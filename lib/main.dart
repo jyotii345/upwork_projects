@@ -1,26 +1,19 @@
 import 'dart:ui';
 
 import 'package:aggressor_adventures/login_page.dart';
+import 'package:aggressor_adventures/my_files.dart';
+import 'package:aggressor_adventures/my_trips.dart';
+import 'package:aggressor_adventures/notes.dart';
+import 'package:aggressor_adventures/photos.dart';
+import 'package:aggressor_adventures/rewards.dart';
 import 'package:flutter/material.dart';
+
+import 'aggressor_colors.dart';
 
 void main() {
   runApp(MyApp());
 }
 
-MaterialColor myColor = MaterialColor(0xFFC8911A, color);
-
-Map<int, Color> color = {
-  50: Color.fromRGBO(200, 145, 26, .1),
-  100: Color.fromRGBO(200, 145, 26, .2),
-  200: Color.fromRGBO(200, 145, 26, .3),
-  300: Color.fromRGBO(200, 145, 26, .4),
-  400: Color.fromRGBO(200, 145, 26, .5),
-  500: Color.fromRGBO(200, 145, 26, .6),
-  600: Color.fromRGBO(200, 145, 26, .7),
-  700: Color.fromRGBO(200, 145, 26, .8),
-  800: Color.fromRGBO(200, 145, 26, .9),
-  900: Color.fromRGBO(200, 145, 26, 1),
-};
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -29,31 +22,34 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Aggressor Adventures',
       theme: ThemeData(
-        primarySwatch: myColor,
+        primarySwatch: AggressorColors.primaryColor,
       ),
-      home: MyHomePage(title: 'Home'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key}) : super(key: key);
 
-  final String title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  /*
+  instance variables
+   */
   int _currentIndex = 4;
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
+  /*
+  build method
+
+  This build method creates the outlilne for the application. This contains the bottomNavigationBar and the overhead Appbar that are present through the entire application
+   */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,14 +132,26 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void onTabTapped(int index) {
+    /*
+    set the state of the navigation bar selection to index
+     */
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   Widget getIndexStack() {
+    /*
+    Returns an indexed Stack widget containing the value of what dart page belongs at which button of the navitgation bar, the extra option is for the login page, will show if the user is not verified
+     */
     return IndexedStack(
       children: <Widget>[
-        loginPage(), //trips page
-        loginPage(), // notes page
-        loginPage(), // photos page
-        loginPage(), // rewards page
-        loginPage(), // files page
+        MyTrips(), //trips page
+        Notes(), // notes page
+        Photos(), // photos page
+        Rewards(), // rewards page
+        MyFiles(), // files page
         loginPage(), // login page
       ],
       index: _currentIndex,
@@ -151,10 +159,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getBottomNavigation() {
+    /*
+    returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
+     */
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       onTap: onTabTapped,
-      backgroundColor: myColor,
+      backgroundColor: AggressorColors.primaryColor,
       // new
       currentIndex: _currentIndex,
       selectedItemColor: Colors.white,
