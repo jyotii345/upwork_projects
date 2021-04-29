@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: IconButton(
                     icon: Icon(
                       Icons.phone_enabled_rounded,
-                      color: Color(0xff59A3C0),
+                      color: Color(0xff59a3c0),
                     ),
                     onPressed: () {
                       print("button pressed");
