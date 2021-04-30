@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 
 class Photos extends StatefulWidget {
@@ -36,7 +34,7 @@ class PhotosState extends State<Photos>
   }
 
   @override
-  bool get wantKeepAlive => throw UnimplementedError();
+  bool get wantKeepAlive => true;
 
 /*
   self implemented

@@ -1,19 +1,20 @@
+import 'dart:convert';
 import 'dart:ui';
 
-import 'package:aggressor_adventures/login_page.dart';
 import 'package:aggressor_adventures/my_files.dart';
 import 'package:aggressor_adventures/my_trips.dart';
 import 'package:aggressor_adventures/notes.dart';
 import 'package:aggressor_adventures/photos.dart';
 import 'package:aggressor_adventures/rewards.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 import 'aggressor_colors.dart';
+import 'login.dart';
 
 void main() {
   runApp(MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -32,18 +33,15 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   /*
   instance variables
    */
-  int _currentIndex = 4;
-
+  int _currentIndex = 5;
 
   /*
   build method
@@ -53,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -92,45 +91,55 @@ class _MyHomePageState extends State<MyHomePage> {
           fit: BoxFit.fitHeight,
         ),
         actions: <Widget>[
-          Padding(padding: EdgeInsets.fromLTRB(0, 0, 5, 0),child:SizedBox(
-            height: AppBar().preferredSize.height,
-            child: Column(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: IconButton(
-                    iconSize: 30,
-                    icon: Icon(
-                      Icons.menu,
-                      color: Color(0xff59A3C0),
-                    ),
-                    onPressed: () {
-                      // do something
-                    },
-                  ),
-                ),
-                Flexible(
-                  flex: 0,
-                  child: Text(
-                    "MENU",
-                    style: TextStyle(
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+            child: SizedBox(
+              height: AppBar().preferredSize.height,
+              child: Column(
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: IconButton(
+                      iconSize: 30,
+                      icon: Icon(
+                        Icons.menu,
                         color: Color(0xff59A3C0),
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        print("menu option pressed");
+                        // do something
+                      },
+                    ),
                   ),
-                ),
-              ],
+                  Flexible(
+                    flex: 0,
+                    child: Text(
+                      "MENU",
+                      style: TextStyle(
+                          color: Color(0xff59A3C0),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),),
+          ),
         ],
       ),
       body: Scaffold(
+        resizeToAvoidBottomInset: false,
         bottomNavigationBar: getBottomNavigation(),
         body: getIndexStack(),
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  /*
+  Self implemented
+   */
+
 
   void onTabTapped(int index) {
     /*
@@ -167,29 +176,29 @@ class _MyHomePageState extends State<MyHomePage> {
       onTap: onTabTapped,
       backgroundColor: AggressorColors.primaryColor,
       // new
-      currentIndex: _currentIndex,
+      currentIndex: _currentIndex > 4 ? 0 : _currentIndex,
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white60,
       items: [
         new BottomNavigationBarItem(
           icon: Image.asset("assets/trips.png"),
-          title: Text('MY TRIPS'),
+          label: 'MY TRIPS',
         ),
         new BottomNavigationBarItem(
           icon: Image.asset("assets/notes.png"),
-          title: Text('NOTES'),
+          label: 'NOTES',
         ),
         new BottomNavigationBarItem(
           icon: Image.asset("assets/photos.png"),
-          title: Text('PHOTOS'),
+          label: 'PHOTOS',
         ),
         new BottomNavigationBarItem(
           icon: Image.asset("assets/rewards.png"),
-          title: Text('REWARDS'),
+          label: 'REWARDS',
         ),
         new BottomNavigationBarItem(
           icon: Image.asset("assets/files.png"),
-          title: Text('MY FILES'),
+          label: 'MY FILES',
         ),
       ],
     );

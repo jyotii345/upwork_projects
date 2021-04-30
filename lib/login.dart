@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class loginPage extends StatefulWidget {
   loginPage();
@@ -11,6 +14,11 @@ class _LoginSignUpPageState extends State<loginPage> {
   /*
   instance vars
    */
+
+  final String apiKey = "pwBL1rik1hyi5JWPid"; //TODO store in a more reachable area to improve usability
+
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   /*
   initState
@@ -26,6 +34,7 @@ class _LoginSignUpPageState extends State<loginPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Stack(
       children: <Widget>[
         Padding(
@@ -83,6 +92,7 @@ class _LoginSignUpPageState extends State<loginPage> {
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: TextField(
+          controller: usernameController,
           maxLines: 1,
           decoration: InputDecoration(
               hintText: "User Name",
@@ -106,6 +116,8 @@ class _LoginSignUpPageState extends State<loginPage> {
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: TextField(
+          controller: passwordController,
+          obscureText: true,
           maxLines: 1,
           decoration: InputDecoration(
               hintText: "Password",
@@ -121,7 +133,9 @@ class _LoginSignUpPageState extends State<loginPage> {
       width: double.infinity,
       child: TextButton(
         onPressed: () {
-          print("login pressed");
+          String username = usernameController.text.toString();
+          String password = passwordController.text.toString();
+          login(username, password);
         },
         child: Text(
           "Log-In",
@@ -136,6 +150,24 @@ class _LoginSignUpPageState extends State<loginPage> {
         ),
       ),
     );
+  }
+
+
+  void login(String username, String password) async {
+    passwordController.clear();
+    //creates a get request to the API authentication method for login verification
+    final requestParams = {
+      "username": username,
+      "password": password,
+    };
+
+    Request request = Request(
+        "GET", Uri.parse("https://secure.aggressor.com/api/app/authentication/login"))
+      ..body = json.encode(requestParams)
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+    print(await pageResponse.stream.bytesToString());
   }
 
   Widget getToolbar() {

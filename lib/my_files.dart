@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 
@@ -36,7 +35,7 @@ class myFilesState extends State<MyFiles>
   }
 
   @override
-  bool get wantKeepAlive => throw UnimplementedError();
+  bool get wantKeepAlive => true;
 
   /*
   self implemented
