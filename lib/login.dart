@@ -20,11 +20,17 @@ class _LoginSignUpPageState extends State<loginPage> {
   final String apiKey =
       "pwBL1rik1hyi5JWPid"; //TODO store in a more reachable area to improve usability
 
+  //text editing controllers for user name and password fields
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  Database database;
+  bool isLoading = false; // boolean to see if the page is currently loading a login
 
+  String errorText = ""; //string value of errors detected on login
+
+  Database database; // instance variable for sql database
+
+  //user variables to be received upon successful login
   String userId;
   String nameF;
   String nameL;
@@ -61,6 +67,7 @@ class _LoginSignUpPageState extends State<loginPage> {
               ),
             ),
             getLoginForm(),
+            getLoadingWheel(),
           ],
         ));
   }
@@ -68,6 +75,10 @@ class _LoginSignUpPageState extends State<loginPage> {
 /*
   self implemented
    */
+
+  Widget getLoadingWheel(){
+    return isLoading ? Center(child:CircularProgressIndicator()) : Container();
+  }
 
   Widget getLoginForm() {
     return Column(
@@ -89,9 +100,16 @@ class _LoginSignUpPageState extends State<loginPage> {
           padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
           child: getToolbar(),
         ),
-        //getToolBar(),
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 0, 25, 0),
+          child: getErrorText(),
+        ),
       ],
     );
+  }
+
+  Widget getErrorText(){
+    return errorText == "" ? Container() : Text(errorText, style: TextStyle(color: Colors.red),textAlign: TextAlign.center,);
   }
 
   Widget getUserButton() {
@@ -150,6 +168,14 @@ class _LoginSignUpPageState extends State<loginPage> {
         onPressed: () {
           String username = usernameController.text.toString();
           String password = passwordController.text.toString();
+
+
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+          isLoading = true;
           login(username, password);
         },
         child: Text(
@@ -168,6 +194,11 @@ class _LoginSignUpPageState extends State<loginPage> {
   }
 
   void login(String username, String password) async {
+    //login function to dismiss keyboard, display appropriate error message, store login data in sql database
+    setState(() {
+      errorText = "";
+    });
+
     passwordController.clear();
     //creates a get request to the API authentication method for login verification
     final requestParams = {
@@ -181,24 +212,46 @@ class _LoginSignUpPageState extends State<loginPage> {
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
     StreamedResponse pageResponse = await request.send();
-    print(await pageResponse.stream.bytesToString());
+    var jsonValue = jsonDecode(await pageResponse.stream.bytesToString());
+    if (jsonValue["status"] == "success") {
+      setState(() {
+        isLoading = false;
+      });
+      userId = jsonValue["userID"];
+      nameF = jsonValue["first"];
+      nameL = jsonValue["last"];
+      contactId = jsonValue["contactID"];
+      OFYContactId = jsonValue["OFYcontactID"];
+      userType = jsonValue["user_type"];
+      contactType = jsonValue["contact_type"];
+      await initDatabase();
+      await saveUserData();
+    }
+    else{
+      setState(() {
+        isLoading = false;
+        errorText = "username or password do not match any items in our records";
+      });
+    }
   }
 
   saveUserData() async {
+    //saves user data into the sql database
     await database.delete("user", where: 'id = ?', whereArgs: [100]);
     await database.rawInsert(
-        'INSERT INTO user(id, userId ,nameF ,nameL ,email ,contactId ,OFYContactId ,userType ,contactType) VALUES(?,?,?,?,?,?,?,?,?,)',
-        [
-          100,
-          userId,
-          nameF,
-          nameL,
-          email,
-          contactId,
-          OFYContactId,
-          userType,
-          contactType,
-        ]);
+      'INSERT INTO user(id, userId ,nameF ,nameL ,email ,contactId ,OFYContactId ,userType ,contactType) VALUES(?,?,?,?,?,?,?,?,?,)',
+      [
+        100,
+        userId,
+        nameF,
+        nameL,
+        email,
+        contactId,
+        OFYContactId,
+        userType,
+        contactType,
+      ],
+    );
   }
 
   initDatabase() async {
@@ -207,6 +260,7 @@ class _LoginSignUpPageState extends State<loginPage> {
   }
 
   Widget getToolbar() {
+    //returns widgets for create account and forgot password
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
