@@ -6,8 +6,11 @@ import 'package:aggressor_adventures/my_trips.dart';
 import 'package:aggressor_adventures/notes.dart';
 import 'package:aggressor_adventures/photos.dart';
 import 'package:aggressor_adventures/rewards.dart';
+import 'package:aggressor_adventures/user.dart';
+import 'package:aggressor_adventures/user_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:sqflite/sqflite.dart';
 
 import 'aggressor_colors.dart';
 import 'login.dart';
@@ -42,6 +45,19 @@ class _MyHomePageState extends State<MyHomePage> {
   instance variables
    */
   int _currentIndex = 5;
+
+  Database database;
+  DatabaseHelper helper;
+
+  /*
+  init state
+   */
+  @override
+  void initState() {
+    super.initState();
+    helper = DatabaseHelper.instance;
+    checkLoginStatus();
+  }
 
   /*
   build method
@@ -161,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
         Photos(), // photos page
         Rewards(), // rewards page
         MyFiles(), // files page
-        loginPage(), // login page
+        loginPage(loginCallback), // login page
       ],
       index: _currentIndex,
     );
@@ -203,4 +219,30 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
   }
+
+
+  void checkLoginStatus() async{
+      //check if the user is logged in and set the appropriate view if they are or are not
+    var userList = await helper.queryUser();
+    User currentUser = userList[0];
+    if(currentUser == null){
+      logoutCallback();
+    }
+    else{
+      loginCallback();
+    }
+  }
+
+  void loginCallback(){
+    setState(() {
+      _currentIndex = 0;
+    });
+  }
+
+  void logoutCallback(){
+    setState(() {
+      _currentIndex = 5;
+    });
+  }
+
 }

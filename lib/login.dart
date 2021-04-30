@@ -6,7 +6,9 @@ import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 
 class loginPage extends StatefulWidget {
-  loginPage();
+  loginPage(this.loginCallback);
+
+  final VoidCallback loginCallback;
 
   @override
   State<StatefulWidget> createState() => new _LoginSignUpPageState();
@@ -226,15 +228,17 @@ class _LoginSignUpPageState extends State<loginPage> {
       setState(() {
         isLoading = false;
       });
-      userId = jsonValue["userID"];
+      userId = jsonValue["userID"].toString();
       nameF = jsonValue["first"];
       nameL = jsonValue["last"];
-      contactId = jsonValue["contactID"];
-      OFYContactId = jsonValue["OFYcontactID"];
+      email = jsonValue["email"];
+      contactId = jsonValue["contactID"].toString();
+      OFYContactId = jsonValue["OFYcontactID"].toString();
       userType = jsonValue["user_type"];
       contactType = jsonValue["contact_type"];
       await initDatabase();
       await saveUserData();
+      widget.loginCallback();
     } else {
       setState(() {
         isLoading = false;
@@ -248,7 +252,7 @@ class _LoginSignUpPageState extends State<loginPage> {
     //saves user data into the sql database
     await database.delete("user", where: 'id = ?', whereArgs: [100]);
     await database.rawInsert(
-      'INSERT INTO user(id, userId ,nameF ,nameL ,email ,contactId ,OFYContactId ,userType ,contactType) VALUES(?,?,?,?,?,?,?,?,?,)',
+      'INSERT INTO user(id, userId ,nameF ,nameL ,email ,contactId ,OFYContactId ,userType ,contactType) VALUES(?,?,?,?,?,?,?,?,?)',
       [
         100,
         userId,
