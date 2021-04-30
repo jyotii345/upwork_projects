@@ -24,7 +24,8 @@ class _LoginSignUpPageState extends State<loginPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool isLoading = false; // boolean to see if the page is currently loading a login
+  bool isLoading =
+      false; // boolean to see if the page is currently loading a login
 
   String errorText = ""; //string value of errors detected on login
 
@@ -76,8 +77,8 @@ class _LoginSignUpPageState extends State<loginPage> {
   self implemented
    */
 
-  Widget getLoadingWheel(){
-    return isLoading ? Center(child:CircularProgressIndicator()) : Container();
+  Widget getLoadingWheel() {
+    return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 
   Widget getLoginForm() {
@@ -85,12 +86,12 @@ class _LoginSignUpPageState extends State<loginPage> {
       children: [
         Padding(
           padding: EdgeInsets.fromLTRB(
-              25, MediaQuery.of(context).size.height / 4, 25, 5),
-          child: getUserButton(),
+              25, MediaQuery.of(context).size.height / 4.5, 25, 5),
+          child: getUserTextField(),
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
-          child: getPassButton(),
+          child: getPassTextField(),
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(75, 5, 75, 0),
@@ -108,11 +109,20 @@ class _LoginSignUpPageState extends State<loginPage> {
     );
   }
 
-  Widget getErrorText(){
-    return errorText == "" ? Container() : Text(errorText, style: TextStyle(color: Colors.red),textAlign: TextAlign.center,);
+  Widget getErrorText() {
+    return errorText == ""
+        ? Container()
+        : Container(
+            color: Colors.white70,
+            child: Text(
+              errorText,
+              style: TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+          );
   }
 
-  Widget getUserButton() {
+  Widget getUserTextField() {
     return new Container(
       decoration: new BoxDecoration(
         color: Colors.white,
@@ -130,13 +140,13 @@ class _LoginSignUpPageState extends State<loginPage> {
           decoration: InputDecoration(
               hintText: "User Name",
               isDense: true,
-              contentPadding: EdgeInsets.all(3)),
+              contentPadding: EdgeInsets.all(1)),
         ),
       ),
     );
   }
 
-  Widget getPassButton() {
+  Widget getPassTextField() {
     return Container(
       decoration: new BoxDecoration(
         color: Colors.white,
@@ -155,7 +165,7 @@ class _LoginSignUpPageState extends State<loginPage> {
           decoration: InputDecoration(
               hintText: "Password",
               isDense: true,
-              contentPadding: EdgeInsets.all(3)),
+              contentPadding: EdgeInsets.all(1)),
         ),
       ),
     );
@@ -168,7 +178,6 @@ class _LoginSignUpPageState extends State<loginPage> {
         onPressed: () {
           String username = usernameController.text.toString();
           String password = passwordController.text.toString();
-
 
           FocusScopeNode currentFocus = FocusScope.of(context);
 
@@ -226,11 +235,11 @@ class _LoginSignUpPageState extends State<loginPage> {
       contactType = jsonValue["contact_type"];
       await initDatabase();
       await saveUserData();
-    }
-    else{
+    } else {
       setState(() {
         isLoading = false;
-        errorText = "username or password do not match any items in our records";
+        errorText =
+            "username or password do not match any items in our records";
       });
     }
   }
