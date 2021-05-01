@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:aggressor_adventures/agressor_api.dart';
 import 'package:aggressor_adventures/user_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -18,9 +19,6 @@ class _LoginSignUpPageState extends State<loginPage> {
   /*
   instance vars
    */
-
-  final String apiKey =
-      "pwBL1rik1hyi5JWPid"; //TODO store in a more reachable area to improve usability
 
   //text editing controllers for user name and password fields
   TextEditingController usernameController = TextEditingController();
@@ -212,30 +210,21 @@ class _LoginSignUpPageState extends State<loginPage> {
 
     passwordController.clear();
     //creates a get request to the API authentication method for login verification
-    final requestParams = {
-      "username": username,
-      "password": password,
-    };
+    var loginResponse = await AggressorApi().getUserLogin(username, password);
+    if (loginResponse["status"] == "success") {
 
-    Request request = Request("GET",
-        Uri.parse("https://secure.aggressor.com/api/app/authentication/login"))
-      ..body = json.encode(requestParams)
-      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
-
-    StreamedResponse pageResponse = await request.send();
-    var jsonValue = jsonDecode(await pageResponse.stream.bytesToString());
-    if (jsonValue["status"] == "success") {
       setState(() {
         isLoading = false;
       });
-      userId = jsonValue["userID"].toString();
-      nameF = jsonValue["first"];
-      nameL = jsonValue["last"];
-      email = jsonValue["email"];
-      contactId = jsonValue["contactID"].toString();
-      OFYContactId = jsonValue["OFYcontactID"].toString();
-      userType = jsonValue["user_type"];
-      contactType = jsonValue["contact_type"];
+
+      userId = loginResponse["userID"].toString();
+      nameF = loginResponse["first"];
+      nameL = loginResponse["last"];
+      email = loginResponse["email"];
+      contactId = loginResponse["contactID"].toString();
+      OFYContactId = loginResponse["OFYcontactID"].toString();
+      userType = loginResponse["user_type"];
+      contactType = loginResponse["contact_type"];
       await initDatabase();
       await saveUserData();
       widget.loginCallback();
