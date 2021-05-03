@@ -225,6 +225,7 @@ class _LoginSignUpPageState extends State<loginPage> {
       OFYContactId = loginResponse["OFYcontactID"].toString();
       userType = loginResponse["user_type"];
       contactType = loginResponse["contact_type"];
+
       await initDatabase();
       await saveUserData();
       widget.loginCallback();

@@ -24,20 +24,10 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   instance vars
    */
 
+  bool listLoading = false;
   List<Widget> pastTripsList;
-
-  Widget pastTableHeader = Container(
-    width: double.infinity,
-    color: Colors.grey[300],
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Text("Conf#"),
-        Text("Yacht"),
-        Text("Embarkment Date")
-      ],
-    ),
-  );
+  List<Widget> upcomingTripsList;
+  Future tripListFuture;
 
   Completer<GoogleMapController> _controller =
       Completer(); //object for asyn map loading
@@ -51,9 +41,9 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-
-    pastTripsList = [pastTableHeader];
-    getTripList();
+    pastTripsList = [];
+    upcomingTripsList = [];
+    tripListFuture = AggressorApi().getReservationList(widget.user.contactId);
   }
 
   /*
@@ -85,46 +75,92 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
-    return Column(
-      children: [
-        getMapObject(),
-        getPageTitle(),
-        getSectionUpcomingTitle(),
-        getUpcomingSection(),
-        getSectionPastTitle(),
-        getPastSection(),
-      ],
-    );
+    return FutureBuilder(
+        future: tripListFuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            return Column(
+              children: [
+                getMapObject(),
+                getPageTitle(),
+                getSectionUpcomingTitle(),
+                getUpcomingSection(false, getTripList(snapshot.data)[1]),
+                getSectionPastTitle(),
+                getPastSection(false, getTripList(snapshot.data)[0]),
+              ],
+            );
+          } else {
+            return Column(
+              children: [
+                getMapObject(),
+                getPageTitle(),
+                getSectionUpcomingTitle(),
+                getUpcomingSection(true, null),
+                getSectionPastTitle(),
+                getPastSection(true, null),
+              ],
+            );
+          }
+        });
   }
 
-  Widget getUpcomingSection() {
+  Widget getUpcomingSection(bool loading, List<Trip> upcomingTrips) {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
         child: Container(
-          color: Colors.white,
-        ),
+            color: Colors.white,
+            child: loading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : getUpcomingListViews(upcomingTrips)),
       ),
     );
   }
 
-  Widget getPastSection() {
+  Widget getPastSection(bool loading, List<Trip> pastTrips) {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Stack(
         children: [
           Container(
-            color: Colors.white,
-            height: MediaQuery.of(context).size.height / 6.5,
-            width: double.infinity,
-          ),
-          getPastTripListViews(),
+              color: Colors.white,
+              height: MediaQuery.of(context).size.height / 6.5,
+              width: double.infinity,
+              child: loading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : getPastTripListViews(pastTrips)),
         ],
       ),
     );
   }
 
-  Widget getPastTripListViews() {
+
+  Widget getUpcomingListViews(List<Trip> pastTrips) {
+    //returns the list item containing upcoming trip objects
+    pastTrips.forEach((element) {
+      upcomingTripsList.add(element.getUpcomingTripCard(context));
+    });
+
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: upcomingTripsList.length,
+        itemBuilder: (context, position) {
+          return upcomingTripsList[position];
+        });
+  }
+  
+  Widget getPastTripListViews(List<Trip> pastTrips) {
+    //returns the list item containing past trip objects
+    int index = 0;
+    pastTrips.forEach((element) {
+      pastTripsList.add(element.getPastTripCard(context, index));
+      index++;
+    });
+
     return ListView.builder(
         shrinkWrap: true,
         itemCount: pastTripsList.length,
@@ -162,10 +198,74 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     );
   }
 
+  List<List<Trip>> getTripList(List<Trip> tripList) {
+    //returns the list of all active trips and sorts them by upcoming or past
+    List<Trip> pastList = [];
+    List<Trip> upcomingList = [];
 
-  Future<void> getTripList() async{
-    var tripList = AggressorApi().getReservationList(widget.user.contactId);
-    print(tripList);
+    double textBoxSize = MediaQuery.of(context).size.width / 4.3;
+
+    pastTripsList.clear();
+    pastTripsList.add(
+      Container(
+        width: double.infinity,
+        color: Colors.grey[100],
+        child: Column(
+          children: [
+            Container(
+              height: .5,
+              color: Colors.grey,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                SizedBox(
+                  width: textBoxSize,
+                  child: Text("Conf#", textAlign: TextAlign.center),
+                ),
+                Spacer(
+                  flex: 10,
+                ),
+                SizedBox(
+                  width: textBoxSize,
+                  child: Text("Yacht", textAlign: TextAlign.center),
+                ),
+                Spacer(
+                  flex: 10,
+                ),
+                SizedBox(
+                  width: textBoxSize,
+                  child: Text(
+                    "Embarkment Date",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(
+                  width: textBoxSize / 2,
+                ),
+                SizedBox(
+                  width: textBoxSize / 2,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+
+    tripList.sort((a, b) =>
+        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+
+    tripList.forEach((element) {
+      if (DateTime.parse(element.tripDate).isBefore(DateTime.now())) {
+        pastList.add(element);
+      } else {
+        upcomingList.add(element);
+      }
+    });
+
+    return [pastList, upcomingList];
   }
 
   Widget getSectionUpcomingTitle() {
@@ -222,9 +322,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
       height: MediaQuery.of(context).size.height / 5,
       child: GoogleMap(
         rotateGesturesEnabled: false,
-        scrollGesturesEnabled: false,
         tiltGesturesEnabled: false,
-        zoomGesturesEnabled: false,
         mapType: MapType.normal,
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
@@ -242,7 +340,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         colorFilter:
             ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
-          "assets/tempbkg.png", //TODO replace remp images with final images
+          "assets/tempbkg.png", //TODO replace with final graphic
           fit: BoxFit.fill,
           height: double.infinity,
           width: double.infinity,

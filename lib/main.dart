@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /*
   instance variables
    */
-  int _currentIndex = 5;
+  int _currentIndex = 0;
 
   User currentUser;
 
@@ -207,23 +207,23 @@ class _MyHomePageState extends State<MyHomePage> {
       unselectedItemColor: Colors.white60,
       items: [
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/trips.png"),
+          icon: Image.asset("assets/trips.png"), //TODO replace with final graphic
           label: 'MY TRIPS',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/notes.png"),
+          icon: Image.asset("assets/notes.png"), //TODO replace with final graphic
           label: 'NOTES',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/photos.png"),
+          icon: Image.asset("assets/photos.png"), //TODO replace with final graphic
           label: 'PHOTOS',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/rewards.png"),
+          icon: Image.asset("assets/rewards.png"), //TODO replace with final graphic
           label: 'REWARDS',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/files.png"),
+          icon: Image.asset("assets/files.png"), //TODO replace with final graphic
           label: 'MY FILES',
         ),
       ],
@@ -246,14 +246,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void loginCallback() {
-    setState(() {
-      _currentIndex = 0;
-    });
+    if(_currentIndex > 4){
+      setState(() {
+        _currentIndex = 0;
+      });
+    }
   }
 
   void logoutCallback() {
-    setState(() {
-      _currentIndex = 5;
-    });
+    if(_currentIndex < 5){
+      setState(() {
+        _currentIndex = 5;
+      });
+    }
   }
 }
