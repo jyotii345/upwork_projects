@@ -21,6 +21,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,6 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
    */
   int _currentIndex = 5;
 
+  User currentUser;
+
   Database database;
   DatabaseHelper helper;
 
@@ -56,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     helper = DatabaseHelper.instance;
-    checkLoginStatus();
   }
 
   /*
@@ -143,19 +145,27 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: Scaffold(
-        resizeToAvoidBottomInset: false,
-        bottomNavigationBar: getBottomNavigation(),
-        body: getIndexStack(),
-      ),
-      // This trailing comma makes auto-formatting nicer for build methods.
+      body: FutureBuilder(
+          future: checkLoginStatus(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return Scaffold(
+                resizeToAvoidBottomInset: false,
+                bottomNavigationBar: getBottomNavigation(),
+                body: getIndexStack(),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 
-  /*
+/*
   Self implemented
    */
-
 
   void onTabTapped(int index) {
     /*
@@ -172,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
      */
     return IndexedStack(
       children: <Widget>[
-        MyTrips(), //trips page
+        MyTrips(currentUser), //trips page
         Notes(), // notes page
         Photos(), // photos page
         Rewards(), // rewards page
@@ -220,29 +230,30 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-
-  void checkLoginStatus() async{
-      //check if the user is logged in and set the appropriate view if they are or are not
+  Future<dynamic> checkLoginStatus() async {
+    //check if the user is logged in and set the appropriate view if they are or are not
     var userList = await helper.queryUser();
-    User currentUser = userList[0];
-    if(currentUser == null){
+    setState(() {
+      currentUser = userList[0];
+    });
+    if (currentUser == null) {
       logoutCallback();
-    }
-    else{
+    } else {
       loginCallback();
     }
+
+    return currentUser;
   }
 
-  void loginCallback(){
+  void loginCallback() {
     setState(() {
       _currentIndex = 0;
     });
   }
 
-  void logoutCallback(){
+  void logoutCallback() {
     setState(() {
       _currentIndex = 5;
     });
   }
-
 }

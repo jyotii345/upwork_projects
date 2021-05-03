@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:aggressor_adventures/trip.dart';
 import 'package:http/http.dart';
 
 class AggressorApi {
@@ -20,6 +21,18 @@ class AggressorApi {
     Request request = Request("GET",
         Uri.parse("https://secure.aggressor.com/api/app/authentication/login"))
       ..body = json.encode(requestParams)
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+    return jsonDecode(await pageResponse.stream.bytesToString());
+  }
+
+  Future<dynamic> getReservationList(String contactId) async {
+    //create and send a reservation view request to the Aggressor Api and return json response
+    String url = "https://secure.aggressor.com/api/app/reservations/list/" +  contactId;
+
+    Request request = Request("GET",
+        Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
     StreamedResponse pageResponse = await request.send();
@@ -80,6 +93,9 @@ class AggressorApi {
     StreamedResponse pageResponse = await request.send();
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
+
+
+
 
 
 }

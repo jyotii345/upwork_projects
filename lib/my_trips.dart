@@ -1,12 +1,19 @@
 import 'dart:async';
 
 import 'package:aggressor_adventures/aggressor_colors.dart';
+import 'package:aggressor_adventures/agressor_api.dart';
+import 'package:aggressor_adventures/trip.dart';
+import 'package:aggressor_adventures/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:aggressor_adventures/agressor_api.dart';
+
 class MyTrips extends StatefulWidget {
-  MyTrips();
+  MyTrips(this.user);
+
+  User user;
 
   @override
   State<StatefulWidget> createState() => new myTripsState();
@@ -46,6 +53,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     super.initState();
 
     pastTripsList = [pastTableHeader];
+    getTripList();
   }
 
   /*
@@ -152,6 +160,12 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         ),
       ],
     );
+  }
+
+
+  Future<void> getTripList() async{
+    var tripList = AggressorApi().getReservationList(widget.user.contactId);
+    print(tripList);
   }
 
   Widget getSectionUpcomingTitle() {
