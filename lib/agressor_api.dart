@@ -8,7 +8,7 @@ class AggressorApi {
 
   AggressorApi();
 
-  Future<dynamic> getUserLogin(String username, String password) async {
+  Future<dynamic> getUserLogin(String username, String password) async { //TODO GET call switched to POST call in API update
     //create and send a login request to the Aggressor Api and return json response
     final requestParams = {
       "username": username,

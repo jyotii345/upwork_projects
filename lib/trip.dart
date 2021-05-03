@@ -56,9 +56,11 @@ class Trip {
   }
 
   Widget getUpcomingTripCard(BuildContext context) {
-    //returns the tile view to be placed into the view for the upcoming trips this user has been engaged in
+    //returns the tile view to be placed into the view for the previous trips this user has been engaged in
+    double textBoxSize = MediaQuery.of(context).size.width / 6.3;
+    double screenFontSize=  MediaQuery.of(context).size.width / 50;
 
-    double textBoxSize = MediaQuery.of(context).size.width / 4.3;
+    double screenFontSizeSmall =  MediaQuery.of(context).size.width / 60;
     List<String> months = [
       'January',
       'February',
@@ -73,138 +75,253 @@ class Trip {
       'November',
       'December'
     ];
-
-    return Row(
-      children: [
-        Column(
+    return Padding(
+        padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+        child: Column(
           children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width / 4,
-              height: MediaQuery.of(context).size.width / 4,
-              child: Image(
-                image: imageResource == null
-                    ? Icon(Icons.directions_boat)
-                    : AssetImage(imageResource),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Container(
+                          color: Colors.grey[200],
+                          height: MediaQuery.of(context).size.height / 7,
+                          width: MediaQuery.of(context).size.height / 7,
+                          child: imageResource == null
+                              ? Icon(
+                                  Icons.directions_boat,
+                                  size: MediaQuery.of(context).size.height / 10,
+                                )
+                              : Image(image: AssetImage(imageResource)),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Days Left: "),
+                            Text(
+                              DateTime.now()
+                                  .difference(DateTime.parse(tripDate))
+                                  .inDays
+                                  .toString(),
+                              style: TextStyle(color: Colors.red),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: TextButton(
+                            style:
+                                TextButton.styleFrom(padding: EdgeInsets.zero),
+                            child: Image.asset("assets/notes.png"),
+                            onPressed:
+                                () {}), //TODO replace with final image resource
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.yellow[200],
+                          border: Border(
+                            top: BorderSide(width: 1.0, color: Colors.grey),
+                            left: BorderSide(width: 1.0, color: Colors.grey),
+                            right: BorderSide(width: 1.0, color: Colors.grey),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "conf#",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 3,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "Yacht",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 3,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "Embarkment Date",
+                                style: TextStyle(fontSize: screenFontSize),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Spacer(
+                              flex: 3,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "Nights",
+                                style: TextStyle(fontSize: screenFontSize),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: Colors.grey,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(width: 1.0, color: Colors.grey),
+                            right: BorderSide(width: 1.0, color: Colors.grey),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                reservationId,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 10,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                title,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 10,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                months[DateTime.parse(tripDate).month - 1]
+                                        .substring(0, 3) +
+                                    " " +
+                                    DateTime.parse(tripDate).day.toString() +
+                                    "," +
+                                    DateTime.parse(tripDate).year.toString(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "NA",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: Colors.grey,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(width: 1.0, color: Colors.grey),
+                            left: BorderSide(width: 1.0, color: Colors.grey),
+                            right: BorderSide(width: 1.0, color: Colors.grey),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              height: 25,
+                              width: MediaQuery.of(context).size.width / 4.8,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
+                                onPressed: () {},
+                                child: Text("Guest Information System (GIS)",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.lightBlue, fontSize: screenFontSizeSmall)),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 25,
+                              width: MediaQuery.of(context).size.width / 4.8,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
+                                onPressed: () {},
+                                child: Text(
+                                  "Know before you go",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.lightBlue, fontSize: screenFontSizeSmall),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 4.8,
+                              height: 25,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
+                                onPressed: () {},
+                                child: Text(
+                                  "Make Payment",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.lightBlue, fontSize: screenFontSizeSmall),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+              child: Container(
+                height: 1,
+                color: Colors.grey[300],
               ),
             ),
-            Row(
-              children: [
-                Text("Days Left: "),
-                Text(
-                  DateTime.now()
-                      .difference(DateTime.parse(tripDate))
-                      .inDays
-                      .toString(),
-                  style: TextStyle(color: Colors.red),
-                )
-              ],
-            ),
           ],
-        ),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Image(image: AssetImage("assets/notes.png")),
-                //TODO replace with final resource
-              ],
-            ),
-            Row(
-              children: [
-                Container(
-                  width: double.infinity,
-                  color: Colors.yellow[100],
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SizedBox(
-                        width: textBoxSize,
-                        child: Text("Conf#", textAlign: TextAlign.center),
-                      ),
-                      Spacer(
-                        flex: 10,
-                      ),
-                      SizedBox(
-                        width: textBoxSize,
-                        child: Text("Yacht", textAlign: TextAlign.center),
-                      ),
-                      Spacer(
-                        flex: 10,
-                      ),
-                      SizedBox(
-                        width: textBoxSize,
-                        child: Text(
-                          "Embarkment Date",
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Container(
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SizedBox(
-                        width: textBoxSize,
-                        child: Text(reservationId, textAlign: TextAlign.center),
-                      ),
-                      Spacer(
-                        flex: 10,
-                      ),
-                      SizedBox(
-                        width: textBoxSize,
-                        child: Text(title, textAlign: TextAlign.center),
-                      ),
-                      Spacer(
-                        flex: 10,
-                      ),
-                      SizedBox(
-                        width: textBoxSize,
-                        child: Text(
-                          months[DateTime.parse(tripDate).month - 1]
-                                  .substring(0, 2) +
-                              " " +
-                              DateTime.parse(tripDate).day.toString() +
-                              "," +
-                              DateTime.parse(tripDate).year.toString(),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Container(
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      TextButton(onPressed: (){}, child: Text("Guest Information System (GIS)", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlue),),),
-                      TextButton(onPressed: (){}, child: Text("Know before you go", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlue),),),
-                      TextButton(onPressed: (){}, child: Text("Make Payment", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlue),),),
-
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        )
-      ],
-    );
+        ));
   }
 
   Widget getPastTripCard(BuildContext context, int index) {
@@ -247,10 +364,10 @@ class Trip {
               SizedBox(
                 width: textBoxSize,
                 child: Text(
-                  months[DateTime.parse(tripDate).month - 1].substring(0, 2) +
+                  months[DateTime.parse(tripDate).month - 1].substring(0, 3) +
                       " " +
                       DateTime.parse(tripDate).day.toString() +
-                      "," +
+                      ", " +
                       DateTime.parse(tripDate).year.toString(),
                   textAlign: TextAlign.center,
                 ),

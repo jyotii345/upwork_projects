@@ -105,16 +105,21 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getUpcomingSection(bool loading, List<Trip> upcomingTrips) {
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
-        child: Container(
-            color: Colors.white,
-            child: loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : getUpcomingListViews(upcomingTrips)),
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+      child: Stack(
+        children: [
+          Container(
+              color: Colors.white,
+              height: MediaQuery.of(context).size.height / 4,
+              width: MediaQuery.of(context).size.width - 20,
+              child: loading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : getUpcomingListViews(upcomingTrips)),
+        ],
       ),
     );
   }
@@ -138,9 +143,10 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     );
   }
 
-
   Widget getUpcomingListViews(List<Trip> pastTrips) {
     //returns the list item containing upcoming trip objects
+
+    upcomingTripsList.clear();
     pastTrips.forEach((element) {
       upcomingTripsList.add(element.getUpcomingTripCard(context));
     });
@@ -152,7 +158,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
           return upcomingTripsList[position];
         });
   }
-  
+
   Widget getPastTripListViews(List<Trip> pastTrips) {
     //returns the list item containing past trip objects
     int index = 0;
@@ -258,7 +264,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
     tripList.forEach((element) {
-      if (DateTime.parse(element.tripDate).isBefore(DateTime.now())) {
+        if (DateTime.parse(element.tripDate).isBefore(DateTime.now())) {
         pastList.add(element);
       } else {
         upcomingList.add(element);
