@@ -36,7 +36,9 @@ class AggressorApi {
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
     StreamedResponse pageResponse = await request.send();
-    return jsonDecode(await pageResponse.stream.bytesToString());
+    Iterable jsonIterable = json.decode(pageResponse.stream.toString());
+    List<Trip> tripList = List<Trip>.from(jsonIterable.map((e) => Trip.fromJson(e)));
+    return tripList;
   }
 
   Future<dynamic> getReservationDetails(String reservationId, String contactId) async {
