@@ -183,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return IndexedStack(
       children: <Widget>[
         MyTrips(currentUser), //trips page
-        Notes(), // notes page
+        Notes(currentUser), // notes page
         Photos(), // photos page
         Rewards(), // rewards page
         MyFiles(), // files page

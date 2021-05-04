@@ -1,3 +1,6 @@
+import 'package:aggressor_adventures/agressor_api.dart';
+import 'package:aggressor_adventures/trip.dart';
+import 'package:aggressor_adventures/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -6,7 +9,9 @@ import 'package:flutter_summernote/flutter_summernote.dart';
 import 'aggressor_colors.dart';
 
 class Notes extends StatefulWidget {
-  Notes();
+  Notes(this.user);
+
+  User user;
 
   @override
   State<StatefulWidget> createState() => new NotesState();
@@ -24,12 +29,18 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   GlobalKey<FlutterSummernoteState> postNotesEditor = GlobalKey();
   GlobalKey<FlutterSummernoteState> miscNotesEditor = GlobalKey();
 
+  List<Trip> sortedTripList;
+
+  Future tripListFuture;
+
   /*
   initState
    */
   @override
   void initState() {
     super.initState();
+    sortedTripList = [];
+    tripListFuture = AggressorApi().getReservationList(widget.user.contactId);
   }
 
   /*
@@ -57,8 +68,52 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Self implemented
    */
 
-  Widget getSaveNotesButton(){
-    return TextButton(onPressed: (){}, child: Text("Save My Notes",style: TextStyle(color: Colors.white),),style: TextButton.styleFrom(backgroundColor: AggressorColors.secondaryColor),);
+  Widget getPageForm() {
+    return FutureBuilder(
+        future: tripListFuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            return Padding(
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 6,
+                    ),
+                    getPageTitle(),
+                    getDestinationDropdown(snapshot.data),
+                    getDepartureDate(),
+                    getReturnDate(),
+                    getPreTripNotes(),
+                    getPostTripNotes(),
+                    getMiscNotes(),
+                    getSaveNotesButton(),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
+  }
+
+  Widget getSaveNotesButton() {
+    return TextButton(
+      onPressed: () {},
+      child: Text(
+        "Save My Notes",
+        style: TextStyle(color: Colors.white),
+      ),
+      style:
+          TextButton.styleFrom(backgroundColor: AggressorColors.secondaryColor),
+    );
   }
 
   Widget getPreTripNotes() {
@@ -76,17 +131,17 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             ),
           ),
         ),
-            Container(
+        Container(
           height: MediaQuery.of(context).size.height / 8,
           width: MediaQuery.of(context).size.width / 1.525,
-          child: FlutterSummernote( //TODO fix text size
-            hint: "Your text here...",
+          child: FlutterSummernote(
+            //TODO fix text size
             key: preNotesEditor,
             hasAttachment: false,
             customToolbar: """
-          [
-          ]
-        """,
+                            [
+                            ]
+                           """,
             showBottomToolbar: false,
           ),
         ),
@@ -112,8 +167,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         Container(
           height: MediaQuery.of(context).size.height / 8,
           width: MediaQuery.of(context).size.width / 1.525,
-          child: FlutterSummernote(  //TODO fix text size
-            hint: "Your text here...",
+          child: FlutterSummernote(
+            //TODO fix text size
             key: postNotesEditor,
             hasAttachment: false,
             customToolbar: """
@@ -128,7 +183,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getMiscNotes() {
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -146,8 +200,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         Container(
           height: MediaQuery.of(context).size.height / 8,
           width: MediaQuery.of(context).size.width / 1.525,
-          child: FlutterSummernote(  //TODO fix text size
-            hint: "Your text here...",
+          child: FlutterSummernote( //TODO fix text size
             key: miscNotesEditor,
             hasAttachment: false,
             customToolbar: """
@@ -161,7 +214,13 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget getDestinationDropdown() {
+  Widget getDestinationDropdown(var snapshot) {
+    sortedTripList.clear();
+
+    sortedTripList = sortTripList(snapshot);
+    sortedTripList.insert(0,
+        Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", ""));
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -182,31 +241,38 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
-          child: DropdownButton<String>(
-            value: dropDownValue,
-            elevation: 0,
-            iconSize: MediaQuery.of(context).size.height / 40,
-            onChanged: (String newValue) {
-              setState(() {
-                dropDownValue = newValue;
-              });
-            },
-            items: <String>[' -- SELECT -- ', 'Two', 'Free', 'Four']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(
-                  value,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                  textAlign: TextAlign.center,
-                ),
-              );
-            }).toList(),
+          child: Center(
+            child: DropdownButton<String>(
+              value: dropDownValue,
+              elevation: 0,
+              iconSize: MediaQuery.of(context).size.height / 40,
+              onChanged: (String newValue) {
+                setState(() {
+                  dropDownValue = newValue;
+                });
+              },
+              items: sortedTripList.map<DropdownMenuItem<String>>((Trip value) {
+                return DropdownMenuItem<String>(
+                  value: value.destination,
+                  child: Text(
+                    value.destination,
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         ),
       ],
     );
+  }
+
+  List<Trip> sortTripList(List<Trip> tripList) {
+    tripList.sort((a, b) =>
+        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+    return tripList;
   }
 
   Widget getDepartureDate() {
@@ -260,32 +326,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           child: Text(returnDate),
         ),
       ],
-    );
-  }
-
-  Widget getPageForm() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 6,
-            ),
-            getPageTitle(),
-            getDestinationDropdown(),
-            getDepartureDate(),
-            getReturnDate(),
-            getPreTripNotes(),
-            getPostTripNotes(),
-            getMiscNotes(),
-            getSaveNotesButton(),
-          ],
-        ),
-      ),
     );
   }
 
