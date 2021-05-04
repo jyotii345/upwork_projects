@@ -58,15 +58,7 @@ class _LoginSignUpPageState extends State<loginPage> {
         resizeToAvoidBottomInset: false,
         body: Stack(
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: Image.asset(
-                "assets/bkg.png",
-                fit: BoxFit.fill,
-                height: double.infinity,
-                width: double.infinity,
-              ),
-            ),
+            getBackgroundImage(),
             getLoginForm(),
             getLoadingWheel(),
           ],
@@ -76,6 +68,18 @@ class _LoginSignUpPageState extends State<loginPage> {
 /*
   self implemented
    */
+
+  Widget getBackgroundImage(){
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      child: Image.asset(
+        "assets/bkg.png", //TODO replace with real image asset
+        fit: BoxFit.fill,
+        height: double.infinity,
+        width: double.infinity,
+      ),
+    );
+  }
 
   Widget getLoadingWheel() {
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
