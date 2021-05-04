@@ -118,7 +118,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
-                  : getUpcomingListViews(upcomingTrips)),
+                  : upcomingTripsList.length == 0 ? Center(child: Text("You do not have any upcoming trips booked yet."),):getUpcomingListViews(upcomingTrips)),
         ],
       ),
     );
@@ -137,7 +137,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
-                  : getPastTripListViews(pastTrips)),
+                  : pastTripsList.length == 0 ? Center(child: Text("You do not have any past trips to view yet."),): getPastTripListViews(pastTrips)),
         ],
       ),
     );
