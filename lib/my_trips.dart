@@ -43,6 +43,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     super.initState();
     pastTripsList = [];
     upcomingTripsList = [];
+    print(widget.user.contactId);
     tripListFuture = AggressorApi().getReservationList(widget.user.contactId);
   }
 
@@ -105,7 +106,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getUpcomingSection(bool loading, List<Trip> upcomingTrips) {
-
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Stack(

@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'agressor_api.dart';
+
 class Trip {
   String tripDate;
   String title;
@@ -12,6 +14,7 @@ class Trip {
   String reservationDate;
   String reservationId;
   String imageResource;
+  String charterId, total, discount, payments, due, dueDate, passengers, location, embark, disembark, detailDestination;
 
   Trip(
     String tripDate,
@@ -53,6 +56,24 @@ class Trip {
       'reservationDate': reservationDate,
       'reservationId': reservationId,
     };
+  }
+
+  Future<dynamic> getTripDetails(String contactId) async{
+    print("getting trip details");
+    var jsonResponse = await AggressorApi().getReservationDetails(reservationId,contactId);
+
+    charterId = jsonResponse["charterid"].toString();
+    total = jsonResponse["total"].toString();
+    discount = jsonResponse["discount"].toString();
+    payments = jsonResponse["payments"].toString();
+    due = jsonResponse["due"].toString();
+    dueDate = jsonResponse["dueDate"].toString();
+    passengers = jsonResponse["passengers"].toString();
+    location = jsonResponse["location"].toString();
+    embark = jsonResponse["embark"].toString();
+    disembark = jsonResponse["disembark"].toString();
+    detailDestination = jsonResponse["detailDestination"].toString();
+    return "success";
   }
 
   Widget getUpcomingTripCard(BuildContext context) {

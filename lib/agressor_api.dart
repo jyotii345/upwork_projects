@@ -25,6 +25,7 @@ class AggressorApi {
   }
 
   Future<List<Trip>> getReservationList(String contactId) async {
+    print("get trip list called");
     //create and send a reservation list request to the Aggressor Api and return a list of Trip objects
     String url =
         "https://secure.aggressor.com/api/app/reservations/list/" + contactId;
@@ -39,11 +40,13 @@ class AggressorApi {
       int i = 0;
       while (response[i.toString()] != null) {
         tripList.add(Trip.fromJson(response[i.toString()]));
+        await tripList[i].getTripDetails(contactId);
         i++;
       }
     } else {
       tripList = null;
     }
+    print("returning");
     return tripList;
   }
 

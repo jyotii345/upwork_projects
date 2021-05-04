@@ -200,7 +200,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         Container(
           height: MediaQuery.of(context).size.height / 8,
           width: MediaQuery.of(context).size.width / 1.525,
-          child: FlutterSummernote( //TODO fix text size
+          child: FlutterSummernote(
+            //TODO fix text size
             key: miscNotesEditor,
             hasAttachment: false,
             customToolbar: """
@@ -214,13 +215,14 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget getDestinationDropdown(var snapshot) {
-    sortedTripList.clear();
-
-    sortedTripList = sortTripList(snapshot);
-    sortedTripList.insert(0,
-        Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", ""));
-
+  Widget getDestinationDropdown(List<Trip> tripList) {
+    sortTripList(tripList);
+    if (tripList[0].destination != " -- SELECT -- ") {
+      tripList.insert(
+          0,
+          Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "",
+              "")); //TODO replace the values with the trip details values
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -234,35 +236,41 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         ),
         Container(
           height: MediaQuery.of(context).size.height / 45,
-          width: MediaQuery.of(context).size.width / 3,
+          width: MediaQuery.of(context).size.width / 2,
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
               side: BorderSide(width: 1.0, style: BorderStyle.solid),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
-          child: Center(
-            child: DropdownButton<String>(
-              value: dropDownValue,
-              elevation: 0,
-              iconSize: MediaQuery.of(context).size.height / 40,
-              onChanged: (String newValue) {
-                setState(() {
-                  dropDownValue = newValue;
-                });
-              },
-              items: sortedTripList.map<DropdownMenuItem<String>>((Trip value) {
-                return DropdownMenuItem<String>(
-                  value: value.destination,
+          child: DropdownButton<String>(
+            underline: Container(),
+            value: dropDownValue,
+            elevation: 0,
+            isExpanded: true,
+            iconSize: MediaQuery.of(context).size.height / 40,
+            onChanged: (String newValue) {
+              setState(() {
+                dropDownValue = newValue;
+              });
+            },
+            items: tripList.map<DropdownMenuItem<String>>((Trip value) {
+              return DropdownMenuItem<String>(
+                value: value.destination,
+                child: Container(
+                  height: MediaQuery.of(context).size.height / 45,
+                  width: MediaQuery.of(context).size.width / 2 -
+                      MediaQuery.of(context).size.height / 40 -
+                      10,
                   child: Text(
                     value.destination,
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.height / 45 - 4),
                     textAlign: TextAlign.center,
                   ),
-                );
-              }).toList(),
-            ),
+                ),
+              );
+            }).toList(),
           ),
         ),
       ],
@@ -270,9 +278,11 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   List<Trip> sortTripList(List<Trip> tripList) {
-    tripList.sort((a, b) =>
+    List<Trip> tempList = tripList;
+    tempList.sort((a, b) =>
         DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
-    return tripList;
+
+    return tempList;
   }
 
   Widget getDepartureDate() {
