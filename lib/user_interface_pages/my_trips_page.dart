@@ -74,7 +74,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
-    return Column(
+    return ListView(
       children: [
         getMapObject(),
         getPageTitle(),

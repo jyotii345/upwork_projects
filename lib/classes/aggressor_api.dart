@@ -28,6 +28,7 @@ class AggressorApi {
 
   Future<List<Trip>> getReservationList(String contactId) async {
     //create and send a reservation list request to the Aggressor Api and return a list of Trip objects also removes duplicates from the received list
+
     String url =
         "https://secure.aggressor.com/api/app/reservations/list/" + contactId;
 

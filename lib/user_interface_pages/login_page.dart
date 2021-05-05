@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'main_page.dart';
+
 class LoginPage extends StatefulWidget {
   LoginPage(this.loginCallback);
 
@@ -245,7 +247,10 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
       await initDatabase();
       await saveUserData();
-      widget.loginCallback();
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => MyApp()));
+
     } else {
       setState(() {
         isLoading = false;

@@ -75,8 +75,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: ListView(
           children: [
             Container(
               width: MediaQuery.of(context).size.width,

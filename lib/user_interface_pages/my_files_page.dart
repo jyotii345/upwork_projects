@@ -53,7 +53,7 @@ class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: Column(
+        child: ListView(
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
