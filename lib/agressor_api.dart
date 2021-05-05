@@ -37,19 +37,13 @@ class AggressorApi {
     var response = json.decode(await pageResponse.stream.bytesToString());
     List<String> addedTrips = [];
     List<Trip> tripList = [];
-    print(response.toString());
     if (response["status"] == "success") {
       int i = 0;
       while (response[i.toString()] != null) {
-        print(response[i.toString()]["reservationid"]);
-        print(response[i.toString()].toString());
         if(!addedTrips.contains(response[i.toString()]["reservationid"].toString())) {
           tripList.add(Trip.fromJson(response[i.toString()]));
           addedTrips.add(response[i.toString()]["reservationid"].toString());
           await tripList[tripList.length - 1].getTripDetails(contactId);
-        }
-        else{
-          print("skipping - duplicate");
         }
         i++;
       }

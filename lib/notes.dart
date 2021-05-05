@@ -22,9 +22,11 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
-  Trip dropDownValue = Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
   String departureDate = "";
   String returnDate = "";
+  Trip dropDownValue;
+
+  Trip selectionTrip;
 
   GlobalKey<FlutterSummernoteState> preNotesEditor = GlobalKey();
   GlobalKey<FlutterSummernoteState> postNotesEditor = GlobalKey();
@@ -38,8 +40,10 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    dropDownValue.detailDestination = " -- SELECT -- ";
-    sortedTripList = [dropDownValue];
+    selectionTrip =
+        Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
+    selectionTrip.detailDestination = " -- SELECT -- ";
+    dropDownValue = selectionTrip;
   }
 
   /*
@@ -54,7 +58,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         getBackgroundImage(),
         getPageForm(),
         Container(
-          height: MediaQuery.of(context).size.height / 6 + 4,
+          height: MediaQuery.of(context).size.height / 7 + 4,
           width: double.infinity,
           color: AggressorColors.secondaryColor,
         ),
@@ -73,11 +77,11 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       child: Container(
         color: Colors.white,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 6,
+              height: MediaQuery.of(context).size.height / 7,
             ),
             getPageTitle(),
             getDestinationDropdown(widget.tripList),
@@ -205,12 +209,11 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getDestinationDropdown(List<Trip> tripList) {
-    Trip selectionTrip =
-    Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
-    selectionTrip.detailDestination = " -- SELECT -- ";
     sortedTripList = [selectionTrip];
     tripList = sortTripList(tripList);
-    tripList.forEach((element) {sortedTripList.add(element);});
+    tripList.forEach((element) {
+      sortedTripList.add(element);
+    });
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -241,6 +244,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             onChanged: (Trip newValue) {
               setState(() {
                 dropDownValue = newValue;
+                departureDate = newValue.tripDate;
+                returnDate =
+                    "not implemented"; //TODO place return date here when uploaded
               });
             },
             items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
@@ -288,14 +294,19 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         ),
         Container(
           height: MediaQuery.of(context).size.height / 45,
-          width: MediaQuery.of(context).size.width / 3,
+          width: MediaQuery.of(context).size.width / 2,
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
               side: BorderSide(width: 1.0, style: BorderStyle.solid),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
-          child: Text(departureDate),
+          child: Text(
+            departureDate,
+            style: TextStyle(
+                fontSize: MediaQuery.of(context).size.height / 45 - 4),
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
     );
@@ -315,14 +326,25 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         ),
         Container(
           height: MediaQuery.of(context).size.height / 45,
-          width: MediaQuery.of(context).size.width / 3,
+          width: MediaQuery.of(context).size.width / 2,
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
               side: BorderSide(width: 1.0, style: BorderStyle.solid),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
-          child: Text(returnDate),
+          child: Container(
+            height: MediaQuery.of(context).size.height / 45,
+            width: MediaQuery.of(context).size.width / 2 -
+                MediaQuery.of(context).size.height / 40 -
+                10,
+            child: Text(
+              returnDate,
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
       ],
     );
@@ -349,7 +371,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     //returns banner image
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 6,
+      height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
         fit: BoxFit.cover,

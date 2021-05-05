@@ -38,7 +38,7 @@ class RewardsState extends State<Rewards>
         getBackgroundImage(),
         getPageForm(),
         Container(
-          height: MediaQuery.of(context).size.height / 6 + 4,
+          height: MediaQuery.of(context).size.height / 7 + 4,
           width: double.infinity,
           color: AggressorColors.secondaryColor,
         ),
@@ -60,7 +60,7 @@ class RewardsState extends State<Rewards>
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 6,
+              height: MediaQuery.of(context).size.height / 7,
             ),
             getPageTitle(),
           ],
@@ -90,7 +90,7 @@ class RewardsState extends State<Rewards>
     //returns banner image
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 6,
+      height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
         fit: BoxFit.cover,
