@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:aggressor_adventures/my_files.dart';
+import 'package:aggressor_adventures/my_profile.dart';
 import 'package:aggressor_adventures/my_trips.dart';
 import 'package:aggressor_adventures/notes.dart';
 import 'package:aggressor_adventures/photos.dart';
@@ -129,17 +130,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: [
                   Flexible(
                     flex: 1,
-                    child: IconButton(
-                      iconSize: 30,
-                      icon: Icon(
-                        Icons.menu,
-                        color: Color(0xff59A3C0),
-                      ),
-                      onPressed: () {
-                        print("menu option pressed");
-                        // do something
-                      },
-                    ),
+                    child: PopupMenuButton<String>(
+                        onSelected: handlePopupClick,
+                        child: Icon(
+                          Icons.menu,
+                          color: Color(0xff59A3C0),
+                          size: 30,
+                        ),
+                        itemBuilder: (BuildContext context) {
+                          return {
+                            "My Profile",
+                          }.map((String option) {
+                            return PopupMenuItem<String>(
+                              value: option,
+                              child: Text(option),
+                            );
+                          }).toList();
+                        }),
                   ),
                   Flexible(
                     flex: 0,
@@ -189,6 +196,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Self implemented
    */
 
+  void handlePopupClick(String value) {
+    switch (value) {
+      case 'My Profile':
+        setState(() {
+          _currentIndex = 6;
+        });
+    }
+  }
+
   void onTabTapped(int index) {
     /*
     set the state of the navigation bar selection to index
@@ -217,6 +233,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // files page
         loginPage(loginCallback),
         // login page
+        currentUser == null ? Container() : MyProfile(currentUser),
+        //my profile page
       ],
       index: _currentIndex,
     );
