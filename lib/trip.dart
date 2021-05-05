@@ -46,6 +46,18 @@ class Trip {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'tripDate': tripDate,
+      'title': title,
+      'latitude': latitude,
+      'longitude': longitude,
+      'destination': destination,
+      'reservationDate': reservationDate,
+      'reservationId': reservationId,
+    };
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'tripDate': tripDate,
@@ -59,21 +71,25 @@ class Trip {
   }
 
   Future<dynamic> getTripDetails(String contactId) async{
-    print("getting trip details");
     var jsonResponse = await AggressorApi().getReservationDetails(reservationId,contactId);
+    if(jsonResponse["status"] == "success"){
+      charterId = jsonResponse["charterid"].toString();
+      total = jsonResponse["total"].toString();
+      discount = jsonResponse["discount"].toString();
+      payments = jsonResponse["payments"].toString();
+      due = jsonResponse["due"].toString();
+      dueDate = jsonResponse["dueDate"].toString();
+      passengers = jsonResponse["passengers"].toString();
+      location = jsonResponse["location"].toString();
+      embark = jsonResponse["embark"].toString();
+      disembark = jsonResponse["disembark"].toString();
+      detailDestination = jsonResponse["destination"].toString();
+      return "success";
+    }
+    else{
+      return "error";
+    }
 
-    charterId = jsonResponse["charterid"].toString();
-    total = jsonResponse["total"].toString();
-    discount = jsonResponse["discount"].toString();
-    payments = jsonResponse["payments"].toString();
-    due = jsonResponse["due"].toString();
-    dueDate = jsonResponse["dueDate"].toString();
-    passengers = jsonResponse["passengers"].toString();
-    location = jsonResponse["location"].toString();
-    embark = jsonResponse["embark"].toString();
-    disembark = jsonResponse["disembark"].toString();
-    detailDestination = jsonResponse["detailDestination"].toString();
-    return "success";
   }
 
   Widget getUpcomingTripCard(BuildContext context) {
@@ -128,7 +144,7 @@ class Trip {
                             Text(
                               DateTime.now()
                                   .difference(DateTime.parse(tripDate))
-                                  .inDays
+                                  .inDays.abs()
                                   .toString(),
                               style: TextStyle(color: Colors.red),
                             )
@@ -260,7 +276,7 @@ class Trip {
                             SizedBox(
                               width: textBoxSize,
                               child: Text(
-                                "NA",
+                                "7",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: screenFontSize),
                               ),

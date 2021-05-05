@@ -6,14 +6,19 @@ import 'package:aggressor_adventures/my_trips.dart';
 import 'package:aggressor_adventures/notes.dart';
 import 'package:aggressor_adventures/photos.dart';
 import 'package:aggressor_adventures/rewards.dart';
+import 'package:aggressor_adventures/trip.dart';
 import 'package:aggressor_adventures/user.dart';
 import 'package:aggressor_adventures/user_database.dart';
+import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'aggressor_colors.dart';
+import 'agressor_api.dart';
 import 'login.dart';
+
+final AsyncMemoizer loginMemoizer = AsyncMemoizer();
 
 void main() {
   runApp(MyApp());
@@ -52,6 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Database database;
   DatabaseHelper helper;
 
+  List<Trip> tripList;
+
+  AsyncMemoizer tripListMemoizer = AsyncMemoizer();
+
+  Future tripListFuture;
+
   /*
   init state
    */
@@ -59,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     helper = DatabaseHelper.instance;
+    tripList = [];
   }
 
   /*
@@ -149,11 +161,21 @@ class _MyHomePageState extends State<MyHomePage> {
           future: checkLoginStatus(),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
-              return Scaffold(
-                resizeToAvoidBottomInset: false,
-                bottomNavigationBar: getBottomNavigation(),
-                body: getIndexStack(),
-              );
+              return FutureBuilder(
+                  future: tripListFuture,
+                  builder: (context, snapshotOne) {
+                    if (snapshotOne.hasData && snapshotOne.data != null) {
+                      return Scaffold(
+                        resizeToAvoidBottomInset: false,
+                        bottomNavigationBar: getBottomNavigation(),
+                        body: getIndexStack(snapshotOne.data),
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  });
             } else {
               return Center(
                 child: CircularProgressIndicator(),
@@ -176,18 +198,25 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Widget getIndexStack() {
+  Widget getIndexStack(var tripList) {
     /*
     Returns an indexed Stack widget containing the value of what dart page belongs at which button of the navitgation bar, the extra option is for the login page, will show if the user is not verified
      */
+
     return IndexedStack(
       children: <Widget>[
-        MyTrips(currentUser), //trips page
-        Notes(currentUser), // notes page
-        Photos(), // photos page
-        Rewards(), // rewards page
-        MyFiles(), // files page
-        loginPage(loginCallback), // login page
+        currentUser == null ? Container() : MyTrips(currentUser, tripList),
+        //trips page
+        currentUser == null ? Container() : Notes(currentUser, tripList),
+        // notes page
+        Photos(),
+        // photos page
+        Rewards(),
+        // rewards page
+        MyFiles(),
+        // files page
+        loginPage(loginCallback),
+        // login page
       ],
       index: _currentIndex,
     );
@@ -207,23 +236,28 @@ class _MyHomePageState extends State<MyHomePage> {
       unselectedItemColor: Colors.white60,
       items: [
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/trips.png"), //TODO replace with final graphic
+          icon: Image.asset("assets/trips.png"),
+          //TODO replace with final graphic
           label: 'MY TRIPS',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/notes.png"), //TODO replace with final graphic
+          icon: Image.asset("assets/notes.png"),
+          //TODO replace with final graphic
           label: 'NOTES',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/photos.png"), //TODO replace with final graphic
+          icon: Image.asset("assets/photos.png"),
+          //TODO replace with final graphic
           label: 'PHOTOS',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/rewards.png"), //TODO replace with final graphic
+          icon: Image.asset("assets/rewards.png"),
+          //TODO replace with final graphic
           label: 'REWARDS',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/files.png"), //TODO replace with final graphic
+          icon: Image.asset("assets/files.png"),
+          //TODO replace with final graphic
           label: 'MY FILES',
         ),
       ],
@@ -232,21 +266,30 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<dynamic> checkLoginStatus() async {
     //check if the user is logged in and set the appropriate view if they are or are not
-    var userList = await helper.queryUser();
-    setState(() {
-      currentUser = userList[0];
-    });
-    if (currentUser == null) {
-      logoutCallback();
-    } else {
-      loginCallback();
-    }
+    return loginMemoizer.runOnce(() async {
+      var userList = await helper.queryUser();
+      try {
+        setState(() {
+          currentUser = userList[0];
+        });
+      } catch (e) {
+        logoutCallback();
+      }
+      if (currentUser.userId == null) {
+        logoutCallback();
+        return "no user";
+      } else {
+        tripListFuture = tripListMemoizer.runOnce(
+            () => AggressorApi().getReservationList(currentUser.contactId));
+        loginCallback();
+      }
 
-    return currentUser;
+      return currentUser;
+    });
   }
 
   void loginCallback() {
-    if(_currentIndex > 4){
+    if (_currentIndex > 4) {
       setState(() {
         _currentIndex = 0;
       });
@@ -254,7 +297,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void logoutCallback() {
-    if(_currentIndex < 5){
+    if (_currentIndex < 5) {
       setState(() {
         _currentIndex = 5;
       });

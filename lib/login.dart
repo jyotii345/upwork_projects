@@ -214,7 +214,20 @@ class _LoginSignUpPageState extends State<loginPage> {
 
     passwordController.clear();
     //creates a get request to the API authentication method for login verification
+    if(password == "" || username == ""){
+      setState(() {
+        isLoading = false;
+        errorText =
+        "username or password was left blank";
+      });
+    }
+
+    print("calling api next");
+
+
     var loginResponse = await AggressorApi().getUserLogin(username, password);
+
+    print("response: " + loginResponse.toString());
     if (loginResponse["status"] == "success") {
 
       setState(() {

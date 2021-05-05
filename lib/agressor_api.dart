@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:aggressor_adventures/trip.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class AggressorApi {
@@ -8,25 +9,24 @@ class AggressorApi {
 
   AggressorApi();
 
-  Future<dynamic> getUserLogin(String username, String password) async { //TODO GET call switched to POST call in API update
-    //create and send a login request to the Aggressor Api and return json response
-    final requestParams = {
-      "username": username,
-      "password": password,
-    };
+  Future<dynamic> getUserLogin(String username, String password) async {
+    Response response = await post(
+      Uri.https('secure.aggressor.com', 'api/app/authentication/login'),
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'password': password,
+      }),
+    );
 
-    Request request = Request("GET",
-        Uri.parse("https://secure.aggressor.com/api/app/authentication/login"))
-      ..body = json.encode(requestParams)
-      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
-
-    StreamedResponse pageResponse = await request.send();
-    return jsonDecode(await pageResponse.stream.bytesToString());
+    return jsonDecode(response.body);
   }
 
   Future<List<Trip>> getReservationList(String contactId) async {
-    print("get trip list called");
-    //create and send a reservation list request to the Aggressor Api and return a list of Trip objects
+    //create and send a reservation list request to the Aggressor Api and return a list of Trip objects also removes duplicates from the received list
     String url =
         "https://secure.aggressor.com/api/app/reservations/list/" + contactId;
 
@@ -35,18 +35,27 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
     var response = json.decode(await pageResponse.stream.bytesToString());
+    List<String> addedTrips = [];
     List<Trip> tripList = [];
+    print(response.toString());
     if (response["status"] == "success") {
       int i = 0;
       while (response[i.toString()] != null) {
-        tripList.add(Trip.fromJson(response[i.toString()]));
-        await tripList[i].getTripDetails(contactId);
+        print(response[i.toString()]["reservationid"]);
+        print(response[i.toString()].toString());
+        if(!addedTrips.contains(response[i.toString()]["reservationid"].toString())) {
+          tripList.add(Trip.fromJson(response[i.toString()]));
+          addedTrips.add(response[i.toString()]["reservationid"].toString());
+          await tripList[tripList.length - 1].getTripDetails(contactId);
+        }
+        else{
+          print("skipping - duplicate");
+        }
         i++;
       }
     } else {
       tripList = null;
     }
-    print("returning");
     return tripList;
   }
 

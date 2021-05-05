@@ -9,9 +9,10 @@ import 'package:flutter_summernote/flutter_summernote.dart';
 import 'aggressor_colors.dart';
 
 class Notes extends StatefulWidget {
-  Notes(this.user);
+  Notes(this.user, this.tripList);
 
   User user;
+  List<Trip> tripList;
 
   @override
   State<StatefulWidget> createState() => new NotesState();
@@ -21,7 +22,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
-  String dropDownValue = " -- SELECT -- ";
+  Trip dropDownValue = Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
   String departureDate = "";
   String returnDate = "";
 
@@ -31,16 +32,14 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   List<Trip> sortedTripList;
 
-  Future tripListFuture;
-
   /*
   initState
    */
   @override
   void initState() {
     super.initState();
-    sortedTripList = [];
-    tripListFuture = AggressorApi().getReservationList(widget.user.contactId);
+    dropDownValue.detailDestination = " -- SELECT -- ";
+    sortedTripList = [dropDownValue];
   }
 
   /*
@@ -69,39 +68,29 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
    */
 
   Widget getPageForm() {
-    return FutureBuilder(
-        future: tripListFuture,
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            return Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 6,
-                    ),
-                    getPageTitle(),
-                    getDestinationDropdown(snapshot.data),
-                    getDepartureDate(),
-                    getReturnDate(),
-                    getPreTripNotes(),
-                    getPostTripNotes(),
-                    getMiscNotes(),
-                    getSaveNotesButton(),
-                  ],
-                ),
-              ),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 6,
+            ),
+            getPageTitle(),
+            getDestinationDropdown(widget.tripList),
+            getDepartureDate(),
+            getReturnDate(),
+            getPreTripNotes(),
+            getPostTripNotes(),
+            getMiscNotes(),
+            getSaveNotesButton(),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget getSaveNotesButton() {
@@ -216,13 +205,13 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getDestinationDropdown(List<Trip> tripList) {
-    sortTripList(tripList);
-    if (tripList[0].destination != " -- SELECT -- ") {
-      tripList.insert(
-          0,
-          Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "",
-              "")); //TODO replace the values with the trip details values
-    }
+    Trip selectionTrip =
+    Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
+    selectionTrip.detailDestination = " -- SELECT -- ";
+    sortedTripList = [selectionTrip];
+    tripList = sortTripList(tripList);
+    tripList.forEach((element) {sortedTripList.add(element);});
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -243,27 +232,27 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
-          child: DropdownButton<String>(
+          child: DropdownButton<Trip>(
             underline: Container(),
             value: dropDownValue,
             elevation: 0,
             isExpanded: true,
             iconSize: MediaQuery.of(context).size.height / 40,
-            onChanged: (String newValue) {
+            onChanged: (Trip newValue) {
               setState(() {
                 dropDownValue = newValue;
               });
             },
-            items: tripList.map<DropdownMenuItem<String>>((Trip value) {
-              return DropdownMenuItem<String>(
-                value: value.destination,
+            items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
+              return DropdownMenuItem<Trip>(
+                value: value,
                 child: Container(
                   height: MediaQuery.of(context).size.height / 45,
                   width: MediaQuery.of(context).size.width / 2 -
                       MediaQuery.of(context).size.height / 40 -
                       10,
                   child: Text(
-                    value.destination,
+                    value.detailDestination,
                     style: TextStyle(
                         fontSize: MediaQuery.of(context).size.height / 45 - 4),
                     textAlign: TextAlign.center,
