@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:aggressor_adventures/agressor_api.dart';
-import 'package:aggressor_adventures/user_database.dart';
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 
-class loginPage extends StatefulWidget {
-  loginPage(this.loginCallback);
+class LoginPage extends StatefulWidget {
+  LoginPage(this.loginCallback);
 
   final VoidCallback loginCallback;
 
@@ -15,7 +15,7 @@ class loginPage extends StatefulWidget {
   State<StatefulWidget> createState() => new _LoginSignUpPageState();
 }
 
-class _LoginSignUpPageState extends State<loginPage> {
+class _LoginSignUpPageState extends State<LoginPage> {
   /*
   instance vars
    */

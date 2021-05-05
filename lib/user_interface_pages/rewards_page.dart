@@ -1,15 +1,18 @@
-import 'package:aggressor_adventures/aggressor_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class MyFiles extends StatefulWidget {
-  MyFiles();
+import '../classes/aggressor_colors.dart';
+
+class Rewards extends StatefulWidget {
+  Rewards();
+
 
   @override
-  State<StatefulWidget> createState() => new myFilesState();
+  State<StatefulWidget> createState() => new RewardsState();
 }
 
-class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
+class RewardsState extends State<Rewards>
+    with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
@@ -72,7 +75,7 @@ class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/tempbkg.png", //TODO replace with final graphic
           fit: BoxFit.fill,
@@ -101,7 +104,7 @@ class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       child: Align(
         alignment: Alignment.topLeft,
         child: Text(
-          "My Files",
+          "My Rewards",
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: MediaQuery.of(context).size.height / 25,
@@ -114,8 +117,6 @@ class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-/*
-  self implemented
-   */
+
 
 }

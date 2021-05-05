@@ -1,12 +1,11 @@
-import 'package:aggressor_adventures/agressor_api.dart';
-import 'package:aggressor_adventures/trip.dart';
-import 'package:aggressor_adventures/user.dart';
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_summernote/flutter_summernote.dart';
-
-import 'aggressor_colors.dart';
 
 class Notes extends StatefulWidget {
   Notes(this.user, this.tripList);

@@ -1,20 +1,15 @@
-import 'package:aggressor_adventures/user.dart';
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'aggressor_colors.dart';
-
-class MyProfile extends StatefulWidget {
-  MyProfile(this.user);
-  User user;
-
+class MyFiles extends StatefulWidget {
+  MyFiles();
 
   @override
-  State<StatefulWidget> createState() => new MyProfileState();
+  State<StatefulWidget> createState() => new myFilesState();
 }
 
-class MyProfileState extends State<MyProfile>
-    with AutomaticKeepAliveClientMixin {
+class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
@@ -30,6 +25,7 @@ class MyProfileState extends State<MyProfile>
   /*
   Build
    */
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -76,7 +72,7 @@ class MyProfileState extends State<MyProfile>
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/tempbkg.png", //TODO replace with final graphic
           fit: BoxFit.fill,
@@ -102,25 +98,14 @@ class MyProfileState extends State<MyProfile>
   Widget getPageTitle() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                "My Profile",
-                style: TextStyle(
-                    color: AggressorColors.primaryColor,
-                    fontSize: MediaQuery.of(context).size.height / 25,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            TextButton(
-                child: Image(image: AssetImage("assets/files.png")),
-                onPressed: () {
-                  //TODO implement button function
-                }),
-          ],
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Text(
+          "My Files",
+          style: TextStyle(
+              color: AggressorColors.primaryColor,
+              fontSize: MediaQuery.of(context).size.height / 25,
+              fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -129,5 +114,8 @@ class MyProfileState extends State<MyProfile>
   @override
   bool get wantKeepAlive => true;
 
+/*
+  self implemented
+   */
 
 }

@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'agressor_api.dart';
+import 'aggressor_api.dart';
 
 class Trip {
   String tripDate;
@@ -35,6 +35,7 @@ class Trip {
   }
 
   factory Trip.fromJson(Map<String, dynamic> json) {
+    //create a trip object from a json file
     return Trip(
       json['tripDate'].toString(),
       json['title'].toString(),
@@ -47,6 +48,7 @@ class Trip {
   }
 
   Map<String, dynamic> toJson() {
+    //create  a json object from a trip object
     return {
       'tripDate': tripDate,
       'title': title,
@@ -59,6 +61,7 @@ class Trip {
   }
 
   Map<String, dynamic> toMap() {
+    //create a map from a trip object
     return {
       'tripDate': tripDate,
       'title': title,
@@ -71,6 +74,7 @@ class Trip {
   }
 
   Future<dynamic> getTripDetails(String contactId) async{
+    //get detials for this specific trip object and add the results to this trip
     var jsonResponse = await AggressorApi().getReservationDetails(reservationId,contactId);
     if(jsonResponse["status"] == "success"){
       charterId = jsonResponse["charterid"].toString();

@@ -1,17 +1,17 @@
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'aggressor_colors.dart';
 
-class Rewards extends StatefulWidget {
-  Rewards();
+class Photos extends StatefulWidget {
+  Photos();
 
 
   @override
-  State<StatefulWidget> createState() => new RewardsState();
+  State<StatefulWidget> createState() => new PhotosState();
 }
 
-class RewardsState extends State<Rewards>
+class PhotosState extends State<Photos>
     with AutomaticKeepAliveClientMixin {
   /*
   instance vars
@@ -28,7 +28,6 @@ class RewardsState extends State<Rewards>
   /*
   Build
    */
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -100,11 +99,11 @@ class RewardsState extends State<Rewards>
 
   Widget getPageTitle() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
       child: Align(
         alignment: Alignment.topLeft,
         child: Text(
-          "My Rewards",
+          "My Photos",
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: MediaQuery.of(context).size.height / 25,
@@ -116,7 +115,6 @@ class RewardsState extends State<Rewards>
 
   @override
   bool get wantKeepAlive => true;
-
 
 
 }

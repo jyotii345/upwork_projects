@@ -1,23 +1,23 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:aggressor_adventures/my_files.dart';
-import 'package:aggressor_adventures/my_profile.dart';
-import 'package:aggressor_adventures/my_trips.dart';
-import 'package:aggressor_adventures/notes.dart';
-import 'package:aggressor_adventures/photos.dart';
-import 'package:aggressor_adventures/rewards.dart';
-import 'package:aggressor_adventures/trip.dart';
-import 'package:aggressor_adventures/user.dart';
-import 'package:aggressor_adventures/user_database.dart';
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/user_interface_pages/my_files_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/photos_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/rewards_page.dart';
+import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'aggressor_colors.dart';
-import 'agressor_api.dart';
-import 'login.dart';
+import 'login_page.dart';
+import 'my_profile_page.dart';
+import 'my_trips_page.dart';
+import 'notes_page.dart';
 
 final AsyncMemoizer loginMemoizer = AsyncMemoizer();
 
@@ -231,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // rewards page
         MyFiles(),
         // files page
-        loginPage(loginCallback),
+        LoginPage(loginCallback),
         // login page
         currentUser == null ? Container() : MyProfile(currentUser),
         //my profile page

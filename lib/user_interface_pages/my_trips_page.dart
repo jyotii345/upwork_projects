@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:aggressor_adventures/aggressor_colors.dart';
-import 'package:aggressor_adventures/agressor_api.dart';
-import 'package:aggressor_adventures/trip.dart';
-import 'package:aggressor_adventures/user.dart';
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/classes/user.dart';
 import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:aggressor_adventures/agressor_api.dart';
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 
 class MyTrips extends StatefulWidget {
   MyTrips(this.user, this.tripList);

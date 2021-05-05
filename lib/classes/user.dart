@@ -31,6 +31,7 @@ class User {
   }
 
   Map<String, dynamic> toMap() {
+    //create a map object from user object
     return {
       'userId': userId,
       'nameF': nameF,

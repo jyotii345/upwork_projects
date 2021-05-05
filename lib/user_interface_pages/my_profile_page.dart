@@ -1,17 +1,18 @@
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'aggressor_colors.dart';
-
-class Photos extends StatefulWidget {
-  Photos();
+class MyProfile extends StatefulWidget {
+  MyProfile(this.user);
+  User user;
 
 
   @override
-  State<StatefulWidget> createState() => new PhotosState();
+  State<StatefulWidget> createState() => new MyProfileState();
 }
 
-class PhotosState extends State<Photos>
+class MyProfileState extends State<MyProfile>
     with AutomaticKeepAliveClientMixin {
   /*
   instance vars
@@ -99,15 +100,26 @@ class PhotosState extends State<Photos>
 
   Widget getPageTitle() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: Text(
-          "My Photos",
-          style: TextStyle(
-              color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 25,
-              fontWeight: FontWeight.bold),
+      padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                "My Profile",
+                style: TextStyle(
+                    color: AggressorColors.primaryColor,
+                    fontSize: MediaQuery.of(context).size.height / 25,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            TextButton(
+                child: Image(image: AssetImage("assets/files.png")),
+                onPressed: () {
+                  //TODO implement button function
+                }),
+          ],
         ),
       ),
     );

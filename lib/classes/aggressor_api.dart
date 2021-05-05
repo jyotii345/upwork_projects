@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:aggressor_adventures/trip.dart';
+import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -10,6 +10,7 @@ class AggressorApi {
   AggressorApi();
 
   Future<dynamic> getUserLogin(String username, String password) async {
+    //create and send a login request to the Aggressor Api and return the current user
     Response response = await post(
       Uri.https('secure.aggressor.com', 'api/app/authentication/login'),
       headers: <String, String>{
@@ -40,7 +41,8 @@ class AggressorApi {
     if (response["status"] == "success") {
       int i = 0;
       while (response[i.toString()] != null) {
-        if(!addedTrips.contains(response[i.toString()]["reservationid"].toString())) {
+        if (!addedTrips
+            .contains(response[i.toString()]["reservationid"].toString())) {
           tripList.add(Trip.fromJson(response[i.toString()]));
           addedTrips.add(response[i.toString()]["reservationid"].toString());
           await tripList[tripList.length - 1].getTripDetails(contactId);
@@ -53,8 +55,7 @@ class AggressorApi {
     return tripList;
   }
 
-  Future<dynamic> getReservationDetails(
-      String reservationId, String contactId) async {
+  Future<dynamic> getReservationDetails(String reservationId, String contactId) async {
     //create and send a reservation view request to the Aggressor Api and return json response
     String url = "https://secure.aggressor.com/api/app/reservations/view/" +
         reservationId +
@@ -68,9 +69,7 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> getInventoryDetails(
-    String reservationId,
-  ) async {
+  Future<dynamic> getInventoryDetails(String reservationId,) async {
     //create and send a inventory view request to the Aggressor Api and return json response
     String url =
         "https://secure.aggressor.com/api/app/reservations/inventory/" +
@@ -95,8 +94,7 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> recordPayment(String reservationId, String amount,
-      String billingContact, String creditType) async {
+  Future<dynamic> recordPayment(String reservationId, String amount, String billingContact, String creditType) async {
     //create and send a payment to be recorded request to the Aggressor Api and return json response
     String url =
         "https://secure.aggressor.com/api/app/payments/record/" + reservationId;
