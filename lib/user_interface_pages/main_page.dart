@@ -257,7 +257,7 @@ class _MyHomePageState extends State<MyHomePage> {
      */
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      onTap: onTabTapped,
+      onTap: currentUser == null ? (int){}: onTabTapped,
       backgroundColor: AggressorColors.primaryColor,
       // new
       currentIndex: _currentIndex > 4 ? 0 : _currentIndex,

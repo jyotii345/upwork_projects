@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/registration_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
@@ -291,7 +292,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
       children: [
         TextButton(
           onPressed: () {
-            print("create account");
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => RegistrationPage()));
           },
           child: Text(
             "Create Account",
