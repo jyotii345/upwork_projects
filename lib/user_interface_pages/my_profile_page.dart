@@ -403,10 +403,10 @@ class MyProfileState extends State<MyProfile>
   void signOutUser() async {
     print(" ----------------------SIGNOUT----------------------");
     DatabaseHelper helper = DatabaseHelper.instance;
-    ;
-
     await helper.deleteUser(100);
+
     print("user deleted");
+    widget.logoutCallback();
 
 
 

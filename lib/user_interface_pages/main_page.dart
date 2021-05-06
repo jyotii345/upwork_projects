@@ -63,6 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future tripListFuture;
 
+  bool haveCheckedLogin;
+
   /*
   init state
    */
@@ -71,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     helper = DatabaseHelper.instance;
     tripList = [];
+    haveCheckedLogin = false;
   }
 
   /*
@@ -166,11 +169,8 @@ class _MyHomePageState extends State<MyHomePage> {
       body: FutureBuilder(
           future: checkLoginStatus(),
           builder: (context, snapshot) {
-
-            print("building login check");
-            print(snapshot.data.toString());
             if (snapshot.hasData && snapshot.data != null) {
-              if(snapshot.data == "no user"){
+              if (snapshot.data == "no user") {
                 return Scaffold(
                   resizeToAvoidBottomInset: false,
                   bottomNavigationBar: getBottomNavigation(),
@@ -180,7 +180,6 @@ class _MyHomePageState extends State<MyHomePage> {
               return FutureBuilder(
                   future: tripListFuture,
                   builder: (context, snapshotOne) {
-                    print("building trip lists");
                     if (snapshotOne.hasData && snapshotOne.data != null) {
                       return Scaffold(
                         resizeToAvoidBottomInset: false,
@@ -205,7 +204,6 @@ class _MyHomePageState extends State<MyHomePage> {
 /*
   Self implemented
    */
-
 
   void handlePopupClick(String value) {
     switch (value) {
@@ -244,7 +242,9 @@ class _MyHomePageState extends State<MyHomePage> {
         // files page
         LoginPage(loginCallback),
         // login page
-        currentUser == null ? Container() : MyProfile(currentUser, logoutCallback),
+        currentUser == null
+            ? Container()
+            : MyProfile(currentUser, logoutCallback),
         //my profile page
       ],
       index: _currentIndex,
@@ -295,35 +295,33 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<dynamic> checkLoginStatus() async {
     //check if the user is logged in and set the appropriate view if they are or are not
-    print("running check status");
+    if(!haveCheckedLogin) {
+      var userList = await helper.queryUser();
+      try {
+        setState(() {
+          currentUser = userList[0];
+        });
+      } catch (e) {
+        logoutCallback();
+      }
+      if (currentUser == null) {
+        logoutCallback();
+        return "no user";
+      } else {
+        tripListFuture = tripListMemoizer.runOnce(
+                () => AggressorApi().getReservationList(currentUser.contactId));
+        loginCallback();
+      }
+    }
 
-      return loginMemoizer.runOnce(() async {
-        print("query running");
-        var userList = await helper.queryUser();
-        try {
-          setState(() {
-            currentUser = userList[0];
-          });
-        } catch (e) {
-          logoutCallback();
-        }
-        if (currentUser == null) {
-          logoutCallback();
-          return "no user";
-        } else {
-          tripListFuture = tripListMemoizer.runOnce(
-                  () => AggressorApi().getReservationList(currentUser.contactId));
-          loginCallback();
-        }
-
-        return currentUser;
-      });
-
-
+    return currentUser;
   }
 
   void loginCallback() {
-    print("login callback called");
+    setState(() {
+
+      haveCheckedLogin = true;
+    });
     if (_currentIndex > 4) {
       setState(() {
         _currentIndex = 0;
@@ -332,10 +330,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void logoutCallback() {
-
-    print("calling logout callback");
     if (_currentIndex != 5) {
       setState(() {
+        haveCheckedLogin = false;
         _currentIndex = 5;
       });
     }
