@@ -30,6 +30,7 @@ dependencies:
   flutter_summernote: ^0.2.3
   async: ^2.5.0
   flutter_cache_manager: ^2.1.2
+  date_format: ^2.0.2
 
 
   # The following adds the Cupertino Icons font to your application.

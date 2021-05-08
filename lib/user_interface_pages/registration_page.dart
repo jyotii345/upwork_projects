@@ -1,6 +1,10 @@
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/user_interface_pages/contact_selection_page.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class RegistrationPage extends StatefulWidget {
   RegistrationPage();
@@ -22,6 +26,10 @@ class RegistrationPageState extends State<RegistrationPage>
       passwordConfirmation = "",
       errorMessage = "";
 
+  double textSize;
+
+  DateTime dateOfBirth = DateTime.now();
+
   bool isLoading = false;
 
   final formKey = new GlobalKey<FormState>();
@@ -40,6 +48,8 @@ class RegistrationPageState extends State<RegistrationPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    textSize = MediaQuery.of(context).size.width / 25;
 
     return Scaffold(
       appBar: AppBar(
@@ -103,6 +113,7 @@ class RegistrationPageState extends State<RegistrationPage>
                   getFirstName(),
                   getLastName(),
                   getEmail(),
+                  getDateOfBirth(),
                   getPassword(),
                   getConfirmPassword(),
                 ],
@@ -124,6 +135,7 @@ class RegistrationPageState extends State<RegistrationPage>
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
+        style: TextStyle(fontSize: textSize),
         decoration: new InputDecoration(
           hintText: 'First Name',
           icon: Icon(
@@ -145,6 +157,7 @@ class RegistrationPageState extends State<RegistrationPage>
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
+        style: TextStyle(fontSize: textSize),
         decoration: new InputDecoration(
           hintText: 'Last Name',
           icon: Icon(
@@ -166,6 +179,7 @@ class RegistrationPageState extends State<RegistrationPage>
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
+        style: TextStyle(fontSize: textSize),
         decoration: new InputDecoration(
           hintText: 'Email',
           icon: Icon(
@@ -179,6 +193,69 @@ class RegistrationPageState extends State<RegistrationPage>
     );
   }
 
+  Widget getDateOfBirth() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 15.0, 0.0),
+            child: Icon(
+              Icons.cake,
+              color: AggressorColors.secondaryColor,
+            ),
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+                ),
+              ),
+              child: TextButton(
+                onPressed: () => selectBirthDay(
+                  context,
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    dateOfBirth.month.toString() +
+                        "/" +
+                        dateOfBirth.day.toString() +
+                        "/" +
+                        (dateOfBirth.year).toString(),
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: textSize,
+                    ),
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.all(0),
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> selectBirthDay(BuildContext context) async {
+    final DateTime selection = await showDatePicker(
+        context: context,
+        initialDate: dateOfBirth,
+        firstDate: DateTime.now().subtract(Duration(days: 365 * 130)),
+        lastDate: DateTime.now());
+    if (selection != null && selection != dateOfBirth)
+      setState(() {
+        dateOfBirth = selection;
+      });
+  }
+
   Widget getPassword() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
@@ -187,6 +264,7 @@ class RegistrationPageState extends State<RegistrationPage>
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
+        style: TextStyle(fontSize: textSize),
         decoration: new InputDecoration(
           hintText: 'Password',
           icon: Icon(
@@ -204,9 +282,11 @@ class RegistrationPageState extends State<RegistrationPage>
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
+        obscureText: true,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
+        style: TextStyle(fontSize: textSize),
         decoration: new InputDecoration(
           hintText: 'Confirm Password',
           icon: Icon(
@@ -225,6 +305,7 @@ class RegistrationPageState extends State<RegistrationPage>
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: ListView(
+        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         children: [
           Text(
@@ -308,12 +389,27 @@ class RegistrationPageState extends State<RegistrationPage>
 
     if (validateAndSave()) {
       try {
-        if (password == passwordConfirmation) {
+        if (password != passwordConfirmation) {
           if (!validatePassword(password)) {
             throw Exception("Password does not meet security requirements");
           }
         } else {
-          throw Exception("Passwords do not match.");
+          String birthday = formatDate(dateOfBirth, [yyyy, '-', mm, '-', dd]);
+          var jsonResponse = await AggressorApi().sendRegistration(
+              firstName, lastName, email, password, birthday);
+          print(jsonResponse.toString());
+          if(jsonResponse["status"] == "success"){
+            if(jsonResponse["message"] == "The account was registered."){
+              //TODO account registered, contact was found no problem send to success page
+            }
+            else{
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => ContactSelection(jsonResponse)));
+            }
+          }
+          else{
+            throw Exception("Error creating account, please try again.");
+          }
         }
 
         setState(() {
