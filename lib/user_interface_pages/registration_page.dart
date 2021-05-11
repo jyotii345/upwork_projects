@@ -380,6 +380,26 @@ class RegistrationPageState extends State<RegistrationPage>
     return false;
   }
 
+  void showSuccessDialogue() {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+              title: new Text('Success'),
+              content: new Text(
+                  "Account was successfully registered. You can now log in with this information"),
+              actions: <Widget>[
+                new TextButton(
+                    onPressed: () {
+                      int popCount = 0;
+                      Navigator.popUntil(context, (route) {
+                        return popCount++ == 2;
+                      });
+                    },
+                    child: new Text('Continue')),
+              ],
+            ));
+  }
+
   // Perform login or signup
   void validateAndSubmit() async {
     setState(() {
@@ -395,19 +415,19 @@ class RegistrationPageState extends State<RegistrationPage>
           }
         } else {
           String birthday = formatDate(dateOfBirth, [yyyy, '-', mm, '-', dd]);
-          var jsonResponse = await AggressorApi().sendRegistration(
-              firstName, lastName, email, password, birthday);
+          var jsonResponse = await AggressorApi()
+              .sendRegistration(firstName, lastName, email, password, birthday);
           print(jsonResponse.toString());
-          if(jsonResponse["status"] == "success"){
-            if(jsonResponse["message"] == "The account was registered."){
-              //TODO account registered, contact was found no problem send to success page
-            }
-            else{
+          if (jsonResponse["status"] == "success") {
+            if (jsonResponse["message"] == "The account was registered.") {
+              showSuccessDialogue();
+            } else {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => ContactSelection(jsonResponse)));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ContactSelection(jsonResponse)));
             }
-          }
-          else{
+          } else {
             throw Exception("Error creating account, please try again.");
           }
         }

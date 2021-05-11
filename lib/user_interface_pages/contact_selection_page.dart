@@ -25,7 +25,7 @@ class ContactSelectionState extends State<ContactSelection>
 
   bool isLoading = false;
   String errorMessage = "";
-  List<dynamic> contactList;
+  List<dynamic> contactList = [];
   int groupSelectionValue = 0;
 
   /*
@@ -102,8 +102,10 @@ class ContactSelectionState extends State<ContactSelection>
             ),
             getPageTitle(),
             getPagePrompt(),
-            Expanded(child: getContactList(),),
-            getChooseContactButton(),
+            Expanded(
+              child: getContactList(),
+            ),
+            contactList.length == 0 ? Container() : getChooseContactButton(),
             getCreateNewContactButton(),
             showErrorMessage(),
           ],
@@ -187,8 +189,8 @@ class ContactSelectionState extends State<ContactSelection>
             errorMessage = "";
           });
 
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => CreateContact()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreateContact()));
         },
         child: Text(
           "Create new contact",
@@ -203,29 +205,36 @@ class ContactSelectionState extends State<ContactSelection>
   Widget getContactList() {
     contactList = populateContactList();
     print(contactList.toString());
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: contactList.length,
-          itemBuilder: (context, position) {
-            return Column(children: [
-              RadioListTile(
-                  title: Text(contactList[position]["city"]),
-                  value: position,
-                  groupValue: groupSelectionValue,
-                  onChanged: (value) {
-                    setState(() {
-                      groupSelectionValue = value;
-                    });
-                  }),
-              Divider(
-                thickness: 1,
-                color: Colors.grey[400],
-              )
-            ]);
-          }),
-    );
+    if (contactList.length == 0) {
+      return Expanded(
+        child: Text(
+            "No contacts were found with this information, please create a new contact."),
+      );
+    } else {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: contactList.length,
+            itemBuilder: (context, position) {
+              return Column(children: [
+                RadioListTile(
+                    title: Text(contactList[position]["city"]),
+                    value: position,
+                    groupValue: groupSelectionValue,
+                    onChanged: (value) {
+                      setState(() {
+                        groupSelectionValue = value;
+                      });
+                    }),
+                Divider(
+                  thickness: 1,
+                  color: Colors.grey[400],
+                )
+              ]);
+            }),
+      );
+    }
   }
 
   List<dynamic> populateContactList() {
