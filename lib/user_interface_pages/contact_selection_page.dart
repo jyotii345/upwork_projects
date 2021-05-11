@@ -1,9 +1,10 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
-import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+
+import 'create_contact_page.dart';
 
 class ContactSelection extends StatefulWidget {
   ContactSelection(this.jsonResponse);
@@ -24,7 +25,8 @@ class ContactSelectionState extends State<ContactSelection>
 
   bool isLoading = false;
   String errorMessage = "";
-
+  List<dynamic> contactList;
+  int groupSelectionValue = 0;
 
   /*
   initState
@@ -32,7 +34,6 @@ class ContactSelectionState extends State<ContactSelection>
   @override
   void initState() {
     super.initState();
-    populateContactList();
   }
 
   /*
@@ -92,13 +93,18 @@ class ContactSelectionState extends State<ContactSelection>
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 7,
             ),
             getPageTitle(),
+            getPagePrompt(),
+            Expanded(child: getContactList(),),
+            getChooseContactButton(),
+            getCreateNewContactButton(),
             showErrorMessage(),
           ],
         ),
@@ -106,16 +112,133 @@ class ContactSelectionState extends State<ContactSelection>
     );
   }
 
-  void populateContactList(){
-    List<String> contactList = [];
+  void showConfirmationBox(String value) {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+              title: new Text('Confirm selection'),
+              content: new Text(
+                "Are you sure you would like to select the contact from the following city: " +
+                    value,
+              ),
+              actions: <Widget>[
+                new TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: new Text('NO')),
+                new TextButton(
+                    onPressed: () {
+                      linkContact(contactList[groupSelectionValue]);
+                    },
+                    child: new Text('YES')),
+              ],
+            ));
+  }
+
+  void linkContact(var selectedContact) async {
+    var linkResponse = await AggressorApi().linkContact(
+        selectedContact["contactid"], widget.jsonResponse["userID"]);
+    if (linkResponse["status"] == "success") {
+      //TODO contact linked success move on
+    } else {
+      setState(() {
+        errorMessage = "Error linking to this contact, please try again.";
+      });
+    }
+  }
+
+  Widget getPagePrompt() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+      child: Text(
+        "Select the city that matches the contact you wish to use or create a new contact",
+        style: TextStyle(color: Colors.grey),
+      ),
+    );
+  }
+
+  Widget getChooseContactButton() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            errorMessage = "";
+          });
+          showConfirmationBox(contactList[groupSelectionValue]["city"]);
+        },
+        child: Text(
+          "Choose selected contact",
+          style: TextStyle(color: Colors.white),
+        ),
+        style:
+            TextButton.styleFrom(backgroundColor: AggressorColors.primaryColor),
+      ),
+    );
+  }
+
+  Widget getCreateNewContactButton() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            errorMessage = "";
+          });
+
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => CreateContact()));
+        },
+        child: Text(
+          "Create new contact",
+          style: TextStyle(color: Colors.white),
+        ),
+        style:
+            TextButton.styleFrom(backgroundColor: AggressorColors.primaryColor),
+      ),
+    );
+  }
+
+  Widget getContactList() {
+    contactList = populateContactList();
+    print(contactList.toString());
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: contactList.length,
+          itemBuilder: (context, position) {
+            return Column(children: [
+              RadioListTile(
+                  title: Text(contactList[position]["city"]),
+                  value: position,
+                  groupValue: groupSelectionValue,
+                  onChanged: (value) {
+                    setState(() {
+                      groupSelectionValue = value;
+                    });
+                  }),
+              Divider(
+                thickness: 1,
+                color: Colors.grey[400],
+              )
+            ]);
+          }),
+    );
+  }
+
+  List<dynamic> populateContactList() {
+    List<dynamic> contactList = [];
+    print("creating contact list from: " + widget.jsonResponse.toString());
     if (widget.jsonResponse["status"] == "success") {
-      int i = 0;
-      while (widget.jsonResponse[i.toString()] != null) {
-          contactList.add(widget.jsonResponse[i.toString()]);
+      int i = 1;
+      while (widget.jsonResponse["data"][i.toString()] != null) {
+        contactList.add(widget.jsonResponse["data"][i.toString()]);
         i++;
       }
     }
-    print(contactList);
+    return contactList;
   }
 
   Widget showErrorMessage() {

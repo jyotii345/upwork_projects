@@ -140,7 +140,7 @@ class AggressorApi {
     return jsonDecode(response.body);
   }
 
-  Future<dynamic> getSelectContact(String contactId, String userId) async {
+  Future<dynamic> linkContact(String contactId, String userId) async {
     //allows a user to link user to a contact
     String url = "https://secure.aggressor.com/api/app/registration/select/" +
         contactId +
