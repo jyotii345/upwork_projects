@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
-
 import 'package:aggressor_adventures/classes/trip.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 class AggressorApi {
@@ -191,19 +189,6 @@ class AggressorApi {
       String dateOfBirth,
       String gender) async {
     //creates a new contact and returns success on completion
-    print("-" + userId + "-");
-    print("-" +address1+ "-");
-    print("-" +address2+ "-");
-    print("-" +city+ "-");
-    print("-" +state+ "-");
-    print("-" +province+ "-");
-    print("-" +country+ "-");
-    print("-" +zip+ "-");
-    print("-" +email+ "-");
-    print("-" +homePhone+ "-");
-    print("-" +mobilePhone+ "-");
-    print("-" +dateOfBirth+ "-");
-    print("-" +gender + "-");
     Response response = await post(
       Uri.https(
           'secure.aggressor.com', "api/app/registration/newcontact/" + userId),
@@ -228,5 +213,16 @@ class AggressorApi {
     );
     print(response.body);
     return jsonDecode(response.body);
+  }
+
+  Future<dynamic>getProfileData(String userId) async{
+    //returns the profile data for the userId provided
+    String url = "https://secure.aggressor.com/api/app/profile/view/" + userId;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+    return jsonDecode(await pageResponse.stream.bytesToString());
   }
 }

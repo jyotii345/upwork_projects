@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:ui';
-
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/user_interface_pages/my_files_page.dart';
@@ -11,8 +9,6 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'login_page.dart';

@@ -135,7 +135,7 @@ class Trip {
                           height: MediaQuery.of(context).size.height / 7,
                           width: MediaQuery.of(context).size.height / 7,
                           child: imageResource == null
-                              ? Icon(
+                              ? Icon( //TODO find a way to get boat images
                                   Icons.directions_boat,
                                   size: MediaQuery.of(context).size.height / 10,
                                 )

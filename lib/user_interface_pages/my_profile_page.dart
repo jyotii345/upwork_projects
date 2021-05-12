@@ -1,18 +1,14 @@
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:aggressor_adventures/databases/user_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/edit_my_profile_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:sqflite/sqflite.dart';
-
-import 'main_page.dart';
 
 class MyProfile extends StatefulWidget {
-  //TODO cannot click my profile before app is done loading initially
   MyProfile(this.user, this.logoutCallback);
 
-  User user;
+  final User user;
   final VoidCallback logoutCallback;
 
   @override
@@ -25,7 +21,10 @@ class MyProfileState extends State<MyProfile>
   instance vars
    */
 
-  double textDisplayWidth;
+  bool profileDataLoaded = false;
+
+  Map<String, dynamic> profileData;
+  List<dynamic> countries;
 
   /*
   initState
@@ -42,7 +41,6 @@ class MyProfileState extends State<MyProfile>
   Widget build(BuildContext context) {
     super.build(context);
 
-    textDisplayWidth = MediaQuery.of(context).size.width / 2;
     return Stack(
       children: [
         getBackgroundImage(),
@@ -65,353 +63,217 @@ class MyProfileState extends State<MyProfile>
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
-        width: MediaQuery.of(context).size.width - 20,
         color: Colors.white,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-          child: ListView(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 7,
-              ),
-              getPageTitle(),
-              getName(),
-              getProfilePicture(),
-              getAddress1(),
-              getAddress2(),
-              getCity(),
-              getTerritory(),
-              getZip(),
-              getCountry(),
-              getEmail(),
-              getHomePhone(),
-              getWorkPhone(),
-              getMobilePhone(),
-              getUsername(),
-              getPassword(),
-              getTotalNumberOfDives(),
-              getAccountType(),
-              getUpdateButton(),
-              getSignOutButton(),
-            ],
-          ),
+        child: ListView(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 7,
+            ),
+            getPageTitle(),
+            getPageContents(),
+          ],
         ),
       ),
     );
   }
 
-  Widget getName() {
-    //returns the widget item containing the Name
+  Widget getPageContents() {
+    return FutureBuilder(
+        future: getProfileContents(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            return Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  getPersonalInfo(),
+                  Divider(
+                    thickness: 1,
+                    color: Colors.grey[400],
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Account information: ",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width / 25),
+                    ),
+                  ),
+                  getAccountInformation(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Address: ",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width / 25),
+                    ),
+                  ),
+                  getAddress(),
+                ],
+              ),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
+  }
+
+  Widget getAddress() {
+    String territory = profileData["country"].toString() == "2"
+        ? profileData["state"]
+        : profileData["province"];
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: Column(
+        children: [
+          Text(profileData["address1"]),
+          profileData["address2"] == ""
+              ? Container()
+              : Text(profileData["address2"]),
+          Text(profileData["city"] +
+              ", " +
+              territory +
+              " " +
+              getCountry(profileData["country"].toString())),
+        ],
+      ),
+    );
+  }
+
+  String getCountry(String countryCode) {
+    String country = countryCode;
+    countries.forEach((element) {
+      if (element["countryid"].toString() == countryCode) {
+        country = element["country"];
+      }
+    });
+    return country;
+  }
+
+  Widget getAccountInformation() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Username: "),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Container(
+              width: double.infinity,
+              child: Text(
+                profileData["username"],
+                textAlign: TextAlign.center,
+              ),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text("Account Type: "),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Container(
+              width: double.infinity,
+              child: Text(
+                profileData["account_type"],
+                textAlign: TextAlign.center,
+              ),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            child: Text("Dives completed: "),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Container(
+              width: double.infinity,
+              child: Text(
+                profileData["dives"],
+                textAlign: TextAlign.center,
+              ),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getPersonalInfo() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: textDisplayWidth,
-          child: Text("Name"),
+          height: MediaQuery.of(context).size.width / 4,
+          width: MediaQuery.of(context).size.width / 4,
+          child: Icon(
+            //TODO find a way to get user images
+            Icons.person,
+            size: MediaQuery.of(context).size.height / 8,
+          ),
+          color: Colors.grey,
         ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
+        Container(
+          height: MediaQuery.of(context).size.width / 4,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                profileData["first"] + " " + profileData["last"],
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text(profileData["email"]),
+              Text("Home Phone: " + profileData["home_phone"]),
+              Text("Work Phone: " + profileData["work_phone"]),
+              Text("Mobile Phone: " + profileData["mobile_phone"]),
+            ],
+          ),
+        ),
       ],
     );
   }
 
-  Widget getProfilePicture() {
-    //returns the widget item containing the Profile picture
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Profile picture:"),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getAddress1() {
-    //returns the widget item containing the address first line
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Address Line 1: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getAddress2() {
-    //returns the widget item containing the address second line
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Address Line 2: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getCity() {
-    //returns the widget item containing the city
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("City: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getTerritory() {
-    //returns the widget item containing the territory/state
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Territory/state"),
-        ),
-        //TODO make this reactive to country
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getZip() {
-    //returns the widget item containing the zip code
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Zip: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getCountry() {
-    //returns the widget item containing the country
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Country: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getEmail() {
-    //returns the widget item containing the email
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Email: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getHomePhone() {
-    //returns the widget item containing the Home Phone Number
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Home Phone: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getWorkPhone() {
-    //returns the widget item containing the Work Phone Number
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Work Phone"),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getMobilePhone() {
-    //returns the widget item containing the Mobile Phone Number
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Mobile Phone"),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getUsername() {
-    //returns the widget item containing the username
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("username:"),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getPassword() {
-    //returns the widget item containing the password
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Password: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getTotalNumberOfDives() {
-    //returns the widget item containing the total number of dives
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Total Number of Dives: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getAccountType() {
-    //returns the widget item containing the account type
-    return Row(
-      children: [
-        Container(
-          width: textDisplayWidth,
-          child: Text("Account Type: "),
-        ),
-        Expanded(
-            child: Container(
-          color: Colors.green,
-          child: Text("placeholder item"),
-        ))
-      ],
-    );
-  }
-
-  Widget getUpdateButton() {
-    return TextButton(
-        onPressed: () {
-          print("update profile"); //TODO implement functionality
-        },
-        style: TextButton.styleFrom(
-            backgroundColor: AggressorColors.secondaryColor),
-        child: Text(
-          "Update Profile",
-          style: TextStyle(color: Colors.white),
-        ));
-  }
-
-  Widget getSignOutButton() {
-    return TextButton(
-        onPressed: () {
-          print("signing out user");
-          signOutUser();
-        },
-        style: TextButton.styleFrom(backgroundColor: Colors.red),
-        child: Text(
-          "Sign out",
-          style: TextStyle(color: Colors.white),
-        ));
-  }
-
-  void signOutUser() async {
-    print(" ----------------------SIGNOUT----------------------");
-    DatabaseHelper helper = DatabaseHelper.instance;
-    await helper.deleteUser(100);
-
-    print("user deleted");
-    widget.logoutCallback();
-
-
-
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MyApp()));
+  Future<dynamic> getProfileContents() async {
+    if (!profileDataLoaded) {
+      var jsonResponse =
+          await AggressorApi().getProfileData(widget.user.userId);
+      if (jsonResponse["status"] == "success") {
+        var jsonResponseCountries = await AggressorApi().getCountries();
+        print(jsonResponseCountries.runtimeType);
+        setState(() {
+          countries = jsonResponseCountries;
+          profileData = jsonResponse;
+          profileDataLoaded = true;
+        });
+      }
+    }
+    return "finished";
   }
 
   Widget getBackgroundImage() {
@@ -445,27 +307,34 @@ class MyProfileState extends State<MyProfile>
 
   Widget getPageTitle() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                "My Profile",
-                style: TextStyle(
-                    color: AggressorColors.primaryColor,
-                    fontSize: MediaQuery.of(context).size.height / 25,
-                    fontWeight: FontWeight.bold),
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              "My Profile",
+              style: TextStyle(
+                  color: AggressorColors.primaryColor,
+                  fontSize: MediaQuery.of(context).size.height / 25,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(height: MediaQuery.of(context).size.height / 20,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: AggressorColors.primaryColor),
+              child: IconButton(
+                iconSize: MediaQuery.of(context).size.height / 35,
+                icon: Icon(Icons.edit, ),
+                onPressed: () { Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => EditMyProfile(widget.user, widget.logoutCallback)));},
+                color: Colors.white,
               ),
             ),
-            TextButton(
-                child: Image(image: AssetImage("assets/files.png")),
-                onPressed: () {
-                  //TODO implement button function
-                }),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
