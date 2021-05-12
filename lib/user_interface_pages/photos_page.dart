@@ -71,16 +71,16 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 4.5,
+            width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "Destination:",
               style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 40),
+                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height / 40,
-            width: MediaQuery.of(context).size.width / 2,
+            height: MediaQuery.of(context).size.height / 35,
+            width: MediaQuery.of(context).size.width / 1.75,
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
                 side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -92,7 +92,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               value: dropDownValue,
               elevation: 0,
               isExpanded: true,
-              iconSize: MediaQuery.of(context).size.height / 40,
+              iconSize: MediaQuery.of(context).size.height / 35,
               onChanged: (Trip newValue) {
                 setState(() {
                   dropDownValue = newValue;
@@ -103,15 +103,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 return DropdownMenuItem<Trip>(
                   value: value,
                   child: Container(
-                    height: MediaQuery.of(context).size.height / 45,
-                    width: MediaQuery.of(context).size.width / 2 -
-                        MediaQuery.of(context).size.height / 40 -
-                        10,
+                    width: MediaQuery.of(context).size.width / 2,
                     child: Text(
                       value.detailDestination,
                       style: TextStyle(
                           fontSize:
-                              MediaQuery.of(context).size.height / 45 - 4),
+                              MediaQuery.of(context).size.height / 40 - 4),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -145,6 +142,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             ),
             getPageTitle(),
             getCreateNewGallery(),
+            getMyGalleries(), //TODO finish my galleries listview
           ],
         ),
       ),
@@ -158,16 +156,16 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 4.5,
+            width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "Departure Date:",
               style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 40),
+                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
           ),
           Container(
-              height: MediaQuery.of(context).size.height / 40,
-              width: MediaQuery.of(context).size.width / 2,
+              height: MediaQuery.of(context).size.height / 35,
+              width: MediaQuery.of(context).size.width / 1.75,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -186,17 +184,21 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getUploadPhotosButton() {
-    return Align(
-      alignment: Alignment.center,
-      child: TextButton(
-        onPressed: () {},
-        child: Text(
-          "Upload Photos",
-          style: TextStyle(color: Colors.white),
+    return Row(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.height / 4,
         ),
-        style: TextButton.styleFrom(
-            backgroundColor: AggressorColors.secondaryColor),
-      ),
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            "Upload Photos",
+            style: TextStyle(color: Colors.white),
+          ),
+          style: TextButton.styleFrom(
+              backgroundColor: AggressorColors.secondaryColor),
+        ),
+      ],
     );
   }
 
@@ -216,6 +218,24 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           getDestinationDropdown(widget.tripList),
           getDepartureInformation(),
           getUploadPhotosButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget getMyGalleries() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "MY GALLERIES",
+            style: TextStyle(
+                color: AggressorColors.secondaryColor,
+                fontSize: MediaQuery.of(context).size.height / 35,
+                fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
