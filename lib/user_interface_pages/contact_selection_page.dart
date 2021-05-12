@@ -190,7 +190,7 @@ class ContactSelectionState extends State<ContactSelection>
           });
 
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreateContact()));
+              MaterialPageRoute(builder: (context) => CreateContact(widget.jsonResponse["userID"])));
         },
         child: Text(
           "Create new contact",

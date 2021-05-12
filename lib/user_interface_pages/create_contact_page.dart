@@ -1,11 +1,14 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class CreateContact extends StatefulWidget {
-  CreateContact();
+  CreateContact(this.userId);
+
+  String userId;
 
   @override
   State<StatefulWidget> createState() => new CreateContactState();
@@ -23,9 +26,19 @@ class CreateContactState extends State<CreateContact>
   bool stateAndCountryLoaded = false;
   String errorMessage = "";
   String genderDropDownOption = "Male";
+  String address1 = "",
+      address2 = "",
+      city = "",
+      zip = "",
+      territory = "",
+      email,
+      homePhone,
+      mobilePhone;
   DateTime dateOfBirth = DateTime.now();
   Map<String, dynamic> countryDropDownSelection;
   Map<String, dynamic> stateDropDownSelection;
+
+  final formKey = new GlobalKey<FormState>();
 
   List<dynamic> countryList = [], stateList = [];
 
@@ -90,6 +103,74 @@ class CreateContactState extends State<CreateContact>
   /*
   Self implemented
    */
+
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void validateAndSubmit() async {
+    setState(() {
+      errorMessage = "";
+      isLoading = true;
+    });
+
+
+
+    if (validateAndSave()) {
+      try {
+
+        if(countryDropDownSelection["country"] == "USA"){
+          territory = stateDropDownSelection["stateAbbr"];
+        }
+
+        String birthday = formatDate(dateOfBirth, [yyyy, mm, dd]);
+        print(birthday);
+
+        var jsonResponse = await AggressorApi().sendNewContact(widget.userId, address1, address2, city, countryDropDownSelection["country"] == "USA" ? territory : "", countryDropDownSelection["country"] != "USA" ? territory : "", countryDropDownSelection["country"], zip, email, homePhone, mobilePhone, birthday, genderDropDownOption);
+        print(jsonResponse.toString());
+        if (jsonResponse["status"] == "success") {
+            showSuccessDialogue();
+        } else {
+          throw Exception("Error creating account, please try again.");
+        }
+
+        setState(() {
+          isLoading = false;
+        });
+      } catch (e) {
+        print('caught Error: $e');
+        setState(() {
+          errorMessage = e.message;
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  void showSuccessDialogue() {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: new Text('Success'),
+          content: new Text(
+              "Contact successfully created. You can now log in with this information"),
+          actions: <Widget>[
+            new TextButton(
+                onPressed: () {
+                  int popCount = 0;
+                  Navigator.popUntil(context, (route) {
+                    return popCount++ == 3;
+                  });
+                },
+                child: new Text('Continue')),
+          ],
+        ));
+  }
 
   Widget getPageForm() {
     return Padding(
@@ -170,29 +251,31 @@ class CreateContactState extends State<CreateContact>
   }
 
   Widget getContactDetails() {
-    //TODO wrap column in a form and create validators for each field and a validate and submit methods
     return FutureBuilder(
         future: getCountryAndState(),
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             return Padding(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  getAddress1(),
-                  getAddress2(),
-                  getCity(),
-                  getCountry(),
-                  getTerritory(),
-                  getZip(),
-                  getEmail(),
-                  getHomePhone(),
-                  getMobilePhone(),
-                  getDateOfBirth(),
-                  getGender(),
-                  getCreateContactButton(),
-                ],
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    getAddress1(),
+                    getAddress2(),
+                    getCity(),
+                    getCountry(),
+                    getTerritory(),
+                    getZip(),
+                    getEmail(),
+                    getHomePhone(),
+                    getMobilePhone(),
+                    getDateOfBirth(),
+                    getGender(),
+                    getCreateContactButton(),
+                  ],
+                ),
               ),
             );
           } else {
@@ -203,20 +286,20 @@ class CreateContactState extends State<CreateContact>
         });
   }
 
-  Widget getCreateContactButton(){
+  Widget getCreateContactButton() {
     return TextButton(
-        onPressed: () {
-          setState(() {
-            errorMessage = "";
-          });
-          print("pressed"); //TODO call validate and submit methods
-        },
-        child: Text(
-          "Create new contact",
-          style: TextStyle(color: Colors.white),
-        ),
-        style:
-        TextButton.styleFrom(backgroundColor: AggressorColors.primaryColor),
+      onPressed: () {
+        setState(() {
+          errorMessage = "";
+        });
+        validateAndSubmit();
+      },
+      child: Text(
+        "Create new contact",
+        style: TextStyle(color: Colors.white),
+      ),
+      style:
+          TextButton.styleFrom(backgroundColor: AggressorColors.primaryColor),
     );
   }
 
@@ -316,6 +399,9 @@ class CreateContactState extends State<CreateContact>
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "Address line 1"),
+            validator: (value) =>
+                value.isEmpty ? 'Address line 1 can\'t be empty' : null,
+            onSaved: (value) => address1 = value.trim(),
           ),
         ),
       ],
@@ -333,6 +419,7 @@ class CreateContactState extends State<CreateContact>
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "Address line 2"),
+            onSaved: (value) => address2 = value.trim(),
           ),
         ),
       ],
@@ -350,6 +437,8 @@ class CreateContactState extends State<CreateContact>
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "City"),
+            validator: (value) => value.isEmpty ? 'City can\'t be empty' : null,
+            onSaved: (value) => city = value.trim(),
           ),
         )
       ],
@@ -378,7 +467,7 @@ class CreateContactState extends State<CreateContact>
                   items: stateList
                       .map<DropdownMenuItem<Map<String, dynamic>>>((value) {
                     return DropdownMenuItem<Map<String, dynamic>>(
-                      child: Text(value["stateAbbr"]),
+                      child: Text(value["state"]),
                       value: value,
                     );
                   }).toList(),
@@ -387,6 +476,9 @@ class CreateContactState extends State<CreateContact>
             : Expanded(
                 child: TextFormField(
                   decoration: InputDecoration(hintText: "Province"),
+                  validator: (value) =>
+                      value.isEmpty ? 'Province can\'t be empty' : null,
+                  onSaved: (value) => territory = value.trim(),
                 ),
               ),
       ],
@@ -403,7 +495,11 @@ class CreateContactState extends State<CreateContact>
         ),
         Expanded(
           child: TextFormField(
+            maxLength: 5,
             decoration: InputDecoration(hintText: "Zip code"),
+            validator: (value) =>
+                value.isEmpty ? 'Zip code can\'t be empty' : null,
+            onSaved: (value) => zip = value.trim(),
           ),
         )
       ],
@@ -450,6 +546,9 @@ class CreateContactState extends State<CreateContact>
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "Email"),
+            validator: (value) =>
+                value.isEmpty ? 'Email can\'t be empty' : null,
+            onSaved: (value) => email = value.trim(),
           ),
         )
       ],
@@ -467,6 +566,7 @@ class CreateContactState extends State<CreateContact>
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "Home phone"),
+            onSaved: (value) => homePhone = value.trim(),
           ),
         )
       ],
@@ -484,6 +584,7 @@ class CreateContactState extends State<CreateContact>
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "Mobile Phone"),
+            onSaved: (value) => mobilePhone = value.trim(),
           ),
         )
       ],
