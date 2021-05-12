@@ -20,6 +20,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Trip dropDownValue, selectionTrip;
   String departureDate = "";
   List<Trip> sortedTripList;
+  List<dynamic> galleriesList = [];
 
   /*
   initState
@@ -236,10 +237,122 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 fontSize: MediaQuery.of(context).size.height / 35,
                 fontWeight: FontWeight.bold),
           ),
+          getGalleriesSection(),
         ],
       ),
     );
   }
+
+  Widget getGalleriesSection() {
+
+
+    double textBoxSize = MediaQuery.of(context).size.width / 4.3;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+      child: Stack(
+        children: [
+          Container(
+              color: Colors.white,
+              height: MediaQuery.of(context).size.height / 6.5,
+              width: double.infinity,
+              child: galleriesList.length == 0
+                  ? Column(
+                children: [
+                  Container(
+                    height: .5,
+                    color: Colors.grey,
+                  ),
+                  Container(
+                    color: Colors.grey[300],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        SizedBox(
+                          width: textBoxSize,
+                          child:
+                          Text("Destination:", textAlign: TextAlign.center),
+                        ),
+                        Spacer(
+                          flex: 10,
+                        ),
+                        SizedBox(
+                          width: textBoxSize,
+                          child:
+                          Text("Date:", textAlign: TextAlign.center),
+                        ),
+
+                        Spacer(
+                          flex: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                        "You do not have any photo galleries to view yet."),
+                  ),
+                ],
+              )
+                  : getGalleriesListView(galleriesList)),
+        ],
+      ),
+    );
+  }
+
+  Widget getGalleriesListView(List<dynamic> galleryFutureList) {
+    //returns the list item containing gallery objects
+
+    double textBoxSize = MediaQuery.of(context).size.width / 4.3;
+    galleriesList.clear();
+    galleriesList.add(
+      Container(
+        width: double.infinity,
+        color: Colors.grey[100],
+        child: Column(
+          children: [
+            Container(
+              height: .5,
+              color: Colors.grey,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                SizedBox(
+                  width: textBoxSize,
+                  child: Text("Destination", textAlign: TextAlign.center),
+                ),
+                Spacer(
+                  flex: 10,
+                ),
+                SizedBox(
+                  width: textBoxSize,
+                  child: Text("Date", textAlign: TextAlign.center),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+
+
+    int index = 0;
+    galleryFutureList.forEach((element) {
+      galleriesList.add(element.getPastTripCard(context, index));
+      index++;
+    });
+
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: galleriesList.length,
+        itemBuilder: (context, position) {
+          return galleriesList[position];
+        });
+  }
+
 
   Widget getBackgroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.

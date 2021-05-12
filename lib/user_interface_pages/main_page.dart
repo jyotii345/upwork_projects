@@ -170,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 return Scaffold(
                   resizeToAvoidBottomInset: false,
                   bottomNavigationBar: getBottomNavigation(),
-                  body: getIndexStack([]),
+                  body: getIndexStack(<Trip>[]),
                 );
               }
               return FutureBuilder(

@@ -41,17 +41,42 @@ class EditMyProfileState extends State<EditMyProfile>
     super.build(context);
 
     textDisplayWidth = MediaQuery.of(context).size.width / 2;
-    return Stack(
-      children: [
-        getBackgroundImage(),
-        getPageForm(),
-        Container(
-          height: MediaQuery.of(context).size.height / 7 + 4,
-          width: double.infinity,
-          color: AggressorColors.secondaryColor,
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leading: SizedBox(
+          height: AppBar().preferredSize.height,
+          child: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Color(0xff59a3c0),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              }),
         ),
-        getBannerImage(),
-      ],
+        title: Image.asset(
+          "assets/logo.png",
+          height: AppBar().preferredSize.height,
+          fit: BoxFit.fitHeight,
+        ),
+        actions: <Widget>[],
+      ),
+      body: Stack(
+        children: [
+          getBackgroundImage(),
+          getPageForm(),
+          Container(
+            height: MediaQuery.of(context).size.height / 7 + 4,
+            width: double.infinity,
+            color: AggressorColors.secondaryColor,
+          ),
+          getBannerImage(),
+        ],
+      ),
     );
   }
 
@@ -405,8 +430,6 @@ class EditMyProfileState extends State<EditMyProfile>
 
     print("user deleted");
     widget.logoutCallback();
-
-
 
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => MyApp()));

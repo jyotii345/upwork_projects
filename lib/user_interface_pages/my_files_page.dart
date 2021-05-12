@@ -6,13 +6,15 @@ class MyFiles extends StatefulWidget {
   MyFiles();
 
   @override
-  State<StatefulWidget> createState() => new myFilesState();
+  State<StatefulWidget> createState() => new MyFilesState();
 }
 
-class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
+class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
+
+  String fileName = "";
 
   /*
   initState
@@ -60,11 +62,87 @@ class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 7,
             ),
             getPageTitle(),
+            getUploadFile(),
           ],
         ),
       ),
     );
   }
+
+  Widget getUploadFile() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "UPLOAD FILE",
+            style: TextStyle(
+                color: AggressorColors.secondaryColor,
+                fontSize: MediaQuery.of(context).size.height / 35,
+                fontWeight: FontWeight.bold),
+          ),
+          getFilePrompt(),
+          getFileInformation(),
+          getUploadFileButton(),
+        ],
+      ),
+    );
+  }
+
+  Widget getFileInformation() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 6,
+            child: Text(
+              "File Name:",
+              style:
+              TextStyle(fontSize: MediaQuery.of(context).size.height / 45),
+            ),
+          ),
+          Container(
+              height: MediaQuery.of(context).size.height / 35,
+              width: MediaQuery.of(context).size.width / 1.75,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ),
+              ),
+              child: Text(
+                fileName,
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 40 - 4),
+                textAlign: TextAlign.center,
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget getUploadFileButton() {
+    return Row(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.height / 4,
+        ),
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            "Upload File",
+            style: TextStyle(color: Colors.white),
+          ),
+          style: TextButton.styleFrom(
+              backgroundColor: AggressorColors.secondaryColor),
+        ),
+      ],
+    );
+  }
+
 
   Widget getBackgroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
@@ -105,6 +183,23 @@ class myFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: MediaQuery.of(context).size.height / 25,
+              fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget getFilePrompt()
+  {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Text(
+          "Files must be uploaded as: PDF, TXT, DOC, JPG, PNG",
+          style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: MediaQuery.of(context).size.height / 55,
               fontWeight: FontWeight.bold),
         ),
       ),

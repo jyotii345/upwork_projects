@@ -107,6 +107,8 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPastSection(List<Trip> pastTrips) {
+    double textBoxSize = MediaQuery.of(context).size.width / 4.3;
+
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Stack(
@@ -116,9 +118,55 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 6.5,
               width: double.infinity,
               child: pastTrips.length == 0
-                  ? Center(
-                      child:
-                          Text("You do not have any past trips to view yet."),
+                  ? Column(
+                      children: [
+                        Container(
+                          height: .5,
+                          color: Colors.grey,
+                        ),
+                        Container(
+                          color: Colors.grey[300],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              SizedBox(
+                                width: textBoxSize,
+                                child:
+                                    Text("Conf#", textAlign: TextAlign.center),
+                              ),
+                              Spacer(
+                                flex: 10,
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child:
+                                    Text("Yacht", textAlign: TextAlign.center),
+                              ),
+                              Spacer(
+                                flex: 10,
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  "Embarkment Date",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              SizedBox(
+                                width: textBoxSize / 2,
+                              ),
+                              SizedBox(
+                                width: textBoxSize / 2,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                              "You do not have any past trips to view yet."),
+                        ),
+                      ],
                     )
                   : getPastTripListViews(pastTrips)),
         ],
@@ -194,7 +242,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         ),
       ),
     );
-
 
     int index = 0;
     pastTrips.forEach((element) {
