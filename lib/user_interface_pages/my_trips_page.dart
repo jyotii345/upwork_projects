@@ -136,10 +136,9 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
     return ListView.builder(
         shrinkWrap: true,
-        reverse: true,
         itemCount: upcomingTripsList.length,
         itemBuilder: (context, position) {
-          return upcomingTripsList[position];
+          return upcomingTripsList[upcomingTripsList.length - 1 - position];
         });
   }
 

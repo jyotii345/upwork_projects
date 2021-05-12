@@ -13,6 +13,7 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'login_page.dart';
 import 'my_profile_page.dart';
@@ -97,13 +98,12 @@ class _MyHomePageState extends State<MyHomePage> {
               Flexible(
                 flex: 1,
                 child: IconButton(
-                    icon: Icon(
-                      Icons.phone_enabled_rounded,
-                      color: Color(0xff59a3c0),
-                    ),
-                    onPressed: () {
-                      print("button pressed");
-                    }),
+                  icon: Icon(
+                    Icons.phone_enabled_rounded,
+                    color: Color(0xff59a3c0),
+                  ),
+                  onPressed: makeCall,
+                ),
               ),
               Flexible(
                 flex: 0,
@@ -212,6 +212,16 @@ class _MyHomePageState extends State<MyHomePage> {
 /*
   Self implemented
    */
+
+  makeCall() async {
+    const url = 'tel:7069932531';
+    try {
+      await launch(url);
+    }
+    catch(e){
+      print(e.toString());
+    }
+  }
 
   void handlePopupClick(String value) {
     switch (value) {

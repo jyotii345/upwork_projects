@@ -75,21 +75,24 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: ListView(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 7,
-            ),
-            getPageTitle(),
-            getDestinationDropdown(widget.tripList),
-            getDepartureDate(),
-            getReturnDate(),
-            getPreTripNotes(),
-            getPostTripNotes(),
-            getMiscNotes(),
-            getSaveNotesButton(),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ListView(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 7,
+              ),
+              getPageTitle(),
+              getDestinationDropdown(widget.tripList),
+              getDepartureDate(),
+              getReturnDate(),
+              getPreTripNotes(),
+              getPostTripNotes(),
+              getMiscNotes(),
+              getSaveNotesButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -108,101 +111,109 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPreTripNotes() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.height / 6,
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-              "Pre-Trip Notes:",
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 6,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Pre-Trip Notes:",
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+              ),
             ),
           ),
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height / 8,
-          width: MediaQuery.of(context).size.width / 1.525,
-          child: FlutterSummernote(
-            //TODO fix text size
-            key: preNotesEditor,
-            hasAttachment: false,
-            customToolbar: """
-                            [
-                            ]
-                           """,
-            showBottomToolbar: false,
+          Container(
+            height: MediaQuery.of(context).size.height / 3,
+            width: MediaQuery.of(context).size.width / 1.6,
+            child: FlutterSummernote(
+              key: preNotesEditor,
+              hasAttachment: false,
+              customToolbar: """
+                              [
+                              ]
+                             """,
+              showBottomToolbar: false,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget getPostTripNotes() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.height / 6,
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-              "Post-Trip Notes:",
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 6,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Post-Trip Notes:",
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+              ),
             ),
           ),
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height / 8,
-          width: MediaQuery.of(context).size.width / 1.525,
-          child: FlutterSummernote(
-            //TODO fix text size
-            key: postNotesEditor,
-            hasAttachment: false,
-            customToolbar: """
+          Container(
+            height: MediaQuery.of(context).size.height / 3,
+            width: MediaQuery.of(context).size.width / 1.6,
+            child: FlutterSummernote(
+              //TODO fix text size
+              key: postNotesEditor,
+              hasAttachment: false,
+              customToolbar: """
           [
           ]
         """,
-            showBottomToolbar: false,
+              showBottomToolbar: false,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget getMiscNotes() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.height / 6,
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: Text(
-              "Post-Trip Notes:",
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 6,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Post-Trip Notes:",
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+              ),
             ),
           ),
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height / 8,
-          width: MediaQuery.of(context).size.width / 1.525,
-          child: FlutterSummernote(
-            //TODO fix text size
-            key: miscNotesEditor,
-            hasAttachment: false,
-            customToolbar: """
+          Container(
+            height: MediaQuery.of(context).size.height / 3,
+            width: MediaQuery.of(context).size.width / 1.6,
+            child: FlutterSummernote(
+              //TODO fix text size
+              key: miscNotesEditor,
+              hasAttachment: false,
+              customToolbar: """
           [
           ]
         """,
-            showBottomToolbar: false,
+              showBottomToolbar: false,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -213,60 +224,64 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       sortedTripList.add(element);
     });
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.height / 6,
-          child: Text(
-            "Destination:",
-            style: TextStyle(
-                fontSize: MediaQuery.of(context).size.height / 45 - 4),
-          ),
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height / 45,
-          width: MediaQuery.of(context).size.width / 2,
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, style: BorderStyle.solid),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 6,
+            child: Text(
+              "Destination:",
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
             ),
           ),
-          child: DropdownButton<Trip>(
-            underline: Container(),
-            value: dropDownValue,
-            elevation: 0,
-            isExpanded: true,
-            iconSize: MediaQuery.of(context).size.height / 40,
-            onChanged: (Trip newValue) {
-              setState(() {
-                dropDownValue = newValue;
-                departureDate = newValue.tripDate;
-                returnDate =
-                    "not implemented"; //TODO place return date here when uploaded
-              });
-            },
-            items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
-              return DropdownMenuItem<Trip>(
-                value: value,
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 45,
-                  width: MediaQuery.of(context).size.width / 2 -
-                      MediaQuery.of(context).size.height / 40 -
-                      10,
-                  child: Text(
-                    value.detailDestination,
-                    style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                    textAlign: TextAlign.center,
+          Container(
+            height: MediaQuery.of(context).size.height / 45,
+            width: MediaQuery.of(context).size.width / 2,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              ),
+            ),
+            child: DropdownButton<Trip>(
+              underline: Container(),
+              value: dropDownValue,
+              elevation: 0,
+              isExpanded: true,
+              iconSize: MediaQuery.of(context).size.height / 40,
+              onChanged: (Trip newValue) {
+                setState(() {
+                  dropDownValue = newValue;
+                  departureDate = newValue.tripDate;
+                  returnDate =
+                      "not implemented"; //TODO place return date here when uploaded
+                });
+              },
+              items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
+                return DropdownMenuItem<Trip>(
+                  value: value,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 45,
+                    width: MediaQuery.of(context).size.width / 2 -
+                        MediaQuery.of(context).size.height / 40 -
+                        10,
+                    child: Text(
+                      value.detailDestination,
+                      style: TextStyle(
+                          fontSize:
+                              MediaQuery.of(context).size.height / 45 - 4),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -279,72 +294,78 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getDepartureDate() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.height / 6,
-          child: Text(
-            "Departure Date:",
-            style: TextStyle(
-                fontSize: MediaQuery.of(context).size.height / 45 - 4),
-          ),
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height / 45,
-          width: MediaQuery.of(context).size.width / 2,
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, style: BorderStyle.solid),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
-          ),
-          child: Text(
-            departureDate,
-            style: TextStyle(
-                fontSize: MediaQuery.of(context).size.height / 45 - 4),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget getReturnDate() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: MediaQuery.of(context).size.height / 6,
-          child: Text(
-            "Return Date",
-            style: TextStyle(
-                fontSize: MediaQuery.of(context).size.height / 45 - 4),
-          ),
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height / 45,
-          width: MediaQuery.of(context).size.width / 2,
-          decoration: ShapeDecoration(
-            shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, style: BorderStyle.solid),
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            ),
-          ),
-          child: Container(
-            height: MediaQuery.of(context).size.height / 45,
-            width: MediaQuery.of(context).size.width / 2 -
-                MediaQuery.of(context).size.height / 40 -
-                10,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 6,
             child: Text(
-              returnDate,
+              "Departure Date:",
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+            ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height / 45,
+            width: MediaQuery.of(context).size.width / 2,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              ),
+            ),
+            child: Text(
+              departureDate,
               style: TextStyle(
                   fontSize: MediaQuery.of(context).size.height / 45 - 4),
               textAlign: TextAlign.center,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  Widget getReturnDate() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 6,
+            child: Text(
+              "Return Date",
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+            ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height / 45,
+            width: MediaQuery.of(context).size.width / 2,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              ),
+            ),
+            child: Container(
+              height: MediaQuery.of(context).size.height / 45,
+              width: MediaQuery.of(context).size.width / 2 -
+                  MediaQuery.of(context).size.height / 40 -
+                  10,
+              child: Text(
+                returnDate,
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
