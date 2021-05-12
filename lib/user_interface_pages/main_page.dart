@@ -187,14 +187,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         body: getIndexStack(snapshotOne.data),
                       );
                     } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
+                      return Scaffold(
+                        resizeToAvoidBottomInset: false,
+                        bottomNavigationBar: getBottomNavigation(),
+                        body: Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       );
                     }
                   });
             } else {
-              return Center(
-                child: CircularProgressIndicator(),
+              return Scaffold(
+                resizeToAvoidBottomInset: false,
+                bottomNavigationBar: getBottomNavigation(),
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
               );
             }
           }),
@@ -257,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage> {
      */
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      onTap: currentUser == null ? (int){}: onTabTapped,
+      onTap: currentUser == null ? (int) {} : onTabTapped,
       backgroundColor: AggressorColors.primaryColor,
       // new
       currentIndex: _currentIndex > 4 ? 0 : _currentIndex,
@@ -295,7 +303,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<dynamic> checkLoginStatus() async {
     //check if the user is logged in and set the appropriate view if they are or are not
-    if(!haveCheckedLogin) {
+    if (!haveCheckedLogin) {
       var userList = await helper.queryUser();
       try {
         setState(() {
@@ -308,8 +316,8 @@ class _MyHomePageState extends State<MyHomePage> {
         logoutCallback();
         return "no user";
       } else {
-        tripListFuture = tripListMemoizer.runOnce(
-                () => AggressorApi().getReservationList(currentUser.contactId));
+        tripListFuture =
+            AggressorApi().getReservationList(currentUser.contactId);
         loginCallback();
       }
     }
@@ -319,7 +327,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void loginCallback() {
     setState(() {
-
       haveCheckedLogin = true;
     });
     if (_currentIndex > 4) {

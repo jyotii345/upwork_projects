@@ -95,6 +95,7 @@ class CreateContactState extends State<CreateContact>
             color: AggressorColors.secondaryColor,
           ),
           getBannerImage(),
+          getLoadingWheel(),
         ],
       ),
     );
@@ -129,9 +130,8 @@ class CreateContactState extends State<CreateContact>
         }
 
         String birthday = formatDate(dateOfBirth, [yyyy, mm, dd]);
-        print(birthday);
 
-        var jsonResponse = await AggressorApi().sendNewContact(widget.userId, address1, address2, city, countryDropDownSelection["country"] == "USA" ? territory : "", countryDropDownSelection["country"] != "USA" ? territory : "", countryDropDownSelection["country"], zip, email, homePhone, mobilePhone, birthday, genderDropDownOption);
+        var jsonResponse = await AggressorApi().sendNewContact(widget.userId, address1, address2, city, countryDropDownSelection["country"] == "USA" ? territory : "", countryDropDownSelection["country"] != "USA" ? territory : "", countryDropDownSelection["countryid"].toString(), zip, email, homePhone, mobilePhone, birthday, genderDropDownOption.toLowerCase());
         print(jsonResponse.toString());
         if (jsonResponse["status"] == "success") {
             showSuccessDialogue();
@@ -164,7 +164,7 @@ class CreateContactState extends State<CreateContact>
                 onPressed: () {
                   int popCount = 0;
                   Navigator.popUntil(context, (route) {
-                    return popCount++ == 3;
+                    return popCount++ == 4;
                   });
                 },
                 child: new Text('Continue')),
@@ -604,6 +604,11 @@ class CreateContactState extends State<CreateContact>
     }
     return "finished";
   }
+
+  Widget getLoadingWheel() {
+    return isLoading ? Center(child: CircularProgressIndicator()) : Container();
+  }
+
 
   @override
   bool get wantKeepAlive => true;

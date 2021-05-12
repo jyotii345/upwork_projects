@@ -140,9 +140,12 @@ class ContactSelectionState extends State<ContactSelection>
 
   void linkContact(var selectedContact) async {
     var linkResponse = await AggressorApi().linkContact(
-        selectedContact["contactid"], widget.jsonResponse["userID"]);
+        selectedContact["contactid"], widget.jsonResponse["userID"].toString());
     if (linkResponse["status"] == "success") {
-      //TODO contact linked success move on
+      int popCount = 0;
+      Navigator.popUntil(context, (route) {
+        return popCount++ == 3;
+      });
     } else {
       setState(() {
         errorMessage = "Error linking to this contact, please try again.";
@@ -190,7 +193,7 @@ class ContactSelectionState extends State<ContactSelection>
           });
 
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreateContact(widget.jsonResponse["userID"])));
+              MaterialPageRoute(builder: (context) => CreateContact(widget.jsonResponse["userID"].toString())));
         },
         child: Text(
           "Create new contact",

@@ -80,10 +80,8 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         getPageTitle(),
         getSectionUpcomingTitle(),
         getUpcomingSection(getTripList(widget.tripList)[1]),
-        //TODO replace with upcoming trip lists
         getSectionPastTitle(),
         getPastSection(getTripList(widget.tripList)[0]),
-        //TODO replace with past Trip list
       ],
     );
   }

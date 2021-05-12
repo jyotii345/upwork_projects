@@ -85,6 +85,7 @@ class RegistrationPageState extends State<RegistrationPage>
             color: AggressorColors.secondaryColor,
           ),
           getBannerImage(),
+          getLoadingWheel(),
         ],
       ),
     );
@@ -495,6 +496,10 @@ class RegistrationPageState extends State<RegistrationPage>
         ),
       ),
     );
+  }
+
+  Widget getLoadingWheel() {
+    return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 
   @override

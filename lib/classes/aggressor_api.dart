@@ -52,7 +52,7 @@ class AggressorApi {
         i++;
       }
     } else {
-      tripList = null;
+      tripList = [];
     }
     return tripList;
   }
@@ -176,7 +176,6 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-
   Future<dynamic> sendNewContact(
       String userId,
       String address1,
@@ -192,9 +191,22 @@ class AggressorApi {
       String dateOfBirth,
       String gender) async {
     //creates a new contact and returns success on completion
+    print("-" + userId + "-");
+    print("-" +address1+ "-");
+    print("-" +address2+ "-");
+    print("-" +city+ "-");
+    print("-" +state+ "-");
+    print("-" +province+ "-");
+    print("-" +country+ "-");
+    print("-" +zip+ "-");
+    print("-" +email+ "-");
+    print("-" +homePhone+ "-");
+    print("-" +mobilePhone+ "-");
+    print("-" +dateOfBirth+ "-");
+    print("-" +gender + "-");
     Response response = await post(
       Uri.https(
-          'secure.aggressor.com', 'api/app/registration/newcontact/' + userId),
+          'secure.aggressor.com', "api/app/registration/newcontact/" + userId),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -214,7 +226,7 @@ class AggressorApi {
         'gender': gender
       }),
     );
-
+    print(response.body);
     return jsonDecode(response.body);
   }
 }
