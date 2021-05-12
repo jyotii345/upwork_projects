@@ -1,21 +1,25 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class Photos extends StatefulWidget {
-  Photos();
+  Photos(this.tripList);
 
+  final List<Trip> tripList;
 
   @override
   State<StatefulWidget> createState() => new PhotosState();
 }
 
-class PhotosState extends State<Photos>
-    with AutomaticKeepAliveClientMixin {
+class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
+
+  Trip dropDownValue, selectionTrip;
+  String departureDate = "";
+  List<Trip> sortedTripList;
 
   /*
   initState
@@ -23,6 +27,10 @@ class PhotosState extends State<Photos>
   @override
   void initState() {
     super.initState();
+    selectionTrip =
+        Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
+    selectionTrip.detailDestination = " -- SELECT -- ";
+    dropDownValue = selectionTrip;
   }
 
   /*
@@ -50,6 +58,80 @@ class PhotosState extends State<Photos>
   Self implemented
    */
 
+  Widget getDestinationDropdown(List<Trip> tripList) {
+    sortedTripList = [selectionTrip];
+    tripList = sortTripList(tripList);
+    tripList.forEach((element) {
+      sortedTripList.add(element);
+    });
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 4.5,
+            child: Text(
+              "Destination:",
+              style:
+                  TextStyle(fontSize: MediaQuery.of(context).size.height / 40),
+            ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.height / 40,
+            width: MediaQuery.of(context).size.width / 2,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              ),
+            ),
+            child: DropdownButton<Trip>(
+              underline: Container(),
+              value: dropDownValue,
+              elevation: 0,
+              isExpanded: true,
+              iconSize: MediaQuery.of(context).size.height / 40,
+              onChanged: (Trip newValue) {
+                setState(() {
+                  dropDownValue = newValue;
+                  departureDate = newValue.tripDate;
+                });
+              },
+              items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
+                return DropdownMenuItem<Trip>(
+                  value: value,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height / 45,
+                    width: MediaQuery.of(context).size.width / 2 -
+                        MediaQuery.of(context).size.height / 40 -
+                        10,
+                    child: Text(
+                      value.detailDestination,
+                      style: TextStyle(
+                          fontSize:
+                              MediaQuery.of(context).size.height / 45 - 4),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Trip> sortTripList(List<Trip> tripList) {
+    List<Trip> tempList = tripList;
+    tempList.sort((a, b) =>
+        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+
+    return tempList;
+  }
+
   Widget getPageForm() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -62,8 +144,79 @@ class PhotosState extends State<Photos>
               height: MediaQuery.of(context).size.height / 7,
             ),
             getPageTitle(),
+            getCreateNewGallery(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget getDepartureInformation() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 4.5,
+            child: Text(
+              "Departure Date:",
+              style:
+                  TextStyle(fontSize: MediaQuery.of(context).size.height / 40),
+            ),
+          ),
+          Container(
+              height: MediaQuery.of(context).size.height / 40,
+              width: MediaQuery.of(context).size.width / 2,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ),
+              ),
+              child: Text(
+                departureDate,
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 40 - 4),
+                textAlign: TextAlign.center,
+              )),
+        ],
+      ),
+    );
+  }
+
+  Widget getUploadPhotosButton() {
+    return Align(
+      alignment: Alignment.center,
+      child: TextButton(
+        onPressed: () {},
+        child: Text(
+          "Upload Photos",
+          style: TextStyle(color: Colors.white),
+        ),
+        style: TextButton.styleFrom(
+            backgroundColor: AggressorColors.secondaryColor),
+      ),
+    );
+  }
+
+  Widget getCreateNewGallery() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "CREATE NEW GALLERY",
+            style: TextStyle(
+                color: AggressorColors.secondaryColor,
+                fontSize: MediaQuery.of(context).size.height / 35,
+                fontWeight: FontWeight.bold),
+          ),
+          getDestinationDropdown(widget.tripList),
+          getDepartureInformation(),
+          getUploadPhotosButton(),
+        ],
       ),
     );
   }
@@ -74,7 +227,7 @@ class PhotosState extends State<Photos>
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/tempbkg.png", //TODO replace with final graphic
           fit: BoxFit.fill,
@@ -115,6 +268,4 @@ class PhotosState extends State<Photos>
 
   @override
   bool get wantKeepAlive => true;
-
-
 }
