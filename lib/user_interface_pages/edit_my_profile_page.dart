@@ -10,10 +10,11 @@ import 'main_page.dart';
 
 class EditMyProfile extends StatefulWidget {
   //TODO cannot click my profile before app is done loading initially
-  EditMyProfile(this.user, this.logoutCallback, this.profileData);
+  EditMyProfile(
+      this.user, this.logoutCallback, this.updateCallback, this.profileData);
 
   final User user;
-  final VoidCallback logoutCallback;
+  final VoidCallback logoutCallback, updateCallback;
   final Map<String, dynamic> profileData;
 
   @override
@@ -25,6 +26,12 @@ class EditMyProfileState extends State<EditMyProfile>
   /*
   instance vars
    */
+
+  final formKey = new GlobalKey<FormState>();
+
+  String errorMessage = "";
+
+  bool isLoading = false;
 
   double textDisplayWidth, textSize;
 
@@ -104,6 +111,7 @@ class EditMyProfileState extends State<EditMyProfile>
             color: AggressorColors.secondaryColor,
           ),
           getBannerImage(),
+          getLoadingWheel(),
         ],
       ),
     );
@@ -112,6 +120,104 @@ class EditMyProfileState extends State<EditMyProfile>
   /*
   Self implemented
    */
+
+  bool validateAndSave() {
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void validateAndSubmit() async {
+    setState(() {
+      errorMessage = "";
+      isLoading = true;
+    });
+
+    if (validateAndSave()) {
+      try {
+        if (countryDropDownSelection["country"] == "USA") {
+          territory = stateDropDownSelection["stateAbbr"];
+        }
+
+        if (password != "") {
+          if (!validatePassword(password)) {
+            throw Exception(
+              "Password does not meet security requirements: \n• Password must be 8 characters long or larger\n• Password must contain at least one numerical digit\n• Password must contain at least one capital letter\n• Password must contain one special character",
+            );
+          }
+        }
+
+        var jsonResponse = await AggressorApi().saveProfileData(
+            widget.user.userId,
+            widget.profileData["first"],
+            widget.profileData["last"],
+            email,
+            address1,
+            address2,
+            city,
+            country == "2" ? territory : "",
+            country != "2" ? territory : "",
+            country,
+            zip,
+            username,
+            password != "" ? password : null,
+            homePhone,
+            workPhone,
+            mobilePhone);
+
+        print(jsonResponse.toString());
+        if (jsonResponse["status"] == "success") {
+          widget.updateCallback();
+          showSuccessDialogue();
+        } else {
+          throw Exception("Error updating account, please try again.");
+        }
+
+        setState(() {
+          isLoading = false;
+        });
+      } catch (e) {
+        print('caught Error: $e');
+        setState(() {
+          errorMessage = e.message;
+          isLoading = false;
+        });
+      }
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  bool validatePassword(String password) {
+    String pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regExp = new RegExp(pattern);
+    return regExp.hasMatch(password);
+  }
+
+  void showSuccessDialogue() {
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+              title: new Text('Success'),
+              content: new Text("Profile has been successfully updated"),
+              actions: <Widget>[
+                new TextButton(
+                    onPressed: () {
+                      int popCount = 0;
+                      Navigator.popUntil(context, (route) {
+                        return popCount++ == 2;
+                      });
+                    },
+                    child: new Text('Continue')),
+              ],
+            ));
+  }
 
   Widget getPageForm() {
     return FutureBuilder(
@@ -125,32 +231,36 @@ class EditMyProfileState extends State<EditMyProfile>
                 color: Colors.white,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  child: ListView(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height / 7,
-                      ),
-                      getPageTitle(),
-                      getName(),
-                      getProfilePicture(),
-                      getAddress1(),
-                      getAddress2(),
-                      getCity(),
-                      getTerritory(),
-                      getZip(),
-                      getCountry(),
-                      getEmail(),
-                      getHomePhone(),
-                      getWorkPhone(),
-                      getMobilePhone(),
-                      getUsername(),
-                      getPassword(),
-                      getTotalNumberOfDives(),
-                      getAccountType(),
-                      getUpdateButton(),
-                      getSignOutButton(),
-                    ],
+                  child: Form(
+                    key: formKey,
+                    child: ListView(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height / 7,
+                        ),
+                        getPageTitle(),
+                        getName(),
+                        getProfilePicture(),
+                        getAddress1(),
+                        getAddress2(),
+                        getCity(),
+                        getTerritory(),
+                        getZip(),
+                        getCountry(),
+                        getEmail(),
+                        getHomePhone(),
+                        getWorkPhone(),
+                        getMobilePhone(),
+                        getUsername(),
+                        getPassword(),
+                        getTotalNumberOfDives(),
+                        getAccountType(),
+                        getUpdateButton(),
+                        getSignOutButton(),
+                        showErrorMessage(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -229,7 +339,9 @@ class EditMyProfileState extends State<EditMyProfile>
                   ),
                 ),
               ),
-              profileImagePath  == "" ? Text("No file chosen") : Text(profileImagePath)
+              profileImagePath == ""
+                  ? Text("No file chosen")
+                  : Text(profileImagePath)
             ],
           )
         ],
@@ -272,6 +384,9 @@ class EditMyProfileState extends State<EditMyProfile>
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
+                    validator: (value) =>
+                        value.isEmpty ? 'Address 1 can\'t be empty' : null,
+                    onSaved: (value) => address1 = value.trim(),
                   ),
                 ),
               ),
@@ -315,6 +430,7 @@ class EditMyProfileState extends State<EditMyProfile>
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   ),
+                  onSaved: (value) => address2 = value.trim(),
                 ),
               ),
             ),
@@ -359,6 +475,9 @@ class EditMyProfileState extends State<EditMyProfile>
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
+                    validator: (value) =>
+                        value.isEmpty ? 'City can\'t be empty' : null,
+                    onSaved: (value) => city = value.trim(),
                   ),
                 ),
               ),
@@ -425,6 +544,9 @@ class EditMyProfileState extends State<EditMyProfile>
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
+                    validator: (value) =>
+                        value.isEmpty ? 'Zip code can\'t be empty' : null,
+                    onSaved: (value) => zip = value.trim(),
                   ),
                 ),
               ),
@@ -486,6 +608,9 @@ class EditMyProfileState extends State<EditMyProfile>
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
+                    validator: (value) =>
+                        value.isEmpty ? 'Email can\'t be empty' : null,
+                    onSaved: (value) => email = value.trim(),
                   ),
                 ),
               ),
@@ -529,6 +654,7 @@ class EditMyProfileState extends State<EditMyProfile>
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   ),
+                  onSaved: (value) => homePhone = value.trim(),
                 ),
               ),
             ),
@@ -573,6 +699,7 @@ class EditMyProfileState extends State<EditMyProfile>
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
+                    onSaved: (value) => workPhone = value.trim(),
                   ),
                 ),
               ),
@@ -616,6 +743,7 @@ class EditMyProfileState extends State<EditMyProfile>
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   ),
+                  onSaved: (value) => mobilePhone = value.trim(),
                 ),
               ),
             ),
@@ -685,6 +813,8 @@ class EditMyProfileState extends State<EditMyProfile>
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   ),
+                  onSaved: (value) =>
+                      password == "" ? () {} : password = value.trim(),
                 ),
               ),
             ),
@@ -765,7 +895,10 @@ class EditMyProfileState extends State<EditMyProfile>
   Widget getUpdateButton() {
     return TextButton(
         onPressed: () {
-          print("update profile"); //TODO implement functionality
+          setState(() {
+            errorMessage = "";
+          });
+          validateAndSubmit();
         },
         style: TextButton.styleFrom(
             backgroundColor: AggressorColors.secondaryColor),
@@ -1014,6 +1147,23 @@ class EditMyProfileState extends State<EditMyProfile>
       });
     }
     return "finished";
+  }
+
+  Widget showErrorMessage() {
+    return errorMessage == ""
+        ? Container()
+        : Padding(
+            padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
+            child: Text(
+              errorMessage,
+              style: TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+          );
+  }
+
+  Widget getLoadingWheel() {
+    return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 
   @override
