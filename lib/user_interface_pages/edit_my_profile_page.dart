@@ -425,7 +425,7 @@ class EditMyProfileState extends State<EditMyProfile>
 
   void signOutUser() async {
     print(" ----------------------SIGNOUT----------------------");
-    DatabaseHelper helper = DatabaseHelper.instance;
+    UserDatabaseHelper helper = UserDatabaseHelper.instance;
     await helper.deleteUser(100);
 
     print("user deleted");

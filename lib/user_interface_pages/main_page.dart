@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   User currentUser;
 
-  DatabaseHelper helper;
+  UserDatabaseHelper helper;
 
   List<Trip> tripList;
 
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    helper = DatabaseHelper.instance;
+    helper = UserDatabaseHelper.instance;
     tripList = [];
     haveCheckedLogin = false;
   }

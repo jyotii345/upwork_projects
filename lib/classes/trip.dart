@@ -14,7 +14,17 @@ class Trip {
   String reservationDate;
   String reservationId;
   String imageResource;
-  String charterId, total, discount, payments, due, dueDate, passengers, location, embark, disembark, detailDestination;
+  String charterId,
+      total,
+      discount,
+      payments,
+      due,
+      dueDate,
+      passengers,
+      location,
+      embark,
+      disembark,
+      detailDestination;
 
   Trip(
     String tripDate,
@@ -34,9 +44,51 @@ class Trip {
     this.reservationId = reservationId;
   }
 
+  //TODO add a trip with details constructor
+
+  Trip.TripWithDetails(
+      String tripDate,
+      String title,
+      String latitude,
+      String longitude,
+      String destination,
+      String reservationDate,
+      String reservationId,
+      String charterId,
+      String total,
+      String discount,
+      String payments,
+      String due,
+      String dueDate,
+      String passengers,
+      String location,
+      String embark,
+      String disembark,
+      String detailDestination) {
+    this.tripDate = tripDate;
+    this.title = title;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.destination = destination;
+    this.reservationDate = reservationDate;
+    this.reservationId = reservationId;
+    this.charterId = charterId;
+    this.total = total;
+    this.discount = discount;
+    this.payments = payments;
+    this.due = due;
+    this.dueDate = dueDate;
+    this.passengers = passengers;
+    this.location = location;
+    this.embark = embark;
+    this.disembark = disembark;
+    this.detailDestination = detailDestination;
+  }
+
   factory Trip.fromJson(Map<String, dynamic> json) {
     //create a trip object from a json file
     return Trip(
+      //TODO add detail information to map
       json['tripDate'].toString(),
       json['title'].toString(),
       json['latitude'].toString(),
@@ -70,13 +122,25 @@ class Trip {
       'destination': destination,
       'reservationDate': reservationDate,
       'reservationId': reservationId,
+      'charterId': charterId,
+      'total': total,
+      'discount': discount,
+      'payments': payments,
+      'due': due,
+      'dueDate': dueDate,
+      'passengers': passengers,
+      'location': location,
+      'embark': embark,
+      'disembark': disembark,
+      'detailDestination': detailDestination,
     };
   }
 
-  Future<dynamic> getTripDetails(String contactId) async{
+  Future<dynamic> getTripDetails(String contactId) async {
     //get detials for this specific trip object and add the results to this trip
-    var jsonResponse = await AggressorApi().getReservationDetails(reservationId,contactId);
-    if(jsonResponse["status"] == "success"){
+    var jsonResponse =
+        await AggressorApi().getReservationDetails(reservationId, contactId);
+    if (jsonResponse["status"] == "success") {
       charterId = jsonResponse["charterid"].toString();
       total = jsonResponse["total"].toString();
       discount = jsonResponse["discount"].toString();
@@ -89,19 +153,17 @@ class Trip {
       disembark = jsonResponse["disembark"].toString();
       detailDestination = jsonResponse["destination"].toString();
       return "success";
-    }
-    else{
+    } else {
       return "error";
     }
-
   }
 
   Widget getUpcomingTripCard(BuildContext context) {
     //returns the tile view to be placed into the view for the previous trips this user has been engaged in
     double textBoxSize = MediaQuery.of(context).size.width / 6.3;
-    double screenFontSize=  MediaQuery.of(context).size.width / 50;
+    double screenFontSize = MediaQuery.of(context).size.width / 50;
 
-    double screenFontSizeSmall =  MediaQuery.of(context).size.width / 60;
+    double screenFontSizeSmall = MediaQuery.of(context).size.width / 60;
     List<String> months = [
       'January',
       'February',
@@ -135,7 +197,8 @@ class Trip {
                           height: MediaQuery.of(context).size.height / 7,
                           width: MediaQuery.of(context).size.height / 7,
                           child: imageResource == null
-                              ? Icon( //TODO find a way to get boat images
+                              ? Icon(
+                                  //TODO find a way to get boat images
                                   Icons.directions_boat,
                                   size: MediaQuery.of(context).size.height / 10,
                                 )
@@ -148,7 +211,8 @@ class Trip {
                             Text(
                               DateTime.now()
                                   .difference(DateTime.parse(tripDate))
-                                  .inDays.abs()
+                                  .inDays
+                                  .abs()
                                   .toString(),
                               style: TextStyle(color: Colors.red),
                             )
@@ -313,7 +377,8 @@ class Trip {
                                 child: Text("Guest Information System (GIS)",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Colors.lightBlue, fontSize: screenFontSizeSmall)),
+                                        color: Colors.lightBlue,
+                                        fontSize: screenFontSizeSmall)),
                               ),
                             ),
                             SizedBox(
@@ -327,7 +392,8 @@ class Trip {
                                   "Know before you go",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Colors.lightBlue, fontSize: screenFontSizeSmall),
+                                      color: Colors.lightBlue,
+                                      fontSize: screenFontSizeSmall),
                                 ),
                               ),
                             ),
@@ -342,7 +408,8 @@ class Trip {
                                   "Make Payment",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Colors.lightBlue, fontSize: screenFontSizeSmall),
+                                      color: Colors.lightBlue,
+                                      fontSize: screenFontSizeSmall),
                                 ),
                               ),
                             ),

@@ -282,7 +282,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
   initDatabase() async {
     //initialize database for sql storage
-    database = await DatabaseHelper.instance.database;
+    database = await UserDatabaseHelper.instance.database;
   }
 
   Widget getToolbar() {
