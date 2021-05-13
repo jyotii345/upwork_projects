@@ -329,7 +329,7 @@ class MyProfileState extends State<MyProfile>
                 iconSize: MediaQuery.of(context).size.height / 35,
                 icon: Icon(Icons.edit, ),
                 onPressed: () { Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => EditMyProfile(widget.user, widget.logoutCallback)));},
+                    context, MaterialPageRoute(builder: (context) => EditMyProfile(widget.user, widget.logoutCallback, profileData)));},
                 color: Colors.white,
               ),
             ),

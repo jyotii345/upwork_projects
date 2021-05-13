@@ -65,17 +65,16 @@ class AggressorApi {
 
     Database db = await tripDatabaseHelper.database;
     List<Map> queryList = await db.rawQuery('SELECT * FROM trip');
-    if(queryList.length > 0){
+    if (queryList.length > 0) {
       tripList = queryList.map((data) => Trip.fromMap(data)).toList();
-    }
-    else{
+    } else {
       tripList = [];
     }
     return tripList;
   }
 
-  Future<dynamic> getReservationDetails(
-      String reservationId, String contactId) async {
+  Future<dynamic> getReservationDetails(String reservationId,
+      String contactId) async {
     //create and send a reservation view request to the Aggressor Api and return json response
     String url = "https://secure.aggressor.com/api/app/reservations/view/" +
         reservationId +
@@ -89,9 +88,7 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> getInventoryDetails(
-    String reservationId,
-  ) async {
+  Future<dynamic> getInventoryDetails(String reservationId,) async {
     //create and send a inventory view request to the Aggressor Api and return json response
     String url =
         "https://secure.aggressor.com/api/app/reservations/inventory/" +
@@ -193,8 +190,7 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> sendNewContact(
-      String userId,
+  Future<dynamic> sendNewContact(String userId,
       String address1,
       String address2,
       String city,
@@ -243,5 +239,50 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
     return jsonDecode(await pageResponse.stream.bytesToString());
+  }
+
+  Future<dynamic> saveProfileData(String userId, String first,
+      String last,
+      String email,
+      String address1,
+      String address2,
+      String city,
+      String state,
+      String province,
+      String country,
+      String zip,
+      String username,
+      String password,
+      String homePhone,
+      String workPhone,
+      String mobilePhone,) async {
+    //saves the updated profile data for the userId provided
+    Response response = await post(
+
+      Uri.https(
+          'secure.aggressor.com', "/api/app/profile/save/" + userId),
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'first' : first,
+        'last' : last,
+        'email' : email,
+        'address1' : address1,
+        'address2' : address2,
+        'city' : city,
+        'state' : state,
+        'province' : province,
+        'country' : country,
+        'zip' : zip,
+        'password' : password,
+        'home_phone' : homePhone,
+        'work_phone' : workPhone,
+        'mobile_phone' : mobilePhone,
+      }),
+    );
+
+    return jsonDecode(response.body);
   }
 }
