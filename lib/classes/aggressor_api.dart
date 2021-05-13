@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:core';
 import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:http/http.dart';
+import 'package:sqflite/sqflite.dart';
 
 class AggressorApi {
   final String apiKey = "pwBL1rik1hyi5JWPid";
@@ -28,6 +30,8 @@ class AggressorApi {
   Future<List<Trip>> getReservationList(String contactId) async {
     //create and send a reservation list request to the Aggressor Api and return a list of Trip objects also removes duplicates from the received list
 
+    TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
+
     String url =
         "https://secure.aggressor.com/api/app/reservations/list/" + contactId;
 
@@ -43,13 +47,28 @@ class AggressorApi {
       while (response[i.toString()] != null) {
         if (!addedTrips
             .contains(response[i.toString()]["reservationid"].toString())) {
-          tripList.add(Trip.fromJson(response[i.toString()]));
           addedTrips.add(response[i.toString()]["reservationid"].toString());
-          await tripList[tripList.length - 1].getTripDetails(contactId);
+          bool tripIsInDatabase = await tripDatabaseHelper
+              .tripExists(response[i.toString()]["reservationid"].toString());
+
+          if (!tripIsInDatabase) {
+            Trip newTrip = Trip.fromJson(response[i.toString()]);
+            await newTrip.getTripDetails(contactId);
+            await tripDatabaseHelper.insertTrip(newTrip);
+          }
         }
         i++;
       }
     } else {
+      tripList = [];
+    }
+
+    Database db = await tripDatabaseHelper.database;
+    List<Map> queryList = await db.rawQuery('SELECT * FROM trip');
+    if(queryList.length > 0){
+      tripList = queryList.map((data) => Trip.fromMap(data)).toList();
+    }
+    else{
       tripList = [];
     }
     return tripList;
@@ -211,11 +230,11 @@ class AggressorApi {
         'gender': gender
       }),
     );
-    print(response.body);
+
     return jsonDecode(response.body);
   }
 
-  Future<dynamic>getProfileData(String userId) async{
+  Future<dynamic> getProfileData(String userId) async {
     //returns the profile data for the userId provided
     String url = "https://secure.aggressor.com/api/app/profile/view/" + userId;
 

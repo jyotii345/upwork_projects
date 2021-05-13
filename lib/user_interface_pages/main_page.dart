@@ -347,6 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         haveCheckedLogin = false;
         _currentIndex = 5;
+        currentUser = null;
       });
     }
   }

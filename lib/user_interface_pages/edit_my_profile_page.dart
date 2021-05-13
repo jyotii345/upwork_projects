@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -413,7 +414,6 @@ class EditMyProfileState extends State<EditMyProfile>
   Widget getSignOutButton() {
     return TextButton(
         onPressed: () {
-          print("signing out user");
           signOutUser();
         },
         style: TextButton.styleFrom(backgroundColor: Colors.red),
@@ -424,11 +424,12 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   void signOutUser() async {
-    print(" ----------------------SIGNOUT----------------------");
     UserDatabaseHelper helper = UserDatabaseHelper.instance;
     await helper.deleteUser(100);
 
-    print("user deleted");
+    TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
+    await tripDatabaseHelper.deleteTripTable();
+
     widget.logoutCallback();
 
     Navigator.pushReplacement(

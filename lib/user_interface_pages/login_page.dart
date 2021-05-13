@@ -225,12 +225,10 @@ class _LoginSignUpPageState extends State<LoginPage> {
       });
     }
 
-    print("calling api next");
 
 
     var loginResponse = await AggressorApi().getUserLogin(username, password);
 
-    print("response: " + loginResponse.toString());
     if (loginResponse["status"] == "success") {
 
       setState(() {

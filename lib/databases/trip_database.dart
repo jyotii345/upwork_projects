@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:aggressor_adventures/classes/trip.dart';
-import 'package:aggressor_adventures/classes/user.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TripDatabaseHelper {
   //a helper class to drive the database
-  static final _databaseName = "userDatabase.db";
+
+  static final _databaseName = "tripDatabase.db";
 
   static final _databaseVersion = 1;
 
@@ -17,6 +17,7 @@ class TripDatabaseHelper {
   static final TripDatabaseHelper instance =
       TripDatabaseHelper._privateConstructor();
   static Database _database;
+
 
   Future<Database> get database async {
     //get the database object
@@ -36,7 +37,7 @@ class TripDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE user(id INTEGER PRIMARY KEY, tripDate TEXT title TEXT,latitude TEXT,longitude TEXT,destination TEXT,reservationDate TEXT,reservationId TEXT, charterId TEXT,total TEXT,discount TEXT,payments TEXT,due TEXT, dueDate TEXT,passengers TEXT,location TEXT,embark TEXT,disembark TEXT,detailDestination TEXT,)",
+      "CREATE TABLE trip(id INTEGER PRIMARY KEY,tripDate TEXT,title TEXT,latitude TEXT,longitude TEXT,destination TEXT,reservationDate TEXT,reservationId TEXT, charterId TEXT,total TEXT,discount TEXT,payments TEXT,due TEXT, dueDate TEXT,passengers TEXT,location TEXT,embark TEXT,disembark TEXT,detailDestination TEXT)",
     );
   }
 
@@ -45,7 +46,7 @@ class TripDatabaseHelper {
    */
 
   Future<int> insertTrip(Trip trip) async {
-    //add a user to the database
+    //add a trip to the database
     final Database db = await database;
 
     int id = await db.insert(
@@ -57,7 +58,7 @@ class TripDatabaseHelper {
   }
 
   Future<void> deleteTrip(int id) async {
-    // delete a user in the database
+    // delete a trip in the database
     final db = await database;
 
     await db.delete(
@@ -67,8 +68,21 @@ class TripDatabaseHelper {
     );
   }
 
+  Future<void> deleteTripTable() async {
+    final db = await database;
+    await db.delete('trip');
+  }
+
+  Future<bool> tripExists(String id) async {
+    final db = await database;
+    var result = await db
+        .rawQuery('SELECT EXISTS(SELECT 1 FROM trip WHERE id = ?)', [id]);
+    int exists = Sqflite.firstIntValue(result);
+    return exists == 1;
+  }
+
   Future<List<Trip>> queryTrip() async {
-    // Get a user from the database
+    // Get a trip from the database
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query('trip');

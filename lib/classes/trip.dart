@@ -115,6 +115,7 @@ class Trip {
   Map<String, dynamic> toMap() {
     //create a map from a trip object
     return {
+      'id': int.parse(reservationId),
       'tripDate': tripDate,
       'title': title,
       'latitude': latitude,
@@ -134,6 +135,31 @@ class Trip {
       'disembark': disembark,
       'detailDestination': detailDestination,
     };
+  }
+
+  factory Trip.fromMap(Map<String, dynamic> map) {
+    //create a trip object from a json file
+    return Trip.TripWithDetails(
+      //TODO add detail information to map
+      map['tripDate'].toString(),
+      map['title'].toString(),
+      map['latitude'].toString(),
+      map['longitude'].toString(),
+      map['destination'].toString(),
+      map['reservationDate'].toString(),
+      map['reservationId'].toString(),
+      map['charterId'].toString(),
+      map['total'].toString(),
+      map['discount'].toString(),
+      map['payments'].toString(),
+      map['due'].toString(),
+      map['dueDate'].toString(),
+      map['passengers'].toString(),
+      map['location'].toString(),
+      map['embark'].toString(),
+      map['disembark'].toString(),
+      map['detailDestination'].toString(),
+    );
   }
 
   Future<dynamic> getTripDetails(String contactId) async {
