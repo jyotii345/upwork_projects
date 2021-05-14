@@ -19,6 +19,7 @@ class PhotoDatabaseHelper {
   static Database _database;
 
 
+
   Future<Database> get database async {
     //get the database object
     if (_database != null) return _database;

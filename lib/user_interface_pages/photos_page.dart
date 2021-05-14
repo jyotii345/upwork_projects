@@ -1,14 +1,17 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Photos extends StatefulWidget {
-  Photos(this.tripList);
+  Photos(this.user, this.tripList);
 
   final List<Trip> tripList;
+  final User user;
 
   @override
   State<StatefulWidget> createState() => new PhotosState();
@@ -36,6 +39,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
     selectionTrip.detailDestination = " -- SELECT -- ";
     dropDownValue = selectionTrip;
+    getGalleries();
   }
 
   /*
@@ -211,10 +215,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     List<Asset> resultList = <Asset>[];
     String error = 'No Error Detected';
 
-
-
-    if (
-    await Permission.photos.status.isDenied || await Permission.camera.status.isDenied) {
+    if (await Permission.photos.status.isDenied ||
+        await Permission.camera.status.isDenied) {
       await Permission.photos.request();
       await Permission.camera.request();
 
@@ -235,8 +237,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           selectCircleStrokeColor: "#ff428cc7",
         ),
       );
-    }
-    catch(e){
+    } catch (e) {
       print(e.toString());
     }
 
@@ -440,6 +441,22 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         ),
       ),
     );
+  }
+
+  Future<void> getGalleries() async {
+    print("getting  galleries");
+    String region = "us-east-1";
+    String bucketId = "aggressor.app.user.images";
+    final AwsS3Client s3client = AwsS3Client(
+        region: region,
+        host: "s3.$region.amazonaws.com",
+        bucketId: bucketId,
+        accessKey: "AKIA43MMI6CI2KP4CUUY",
+        secretKey: "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");
+
+    ListBucketResult listBucketResult = await s3client.listObjects(
+        prefix: widget.user.userId + "/gallery/", delimiter: "/");
+    print(listBucketResult.toString());
   }
 
   @override

@@ -247,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
         //trips page
         currentUser == null ? Container() : Notes(currentUser, tripList),
         // notes page
-        Photos(tripList),
+        Photos(currentUser, tripList),
         // photos page
         Rewards(),
         // rewards page
