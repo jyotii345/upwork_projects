@@ -2,6 +2,8 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Photos extends StatefulWidget {
   Photos(this.tripList);
@@ -18,9 +20,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
    */
 
   Trip dropDownValue, selectionTrip;
-  String departureDate = "";
+  String departureDate = "", errorMessage;
   List<Trip> sortedTripList;
   List<dynamic> galleriesList = [];
+
+  List<Asset> images = <Asset>[];
 
   /*
   initState
@@ -191,7 +195,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           width: MediaQuery.of(context).size.height / 4,
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: loadAssets,
           child: Text(
             "Upload Photos",
             style: TextStyle(color: Colors.white),
@@ -201,6 +205,50 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         ),
       ],
     );
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
+
+
+
+    if (
+    await Permission.photos.status.isDenied || await Permission.camera.status.isDenied) {
+      await Permission.photos.request();
+      await Permission.camera.request();
+
+      // We didn't ask for permission yet or the permission has been denied before but not permanently.
+    }
+
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#ff428cc7",
+          actionBarTitle: "Example App",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#ff428cc7",
+        ),
+      );
+    }
+    catch(e){
+      print(e.toString());
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      images = resultList;
+      errorMessage = error;
+    });
   }
 
   Widget getCreateNewGallery() {
@@ -244,8 +292,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getGalleriesSection() {
-
-
     double textBoxSize = MediaQuery.of(context).size.width / 4.3;
 
     return Padding(
@@ -258,43 +304,42 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               width: double.infinity,
               child: galleriesList.length == 0
                   ? Column(
-                children: [
-                  Container(
-                    height: .5,
-                    color: Colors.grey,
-                  ),
-                  Container(
-                    color: Colors.grey[300],
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.max,
                       children: [
-                        SizedBox(
-                          width: textBoxSize,
-                          child:
-                          Text("Destination:", textAlign: TextAlign.center),
+                        Container(
+                          height: .5,
+                          color: Colors.grey,
                         ),
-                        Spacer(
-                          flex: 10,
+                        Container(
+                          color: Colors.grey[300],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text("Destination:",
+                                    textAlign: TextAlign.center),
+                              ),
+                              Spacer(
+                                flex: 10,
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child:
+                                    Text("Date:", textAlign: TextAlign.center),
+                              ),
+                              Spacer(
+                                flex: 10,
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(
-                          width: textBoxSize,
-                          child:
-                          Text("Date:", textAlign: TextAlign.center),
-                        ),
-
-                        Spacer(
-                          flex: 10,
+                        Expanded(
+                          child: Text(
+                              "You do not have any photo galleries to view yet."),
                         ),
                       ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                        "You do not have any photo galleries to view yet."),
-                  ),
-                ],
-              )
+                    )
                   : getGalleriesListView(galleriesList)),
         ],
       ),
@@ -338,7 +383,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       ),
     );
 
-
     int index = 0;
     galleryFutureList.forEach((element) {
       galleriesList.add(element.getPastTripCard(context, index));
@@ -353,14 +397,13 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         });
   }
 
-
   Widget getBackgroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
