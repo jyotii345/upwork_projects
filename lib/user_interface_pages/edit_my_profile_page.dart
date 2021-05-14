@@ -150,6 +150,10 @@ class EditMyProfileState extends State<EditMyProfile>
           }
         }
 
+        if(totalDives == ""){
+          totalDives = null;
+        }
+
         var jsonResponse = await AggressorApi().saveProfileData(
             widget.user.userId,
             widget.profileData["first"],
@@ -851,7 +855,7 @@ class EditMyProfileState extends State<EditMyProfile>
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(3.0),
-                  child: totalDives == null
+                  child: totalDives == null || totalDives == ""
                       ? Text(
                           "0",
                           style: TextStyle(fontSize: textSize),
