@@ -170,6 +170,7 @@ class EditMyProfileState extends State<EditMyProfile>
 
         print(jsonResponse.toString());
         if (jsonResponse["status"] == "success") {
+          stateAndCountryLoaded = false;
           widget.updateCallback();
           showSuccessDialogue();
         } else {
@@ -991,16 +992,6 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Widget getTerritoryDropDown() {
-    if (!stateAndCountryLoaded) {
-      country == "2"
-          ? stateList.forEach((element) {
-              if (element["stateAbbr"].toString() == territory) {
-                stateDropDownSelection = element;
-              }
-            })
-          : () {};
-    }
-
     return countryDropDownSelection["country"] == "USA"
         ? Expanded(
             child: Padding(
@@ -1070,13 +1061,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Widget getCountryDropDown() {
-    if (!stateAndCountryLoaded) {
-      countryList.forEach((element) {
-        if (element["countryid"].toString() == country) {
-          countryDropDownSelection = element;
-        }
-      });
-    }
+    print("getting drop down");
 
     return Expanded(
       child: Padding(
@@ -1142,6 +1127,21 @@ class EditMyProfileState extends State<EditMyProfile>
       stateList = await AggressorApi().getStates();
       countryDropDownSelection = countryList[0];
       stateDropDownSelection = stateList[0];
+
+      countryList.forEach((element) {
+        if (element["countryid"].toString() == country) {
+          countryDropDownSelection = element;
+        }
+      });
+
+      country == "2"
+          ? stateList.forEach((element) {
+              if (element["stateAbbr"].toString() == territory) {
+                stateDropDownSelection = element;
+              }
+            })
+          : () {};
+
       setState(() {
         stateAndCountryLoaded = true;
       });
