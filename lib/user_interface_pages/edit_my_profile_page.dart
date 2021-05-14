@@ -850,7 +850,7 @@ class EditMyProfileState extends State<EditMyProfile>
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(3.0),
-                  child: totalDives == ""
+                  child: totalDives == null
                       ? Text(
                           "0",
                           style: TextStyle(fontSize: textSize),

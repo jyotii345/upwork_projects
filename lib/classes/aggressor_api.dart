@@ -282,6 +282,7 @@ class AggressorApi {
               'province': province,
               'country': int.parse(country),
               'zip': int.parse(zip),
+              'username': username,
               'home_phone': homePhone,
               'work_phone': workPhone,
               'mobile_phone': mobilePhone,
@@ -297,6 +298,7 @@ class AggressorApi {
               'province': province,
               'country': int.parse(country),
               'zip': int.parse(zip),
+              'username': username,
               'password': password,
               'home_phone': homePhone,
               'work_phone': workPhone,
@@ -304,7 +306,6 @@ class AggressorApi {
             }),
     );
 
-    print(response.body);
 
     return jsonDecode(response.body);
   }

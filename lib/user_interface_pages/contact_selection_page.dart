@@ -101,10 +101,8 @@ class ContactSelectionState extends State<ContactSelection>
               height: MediaQuery.of(context).size.height / 7,
             ),
             getPageTitle(),
-            getPagePrompt(),
-            Expanded(
-              child: getContactList(),
-            ),
+            getPagePrompt(),getContactList(),
+
             contactList.length == 0 ? Container() : getChooseContactButton(),
             getCreateNewContactButton(),
             showErrorMessage(),
@@ -244,10 +242,12 @@ class ContactSelectionState extends State<ContactSelection>
     List<dynamic> contactList = [];
     print("creating contact list from: " + widget.jsonResponse.toString());
     if (widget.jsonResponse["status"] == "success") {
-      int i = 1;
-      while (widget.jsonResponse["data"][i.toString()] != null) {
-        contactList.add(widget.jsonResponse["data"][i.toString()]);
-        i++;
+      if(widget.jsonResponse["data"].length != 0) {
+        int i = 1;
+        while (widget.jsonResponse["data"][i.toString()] != null) {
+          contactList.add(widget.jsonResponse["data"][i.toString()]);
+          i++;
+        }
       }
     }
     return contactList;
