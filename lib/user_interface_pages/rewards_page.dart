@@ -77,14 +77,15 @@ class RewardsState extends State<Rewards>
         colorFilter:
         ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
-          "assets/tempbkg.png", //TODO replace with final graphic
-          fit: BoxFit.fill,
+          "assets/pagebackground.png",
+          fit: BoxFit.cover,
           height: double.infinity,
           width: double.infinity,
         ),
       ),
     );
   }
+
 
   Widget getBannerImage() {
     //returns banner image

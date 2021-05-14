@@ -7,6 +7,8 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
@@ -89,20 +91,13 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   Widget getUpcomingSection(List<Trip> upcomingTrips) {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-      child: Stack(
-        children: [
-          Container(
-              color: Colors.white,
-              height: MediaQuery.of(context).size.height / 4,
-              width: MediaQuery.of(context).size.width - 20,
-              child: upcomingTrips.length == 0
-                  ? Center(
-                      child: Text(
-                          "You do not have any upcoming trips booked yet."),
-                    )
-                  : getUpcomingListViews(upcomingTrips)),
-        ],
-      ),
+      child: Container(
+          color: Colors.white,
+          child: upcomingTrips.length == 0
+              ? Center(
+                  child: Text("You do not have any upcoming trips booked yet."),
+                )
+              : getUpcomingListViews(upcomingTrips)),
     );
   }
 
@@ -110,67 +105,59 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     double textBoxSize = MediaQuery.of(context).size.width / 4.3;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-      child: Stack(
-        children: [
-          Container(
-              color: Colors.white,
-              height: MediaQuery.of(context).size.height / 6.5,
-              width: double.infinity,
-              child: pastTrips.length == 0
-                  ? Column(
-                      children: [
-                        Container(
-                          height: .5,
-                          color: Colors.grey,
-                        ),
-                        Container(
-                          color: Colors.grey[300],
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              SizedBox(
-                                width: textBoxSize,
-                                child:
-                                    Text("Conf#", textAlign: TextAlign.center),
-                              ),
-                              Spacer(
-                                flex: 10,
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child:
-                                    Text("Yacht", textAlign: TextAlign.center),
-                              ),
-                              Spacer(
-                                flex: 10,
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  "Embarkment Date",
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(
-                                width: textBoxSize / 2,
-                              ),
-                              SizedBox(
-                                width: textBoxSize / 2,
-                              ),
-                            ],
+      padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+      child: Container(
+          color: Colors.white,
+          child: pastTrips.length == 0
+              ? Column(
+                  children: [
+                    Container(
+                      height: .5,
+                      color: Colors.grey,
+                    ),
+                    Container(
+                      color: Colors.grey[300],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          SizedBox(
+                            width: textBoxSize,
+                            child: Text("Conf#", textAlign: TextAlign.center),
                           ),
-                        ),
-                        Expanded(
-                          child: Text(
-                              "You do not have any past trips to view yet."),
-                        ),
-                      ],
-                    )
-                  : getPastTripListViews(pastTrips)),
-        ],
-      ),
+                          Spacer(
+                            flex: 10,
+                          ),
+                          SizedBox(
+                            width: textBoxSize,
+                            child: Text("Yacht", textAlign: TextAlign.center),
+                          ),
+                          Spacer(
+                            flex: 10,
+                          ),
+                          SizedBox(
+                            width: textBoxSize,
+                            child: Text(
+                              "Embarkment Date",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            width: textBoxSize / 2,
+                          ),
+                          SizedBox(
+                            width: textBoxSize / 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child:
+                          Text("You do not have any past trips to view yet."),
+                    ),
+                  ],
+                )
+              : getPastTripListViews(pastTrips)),
     );
   }
 
@@ -183,6 +170,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     });
 
     return ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: upcomingTripsList.length,
         itemBuilder: (context, position) {
@@ -250,6 +238,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     });
 
     return ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: pastTripsList.length,
         itemBuilder: (context, position) {
@@ -378,8 +367,8 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         colorFilter:
             ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
-          "assets/tempbkg.png", //TODO replace with final graphic
-          fit: BoxFit.fill,
+          "assets/pagebackground.png",
+          fit: BoxFit.cover,
           height: double.infinity,
           width: double.infinity,
         ),

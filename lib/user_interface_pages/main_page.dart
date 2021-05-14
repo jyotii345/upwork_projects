@@ -213,8 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const url = 'tel:7069932531';
     try {
       await launch(url);
-    }
-    catch(e){
+    } catch (e) {
       print(e.toString());
     }
   }
@@ -269,7 +268,12 @@ class _MyHomePageState extends State<MyHomePage> {
     /*
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
+
+    double iconSize = MediaQuery.of(context).size.width / 8;
     return BottomNavigationBar(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      selectedFontSize: 0,
       type: BottomNavigationBarType.fixed,
       onTap: currentUser == null ? (int) {} : onTabTapped,
       backgroundColor: AggressorColors.primaryColor,
@@ -279,29 +283,78 @@ class _MyHomePageState extends State<MyHomePage> {
       unselectedItemColor: Colors.white60,
       items: [
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/trips.png"),
-          //TODO replace with final graphic
-          label: 'MY TRIPS',
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/tripsactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/tripspassive.png"),
+          ),
+          label: '',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/notes.png"),
-          //TODO replace with final graphic
-          label: 'NOTES',
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/notesactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/notespassive.png"),
+          ),
+          label: '',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/photos.png"),
-          //TODO replace with final graphic
-          label: 'PHOTOS',
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/photosactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/photospassive.png"),
+          ),
+          label: '',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/rewards.png"),
-          //TODO replace with final graphic
-          label: 'REWARDS',
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/rewardsactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/rewardspassive.png"),
+          ),
+          label: '',
         ),
         new BottomNavigationBarItem(
-          icon: Image.asset("assets/files.png"),
-          //TODO replace with final graphic
-          label: 'MY FILES',
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/filesactive.png",
+            ),
+          ), icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/filespassive.png"),
+          ),
+          label: '',
         ),
       ],
     );

@@ -282,10 +282,10 @@ class MyProfileState extends State<MyProfile>
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
-          "assets/tempbkg.png", //TODO replace with final graphic
-          fit: BoxFit.fill,
+          "assets/pagebackground.png",
+          fit: BoxFit.cover,
           height: double.infinity,
           width: double.infinity,
         ),

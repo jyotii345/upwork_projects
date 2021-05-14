@@ -945,10 +945,10 @@ class EditMyProfileState extends State<EditMyProfile>
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
-          "assets/tempbkg.png", //TODO replace with final graphic
-          fit: BoxFit.fill,
+          "assets/pagebackground.png",
+          fit: BoxFit.cover,
           height: double.infinity,
           width: double.infinity,
         ),
@@ -985,7 +985,7 @@ class EditMyProfileState extends State<EditMyProfile>
               ),
             ),
             TextButton(
-                child: Image(image: AssetImage("assets/files.png")),
+                child: Image(image: AssetImage("assets/filesactive.png"),height: MediaQuery.of(context).size.width / 10,width: MediaQuery.of(context).size.width / 10),
                 onPressed: () {
                   //TODO implement button function
                 }),

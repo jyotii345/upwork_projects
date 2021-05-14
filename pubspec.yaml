@@ -87,12 +87,20 @@ flutter:
 
 
   assets:
-    - assets/trips.png
-    - assets/notes.png
-    - assets/photos.png
-    - assets/rewards.png
-    - assets/files.png
+    - assets/tripsactive.png
+    - assets/tripspassive.png
+    - assets/notesactive.png
+    - assets/notespassive.png
+    - assets/photosactive.png
+    - assets/photospassive.png
+    - assets/rewardsactive.png
+    - assets/rewardspassive.png
+    - assets/filesactive.png
+    - assets/filespassive.png
+    - assets/notesblue.png
+    - assets/photosblue.png
+    - assets/addphotosblue.png
     - assets/logo.png
     - assets/bkg.png
-    - assets/tempbkg.png
+    - assets/pagebackground.png
     - assets/bannerimage.png

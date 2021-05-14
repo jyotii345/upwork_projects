@@ -375,10 +375,10 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
-          "assets/tempbkg.png", //TODO replace with final graphic
-          fit: BoxFit.fill,
+          "assets/pagebackground.png",
+          fit: BoxFit.cover,
           height: double.infinity,
           width: double.infinity,
         ),
@@ -399,6 +399,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPageTitle() {
+    double iconSize  = MediaQuery.of(context).size.width / 10;
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
       child: Container(
@@ -415,12 +416,12 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               ),
             ),
             TextButton(
-                child: Image(image: AssetImage("assets/files.png")),
+                child: Image(image: AssetImage("assets/filesactive.png"),height: iconSize, width: iconSize,), //TODO get blue files image asset
                 onPressed: () {
                   //TODO implement button function
                 }),
             TextButton(
-                child: Image(image: AssetImage("assets/photos.png")),
+                child: Image(image: AssetImage("assets/photosblue.png"),height: iconSize, width: iconSize),
                 onPressed: () {
                   //TODO implement button function
                 }),

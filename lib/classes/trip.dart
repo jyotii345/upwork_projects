@@ -44,7 +44,6 @@ class Trip {
     this.reservationId = reservationId;
   }
 
-  //TODO add a trip with details constructor
 
   Trip.TripWithDetails(
       String tripDate,
@@ -88,7 +87,6 @@ class Trip {
   factory Trip.fromJson(Map<String, dynamic> json) {
     //create a trip object from a json file
     return Trip(
-      //TODO add detail information to map
       json['tripDate'].toString(),
       json['title'].toString(),
       json['latitude'].toString(),
@@ -140,7 +138,6 @@ class Trip {
   factory Trip.fromMap(Map<String, dynamic> map) {
     //create a trip object from a json file
     return Trip.TripWithDetails(
-      //TODO add detail information to map
       map['tripDate'].toString(),
       map['title'].toString(),
       map['latitude'].toString(),
@@ -259,9 +256,9 @@ class Trip {
                         child: TextButton(
                             style:
                                 TextButton.styleFrom(padding: EdgeInsets.zero),
-                            child: Image.asset("assets/notes.png"),
+                            child: Image.asset("assets/notesblue.png"),
                             onPressed:
-                                () {}), //TODO replace with final image resource
+                                () {}), //TODO add on pressed function
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -509,8 +506,7 @@ class Trip {
               SizedBox(
                 width: textBoxSize / 2,
                 child: IconButton(
-                    icon: Image.asset("assets/notes.png"),
-                    //TODO replace with final graphic
+                    icon: Image.asset("assets/notesblue.png"),
                     onPressed: () {
                       print("pressed");
                     }),
@@ -518,8 +514,7 @@ class Trip {
               SizedBox(
                 width: textBoxSize / 2,
                 child: IconButton(
-                    icon: Image.asset("assets/photos.png"),
-                    //TODO replace with final graphic
+                    icon: Image.asset("assets/photosblue.png"),
                     onPressed: () {
                       print("pressed");
                     }),
