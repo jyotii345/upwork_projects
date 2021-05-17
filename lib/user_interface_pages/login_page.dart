@@ -72,7 +72,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
   self implemented
    */
 
-  Widget getBackgroundImage(){
+  Widget getBackgroundImage() {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: Image.asset(
@@ -217,20 +217,16 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
     passwordController.clear();
     //creates a get request to the API authentication method for login verification
-    if(password == "" || username == ""){
+    if (password == "" || username == "") {
       setState(() {
         isLoading = false;
-        errorText =
-        "username or password was left blank";
+        errorText = "username or password was left blank";
       });
     }
-
-
 
     var loginResponse = await AggressorApi().getUserLogin(username, password);
 
     if (loginResponse["status"] == "success") {
-
       setState(() {
         isLoading = false;
       });
@@ -249,7 +245,6 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MyApp()));
-
     } else {
       setState(() {
         isLoading = false;
@@ -283,6 +278,44 @@ class _LoginSignUpPageState extends State<LoginPage> {
     database = await UserDatabaseHelper.instance.database;
   }
 
+  void showConfirmationDialogue() {
+    TextEditingController emailConfirmationController = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+              title: new Text('Forgot Password'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Please enter the email associated with your account"),
+                  TextField(
+                    controller: emailConfirmationController,
+                    decoration: new InputDecoration(
+                        border: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.only(
+                            left: 0, bottom: 0, top: 11, right: 15),
+                        hintText: "email"),
+                  )
+                ],
+              ),
+              actions: <Widget>[
+                new TextButton(
+                    onPressed: () async {
+                      var response = await AggressorApi().sendForgotPassword(emailConfirmationController.value.text);
+                      Navigator.pop(context);
+                      setState(() {
+                        errorText = response["message"];
+                      });
+                    },
+                    child: new Text('Continue')),
+              ],
+            ));
+  }
+
   Widget getToolbar() {
     //returns widgets for create account and forgot password
     return Row(
@@ -290,8 +323,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
       children: [
         TextButton(
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => RegistrationPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => RegistrationPage()));
           },
           child: Text(
             "Create Account",
@@ -308,7 +341,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
         ),
         TextButton(
           onPressed: () {
-            print("forgot password");
+            showConfirmationDialogue();
           },
           child: Text(
             "Forgot Password",

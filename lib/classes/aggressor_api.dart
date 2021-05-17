@@ -309,4 +309,27 @@ class AggressorApi {
 
     return jsonDecode(response.body);
   }
+
+  Future<dynamic> sendForgotPassword(
+      String email,
+      ) async {
+    //saves the updated profile data for the userId provided
+
+    print(email);
+    Response response = await post(
+      Uri.https('secure.aggressor.com', "api/app/authentication/forgotpassword"),
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body:  jsonEncode(<String, dynamic>{
+        'email': email,
+      })
+    );
+    print(response.body);
+
+    return jsonDecode(response.body);
+  }
+
+
 }

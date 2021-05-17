@@ -1,10 +1,14 @@
+import 'dart:io';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/aws_helper.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Photos extends StatefulWidget {
@@ -223,23 +227,48 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
     }
 
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
-        enableCamera: true,
-        selectedAssets: images,
-        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-        materialOptions: MaterialOptions(
-          actionBarColor: "#ff428cc7",
-          actionBarTitle: "Example App",
-          allViewTitle: "All Photos",
-          useDetailsView: false,
-          selectCircleStrokeColor: "#ff428cc7",
-        ),
-      );
-    } catch (e) {
-      print(e.toString());
-    }
+    //try {
+    resultList = await MultiImagePicker.pickImages(
+      maxImages: 300,
+      enableCamera: true,
+      selectedAssets: images,
+      cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+      materialOptions: MaterialOptions(
+        actionBarColor: "#ff428cc7",
+        actionBarTitle: "Example App",
+        allViewTitle: "All Photos",
+        useDetailsView: false,
+        selectCircleStrokeColor: "#ff428cc7",
+      ),
+    );
+
+    //TODO upload to aws for testing
+    print(File(
+        await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier)));
+
+    String region = "us-east-1";
+    String bucketId = "aggressor.app.user.images";
+    String directory = widget.user.userId.toString() +
+        "/gallery/" +
+        selectionTrip.charterId.toString() +
+        "_" +
+        selectionTrip.tripDate.toString();
+
+    File file = File(
+        await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier));
+
+    print("uploading");
+    await AwsS3.uploadFile(
+      accessKey: "AKIA43MMI6CI2KP4CUUY",
+      secretKey: "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",
+      file: file,
+      bucket: bucketId,
+      region: region,
+      destDir: directory,
+    );
+    // } catch (e) {
+    //   print(e.toString());
+    // }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -300,48 +329,67 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       child: Stack(
         children: [
           Container(
-              color: Colors.white,
-              height: MediaQuery.of(context).size.height / 6.5,
-              width: double.infinity,
-              child: galleriesList.length == 0
-                  ? Column(
-                      children: [
-                        Container(
-                          height: .5,
-                          color: Colors.grey,
-                        ),
-                        Container(
-                          color: Colors.grey[300],
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text("Destination:",
-                                    textAlign: TextAlign.center),
+            color: Colors.white,
+            height: MediaQuery.of(context).size.height / 6.5,
+            width: double.infinity,
+            child: FutureBuilder(
+              future: getGalleries(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  galleriesList.clear();
+                  if (snapshot.data.keyCount == 0) {
+                    galleriesList = [];
+                  } else {
+                    print("handle galleries objects here");
+                  }
+
+                  return galleriesList.length == 0
+                      ? Column(
+                          children: [
+                            Container(
+                              height: .5,
+                              color: Colors.grey,
+                            ),
+                            Container(
+                              color: Colors.grey[300],
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  SizedBox(
+                                    width: textBoxSize,
+                                    child: Text("Destination:",
+                                        textAlign: TextAlign.center),
+                                  ),
+                                  Spacer(
+                                    flex: 10,
+                                  ),
+                                  SizedBox(
+                                    width: textBoxSize,
+                                    child: Text("Date:",
+                                        textAlign: TextAlign.center),
+                                  ),
+                                  Spacer(
+                                    flex: 10,
+                                  ),
+                                ],
                               ),
-                              Spacer(
-                                flex: 10,
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child:
-                                    Text("Date:", textAlign: TextAlign.center),
-                              ),
-                              Spacer(
-                                flex: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                              "You do not have any photo galleries to view yet."),
-                        ),
-                      ],
-                    )
-                  : getGalleriesListView(galleriesList)),
+                            ),
+                            Expanded(
+                              child: Text(
+                                  "You do not have any photo galleries to view yet."),
+                            ),
+                          ],
+                        )
+                      : getGalleriesListView(galleriesList);
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -443,8 +491,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Future<void> getGalleries() async {
-    print("getting  galleries");
+  Future<ListBucketResult> getGalleries() async {
     String region = "us-east-1";
     String bucketId = "aggressor.app.user.images";
     final AwsS3Client s3client = AwsS3Client(
@@ -456,7 +503,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     ListBucketResult listBucketResult = await s3client.listObjects(
         prefix: widget.user.userId + "/gallery/", delimiter: "/");
-    print(listBucketResult.toString());
+    return listBucketResult;
   }
 
   @override
