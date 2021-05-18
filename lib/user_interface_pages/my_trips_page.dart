@@ -70,7 +70,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   self implemented
    */
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController controller) { //TODO ios google maps install
     _controller.complete(controller);
   }
 

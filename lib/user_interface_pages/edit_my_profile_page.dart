@@ -150,7 +150,7 @@ class EditMyProfileState extends State<EditMyProfile>
           }
         }
 
-        if(totalDives == ""){
+        if (totalDives == "") {
           totalDives = null;
         }
 
@@ -344,10 +344,21 @@ class EditMyProfileState extends State<EditMyProfile>
                   ),
                 ),
               ),
-              profileImagePath == ""
-                  ? Text("No file chosen")
-                  : Text(profileImagePath,
-                style: TextStyle(color: Colors.black, fontSize: textSize),)
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width -
+                      (textDisplayWidth + textSize * 11),
+                  child: profileImagePath == ""
+                      ? Text("No file chosen")
+                      : Text(
+                          profileImagePath,
+                          textAlign: TextAlign.center,
+                          style:
+                              TextStyle(color: Colors.black, fontSize: textSize),
+                        ),
+                ),
+              ),
             ],
           )
         ],
@@ -946,7 +957,7 @@ class EditMyProfileState extends State<EditMyProfile>
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -986,7 +997,10 @@ class EditMyProfileState extends State<EditMyProfile>
               ),
             ),
             TextButton(
-                child: Image(image: AssetImage("assets/filesblue.png"),height: MediaQuery.of(context).size.width / 10,width: MediaQuery.of(context).size.width / 10),
+                child: Image(
+                    image: AssetImage("assets/filesblue.png"),
+                    height: MediaQuery.of(context).size.width / 10,
+                    width: MediaQuery.of(context).size.width / 10),
                 onPressed: () {
                   //TODO implement button function
                 }),
