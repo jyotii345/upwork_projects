@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'main_page.dart';
+import '../main.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage(this.loginCallback);

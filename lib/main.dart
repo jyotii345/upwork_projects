@@ -11,10 +11,10 @@ import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'login_page.dart';
-import 'my_profile_page.dart';
-import 'my_trips_page.dart';
-import 'notes_page.dart';
+import 'user_interface_pages/login_page.dart';
+import 'user_interface_pages/my_profile_page.dart';
+import 'user_interface_pages/my_trips_page.dart';
+import 'user_interface_pages/notes_page.dart';
 
 final AsyncMemoizer loginMemoizer = AsyncMemoizer();
 
