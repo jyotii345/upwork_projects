@@ -217,8 +217,8 @@ class Trip {
                       children: [
                         Container(
                           color: Colors.grey[200],
-                          height: MediaQuery.of(context).size.height / 7,
-                          width: MediaQuery.of(context).size.height / 7,
+                          height: textBoxSize * 1.5,
+                          width: textBoxSize * 1.5,
                           child: imageResource == null
                               ? Icon(
                                   //TODO find a way to get boat images

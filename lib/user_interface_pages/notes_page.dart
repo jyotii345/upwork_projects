@@ -1,4 +1,4 @@
-import 'package:aggressor_adventures/classes/aggressor_api.dart';
+
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -74,9 +74,10 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
+        width: MediaQuery.of(context).size.width - 20,
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
           child: ListView(
             children: [
               Container(
@@ -127,17 +128,18 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 3,
-            width: MediaQuery.of(context).size.width / 1.6,
-            child: FlutterSummernote(
-              key: preNotesEditor,
-              hasAttachment: false,
-              customToolbar: """
-                              [
-                              ]
-                             """,
-              showBottomToolbar: false,
+          Expanded(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 3,
+              child: FlutterSummernote(
+                key: preNotesEditor,
+                hasAttachment: false,
+                customToolbar: """
+                                [
+                                ]
+                               """,
+                showBottomToolbar: false,
+              ),
             ),
           ),
         ],
@@ -162,18 +164,18 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 3,
-            width: MediaQuery.of(context).size.width / 1.6,
-            child: FlutterSummernote(
-              //TODO fix text size
-              key: postNotesEditor,
-              hasAttachment: false,
-              customToolbar: """
-          [
-          ]
+          Expanded(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 3,
+              child: FlutterSummernote(
+                key: postNotesEditor,
+                hasAttachment: false,
+                customToolbar: """
+            [
+            ]
         """,
-              showBottomToolbar: false,
+                showBottomToolbar: false,
+              ),
             ),
           ),
         ],
@@ -198,18 +200,18 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               ),
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 3,
-            width: MediaQuery.of(context).size.width / 1.6,
-            child: FlutterSummernote(
-              //TODO fix text size
-              key: miscNotesEditor,
-              hasAttachment: false,
-              customToolbar: """
-          [
-          ]
+          Expanded(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 3,
+              child: FlutterSummernote(
+                key: miscNotesEditor,
+                hasAttachment: false,
+                customToolbar: """
+            [
+            ]
         """,
-              showBottomToolbar: false,
+                showBottomToolbar: false,
+              ),
             ),
           ),
         ],
@@ -237,47 +239,48 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                   fontSize: MediaQuery.of(context).size.height / 45 - 4),
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 45,
-            width: MediaQuery.of(context).size.width / 2,
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          Expanded(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 45,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ),
               ),
-            ),
-            child: DropdownButton<Trip>(
-              underline: Container(),
-              value: dropDownValue,
-              elevation: 0,
-              isExpanded: true,
-              iconSize: MediaQuery.of(context).size.height / 40,
-              onChanged: (Trip newValue) {
-                setState(() {
-                  dropDownValue = newValue;
-                  departureDate = newValue.tripDate;
-                  returnDate =
-                      "not implemented"; //TODO place return date here when uploaded
-                });
-              },
-              items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
-                return DropdownMenuItem<Trip>(
-                  value: value,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height / 45,
-                    width: MediaQuery.of(context).size.width / 2 -
-                        MediaQuery.of(context).size.height / 40 -
-                        10,
-                    child: Text(
-                      value.detailDestination,
-                      style: TextStyle(
-                          fontSize:
-                              MediaQuery.of(context).size.height / 45 - 4),
-                      textAlign: TextAlign.center,
+              child: DropdownButton<Trip>(
+                underline: Container(),
+                value: dropDownValue,
+                elevation: 0,
+                isExpanded: true,
+                iconSize: MediaQuery.of(context).size.height / 40,
+                onChanged: (Trip newValue) {
+                  setState(() {
+                    dropDownValue = newValue;
+                    departureDate = newValue.tripDate;
+                    returnDate =
+                        "not implemented"; //TODO place return date here when uploaded
+                  });
+                },
+                items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
+                  return DropdownMenuItem<Trip>(
+                    value: value,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height / 45,
+                      width: MediaQuery.of(context).size.width / 2 -
+                          MediaQuery.of(context).size.height / 40 -
+                          10,
+                      child: Text(
+                        value.detailDestination,
+                        style: TextStyle(
+                            fontSize:
+                                MediaQuery.of(context).size.height / 45 - 4),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ],
@@ -307,20 +310,21 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                   fontSize: MediaQuery.of(context).size.height / 45 - 4),
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 45,
-            width: MediaQuery.of(context).size.width / 2,
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          Expanded(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 45,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ),
               ),
-            ),
-            child: Text(
-              departureDate,
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
-              textAlign: TextAlign.center,
+              child: Text(
+                departureDate,
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ],
@@ -342,10 +346,10 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                   fontSize: MediaQuery.of(context).size.height / 45 - 4),
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 45,
-            width: MediaQuery.of(context).size.width / 2,
-            decoration: ShapeDecoration(
+    Expanded(
+    child: Container(
+    height: MediaQuery.of(context).size.height / 45,
+    decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
                 side: BorderSide(width: 1.0, style: BorderStyle.solid),
                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -362,7 +366,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                     fontSize: MediaQuery.of(context).size.height / 45 - 4),
                 textAlign: TextAlign.center,
               ),
-            ),
+            ),),
           ),
         ],
       ),
@@ -399,9 +403,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPageTitle() {
-    double iconSize  = MediaQuery.of(context).size.width / 10;
+    double iconSize = MediaQuery.of(context).size.width / 10;
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: Container(
         width: MediaQuery.of(context).size.width,
         child: Row(
@@ -411,17 +415,24 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 "My Trip Notes",
                 style: TextStyle(
                     color: AggressorColors.primaryColor,
-                    fontSize: MediaQuery.of(context).size.height / 25,
+                    fontSize: MediaQuery.of(context).size.height / 26,
                     fontWeight: FontWeight.bold),
               ),
             ),
             TextButton(
-                child: Image(image: AssetImage("assets/filesblue.png"),height: iconSize, width: iconSize,), //TODO get blue files image asset
+                child: Image(
+                  image: AssetImage("assets/filesblue.png"),
+                  height: iconSize,
+                  width: iconSize,
+                ),
                 onPressed: () {
                   //TODO implement button function
                 }),
             TextButton(
-                child: Image(image: AssetImage("assets/photosblue.png"),height: iconSize, width: iconSize),
+                child: Image(
+                    image: AssetImage("assets/photosblue.png"),
+                    height: iconSize,
+                    width: iconSize),
                 onPressed: () {
                   //TODO implement button function
                 }),

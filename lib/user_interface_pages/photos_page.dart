@@ -91,42 +91,44 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height / 35,
-            width: MediaQuery.of(context).size.width / 1.75,
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          Expanded(
+            child: Container(
+
+              height: MediaQuery.of(context).size.height / 35,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ),
               ),
-            ),
-            child: DropdownButton<Trip>(
-              underline: Container(),
-              value: dropDownValue,
-              elevation: 0,
-              isExpanded: true,
-              iconSize: MediaQuery.of(context).size.height / 35,
-              onChanged: (Trip newValue) {
-                setState(() {
-                  dropDownValue = newValue;
-                  departureDate = newValue.tripDate;
-                });
-              },
-              items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
-                return DropdownMenuItem<Trip>(
-                  value: value,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: Text(
-                      value.detailDestination,
-                      style: TextStyle(
-                          fontSize:
-                              MediaQuery.of(context).size.height / 40 - 4),
-                      textAlign: TextAlign.center,
+              child: DropdownButton<Trip>(
+                underline: Container(),
+                value: dropDownValue,
+                elevation: 0,
+                isExpanded: true,
+                iconSize: MediaQuery.of(context).size.height / 35,
+                onChanged: (Trip newValue) {
+                  setState(() {
+                    dropDownValue = newValue;
+                    departureDate = newValue.tripDate;
+                  });
+                },
+                items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
+                  return DropdownMenuItem<Trip>(
+                    value: value,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: Text(
+                        value.detailDestination,
+                        style: TextStyle(
+                            fontSize:
+                                MediaQuery.of(context).size.height / 40 - 4),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ],
@@ -176,21 +178,22 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
           ),
-          Container(
-              height: MediaQuery.of(context).size.height / 35,
-              width: MediaQuery.of(context).size.width / 1.75,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          Expanded(
+            child: Container(
+                height: MediaQuery.of(context).size.height / 35,
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
                 ),
-              ),
-              child: Text(
-                departureDate,
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 40 - 4),
-                textAlign: TextAlign.center,
-              )),
+                child: Text(
+                  departureDate,
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height / 40 - 4),
+                  textAlign: TextAlign.center,
+                )),
+          ),
         ],
       ),
     );

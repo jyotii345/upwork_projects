@@ -104,21 +104,22 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               TextStyle(fontSize: MediaQuery.of(context).size.height / 45),
             ),
           ),
-          Container(
-              height: MediaQuery.of(context).size.height / 35,
-              width: MediaQuery.of(context).size.width / 1.75,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          Expanded(
+            child: Container(
+                height: MediaQuery.of(context).size.height / 35,
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
                 ),
-              ),
-              child: Text(
-                fileName,
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 40 - 4),
-                textAlign: TextAlign.center,
-              )),
+                child: Text(
+                  fileName,
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height / 40 - 4),
+                  textAlign: TextAlign.center,
+                )),
+          ),
         ],
       ),
     );

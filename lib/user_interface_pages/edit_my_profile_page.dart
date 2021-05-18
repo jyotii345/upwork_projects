@@ -346,7 +346,8 @@ class EditMyProfileState extends State<EditMyProfile>
               ),
               profileImagePath == ""
                   ? Text("No file chosen")
-                  : Text(profileImagePath)
+                  : Text(profileImagePath,
+                style: TextStyle(color: Colors.black, fontSize: textSize),)
             ],
           )
         ],
