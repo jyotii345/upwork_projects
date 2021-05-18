@@ -500,9 +500,15 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         bucketId: bucketId,
         accessKey: "AKIA43MMI6CI2KP4CUUY",
         secretKey: "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");
-
-    ListBucketResult listBucketResult = await s3client.listObjects(
-        prefix: widget.user.userId + "/gallery/", delimiter: "/");
+    ListBucketResult listBucketResult;
+    try {
+       listBucketResult = await s3client.listObjects(
+          prefix: widget.user.userId + "/gallery/", delimiter: "/");
+    }
+    catch(e){
+      print(e.toString());
+      listBucketResult = ListBucketResult();
+    }
     return listBucketResult;
   }
 
