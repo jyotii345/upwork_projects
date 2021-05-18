@@ -104,7 +104,8 @@ flutter:
     - assets/notesblue.png
     - assets/photosblue.png
     - assets/addphotosblue.png
+    - assets/filesblue.png
     - assets/logo.png
-    - assets/bkg.png
+    - assets/loginbackground.png
     - assets/pagebackground.png
     - assets/bannerimage.png

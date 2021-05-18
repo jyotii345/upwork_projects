@@ -76,8 +76,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: Image.asset(
-        "assets/bkg.png", //TODO replace with real image asset
-        fit: BoxFit.fill,
+        "assets/loginbackground.png",
+        fit: BoxFit.fitHeight,
         height: double.infinity,
         width: double.infinity,
       ),
@@ -93,7 +93,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
       children: [
         Padding(
           padding: EdgeInsets.fromLTRB(
-              25, MediaQuery.of(context).size.height / 4.5, 25, 5),
+              25, MediaQuery.of(context).size.height / 4, 25, 5),
           child: getUserTextField(),
         ),
         Padding(

@@ -416,7 +416,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               ),
             ),
             TextButton(
-                child: Image(image: AssetImage("assets/filesactive.png"),height: iconSize, width: iconSize,), //TODO get blue files image asset
+                child: Image(image: AssetImage("assets/filesblue.png"),height: iconSize, width: iconSize,), //TODO get blue files image asset
                 onPressed: () {
                   //TODO implement button function
                 }),

@@ -985,7 +985,7 @@ class EditMyProfileState extends State<EditMyProfile>
               ),
             ),
             TextButton(
-                child: Image(image: AssetImage("assets/filesactive.png"),height: MediaQuery.of(context).size.width / 10,width: MediaQuery.of(context).size.width / 10),
+                child: Image(image: AssetImage("assets/filesblue.png"),height: MediaQuery.of(context).size.width / 10,width: MediaQuery.of(context).size.width / 10),
                 onPressed: () {
                   //TODO implement button function
                 }),
