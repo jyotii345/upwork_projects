@@ -35,10 +35,12 @@ class PhotoDatabaseHelper {
         version: _databaseVersion, onCreate: _onCreate);
   }
 
+
+
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE photo(id INTEGER PRIMARY KEY,imagePath TEXT,galleryId TEXT,imageBytes TEXT)",
+      "CREATE TABLE photo(id INTEGER PRIMARY KEY,imageName TEXT,userId TEXT,gallery TEXT,charterId TEXT)",
     );
   }
 
@@ -88,11 +90,13 @@ class PhotoDatabaseHelper {
 
     final List<Map<String, dynamic>> maps = await db.query('photo');
 
+
     return List.generate(maps.length, (i) {
       return Photo(
-        maps[i]['imagePath'],
-        maps[i]['galleryId'],
-        maps[i]['imageBytes'],
+        maps[i]['imageName'],
+        maps[i]['userId'],
+        maps[i]['gallery'],
+        maps[i]['charterId'],
       );
     });
   }

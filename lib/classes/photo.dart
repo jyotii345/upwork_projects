@@ -1,26 +1,29 @@
 import 'dart:ui';
 
 class Photo {
-  String imagePath;
-  String galleryName;
-  String imageBytes;
+  String imageName;
+  String userId;
+  String gallery;
+  String charterId;
 
   Photo(
+      String imageName,
       String userId,
-      String nameF,
-      String nameL,
+      String gallery,String charterId
       ) {
-    this.imagePath = imagePath;
-    this.galleryName = galleryName;
-    this.imageBytes = imageBytes;
+    this.imageName = imageName;
+    this.userId = userId;
+    this.gallery = gallery;
+    this.charterId = charterId;
   }
 
   Map<String, dynamic> toMap() {
     //create a map object from user object
     return {
-      'imagePath': imagePath,
-      'nameF': imageBytes,
-      'nameL': imageBytes,
+      'imageName': imageName,
+      'userId': userId,
+      'gallery': gallery,
+      'charterId' : charterId,
     };
   }
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
-import 'package:aggressor_adventures/classes/aws_helper.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Photos extends StatefulWidget {
@@ -93,7 +92,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           ),
           Expanded(
             child: Container(
-
               height: MediaQuery.of(context).size.height / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
@@ -245,37 +243,18 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       ),
     );
 
-    //TODO upload to aws for testing
-    print(File(
-        await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier)));
-
-    String region = "us-east-1";
-    String bucketId = "aggressor.app.user.images";
-    String directory = widget.user.userId.toString() +
-        "/gallery/" +
-        selectionTrip.charterId.toString() +
-        "_" +
-        selectionTrip.tripDate.toString();
-
-    File file = File(
-        await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier));
-
     print("uploading");
-    await AwsS3.uploadFile(
-      accessKey: "AKIA43MMI6CI2KP4CUUY",
-      secretKey: "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",
-      file: file,
-      bucket: bucketId,
-      region: region,
-      destDir: directory,
-    );
-    // } catch (e) {
-    //   print(e.toString());
-    // }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
+    resultList.forEach((element) async {
+      File file =
+          File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+
+       var response = await AggressorApi().uploadAwsFile(
+          widget.user.userId, "gallery", dropDownValue.charterId, file.path);
+       print("received");
+      print(response.toString());
+    });
+
     if (!mounted) return;
 
     setState(() {
@@ -505,13 +484,13 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         secretKey: "XW9mCcLYk9zn2/PRfln3bSuRdHe3bL34Wx0NarqC");
     ListBucketResult listBucketResult;
     try {
-       listBucketResult = await s3client.listObjects(
+      listBucketResult = await s3client.listObjects(
           prefix: widget.user.userId + "/gallery/", delimiter: "/");
-    }
-    catch(e){
+    } catch (e) {
       print(e.toString());
       listBucketResult = ListBucketResult();
     }
+    print(listBucketResult);
     return listBucketResult;
   }
 

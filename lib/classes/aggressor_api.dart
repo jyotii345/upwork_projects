@@ -4,6 +4,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:http/http.dart' as http;
 
 class AggressorApi {
   final String apiKey = "pwBL1rik1hyi5JWPid";
@@ -309,6 +310,32 @@ class AggressorApi {
 
     return jsonDecode(response.body);
   }
+
+
+  Future<dynamic> uploadAwsFile(
+      String userId,
+      String gallery,
+      String charterId,
+      String filePath
+      ) async {
+    //saves the updated profile data for the userId provided
+
+    String url = "https://secure.aggressor.com/api/app/gallery/upload/" + userId.toString() + "/" + "gallery" + "/" + charterId.toString();
+
+    var uri = Uri.parse(url);
+    MultipartRequest request = http.MultipartRequest('POST', uri);
+    request.headers.addEntries([MapEntry('apikey', apiKey)]);
+    request.files.add(await http.MultipartFile.fromPath('file', filePath));
+    StreamedResponse response = await request.send();
+
+    var jsonResponse = await json.decode(await response.stream.bytesToString());
+    print(jsonResponse.toString());
+    print(jsonResponse.runtimeType);
+    if (jsonResponse["status"] == "success") print('Uploaded!');
+
+    return Map<String, dynamic>.from(jsonResponse);
+  }
+
 
   Future<dynamic> sendForgotPassword(
       String email,
