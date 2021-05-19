@@ -333,6 +333,7 @@ class AggressorApi {
     print(jsonResponse.runtimeType);
     if (jsonResponse["status"] == "success") print('Uploaded!');
 
+    print(jsonResponse.toString());
     return Map<String, dynamic>.from(jsonResponse);
   }
 

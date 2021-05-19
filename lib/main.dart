@@ -89,29 +89,11 @@ class _MyHomePageState extends State<MyHomePage> {
         automaticallyImplyLeading: false,
         leading: SizedBox(
           height: AppBar().preferredSize.height,
-          child: Column(
-            children: [
-              Flexible(
-                flex: 1,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.phone_enabled_rounded,
-                    color: Color(0xff59a3c0),
-                  ),
-                  onPressed: makeCall,
-                ),
-              ),
-              Flexible(
-                flex: 0,
-                child: Text(
-                  "CALL",
-                  style: TextStyle(
-                      color: Color(0xff59A3C0),
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+          child: IconButton(
+            icon: Container(
+              child: Image.asset("assets/callicon.png"),
+            ),
+            onPressed: makeCall,
           ),
         ),
         title: Image.asset(
@@ -124,39 +106,25 @@ class _MyHomePageState extends State<MyHomePage> {
             padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
             child: SizedBox(
               height: AppBar().preferredSize.height,
-              child: Column(
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child: PopupMenuButton<String>(
-                        onSelected: handlePopupClick,
-                        child: Icon(
-                          Icons.menu,
-                          color: Color(0xff59A3C0),
-                          size: 30,
-                        ),
-                        itemBuilder: (BuildContext context) {
-                          return {
-                            "My Profile",
-                          }.map((String option) {
-                            return PopupMenuItem<String>(
-                              value: option,
-                              child: Text(option),
-                            );
-                          }).toList();
-                        }),
-                  ),
-                  Flexible(
-                    flex: 0,
-                    child: Text(
-                      "MENU",
-                      style: TextStyle(
-                          color: Color(0xff59A3C0),
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PopupMenuButton<String>(
+                    onSelected: handlePopupClick,
+                    child: Container(
+                      child: Image.asset(
+                        "assets/menuicon.png",
+                      ),
                     ),
-                  ),
-                ],
+                    itemBuilder: (BuildContext context) {
+                      return {
+                        "My Profile",
+                      }.map((String option) {
+                        return PopupMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList();
+                    }),
               ),
             ),
           ),
@@ -349,7 +317,8 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Image.asset(
               "assets/filesactive.png",
             ),
-          ), icon: Container(
+          ),
+          icon: Container(
             width: iconSize,
             height: iconSize,
             child: Image.asset("assets/filespassive.png"),
@@ -405,5 +374,3 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 }
-
-

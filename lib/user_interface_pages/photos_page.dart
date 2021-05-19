@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
@@ -249,9 +250,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       File file =
           File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
 
-       var response = await AggressorApi().uploadAwsFile(
+      var response = await AggressorApi().uploadAwsFile(
           widget.user.userId, "gallery", dropDownValue.charterId, file.path);
-       print("received");
+      print("received");
       print(response.toString());
     });
 
@@ -484,13 +485,16 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         secretKey: "XW9mCcLYk9zn2/PRfln3bSuRdHe3bL34Wx0NarqC");
     ListBucketResult listBucketResult;
     try {
-      listBucketResult = await s3client.listObjects(
-          prefix: widget.user.userId + "/gallery/", delimiter: "/");
+      widget.tripList.forEach((element) async {
+        //var response = await s3client.listObjects(prefix: widget.user.userId + "/gallery/" + element.charterId + "/",delimiter: "/");
+
+       // print("response:");
+        //print(response.toString());
+      });
     } catch (e) {
       print(e.toString());
       listBucketResult = ListBucketResult();
     }
-    print(listBucketResult);
     return listBucketResult;
   }
 
