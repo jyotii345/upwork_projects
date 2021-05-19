@@ -295,8 +295,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-      child: Stack(
-        children: [
+      child:
           Container(
             color: Colors.white,
             child: FutureBuilder(
@@ -347,8 +346,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               },
             ),
           ),
-        ],
-      ),
     );
   }
 
@@ -361,9 +358,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       Container(
         width: double.infinity,
         color: Colors.grey[100],
-        child: ListView(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+        child: Column(
           children: [
             Container(
               height: .5,
@@ -401,6 +396,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     });
 
     return ListView.builder(
+        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: galleriesList.length,
         itemBuilder: (context, position) {
