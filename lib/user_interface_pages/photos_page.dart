@@ -486,7 +486,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     ListBucketResult listBucketResult;
     try {
       widget.tripList.forEach((element) async {
-        //var response = await s3client.listObjects(prefix: widget.user.userId + "/gallery/" + element.charterId + "/",delimiter: "/");
+          var response = await s3client.listObjects(prefix: widget.user.userId + "/gallery/" + element.charterId + "/",delimiter: "/");
+          if(response.contents != null){
+            print(element.charterId);
+            print(response.contents.toString());
+            //TODO response valid, download files.
+          }
 
        // print("response:");
         //print(response.toString());
