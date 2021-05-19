@@ -15,6 +15,7 @@ import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Photos extends StatefulWidget {
@@ -33,8 +34,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
    */
 
   Trip dropDownValue, selectionTrip;
-  String departureDate = "",
-      errorMessage;
+  String departureDate = "", errorMessage;
   List<Trip> sortedTripList;
   List<dynamic> galleriesList = [];
   List<Asset> images = <Asset>[];
@@ -47,15 +47,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    selectionTrip =
-        Trip(
-            DateTime.now().toString(),
-            "",
-            "",
-            "",
-            " -- SELECT -- ",
-            "",
-            "");
+    selectionTrip = Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
     selectionTrip.detailDestination = " -- SELECT -- ";
     dropDownValue = selectionTrip;
   }
@@ -72,10 +64,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         getBackgroundImage(),
         getPageForm(),
         Container(
-          height: MediaQuery
-              .of(context)
-              .size
-              .height / 7 + 4,
+          height: MediaQuery.of(context).size.height / 7 + 4,
           width: double.infinity,
           color: AggressorColors.secondaryColor,
         ),
@@ -101,25 +90,15 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery
-                .of(context)
-                .size
-                .height / 6,
+            width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "Destination:",
-              style:
-              TextStyle(fontSize: MediaQuery
-                  .of(context)
-                  .size
-                  .height / 50),
+              style: TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
           ),
           Expanded(
             child: Container(
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height / 35,
+              height: MediaQuery.of(context).size.height / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -131,10 +110,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 value: dropDownValue,
                 elevation: 0,
                 isExpanded: true,
-                iconSize: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 35,
+                iconSize: MediaQuery.of(context).size.height / 35,
                 onChanged: (Trip newValue) {
                   setState(() {
                     dropDownValue = newValue;
@@ -145,18 +121,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   return DropdownMenuItem<Trip>(
                     value: value,
                     child: Container(
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width / 2,
+                      width: MediaQuery.of(context).size.width / 2,
                       child: Text(
                         value.detailDestination,
-                        style: TextStyle(
-                            fontSize:
-                            MediaQuery
-                                .of(context)
-                                .size
-                                .height / 40 - 4),
+                        style: TextStyle(fontSize: MediaQuery.of(context).size.height / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -172,8 +140,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   List<Trip> sortTripList(List<Trip> tripList) {
     List<Trip> tempList = tripList;
-    tempList.sort((a, b) =>
-        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+    tempList.sort((a, b) => DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
     return tempList;
   }
@@ -186,14 +153,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         child: ListView(
           children: [
             Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height / 7,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 7,
             ),
             getPageTitle(),
             getCreateNewGallery(),
@@ -211,25 +172,15 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery
-                .of(context)
-                .size
-                .height / 6,
+            width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "Departure Date:",
-              style:
-              TextStyle(fontSize: MediaQuery
-                  .of(context)
-                  .size
-                  .height / 50),
+              style: TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
           ),
           Expanded(
             child: Container(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 35,
+                height: MediaQuery.of(context).size.height / 35,
                 decoration: ShapeDecoration(
                   shape: RoundedRectangleBorder(
                     side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -238,11 +189,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 ),
                 child: Text(
                   departureDate,
-                  style: TextStyle(
-                      fontSize: MediaQuery
-                          .of(context)
-                          .size
-                          .height / 40 - 4),
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.height / 40 - 4),
                   textAlign: TextAlign.center,
                 )),
           ),
@@ -255,10 +202,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     return Row(
       children: [
         SizedBox(
-          width: MediaQuery
-              .of(context)
-              .size
-              .height / 4,
+          width: MediaQuery.of(context).size.height / 4,
         ),
         TextButton(
           onPressed: loadAssets,
@@ -266,8 +210,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             "Upload Photos",
             style: TextStyle(color: Colors.white),
           ),
-          style: TextButton.styleFrom(
-              backgroundColor: AggressorColors.secondaryColor),
+          style: TextButton.styleFrom(backgroundColor: AggressorColors.secondaryColor),
         ),
       ],
     );
@@ -277,8 +220,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     List<Asset> resultList = <Asset>[];
     String error = 'No Error Detected';
 
-    if (await Permission.photos.status.isDenied ||
-        await Permission.camera.status.isDenied) {
+    if (await Permission.photos.status.isDenied || await Permission.camera.status.isDenied) {
       await Permission.photos.request();
       await Permission.camera.request();
 
@@ -301,11 +243,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
 
     resultList.forEach((element) async {
-      File file =
-      File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+      File file = File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
 
-      var response = await AggressorApi().uploadAwsFile(
-          widget.user.userId, "gallery", dropDownValue.charterId, file.path);
+      var response = await AggressorApi().uploadAwsFile(widget.user.userId, "gallery", dropDownValue.charterId, file.path);
     });
 
     if (!mounted) return;
@@ -324,13 +264,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         children: [
           Text(
             "CREATE NEW GALLERY",
-            style: TextStyle(
-                color: AggressorColors.secondaryColor,
-                fontSize: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 35,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: AggressorColors.secondaryColor, fontSize: MediaQuery.of(context).size.height / 35, fontWeight: FontWeight.bold),
           ),
           getDestinationDropdown(widget.tripList),
           getDepartureInformation(),
@@ -348,13 +282,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         children: [
           Text(
             "MY GALLERIES",
-            style: TextStyle(
-                color: AggressorColors.secondaryColor,
-                fontSize: MediaQuery
-                    .of(context)
-                    .size
-                    .height / 35,
-                fontWeight: FontWeight.bold),
+            style: TextStyle(color: AggressorColors.secondaryColor, fontSize: MediaQuery.of(context).size.height / 35, fontWeight: FontWeight.bold),
           ),
           getGalleriesSection(),
         ],
@@ -363,64 +291,53 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getGalleriesSection() {
-    double textBoxSize = MediaQuery
-        .of(context)
-        .size
-        .width / 4.3;
+    double textBoxSize = MediaQuery.of(context).size.width / 4;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
       child: Stack(
         children: [
           Container(
             color: Colors.white,
-            height: MediaQuery
-                .of(context)
-                .size
-                .height / 6.5,
-            width: double.infinity,
             child: FutureBuilder(
               future: getGalleries(),
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
                   return galleriesMap.length == 0
                       ? Column(
-                    children: [
-                      Container(
-                        height: .5,
-                        color: Colors.grey,
-                      ),
-                      Container(
-                        color: Colors.grey[300],
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.max,
                           children: [
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text("Destination:",
-                                  textAlign: TextAlign.center),
+                            Container(
+                              height: .5,
+                              color: Colors.grey,
                             ),
-                            Spacer(
-                              flex: 10,
+                            Container(
+                              color: Colors.grey[300],
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Expanded(
+                                    child: SizedBox(
+                                      width: textBoxSize,
+                                      child: Text("Destination", textAlign: TextAlign.center),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: textBoxSize,
+                                    child: Text("Date", textAlign: TextAlign.center),
+                                  ),
+                                  SizedBox(
+                                    width: textBoxSize / 2,
+                                    child: Container(),
+                                  ),
+                                ],
+                              ),
                             ),
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text("Date:",
-                                  textAlign: TextAlign.center),
-                            ),
-                            Spacer(
-                              flex: 10,
+                            Expanded(
+                              child: Text("You do not have any photo galleries to view yet."),
                             ),
                           ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                            "You do not have any photo galleries to view yet."),
-                      ),
-                    ],
-                  )
+                        )
                       : getGalleriesListView();
                 } else {
                   return Center(
@@ -438,35 +355,37 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Widget getGalleriesListView() {
     //returns the list item containing gallery objects
 
-    double textBoxSize = MediaQuery
-        .of(context)
-        .size
-        .width / 4.3;
+    double textBoxSize = MediaQuery.of(context).size.width / 4;
     galleriesList.clear();
     galleriesList.add(
       Container(
         width: double.infinity,
         color: Colors.grey[100],
-        child: Column(
+        child: ListView(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
           children: [
             Container(
               height: .5,
               color: Colors.grey,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               mainAxisSize: MainAxisSize.max,
               children: [
+                Expanded(
+                  child: SizedBox(
+                    width: textBoxSize,
+                    child: Text("Destination", textAlign: TextAlign.left),
+                  ),
+                ),
                 SizedBox(
                   width: textBoxSize,
-                  child: Text("Destination", textAlign: TextAlign.center),
-                ),
-                Spacer(
-                  flex: 10,
+                  child: Text("Date", textAlign: TextAlign.left),
                 ),
                 SizedBox(
-                  width: textBoxSize,
-                  child: Text("Date", textAlign: TextAlign.center),
+                  width: textBoxSize / 2,
+                  child: Container(),
                 ),
               ],
             ),
@@ -476,7 +395,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
 
     int index = 0;
-    galleriesMap.forEach((key,value) {
+    galleriesMap.forEach((key, value) {
       galleriesList.add(value.getGalleryRow(context, index));
       index++;
     });
@@ -494,8 +413,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
-        colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -509,14 +427,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Widget getBannerImage() {
     //returns banner image
     return Container(
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
-      height: MediaQuery
-          .of(context)
-          .size
-          .height / 7,
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
         fit: BoxFit.cover,
@@ -531,13 +443,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         alignment: Alignment.topLeft,
         child: Text(
           "My Photos",
-          style: TextStyle(
-              color: AggressorColors.primaryColor,
-              fontSize: MediaQuery
-                  .of(context)
-                  .size
-                  .height / 25,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: AggressorColors.primaryColor, fontSize: MediaQuery.of(context).size.height / 25, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -548,46 +454,43 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     if (!photosLoaded) {
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
-      final AwsS3Client s3client = AwsS3Client(
-          region: region,
-          host: "s3.$region.amazonaws.com",
-          bucketId: bucketId,
-          accessKey: "AKIA43MMI6CI2KP4CUUY",
-          secretKey: "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");
+      final AwsS3Client s3client =
+          AwsS3Client(region: region, host: "s3.$region.amazonaws.com", bucketId: bucketId, accessKey: "AKIA43MMI6CI2KP4CUUY", secretKey: "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");
       ListBucketResult listBucketResult;
       PhotoDatabaseHelper photoHelper = PhotoDatabaseHelper.instance;
-      Map<String, Gallery> tempGalleries= <String, Gallery>{};
+      Map<String, Gallery> tempGalleries = <String, Gallery>{};
 
       try {
         widget.tripList.forEach((element) async {
-
-          var response = await s3client.listObjects(
-              prefix:
-              widget.user.userId + "/gallery/" + element.charterId + "/",
-              delimiter: "/");
+          var response = await s3client.listObjects(prefix: widget.user.userId + "/gallery/" + element.charterId + "/", delimiter: "/");
 
           if (response.contents != null) {
             response.contents.forEach((content) async {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.charterId)) {
-                  tempGalleries[element.charterId] =
-                      Gallery(element.charterId, <Photo>[],element);
+                  tempGalleries[element.charterId] = Gallery(element.charterId, <Photo>[], element);
                 }
-                StreamedResponse downloadResponse = await AggressorApi()
-                    .downloadAwsFile(elementJson["Key"].toString());
+                StreamedResponse downloadResponse = await AggressorApi().downloadAwsFile(elementJson["Key"].toString());
 
                 Uint8List bytes = await readByteStream(downloadResponse.stream);
+
                 String fileName = downloadResponse.headers["content-disposition"];
                 int whereIndex = fileName.indexOf("=");
                 fileName = fileName.substring(whereIndex + 1);
                 fileName.replaceAll("\"", "");
+
+                Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+                String appDocumentsPath = appDocumentsDirectory.path; // 2
+                String filePath = '$appDocumentsPath/$fileName';
+                File imageFile = File(filePath);
+                imageFile.writeAsBytes(bytes);
+
                 String date = downloadResponse.headers["date"];
 
-                if (!await photoHelper.photoExists(
-                    fileName, element.charterId)) {
-                  Photo photo = Photo(fileName, widget.user.userId,
-                      bytes.toString(), date, element.charterId);
+                if (!await photoHelper.photoExists(fileName, element.charterId)) {
+                  Photo photo = Photo(fileName, widget.user.userId, imageFile.path, date, element.charterId);
+
                   photoHelper.insertPhoto(photo);
                 }
               }
@@ -596,12 +499,21 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         });
       } catch (e) {
         print(e.toString());
-        listBucketResult = ListBucketResult();
       }
 
-
+      print("query started");
       List<Photo> photos = await photoHelper.queryPhoto();
+      print("query finished");
       photos.forEach((element) {
+        if (!tempGalleries.containsKey(element.charterId)) {
+          int tripIndex = 0;
+          for (int i = 0; i < widget.tripList.length - 1; i++) {
+            if (widget.tripList[i].charterId == element.charterId) {
+              tripIndex = i;
+            }
+          }
+          tempGalleries[element.charterId] = Gallery(element.charterId, <Photo>[], widget.tripList[tripIndex]);
+        }
         tempGalleries[element.charterId].addPhoto(element);
       });
 

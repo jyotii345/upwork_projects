@@ -3,18 +3,18 @@ import 'dart:ui';
 class Photo {
   String imageName;
   String userId;
-  String byteString;
+  String imagePath;
   String date;
   String charterId;
 
   Photo(
       String imageName,
       String userId,
-      String byteString, String date,String charterId
+      String imagePath, String date,String charterId
       ) {
     this.imageName = imageName;
     this.userId = userId;
-    this.byteString = byteString;
+    this.imagePath = imagePath;
     this.date = date;
     this.charterId = charterId;
   }
@@ -24,7 +24,7 @@ class Photo {
     return {
       'imageName': imageName,
       'userId': userId,
-      'byteString': byteString,
+      'imagePath': imagePath,
       'date' : date,
       'charterId' : charterId,
     };

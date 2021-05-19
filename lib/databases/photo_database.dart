@@ -40,7 +40,7 @@ class PhotoDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE photo(id INTEGER PRIMARY KEY,imageName TEXT,userId TEXT,byteString TEXT,date TEXT,charterId TEXT)",
+      "CREATE TABLE photo(id INTEGER PRIMARY KEY,imageName TEXT,userId TEXT,imagePath TEXT,date TEXT,charterId TEXT)",
     );
   }
 
@@ -95,7 +95,7 @@ class PhotoDatabaseHelper {
       return Photo(
         maps[i]['imageName'],
         maps[i]['userId'],
-        maps[i]['byteString'],
+        maps[i]['imagePath'],
         maps[i]['date'],
         maps[i]['charterId'],
       );
