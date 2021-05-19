@@ -219,7 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // photos page
         Rewards(),
         // rewards page
-        MyFiles(),
+        MyFiles(currentUser),
         // files page
         LoginPage(loginCallback),
         // login page
