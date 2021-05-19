@@ -82,6 +82,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             ),
             getPageTitle(),
             getUploadFile(),
+            getFilesSection(),
           ],
         ),
       ),
@@ -103,7 +104,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           getFilePrompt(),
           getFileInformation(),
           getUploadFileButton(),
-          getFilesSection(),
         ],
       ),
     );
