@@ -1,6 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -944,6 +945,10 @@ class EditMyProfileState extends State<EditMyProfile>
 
     TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
     await tripDatabaseHelper.deleteTripTable();
+
+    PhotoDatabaseHelper photoDatabaseHelper = PhotoDatabaseHelper.instance;
+    await photoDatabaseHelper.deletePhotoTable();
+
 
     widget.logoutCallback();
 

@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
+import 'package:chunked_stream/chunked_stream.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
@@ -335,6 +338,20 @@ class AggressorApi {
 
     print(jsonResponse.toString());
     return Map<String, dynamic>.from(jsonResponse);
+  }
+
+  Future<dynamic> downloadAwsFile(String key) async {
+    //create and send a contact details request to the Aggressor Api and return json response
+    String url =
+        "https://secure.aggressor.com/api/app/gallery/download/" + key;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    return pageResponse;
+
   }
 
 
