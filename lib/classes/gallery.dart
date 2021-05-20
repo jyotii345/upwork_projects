@@ -73,7 +73,6 @@ class Gallery {
               ),
               SizedBox(
                 width: textBoxSize,
-                //TODO everything with this date should be replaced with embarkment date soon.
                 child: Text(
                   months[DateTime.parse(trip.tripDate).month - 1].substring(0, 3) + " " + DateTime.parse(trip.tripDate).day.toString() + ", " + DateTime.parse(trip.tripDate).year.toString(),
                   textAlign: TextAlign.left,

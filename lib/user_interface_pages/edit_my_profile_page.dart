@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 
 class EditMyProfile extends StatefulWidget {
-  //TODO cannot click my profile before app is done loading initially
   EditMyProfile(
       this.user, this.updateCallback, this.profileData);
 

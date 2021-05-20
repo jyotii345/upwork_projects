@@ -274,7 +274,7 @@ class ContactSelectionState extends State<ContactSelection>
         colorFilter:
             ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
-          "assets/pagebackground.png", //TODO replace with final graphic
+          "assets/pagebackground.png",
           fit: BoxFit.fill,
           height: double.infinity,
           width: double.infinity,

@@ -213,7 +213,7 @@ class CreateContactState extends State<CreateContact>
         colorFilter:
             ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
-          "assets/pagebackground.png", //TODO replace with final graphic
+          "assets/pagebackground.png",
           fit: BoxFit.fill,
           height: double.infinity,
           width: double.infinity,
@@ -228,7 +228,7 @@ class CreateContactState extends State<CreateContact>
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
-        "assets/bannerimage.png", //TODO replace with final graphic
+        "assets/bannerimage.png",
         fit: BoxFit.cover,
       ),
     );

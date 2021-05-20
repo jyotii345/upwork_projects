@@ -40,7 +40,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    selectionTrip = Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", ""); //TODO block uploads if unchanged
+    selectionTrip = Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
     selectionTrip.charter =
         Charter("", "","","","","","",""," -- SELECT -- ");
     dropDownValue = selectionTrip;

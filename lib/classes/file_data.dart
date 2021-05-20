@@ -43,12 +43,11 @@ class FileData {
                   width: textBoxSize,
                   child: Text(fileName,
                       textAlign: TextAlign
-                          .left), //TODO replace with actual destination
+                          .left), //TODO replace with actual destination, unsure what this means right now
                 ),
               ),
               SizedBox(
                 width: textBoxSize,
-                //TODO everything with this date should be replaced with embarkment date soon.
                 child: Text(
                   date,
                   textAlign: TextAlign.left,

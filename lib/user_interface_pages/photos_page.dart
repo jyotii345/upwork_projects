@@ -140,7 +140,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                         "/" +
                         DateTime.parse(newValue.charter.startDate).day.toString() +
                         "/" +
-                        DateTime.parse(newValue.charter.startDate).year.toString();;
+                        DateTime.parse(newValue.charter.startDate).year.toString();
                   });
                 },
                 items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {

@@ -451,7 +451,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                   )) {
                     FileData fileData = FileData(
                       tempFile.path,
-                      date,
+                      date, //TODO potentially replace with embarkment date
                       fileName,
                     );
 
