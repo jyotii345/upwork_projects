@@ -5,6 +5,7 @@ import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,10 +14,10 @@ import '../main.dart';
 class EditMyProfile extends StatefulWidget {
   //TODO cannot click my profile before app is done loading initially
   EditMyProfile(
-      this.user, this.logoutCallback, this.updateCallback, this.profileData);
+      this.user, this.updateCallback, this.profileData);
 
   final User user;
-  final VoidCallback logoutCallback, updateCallback;
+  final VoidCallback  updateCallback;
   final Map<String, dynamic> profileData;
 
   @override
@@ -954,11 +955,8 @@ class EditMyProfileState extends State<EditMyProfile>
     FileDatabaseHelper fileDatabaseHelper = FileDatabaseHelper.instance;
     await fileDatabaseHelper.deleteFileTable();
 
-
-    widget.logoutCallback();
-
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => MyApp()));
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
 
   Widget getBackgroundImage() {

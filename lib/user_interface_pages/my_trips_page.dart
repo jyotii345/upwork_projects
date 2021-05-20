@@ -70,9 +70,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   self implemented
    */
 
-  void _onMapCreated(GoogleMapController controller) { //TODO ios google maps install
-    _controller.complete(controller);
-  }
 
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
@@ -351,7 +348,9 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         rotateGesturesEnabled: false,
         tiltGesturesEnabled: false,
         mapType: MapType.normal,
-        onMapCreated: _onMapCreated,
+        onMapCreated: (GoogleMapController controller){
+          _controller.complete();
+        },
         initialCameraPosition: CameraPosition(
           target: _center,
         ),

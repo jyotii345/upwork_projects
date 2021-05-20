@@ -1,20 +1,27 @@
 import 'dart:io';
 
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../classes/aggressor_colors.dart';
 
 class GalleryView extends StatefulWidget {
-  GalleryView(this.charterId, this.photos, this.trip, this.callBackList);
+  GalleryView(this.user, this.charterId, this.photos, this.trip, this.callBackList, this.newImagesCallBack);
 
+  User user;
   String charterId;
   List<Photo> photos;
   Trip trip;
   List<VoidCallback> callBackList;
+  VoidCallback newImagesCallBack;
 
   @override
   State<StatefulWidget> createState() => new GalleryViewState();
@@ -25,7 +32,10 @@ class GalleryViewState extends State<GalleryView> {
   instance vars
    */
 
-  int index = 2;
+  int pageIndex = 2;
+  int indexMultiplier = 1;
+  String errorMessage = "";
+  List<Asset> images = <Asset>[];
 
   /*
   initState
@@ -127,7 +137,7 @@ class GalleryViewState extends State<GalleryView> {
       },
       backgroundColor: AggressorColors.primaryColor,
       // new
-      currentIndex: index,
+      currentIndex: pageIndex,
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white60,
       items: [
@@ -237,7 +247,8 @@ class GalleryViewState extends State<GalleryView> {
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
@@ -247,9 +258,43 @@ class GalleryViewState extends State<GalleryView> {
             getDestination(),
             getDate(),
             getImageGrid(),
+            Spacer(),
+            getScrollButtons(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget getScrollButtons() {
+    double iconSize = MediaQuery.of(context).size.width / 10;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TextButton(
+            child: Image(image: AssetImage("assets/leftarrow.png"), height: iconSize, width: iconSize),
+            onPressed: () {
+              if(indexMultiplier > 1){
+                setState(() {
+                  indexMultiplier --;
+                });
+              }
+            }),
+        SizedBox(
+          width: iconSize,
+          height: iconSize,
+        ),
+        TextButton(
+            child: Image(image: AssetImage("assets/rightarrow.png"), height: iconSize, width: iconSize),
+            onPressed: () {
+              if(widget.photos.length - (9 * (indexMultiplier - 1)) > 9 ){
+                setState(() {
+                  indexMultiplier ++;
+                });
+              }
+            }),
+      ],
     );
   }
 
@@ -281,21 +326,39 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getImageGrid() {
+
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: GridView.builder(
         shrinkWrap: true,
-        itemCount: widget.photos.length - 1,
+        itemCount: widget.photos.length - (9 * (indexMultiplier - 1)) < 9  ?  widget.photos.length - (9 * (indexMultiplier - 1)) : 9 ,
         itemBuilder: (context, index) {
-          return Image.file(
-            File(
-              widget.photos[index].imagePath,
+          return GestureDetector(
+            onTap: () {
+              imageExpansionDialogue(Image.file(
+                File(
+                  widget.photos[(index + (9 * indexMultiplier))].imagePath,
+                ),
+                fit: BoxFit.cover,
+              ));
+            },
+            child: Image.file(
+              File(
+                widget.photos[index].imagePath,
+              ),
+              fit: BoxFit.cover,
             ),
-            fit: BoxFit.fill,
           );
         },
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: (MediaQuery.of(context).size.width / 3), childAspectRatio: 1.2 / 1, crossAxisSpacing: 20, mainAxisSpacing: 20),
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(mainAxisExtent:MediaQuery.of(context).size.width / 6,maxCrossAxisExtent:MediaQuery.of(context).size.width / 4, childAspectRatio: 1.2 / 1, crossAxisSpacing: 20, mainAxisSpacing: 20),
       ),
+    );
+  }
+
+  void imageExpansionDialogue(Widget content) {
+    showDialog(
+      context: context,
+      builder: (_) => new AlertDialog(title: Container(), content: content),
     );
   }
 
@@ -327,6 +390,66 @@ class GalleryViewState extends State<GalleryView> {
     );
   }
 
+  Widget showErrorMessage() {
+    return errorMessage == ""
+        ? Container()
+        : Padding(
+      padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
+      child: Text(
+        errorMessage,
+        style: TextStyle(color: Colors.red),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
+
+    if (await Permission.photos.status.isDenied || await Permission.camera.status.isDenied) {
+      await Permission.photos.request();
+      await Permission.camera.request();
+
+      // We didn't ask for permission yet or the permission has been denied before but not permanently.
+    }
+
+      //try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#ff428cc7",
+          actionBarTitle: "Aggressor Adventures",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#ff428cc7",
+        ),
+      );
+
+      for(var result in resultList) {
+        File file = File(await FlutterAbsolutePath.getAbsolutePath(result.identifier));
+
+         var response = await AggressorApi().uploadAwsFile(widget.user.userId, "gallery", widget.trip.charterId, file.path);
+
+         if (response["status"] == "success") {
+           widget.photos.add(Photo("", "", file.path, "", ""));
+           widget.newImagesCallBack();
+         }
+      };
+      setState(() {
+      });
+
+      if (!mounted) return;
+
+      setState(() {
+        errorMessage = error;
+      });
+  }
+
+
   Widget getPageTitle() {
     double iconSize = MediaQuery.of(context).size.width / 10;
     return Padding(
@@ -348,9 +471,7 @@ class GalleryViewState extends State<GalleryView> {
                   height: iconSize,
                   width: iconSize,
                 ),
-                onPressed: () {
-                  //TODO implement button function
-                }),
+                onPressed: loadAssets,),
             TextButton(
                 child: Image(image: AssetImage("assets/trashcan.png"), height: iconSize, width: iconSize),
                 onPressed: () {

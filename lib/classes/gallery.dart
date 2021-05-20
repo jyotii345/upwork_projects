@@ -3,21 +3,26 @@ import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/gallery_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Gallery {
+  User user;
   String charterId;
   List<Photo> photos;
   Trip trip;
   List<VoidCallback> callBackList;
+  VoidCallback newImageCallBack;
 
-  Gallery(String charterId, List<Photo> photos, Trip trip,List<VoidCallback> callBackList) {
+  Gallery(User user, String charterId, List<Photo> photos, Trip trip,List<VoidCallback> callBackList, VoidCallback newImageCallback) {
+    this.user = user;
     this.charterId = charterId;
     this.photos = photos;
     this.trip = trip;
     this.callBackList =  callBackList;
+    this.newImageCallBack = newImageCallback;
   }
 
   Map<String, dynamic> toMap() {
@@ -57,7 +62,7 @@ class Gallery {
                     onTap : (){Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => GalleryView(charterId, photos, trip, callBackList)));},
+                            builder: (context) => GalleryView(user, charterId, photos, trip, callBackList, newImageCallBack)));},
                     child: Text(
                       trip.detailDestination,
                       textAlign: TextAlign.left,

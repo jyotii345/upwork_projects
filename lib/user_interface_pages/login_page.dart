@@ -1,18 +1,19 @@
 import 'dart:convert';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/registration_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../main.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'loading_page.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage(this.loginCallback);
-
-  final VoidCallback loginCallback;
+  LoginPage();
 
   @override
   State<StatefulWidget> createState() => new _LoginSignUpPageState();
@@ -27,8 +28,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool isLoading =
-      false; // boolean to see if the page is currently loading a login
+  bool isLoading = false; // boolean to see if the page is currently loading a login
 
   String errorText = ""; //string value of errors detected on login
 
@@ -44,6 +44,10 @@ class _LoginSignUpPageState extends State<LoginPage> {
   String userType;
   String contactType;
 
+  UserDatabaseHelper helper;
+
+  User currentUser;
+
   /*
   initState
 
@@ -53,24 +57,94 @@ class _LoginSignUpPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    helper = UserDatabaseHelper.instance;
+    checkLoginStatus();
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: <Widget>[
-            getBackgroundImage(),
-            getLoginForm(),
-            getLoadingWheel(),
-          ],
-        ));
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leading: SizedBox(
+          height: AppBar().preferredSize.height,
+          child: IconButton(
+            icon: Container(
+              child: Image.asset("assets/callicon.png"),
+            ),
+            onPressed: makeCall,
+          ),
+        ),
+        title: Image.asset(
+          "assets/logo.png",
+          height: AppBar().preferredSize.height,
+          fit: BoxFit.fitHeight,
+        ),
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+            child: SizedBox(
+              height: AppBar().preferredSize.height,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PopupMenuButton<String>(
+                    onSelected: handlePopupClick,
+                    child: Container(
+                      child: Image.asset(
+                        "assets/menuicon.png",
+                      ),
+                    ),
+                    itemBuilder: (BuildContext context) {
+                      return {
+                        "My Profile",
+                      }.map((String option) {
+                        return PopupMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList();
+                    }),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: <Widget>[
+          getBackgroundImage(),
+          getLoginForm(),
+          getLoadingWheel(),
+        ],
+      ),
+      bottomNavigationBar: getBottomNavigation(),
+    );
   }
 
 /*
   self implemented
    */
+
+  makeCall() async {
+    const url = 'tel:7069932531';
+    try {
+      await launch(url);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void handlePopupClick(String value) {
+    switch (value) {
+      case 'My Profile':
+        setState(() {
+          errorText = "You must be logged in to view your profile.";
+        });
+    }
+  }
 
   Widget getBackgroundImage() {
     return Padding(
@@ -92,8 +166,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(
-              25, MediaQuery.of(context).size.height / 4, 25, 5),
+          padding: EdgeInsets.fromLTRB(25, MediaQuery.of(context).size.height / 4, 25, 5),
           child: getUserTextField(),
         ),
         Padding(
@@ -144,10 +217,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
         child: TextField(
           controller: usernameController,
           maxLines: 1,
-          decoration: InputDecoration(
-              hintText: "User Name",
-              isDense: true,
-              contentPadding: EdgeInsets.all(1)),
+          decoration: InputDecoration(hintText: "User Name", isDense: true, contentPadding: EdgeInsets.all(1)),
         ),
       ),
     );
@@ -169,10 +239,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
           controller: passwordController,
           obscureText: true,
           maxLines: 1,
-          decoration: InputDecoration(
-              hintText: "Password",
-              isDense: true,
-              contentPadding: EdgeInsets.all(1)),
+          decoration: InputDecoration(hintText: "Password", isDense: true, contentPadding: EdgeInsets.all(1)),
         ),
       ),
     );
@@ -200,10 +267,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
         ),
         style: TextButton.styleFrom(
           backgroundColor: Colors.green,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(
-                  color: Colors.black, width: 1, style: BorderStyle.solid),
-              borderRadius: BorderRadius.circular(0)),
+          shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(0)),
         ),
       ),
     );
@@ -243,15 +307,119 @@ class _LoginSignUpPageState extends State<LoginPage> {
       await initDatabase();
       await saveUserData();
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => MyApp()));
+      checkLoginStatus();
     } else {
       setState(() {
         isLoading = false;
-        errorText =
-            "username or password do not match any items in our records";
+        errorText = "username or password do not match any items in our records";
       });
     }
+  }
+
+  Widget getBottomNavigation() {
+    /*
+    returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
+     */
+
+    double iconSize = MediaQuery.of(context).size.width / 8;
+    return BottomNavigationBar(
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      selectedFontSize: 0,
+      type: BottomNavigationBarType.fixed,
+      onTap: (int) {},
+      backgroundColor: AggressorColors.primaryColor,
+      // new
+      currentIndex: 0,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white60,
+      items: [
+        new BottomNavigationBarItem(
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/tripsactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/tripspassive.png"),
+          ),
+          label: '',
+        ),
+        new BottomNavigationBarItem(
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/notesactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/notespassive.png"),
+          ),
+          label: '',
+        ),
+        new BottomNavigationBarItem(
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/photosactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/photospassive.png"),
+          ),
+          label: '',
+        ),
+        new BottomNavigationBarItem(
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/rewardsactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/rewardspassive.png"),
+          ),
+          label: '',
+        ),
+        new BottomNavigationBarItem(
+          activeIcon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset(
+              "assets/filesactive.png",
+            ),
+          ),
+          icon: Container(
+            width: iconSize,
+            height: iconSize,
+            child: Image.asset("assets/filespassive.png"),
+          ),
+          label: '',
+        ),
+      ],
+    );
+  }
+
+
+  void checkLoginStatus() async {
+    //check if the user is logged in and set the appropriate view if they are or are not
+      var userList = await helper.queryUser();
+      if (userList.length != 0) {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoadingPage(userList[0])));
+      }
   }
 
   saveUserData() async {
@@ -296,8 +464,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
                         enabledBorder: InputBorder.none,
                         errorBorder: InputBorder.none,
                         disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.only(
-                            left: 0, bottom: 0, top: 11, right: 15),
+                        contentPadding: EdgeInsets.only(left: 0, bottom: 0, top: 11, right: 15),
                         hintText: "email"),
                   )
                 ],
@@ -323,8 +490,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
       children: [
         TextButton(
           onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => RegistrationPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationPage()));
           },
           child: Text(
             "Create Account",

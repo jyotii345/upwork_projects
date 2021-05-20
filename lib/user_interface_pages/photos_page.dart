@@ -249,16 +249,16 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         ),
       );
 
-      resultList.forEach((element) async {
+      for(var element in resultList) {
         File file = File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
 
         var response = await AggressorApi().uploadAwsFile(widget.user.userId, "gallery", dropDownValue.charterId, file.path);
-        if (response["status" == "success"]) {
+        if (response["status"] == "success") {
           setState(() {
             photosLoaded = false;
           });
         }
-      });
+      };
 
       if (!mounted) return;
 
@@ -461,7 +461,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
     if (!photosLoaded) {
-      print("loading photos still");
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
       final AwsS3Client s3client =
@@ -484,7 +483,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.charterId)) {
-                  tempGalleries[element.charterId] = Gallery(element.charterId, <Photo>[],element, widget.callbackList);
+                  tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[],element, widget.callbackList, newImageCallBack);
                 }
                 StreamedResponse downloadResponse = await AggressorApi().downloadAwsFile(elementJson["Key"].toString());
 
@@ -512,6 +511,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           }
         }
       } catch (e) {
+        print(e.toString());
       }
 
       List<Photo> photos = await photoHelper.queryPhoto();
@@ -523,7 +523,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               tripIndex = i;
             }
           }
-          tempGalleries[element.charterId] = Gallery(element.charterId, <Photo>[], widget.tripList[tripIndex], widget.callbackList);
+          tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[], widget.tripList[tripIndex], widget.callbackList, newImageCallBack);
         }
         tempGalleries[element.charterId].addPhoto(element);
       });
@@ -534,6 +534,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       });
     }
     return "finished";
+  }
+
+  void newImageCallBack(){
+    setState(() {
+      photosLoaded = true;
+    });
   }
 
   @override

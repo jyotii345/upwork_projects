@@ -332,11 +332,7 @@ class AggressorApi {
     StreamedResponse response = await request.send();
 
     var jsonResponse = await json.decode(await response.stream.bytesToString());
-    print(jsonResponse.toString());
-    print(jsonResponse.runtimeType);
-    if (jsonResponse["status"] == "success") print('Uploaded!');
 
-    print(jsonResponse.toString());
     return Map<String, dynamic>.from(jsonResponse);
   }
 
@@ -360,7 +356,6 @@ class AggressorApi {
       ) async {
     //saves the updated profile data for the userId provided
 
-    print(email);
     Response response = await post(
       Uri.https('secure.aggressor.com', "api/app/authentication/forgotpassword"),
       headers: <String, String>{
@@ -371,7 +366,6 @@ class AggressorApi {
         'email': email,
       })
     );
-    print(response.body);
 
     return jsonDecode(response.body);
   }

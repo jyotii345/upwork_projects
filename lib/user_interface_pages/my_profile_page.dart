@@ -6,10 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MyProfile extends StatefulWidget {
-  MyProfile(this.user, this.logoutCallback);
+  MyProfile(this.user,);
 
   final User user;
-  final VoidCallback logoutCallback;
 
   @override
   State<StatefulWidget> createState() => new MyProfileState();
@@ -329,7 +328,7 @@ class MyProfileState extends State<MyProfile>
                 iconSize: MediaQuery.of(context).size.height / 35,
                 icon: Icon(Icons.edit, ),
                 onPressed: () { Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => EditMyProfile(widget.user, widget.logoutCallback, updateCallback,profileData)));},
+                    context, MaterialPageRoute(builder: (context) => EditMyProfile(widget.user, updateCallback,profileData)));},
                 color: Colors.white,
               ),
             ),

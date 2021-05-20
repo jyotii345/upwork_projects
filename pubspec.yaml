@@ -38,6 +38,7 @@ dependencies:
   flutter_absolute_path: ^1.0.6
   chunked_stream: ^1.4.1
   file_picker: ^2.1.7
+  persistent_bottom_nav_bar: ^4.0.2
 
 
   # The following adds the Cupertino Icons font to your application.
