@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:aggressor_adventures/classes/boat.dart';
+import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +27,6 @@ class Trip {
       embark,
       disembark,
       detailDestination;
-
   Trip(
     String tripDate,
     String title,
