@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
@@ -49,7 +50,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     selectionTrip = Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
-    selectionTrip.detailDestination = " -- SELECT -- ";
+    selectionTrip.charter = Charter("","","","","","","",""," -- SELECT -- ",);
     dropDownValue = selectionTrip;
   }
 
@@ -135,7 +136,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 onChanged: (Trip newValue) {
                   setState(() {
                     dropDownValue = newValue;
-                    departureDate = newValue.tripDate;
+                    departureDate = DateTime.parse(newValue.charter.startDate).month.toString() +
+                        "/" +
+                        DateTime.parse(newValue.charter.startDate).day.toString() +
+                        "/" +
+                        DateTime.parse(newValue.charter.startDate).year.toString();;
                   });
                 },
                 items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
@@ -144,7 +149,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                     child: Container(
                       width: MediaQuery.of(context).size.width / 2,
                       child: Text(
-                        value.detailDestination,
+                        value.charter.destination,
                         style: TextStyle(fontSize: MediaQuery.of(context).size.height / 40 - 4),
                         textAlign: TextAlign.center,
                       ),

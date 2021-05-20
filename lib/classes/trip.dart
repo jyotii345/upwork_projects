@@ -187,19 +187,21 @@ class Trip {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Container(
-                            color: Colors.grey[200],
-                            height: textBoxSize * 1.5,
-                            width: textBoxSize * 1.5,
-                            child: CachedNetworkImage(
-                              imageUrl: boat.imageLink,
-                              progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
-                              errorWidget: (context, url, error) => Icon(Icons.error),),),
+                          color: Colors.grey[200],
+                          height: textBoxSize * 1.5,
+                          width: textBoxSize * 1.5,
+                          child: CachedNetworkImage(
+                            imageUrl: boat.imageLink,
+                            progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          ),
+                        ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text("Days Left: "),
                             Text(
-                              DateTime.now().difference(DateTime.parse(tripDate)).inDays.abs().toString(),
+                              DateTime.now().difference(DateTime.parse(charter.startDate)).inDays.abs().toString(),
                               style: TextStyle(color: Colors.red),
                             )
                           ],
@@ -301,7 +303,7 @@ class Trip {
                             SizedBox(
                               width: textBoxSize,
                               child: Text(
-                                title,
+                                boat.name,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: screenFontSize),
                               ),
@@ -312,7 +314,11 @@ class Trip {
                             SizedBox(
                               width: textBoxSize,
                               child: Text(
-                                months[DateTime.parse(tripDate).month - 1].substring(0, 3) + " " + DateTime.parse(tripDate).day.toString() + "," + DateTime.parse(tripDate).year.toString(),
+                                months[DateTime.parse(charter.startDate).month - 1].substring(0, 3) +
+                                    " " +
+                                    DateTime.parse(charter.startDate).day.toString() +
+                                    "," +
+                                    DateTime.parse(charter.startDate).year.toString(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: screenFontSize),
                               ),
@@ -320,7 +326,7 @@ class Trip {
                             SizedBox(
                               width: textBoxSize,
                               child: Text(
-                                "7",
+                                charter.nights,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: screenFontSize),
                               ),
@@ -419,12 +425,16 @@ class Trip {
               ),
               SizedBox(
                 width: textBoxSize,
-                child: Text(title, textAlign: TextAlign.center),
+                child: Text(boat.name, textAlign: TextAlign.center),
               ),
               SizedBox(
                 width: textBoxSize,
                 child: Text(
-                  months[DateTime.parse(tripDate).month - 1].substring(0, 3) + " " + DateTime.parse(tripDate).day.toString() + ", " + DateTime.parse(tripDate).year.toString(),
+                  months[DateTime.parse(charter.startDate).month - 1].substring(0, 3) +
+                      " " +
+                      DateTime.parse(charter.startDate).day.toString() +
+                      ", " +
+                      DateTime.parse(charter.startDate).year.toString(),
                   textAlign: TextAlign.center,
                 ),
               ),

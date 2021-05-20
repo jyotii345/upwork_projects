@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/google_map.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:async/async.dart';
@@ -30,12 +31,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
   List<Widget> pastTripsList;
   List<Widget> upcomingTripsList;
-
-  Completer<GoogleMapController> _controller =
-      Completer(); //object for asyn map loading
-
-  static const LatLng _center =
-      const LatLng(0, 0); // coordinates for a center location
+// coordinates for a center location
 
   /*
   initState
@@ -74,8 +70,10 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
     return ListView(
+      addAutomaticKeepAlives: true,
+      cacheExtent: 100,
       children: [
-        getMapObject(),
+        GoogleMapWidget(context).getMap(),
         getPageTitle(),
         getSectionUpcomingTitle(),
         getUpcomingSection(getTripList(widget.tripList)[1]),
@@ -232,8 +230,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
     pastTrips.forEach((element) {
-      print("building");
-      print(element.boat.toMap().toString());
       pastTripsList.add(element.getPastTripCard(context, index));
       index++;
     });
@@ -342,25 +338,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget getMapObject() {
-    //TODO change map size to full world view, potential switch away from google maps
-    //returns a box to take up the top fifth of the available space in the view showing a google maps object. The map is locked from moving it.
-    return SizedBox(
-      width: MediaQuery.of(context).size.width, // or use fixed size like 200
-      height: MediaQuery.of(context).size.height / 5,
-      child: GoogleMap(
-        rotateGesturesEnabled: false,
-        tiltGesturesEnabled: false,
-        mapType: MapType.normal,
-        onMapCreated: (GoogleMapController controller){
-          _controller.complete();
-        },
-        initialCameraPosition: CameraPosition(
-          target: _center,
-        ),
-      ),
-    );
-  }
 
   Widget getBackGroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.

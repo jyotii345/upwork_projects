@@ -1,7 +1,8 @@
-
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -39,9 +40,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    selectionTrip =
-        Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", ""); //TODO block uploads if unchanged
-    selectionTrip.detailDestination = " -- SELECT -- ";
+    selectionTrip = Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", ""); //TODO block uploads if unchanged
+    selectionTrip.charter =
+        Charter("", "","","","","","",""," -- SELECT -- ");
     dropDownValue = selectionTrip;
   }
 
@@ -106,8 +107,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         "Save My Notes",
         style: TextStyle(color: Colors.white),
       ),
-      style:
-          TextButton.styleFrom(backgroundColor: AggressorColors.secondaryColor),
+      style: TextButton.styleFrom(backgroundColor: AggressorColors.secondaryColor),
     );
   }
 
@@ -123,8 +123,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               alignment: Alignment.topLeft,
               child: Text(
                 "Pre-Trip Notes:",
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
               ),
             ),
           ),
@@ -159,8 +158,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               alignment: Alignment.topLeft,
               child: Text(
                 "Post-Trip Notes:",
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
               ),
             ),
           ),
@@ -195,8 +193,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               alignment: Alignment.topLeft,
               child: Text(
                 "Post-Trip Notes:",
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
               ),
             ),
           ),
@@ -235,8 +232,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "Destination:",
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+              style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
             ),
           ),
           Expanded(
@@ -257,9 +253,16 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 onChanged: (Trip newValue) {
                   setState(() {
                     dropDownValue = newValue;
-                    departureDate = newValue.tripDate;
-                    returnDate =
-                        "not implemented"; //TODO place return date here when uploaded
+                    departureDate = DateTime.parse(newValue.charter.startDate).month.toString() +
+                        "/" +
+                        DateTime.parse(newValue.charter.startDate).day.toString() +
+                        "/" +
+                        DateTime.parse(newValue.charter.startDate).year.toString();
+                    returnDate = DateTime.parse(newValue.charter.startDate).add(Duration(days: int.parse(newValue.charter.nights))).month.toString() +
+                        "/" +
+                        DateTime.parse(newValue.charter.startDate).add(Duration(days: int.parse(newValue.charter.nights))).day.toString() +
+                        "/" +
+                        DateTime.parse(newValue.charter.startDate).add(Duration(days: int.parse(newValue.charter.nights))).year.toString();
                   });
                 },
                 items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
@@ -267,14 +270,10 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                     value: value,
                     child: Container(
                       height: MediaQuery.of(context).size.height / 45,
-                      width: MediaQuery.of(context).size.width / 2 -
-                          MediaQuery.of(context).size.height / 40 -
-                          10,
+                      width: MediaQuery.of(context).size.width / 2 - MediaQuery.of(context).size.height / 40 - 10,
                       child: Text(
-                        value.detailDestination,
-                        style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height / 45 - 4),
+                        value.charter.destination,
+                        style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -290,8 +289,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   List<Trip> sortTripList(List<Trip> tripList) {
     List<Trip> tempList = tripList;
-    tempList.sort((a, b) =>
-        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+    tempList.sort((a, b) => DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
     return tempList;
   }
@@ -306,8 +304,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "Departure Date:",
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+              style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
             ),
           ),
           Expanded(
@@ -321,8 +318,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               ),
               child: Text(
                 departureDate,
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -342,31 +338,28 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "Return Date",
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+              style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
             ),
           ),
-    Expanded(
-    child: Container(
-    height: MediaQuery.of(context).size.height / 45,
-    decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              ),
-            ),
+          Expanded(
             child: Container(
               height: MediaQuery.of(context).size.height / 45,
-              width: MediaQuery.of(context).size.width / 2 -
-                  MediaQuery.of(context).size.height / 40 -
-                  10,
-              child: Text(
-                returnDate,
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                textAlign: TextAlign.center,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ),
               ),
-            ),),
+              child: Container(
+                height: MediaQuery.of(context).size.height / 45,
+                width: MediaQuery.of(context).size.width / 2 - MediaQuery.of(context).size.height / 40 - 10,
+                child: Text(
+                  returnDate,
+                  style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -378,8 +371,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
-        colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -413,10 +405,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             Expanded(
               child: Text(
                 "My Trip Notes",
-                style: TextStyle(
-                    color: AggressorColors.primaryColor,
-                    fontSize: MediaQuery.of(context).size.height / 26,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(color: AggressorColors.primaryColor, fontSize: MediaQuery.of(context).size.height / 26, fontWeight: FontWeight.bold),
               ),
             ),
             TextButton(
@@ -429,10 +418,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                   //TODO implement button function
                 }),
             TextButton(
-                child: Image(
-                    image: AssetImage("assets/photosblue.png"),
-                    height: iconSize,
-                    width: iconSize),
+                child: Image(image: AssetImage("assets/photosblue.png"), height: iconSize, width: iconSize),
                 onPressed: () {
                   //TODO implement button function
                 }),
