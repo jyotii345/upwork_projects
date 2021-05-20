@@ -253,6 +253,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         File file = File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
 
         var response = await AggressorApi().uploadAwsFile(widget.user.userId, "gallery", dropDownValue.charterId, file.path);
+
+        await Future.delayed(Duration(milliseconds: 1000));
         if (response["status"] == "success") {
           setState(() {
             photosLoaded = false;
