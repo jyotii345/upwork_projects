@@ -81,6 +81,33 @@ class TripDatabaseHelper {
     return exists == 1;
   }
 
+  Future<Trip> getTrip(String reservationId) async {
+    final db = await database;
+    var result = await db
+        .rawQuery('SELECT * FROM trip WHERE reservationId = ?', [reservationId]);
+    return Trip.TripWithDetails(
+      result[0]['tripDate'],
+      result[0]['title'],
+      result[0]['latitude'],
+      result[0]['longitude'],
+      result[0]['destination'],
+      result[0]['reservationDate'],
+      result[0]['reservationId'],
+      result[0]['charterId'],
+      result[0]['total'],
+      result[0]['discount'],
+      result[0]['payments'],
+      result[0]['due'],
+      result[0]['dueDate'],
+      result[0]['passengers'],
+      result[0]['location'],
+      result[0]['embark'],
+      result[0]['disembark'],
+      result[0]['detailDestination'],
+    );
+
+  }
+
   Future<List<Trip>> queryTrip() async {
     // Get a trip from the database
     final Database db = await database;

@@ -34,7 +34,7 @@ class CharterDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE charter(id INTEGER PRIMARY KEY,charterId TEXT,startDate TEXT,statusId TEXT,boatId TEXT,nights TEXT,itinerary TEXT,embarkment TEXT, disembarkment TEXT, destination TEXT)",
+      "CREATE TABLE charter(charterId TEXT,startDate TEXT,statusId TEXT,boatId TEXT,nights TEXT,itinerary TEXT,embarkment TEXT, disembarkment TEXT, destination TEXT)",
     );
   }
 
@@ -70,11 +70,28 @@ class CharterDatabaseHelper {
     await db.delete('charter');
   }
 
-  Future<bool> fileExists(String charterId) async {
+  Future<bool> charterExists(String charterId) async {
     final db = await database;
     var result = await db.rawQuery('SELECT EXISTS(SELECT 1 FROM charter WHERE charterId = ?)', [charterId]);
     int exists = Sqflite.firstIntValue(result);
     return exists == 1;
+  }
+
+  Future<Charter> getCharter(String charterId) async {
+    final db = await database;
+    var result = await db
+        .rawQuery('SELECT * FROM charter WHERE charterId = ?', [charterId]);
+    return Charter(
+      result[0]['charterId'],
+      result[0]['startDate'],
+      result[0]['statusId'],
+      result[0]['boatId'],
+      result[0]['nights'],
+      result[0]['itinerary'],
+      result[0]['embarkment'],
+      result[0]['disembarkment'],
+      result[0]['destination'],
+    );
   }
 
   Future<List<Charter>> queryCharter() async {

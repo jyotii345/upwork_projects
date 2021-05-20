@@ -77,12 +77,26 @@ class BoatDatabaseHelper {
     await db.delete('boat');
   }
 
-  Future<bool> fileExists(String boatId) async {
+  Future<bool> boatExists(String boatId) async {
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM boat WHERE boatId = ?)', [boatId]);
     int exists = Sqflite.firstIntValue(result);
     return exists == 1;
+  }
+
+  Future<Boat> getBoat(String boatId) async {
+    final db = await database;
+    var result = await db
+        .rawQuery('SELECT * FROM boat WHERE boatId = ?', [boatId]);
+    return Boat(
+      result[0]['boatId'],
+      result[0]['name'],
+      result[0]['abbreviation'],
+      result[0]['email'],
+      result[0]['active'],
+      result[0]['imageLink'],
+    );
   }
 
   Future<List<Boat>> queryBoat() async {

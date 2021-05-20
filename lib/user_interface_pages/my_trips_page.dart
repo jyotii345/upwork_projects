@@ -163,6 +163,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
     upcomingTripsList.clear();
     upcomingTrips.forEach((element) {
+      print(element.charter.toMap().toString());
       upcomingTripsList.add(element.getUpcomingTripCard(context));
     });
 
@@ -171,6 +172,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         shrinkWrap: true,
         itemCount: upcomingTripsList.length,
         itemBuilder: (context, position) {
+
           return upcomingTripsList[upcomingTripsList.length - 1 - position];
         });
   }
@@ -230,6 +232,8 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
     pastTrips.forEach((element) {
+      print("building");
+      print(element.boat.toMap().toString());
       pastTripsList.add(element.getPastTripCard(context, index));
       index++;
     });

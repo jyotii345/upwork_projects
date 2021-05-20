@@ -216,6 +216,9 @@ class LoadingPageState extends State<LoadingPage> {
 
   void loadData()async{
     List<Trip> tripList = await AggressorApi().getReservationList(widget.user.contactId);
+    for(var trip in tripList){
+      await trip.initCharterInformation();
+    }
     if(tripList == null){
       tripList = [];
     }
