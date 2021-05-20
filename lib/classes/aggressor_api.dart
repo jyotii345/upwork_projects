@@ -323,7 +323,7 @@ class AggressorApi {
       ) async {
     //saves the updated profile data for the userId provided
 
-    String url = "https://secure.aggressor.com/api/app/gallery/upload/" + userId.toString() + "/" + "gallery" + "/" + charterId.toString();
+    String url = "https://secure.aggressor.com/api/app/gallery/upload/" + userId.toString() + "/" + gallery + "/" + charterId.toString();
 
     var uri = Uri.parse(url);
     MultipartRequest request = http.MultipartRequest('POST', uri);

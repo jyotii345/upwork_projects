@@ -77,6 +77,26 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Self implemented
    */
 
+  Widget getPageForm() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      child: Container(
+        color: Colors.white,
+        child: ListView(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 7,
+            ),
+            getPageTitle(),
+            getCreateNewGallery(),
+            getMyGalleries(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget getDestinationDropdown(List<Trip> tripList) {
     sortedTripList = [selectionTrip];
     tripList = sortTripList(tripList);
@@ -145,26 +165,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     return tempList;
   }
 
-  Widget getPageForm() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-      child: Container(
-        color: Colors.white,
-        child: ListView(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 7,
-            ),
-            getPageTitle(),
-            getCreateNewGallery(),
-            getMyGalleries(),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget getDepartureInformation() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -227,33 +227,45 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
     }
 
-    //try {
-    resultList = await MultiImagePicker.pickImages(
-      maxImages: 300,
-      enableCamera: true,
-      selectedAssets: images,
-      cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-      materialOptions: MaterialOptions(
-        actionBarColor: "#ff428cc7",
-        actionBarTitle: "Example App",
-        allViewTitle: "All Photos",
-        useDetailsView: false,
-        selectCircleStrokeColor: "#ff428cc7",
-      ),
-    );
+    if(dropDownValue.detailDestination == " -- SELECT -- "){
+      setState(() {
+        errorMessage = "You must select a trip to create a gallery for.";
+      });
+    }
+    else {
+      //try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#ff428cc7",
+          actionBarTitle: "Example App",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#ff428cc7",
+        ),
+      );
 
-    resultList.forEach((element) async {
-      File file = File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+      resultList.forEach((element) async {
+        File file = File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
 
-      var response = await AggressorApi().uploadAwsFile(widget.user.userId, "gallery", dropDownValue.charterId, file.path);
-    });
+        var response = await AggressorApi().uploadAwsFile(widget.user.userId, "gallery", dropDownValue.charterId, file.path);
+        if (response["status" == "success"]) {
+          setState(() {
+            photosLoaded = false;
+          });
+        }
+      });
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      images = resultList;
-      errorMessage = error;
-    });
+      setState(() {
+        images = resultList;
+        errorMessage = error;
+      });
+    }
   }
 
   Widget getCreateNewGallery() {
@@ -295,57 +307,57 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-      child:
-          Container(
-            color: Colors.white,
-            child: FutureBuilder(
-              future: getGalleries(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  return galleriesMap.length == 0
-                      ? Column(
-                          children: [
-                            Container(
-                              height: .5,
-                              color: Colors.grey,
-                            ),
-                            Container(
-                              color: Colors.grey[300],
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    child: SizedBox(
-                                      width: textBoxSize,
-                                      child: Text("Destination", textAlign: TextAlign.center),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: textBoxSize,
-                                    child: Text("Date", textAlign: TextAlign.center),
-                                  ),
-                                  SizedBox(
-                                    width: textBoxSize / 2,
-                                    child: Container(),
-                                  ),
-                                ],
+      child: Container(
+        color: Colors.white,
+        child: FutureBuilder(
+          future: getGalleries(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData && snapshot.data != null) {
+              return galleriesMap.length == 0
+                  ? Column(
+                mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          height: .5,
+                          color: Colors.grey,
+                        ),
+                        Container(
+                          color: Colors.grey[300],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Flexible(
+                                child: SizedBox(
+                                  width: textBoxSize,
+                                  child: Text("Destination", textAlign: TextAlign.center),
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: Text("You do not have any photo galleries to view yet."),
-                            ),
-                          ],
-                        )
-                      : getGalleriesListView();
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-            ),
-          ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text("Date", textAlign: TextAlign.center),
+                              ),
+                              SizedBox(
+                                width: textBoxSize / 2,
+                                child: Container(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Flexible(
+                          child: Text("You do not have any photo galleries to view yet."),
+                        ),
+                      ],
+                    )
+                  : getGalleriesListView();
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 
@@ -448,20 +460,26 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
     if (!photosLoaded) {
+      print("loading photos still");
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
       final AwsS3Client s3client =
           AwsS3Client(region: region, host: "s3.$region.amazonaws.com", bucketId: bucketId, accessKey: "AKIA43MMI6CI2KP4CUUY", secretKey: "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");
-      ListBucketResult listBucketResult;
       PhotoDatabaseHelper photoHelper = PhotoDatabaseHelper.instance;
       Map<String, Gallery> tempGalleries = <String, Gallery>{};
 
       try {
-        widget.tripList.forEach((element) async {
-          var response = await s3client.listObjects(prefix: widget.user.userId + "/gallery/" + element.charterId + "/", delimiter: "/");
+        for(var element in widget.tripList) {
+          var response;
+          try {
+            response = await s3client.listObjects(prefix: widget.user.userId + "/gallery/" + element.charterId + "/", delimiter: "/");
+          }
+          catch(e){
+            print(e);
+          }
 
           if (response.contents != null) {
-            response.contents.forEach((content) async {
+            for(var content in response.contents) {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.charterId)) {
@@ -482,24 +500,20 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 File imageFile = File(filePath);
                 imageFile.writeAsBytes(bytes);
 
-                String date = downloadResponse.headers["date"];
 
                 if (!await photoHelper.photoExists(fileName, element.charterId)) {
-                  Photo photo = Photo(fileName, widget.user.userId, imageFile.path, date, element.charterId);
+                  Photo photo = Photo(fileName, widget.user.userId, imageFile.path, element.tripDate, element.charterId);
 
                   photoHelper.insertPhoto(photo);
                 }
               }
-            });
+            }
           }
-        });
+        }
       } catch (e) {
-        print(e.toString());
       }
 
-      print("query started");
       List<Photo> photos = await photoHelper.queryPhoto();
-      print("query finished");
       photos.forEach((element) {
         if (!tempGalleries.containsKey(element.charterId)) {
           int tripIndex = 0;

@@ -16,8 +16,8 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 class MyTrips extends StatefulWidget {
   MyTrips(this.user, this.tripList);
 
-  User user;
-  List<Trip> tripList;
+  final User user;
+  final List<Trip> tripList;
 
   @override
   State<StatefulWidget> createState() => new myTripsState();

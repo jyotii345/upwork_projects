@@ -1,6 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
@@ -150,6 +151,7 @@ class EditMyProfileState extends State<EditMyProfile>
             );
           }
         }
+
 
         if (totalDives == "") {
           totalDives = null;
@@ -948,6 +950,9 @@ class EditMyProfileState extends State<EditMyProfile>
 
     PhotoDatabaseHelper photoDatabaseHelper = PhotoDatabaseHelper.instance;
     await photoDatabaseHelper.deletePhotoTable();
+
+    FileDatabaseHelper fileDatabaseHelper = FileDatabaseHelper.instance;
+    await fileDatabaseHelper.deleteFileTable();
 
 
     widget.logoutCallback();

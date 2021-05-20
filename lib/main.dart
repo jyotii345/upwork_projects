@@ -4,25 +4,24 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/user_interface_pages/my_files_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_page.dart';
-import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:async/async.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'classes/trip.dart';
 import 'user_interface_pages/login_page.dart';
 import 'user_interface_pages/my_profile_page.dart';
 import 'user_interface_pages/my_trips_page.dart';
 import 'user_interface_pages/notes_page.dart';
 
-final AsyncMemoizer loginMemoizer = AsyncMemoizer();
 
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget{
   // This widget is the root of your application.
 
   @override
@@ -37,6 +36,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
@@ -44,7 +44,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMixin{
   /*
   instance variables
    */
@@ -54,13 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   UserDatabaseHelper helper;
 
-  List<Trip> tripList;
-
-  AsyncMemoizer tripListMemoizer = AsyncMemoizer();
-
-  Future tripListFuture;
-
   bool haveCheckedLogin;
+
+  List<Trip> tripList = [];
 
   /*
   init state
@@ -69,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     helper = UserDatabaseHelper.instance;
-    tripList = [];
     haveCheckedLogin = false;
   }
 
@@ -134,32 +129,12 @@ class _MyHomePageState extends State<MyHomePage> {
           future: checkLoginStatus(),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
-              if (snapshot.data == "no user") {
-                return Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  bottomNavigationBar: getBottomNavigation(),
-                  body: getIndexStack(<Trip>[]),
-                );
-              }
-              return FutureBuilder(
-                  future: tripListFuture,
-                  builder: (context, snapshotOne) {
-                    if (snapshotOne.hasData && snapshotOne.data != null) {
-                      return Scaffold(
-                        resizeToAvoidBottomInset: false,
-                        bottomNavigationBar: getBottomNavigation(),
-                        body: getIndexStack(snapshotOne.data),
-                      );
-                    } else {
-                      return Scaffold(
-                        resizeToAvoidBottomInset: false,
-                        bottomNavigationBar: getBottomNavigation(),
-                        body: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
-                  });
+              print("new index with snapshot");
+              return Scaffold(
+                resizeToAvoidBottomInset: false,
+                bottomNavigationBar: getBottomNavigation(),
+                body: getIndexStack(),
+              );
             } else {
               return Scaffold(
                 resizeToAvoidBottomInset: false,
@@ -204,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Widget getIndexStack(var tripList) {
+  Widget getIndexStack() {
     /*
     Returns an indexed Stack widget containing the value of what dart page belongs at which button of the navitgation bar, the extra option is for the login page, will show if the user is not verified
      */
@@ -213,19 +188,17 @@ class _MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         currentUser == null ? Container() : MyTrips(currentUser, tripList),
         //trips page
-        currentUser == null ? Container() : Notes(currentUser, tripList),
+        currentUser == null ? Container() : Notes(currentUser,tripList),
         // notes page
-        Photos(currentUser, tripList),
+        currentUser == null ? Container() : Photos(currentUser,tripList),
         // photos page
         Rewards(),
         // rewards page
-        MyFiles(currentUser),
+        currentUser == null ? Container() : MyFiles(currentUser,tripList),
         // files page
         LoginPage(loginCallback),
         // login page
-        currentUser == null
-            ? Container()
-            : MyProfile(currentUser, logoutCallback),
+        currentUser == null ? Container() : MyProfile(currentUser,logoutCallback),
         //my profile page
       ],
       index: _currentIndex,
@@ -332,25 +305,24 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<dynamic> checkLoginStatus() async {
     //check if the user is logged in and set the appropriate view if they are or are not
     if (!haveCheckedLogin) {
+      print("checking");
       var userList = await helper.queryUser();
-      try {
+
+      if (userList.length == 0) {
+        logoutCallback();
+        return [];
+      } else {
+        var tempList  = await AggressorApi().getReservationList(userList[0].contactId);
+        loginCallback();
         setState(() {
+          tripList = tempList;
+          haveCheckedLogin = true;
           currentUser = userList[0];
         });
-      } catch (e) {
-        logoutCallback();
-      }
-      if (currentUser == null) {
-        logoutCallback();
-        return "no user";
-      } else {
-        tripListFuture =
-            AggressorApi().getReservationList(currentUser.contactId);
-        loginCallback();
       }
     }
 
-    return currentUser;
+    return "no user";
   }
 
   void loginCallback() {
@@ -373,4 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -17,7 +17,7 @@ class FileData {
   Map<String, dynamic> toMap() {
     //create a map object from user object
     return {
-      'file': filePath,
+      'filePath': filePath,
       'date' : date,
       'fileName' : fileName,
     };
@@ -25,21 +25,6 @@ class FileData {
 
   Widget getFileRow(BuildContext context, int index) {
     double textBoxSize = MediaQuery.of(context).size.width / 4;
-
-    List<String> months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
 
     return Column(
       children: [
@@ -65,12 +50,7 @@ class FileData {
                 width: textBoxSize,
                 //TODO everything with this date should be replaced with embarkment date soon.
                 child: Text(
-                  months[DateTime.parse(date).month - 1]
-                      .substring(0, 3) +
-                      " " +
-                      DateTime.parse(date).day.toString() +
-                      ", " +
-                      DateTime.parse(date).year.toString(),
+                  date,
                   textAlign: TextAlign.left,
                 ),
               ),
