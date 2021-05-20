@@ -19,10 +19,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class Photos extends StatefulWidget {
-  Photos(this.user, this.tripList);
+  Photos(this.user, this.tripList, this.callbackList);
 
   final List<Trip> tripList;
   final User user;
+  final List<VoidCallback> callbackList;
 
   @override
   State<StatefulWidget> createState() => new PhotosState();
@@ -483,7 +484,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.charterId)) {
-                  tempGalleries[element.charterId] = Gallery(element.charterId, <Photo>[], element);
+                  tempGalleries[element.charterId] = Gallery(element.charterId, <Photo>[],element, widget.callbackList);
                 }
                 StreamedResponse downloadResponse = await AggressorApi().downloadAwsFile(elementJson["Key"].toString());
 
@@ -522,7 +523,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               tripIndex = i;
             }
           }
-          tempGalleries[element.charterId] = Gallery(element.charterId, <Photo>[], widget.tripList[tripIndex]);
+          tempGalleries[element.charterId] = Gallery(element.charterId, <Photo>[], widget.tripList[tripIndex], widget.callbackList);
         }
         tempGalleries[element.charterId].addPhoto(element);
       });

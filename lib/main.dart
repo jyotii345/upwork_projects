@@ -1,27 +1,29 @@
 import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/user_interface_pages/gallery_view.dart';
 import 'package:aggressor_adventures/user_interface_pages/my_files_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_page.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:async/async.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'classes/photo.dart';
 import 'classes/trip.dart';
 import 'user_interface_pages/login_page.dart';
 import 'user_interface_pages/my_profile_page.dart';
 import 'user_interface_pages/my_trips_page.dart';
 import 'user_interface_pages/notes_page.dart';
 
-
 void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget{
+class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
   @override
@@ -36,7 +38,6 @@ class MyApp extends StatelessWidget{
   }
 }
 
-
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
 
@@ -44,7 +45,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMixin{
+class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMixin {
   /*
   instance variables
    */
@@ -57,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
   bool haveCheckedLogin;
 
   List<Trip> tripList = [];
+
+  Widget galleryWidget = Container();
 
   /*
   init state
@@ -188,18 +191,19 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
       children: <Widget>[
         currentUser == null ? Container() : MyTrips(currentUser, tripList),
         //trips page
-        currentUser == null ? Container() : Notes(currentUser,tripList),
+        currentUser == null ? Container() : Notes(currentUser, tripList),
         // notes page
-        currentUser == null ? Container() : Photos(currentUser,tripList),
+        currentUser == null ? Container() : Photos(currentUser, tripList, [tripsCallback, notesCallback, photosCallback, rewardsCallBack,filesCallBack,profileCallBack]),
         // photos page
         Rewards(),
         // rewards page
-        currentUser == null ? Container() : MyFiles(currentUser,tripList),
+        currentUser == null ? Container() : MyFiles(currentUser, tripList),
         // files page
         LoginPage(loginCallback),
         // login page
-        currentUser == null ? Container() : MyProfile(currentUser,logoutCallback),
+        currentUser == null ? Container() : MyProfile(currentUser, logoutCallback),
         //my profile page
+        galleryWidget,
       ],
       index: _currentIndex,
     );
@@ -312,7 +316,7 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
         logoutCallback();
         return [];
       } else {
-        var tempList  = await AggressorApi().getReservationList(userList[0].contactId);
+        var tempList = await AggressorApi().getReservationList(userList[0].contactId);
         loginCallback();
         setState(() {
           tripList = tempList;
@@ -345,6 +349,44 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
       });
     }
   }
+
+
+  void tripsCallback() {
+      setState(() {
+        _currentIndex = 1;
+      });
+  }
+
+  void notesCallback() {
+    setState(() {
+      _currentIndex = 2;
+    });
+  }
+
+  void photosCallback() {
+    setState(() {
+      _currentIndex = 3;
+    });
+  }
+
+  void rewardsCallBack() {
+    setState(() {
+      _currentIndex = 4;
+    });
+  }
+
+  void filesCallBack() {
+    setState(() {
+      _currentIndex = 5;
+    });
+  }
+
+  void profileCallBack() {
+    setState(() {
+      _currentIndex = 6;
+    });
+  }
+
 
   @override
   bool get wantKeepAlive => true;
