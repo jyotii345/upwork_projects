@@ -62,8 +62,7 @@ class AggressorApi {
           }
           else{
             newTrip = await tripDatabaseHelper.getTrip(response[i.toString()]["reservationid"].toString());
-            print(newTrip.toString());
-          }
+        }
 
 
           if (!await charterDatabaseHelper.charterExists(newTrip.charterId)) {
