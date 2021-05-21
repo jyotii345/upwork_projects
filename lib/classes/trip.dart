@@ -3,15 +3,13 @@ import 'dart:ui';
 
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
-import 'package:aggressor_adventures/classes/gallery_map.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/gallery_view.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'aggressor_api.dart';
 
 class Trip {
@@ -239,7 +237,7 @@ class Trip {
                           color: Colors.grey[200],
                           height: textBoxSize * 1.5,
                           width: textBoxSize * 1.5,
-                          child: boat.imageLink != "" ? Image.file(File(boat.imageLink)) : Icon(Icons.directions_boat_sharp),
+                          child: boat.imageLink != "" ? Image.file(File(boat.imageLink), fit: BoxFit.fill,) : Icon(Icons.directions_boat_sharp),
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -545,7 +543,6 @@ class Trip {
                             charterId,
                             galleriesMap.containsKey(charterId)?  galleriesMap[charterId].photos : [],
                             trip,
-                            callBackList,
                           ),
                         ),
                       );

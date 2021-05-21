@@ -1,7 +1,6 @@
 import 'dart:io';
-
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
-import 'package:aggressor_adventures/classes/gallery_map.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -11,17 +10,16 @@ import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart' as globals;
 
 class GalleryView extends StatefulWidget {
-  GalleryView(this.user, this.charterId, this.photos, this.trip, this.callBackList,);
+  GalleryView(this.user, this.charterId, this.photos, this.trip,);
 
   User user;
   String charterId;
   List<Photo> photos;
   Trip trip;
-  List<VoidCallback> callBackList;
 
   @override
   State<StatefulWidget> createState() => new GalleryViewState();
@@ -230,14 +228,14 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   void handleBottomNavigation(int index) {
-    widget.callBackList[index - 1]();
+    currentIndex = index - 1;
     Navigator.pop(context);
   }
 
   void handlePopupClick(String value) {
     switch (value) {
       case 'My Profile':
-        widget.callBackList[5]();
+        currentIndex = 5;
         Navigator.pop(context);
     }
   }

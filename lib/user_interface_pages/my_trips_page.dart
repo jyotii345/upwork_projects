@@ -11,13 +11,11 @@ import 'package:flutter/widgets.dart';
 class MyTrips extends StatefulWidget {
   MyTrips(
     this.user,
-    this.tripList,
-      this.callBackList
+    this.tripList
   );
 
   final User user;
   final List<Trip> tripList;
-  final List<VoidCallback> callBackList;
 
   @override
   State<StatefulWidget> createState() => new myTripsState();
@@ -228,7 +226,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
       element.user = widget.user;
       element.trip = element;
-      element.callBackList = widget.callBackList;
       pastTripsList.add(element.getPastTripCard(context, index));
       index++;
     });

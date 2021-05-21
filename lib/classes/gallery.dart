@@ -15,7 +15,7 @@ class Gallery {
   Trip trip;
   List<VoidCallback> callBackList;
 
-  Gallery(User user, String charterId, List<Photo> photos, Trip trip,List<VoidCallback> callBackList) {
+  Gallery(User user, String charterId, List<Photo> photos, Trip trip,) {
     this.user = user;
     this.charterId = charterId;
     this.photos = photos;
@@ -92,6 +92,6 @@ class Gallery {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => GalleryView(user, charterId, photos, trip, callBackList)));
+            builder: (context) => GalleryView(user, charterId, photos, trip,)));
   }
 }

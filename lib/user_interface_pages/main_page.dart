@@ -1,5 +1,5 @@
-import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
@@ -8,8 +8,6 @@ import 'package:aggressor_adventures/user_interface_pages/rewards_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'login_page.dart';
 import 'my_files_page.dart';
 import 'my_profile_page.dart';
 import 'my_trips_page.dart';
@@ -30,7 +28,6 @@ class _MyHomePageState extends State<MyHomePage>
   /*
   instance variables
    */
-  int _currentIndex = 0;
 
   UserDatabaseHelper helper;
 
@@ -126,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage>
     switch (value) {
       case 'My Profile':
         setState(() {
-          _currentIndex = 5;
+          currentIndex = 5;
         });
     }
   }
@@ -136,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage>
     set the state of the navigation bar selection to index
      */
     setState(() {
-      _currentIndex = index;
+      currentIndex = index;
     });
   }
 
@@ -147,25 +144,11 @@ class _MyHomePageState extends State<MyHomePage>
 
     return IndexedStack(
       children: <Widget>[
-        MyTrips(widget.user, widget.tripList,[
-          tripsCallback,
-          notesCallback,
-          photosCallback,
-          rewardsCallBack,
-          filesCallBack,
-          profileCallBack
-        ]),
+        MyTrips(widget.user, widget.tripList),
         //trips page
         Notes(widget.user, widget.tripList),
         // notes page
-        Photos(widget.user, widget.tripList, [
-          tripsCallback,
-          notesCallback,
-          photosCallback,
-          rewardsCallBack,
-          filesCallBack,
-          profileCallBack
-        ]),
+        Photos(widget.user, widget.tripList, ),
         // photos page
         Rewards(),
         // rewards page
@@ -175,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage>
         //my profile page
         galleryWidget,
       ],
-      index: _currentIndex,
+      index: currentIndex,
     );
   }
 
@@ -193,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage>
       onTap: onTabTapped,
       backgroundColor: AggressorColors.primaryColor,
       // new
-      currentIndex: _currentIndex > 4 ? 0 : _currentIndex,
+      currentIndex: currentIndex > 4 ? 0 : currentIndex,
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white60,
       items: [
@@ -276,41 +259,6 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  void tripsCallback() {
-    setState(() {
-      _currentIndex = 1;
-    });
-  }
-
-  void notesCallback() {
-    setState(() {
-      _currentIndex = 2;
-    });
-  }
-
-  void photosCallback() {
-    setState(() {
-      _currentIndex = 3;
-    });
-  }
-
-  void rewardsCallBack() {
-    setState(() {
-      _currentIndex = 4;
-    });
-  }
-
-  void filesCallBack() {
-    setState(() {
-      _currentIndex = 5;
-    });
-  }
-
-  void profileCallBack() {
-    setState(() {
-      _currentIndex = 6;
-    });
-  }
 
   @override
   bool get wantKeepAlive => true;

@@ -5,7 +5,7 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
-import 'package:aggressor_adventures/classes/gallery_map.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -19,14 +19,13 @@ import 'package:http/http.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:aggressor_adventures/classes/gallery_map.dart' as galleryMap;
+import 'package:aggressor_adventures/classes/globals.dart' as galleryMap;
 
 class Photos extends StatefulWidget {
-  Photos(this.user, this.tripList, this.callbackList);
+  Photos(this.user, this.tripList);
 
   final List<Trip> tripList;
   final User user;
-  final List<VoidCallback> callbackList;
 
   @override
   State<StatefulWidget> createState() => new PhotosState();
@@ -469,6 +468,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
+
     if (!photosLoaded) {
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
@@ -492,10 +492,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.charterId)) {
-                  tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[],element, widget.callbackList);
+                  tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[],element);
                 }
                 if(! await photoHelper.keyExists(elementJson["Key"])) {
-                  print("does not exist");
                   StreamedResponse downloadResponse = await AggressorApi()
                       .downloadAwsFile(elementJson["Key"].toString());
 
@@ -538,7 +537,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               tripIndex = i;
             }
           }
-          tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[], widget.tripList[tripIndex], widget.callbackList);
+          tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[], widget.tripList[tripIndex]);
         }
         tempGalleries[element.charterId].addPhoto(element);
       });

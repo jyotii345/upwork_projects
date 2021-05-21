@@ -8,5 +8,9 @@ Map<String, Gallery> galleriesMap = <String, Gallery>{};
 
 bool photosLoaded = false;
 
+int currentIndex = 0;
+
+
+
 
 
