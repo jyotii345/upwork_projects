@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 
@@ -70,8 +69,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
     return ListView(
-      addAutomaticKeepAlives: true,
-      cacheExtent: 100,
       children: [
         GoogleMapWidget(context).getMap(),
         getPageTitle(),
@@ -161,7 +158,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
     upcomingTripsList.clear();
     upcomingTrips.forEach((element) {
-      print(element.charter.toMap().toString());
       upcomingTripsList.add(element.getUpcomingTripCard(context));
     });
 

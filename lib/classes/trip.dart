@@ -193,7 +193,7 @@ class Trip {
                           child: CachedNetworkImage(
                             imageUrl: boat.imageLink,
                             progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
+                            errorWidget: (context, url, error) => Icon(Icons.directions_boat),
                           ),
                         ),
                         Row(

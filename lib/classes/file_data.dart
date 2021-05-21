@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,13 +19,14 @@ class FileData {
     //create a map object from user object
     return {
       'filePath': filePath,
-      'date' : date,
-      'fileName' : fileName,
+      'date': date,
+      'fileName': fileName,
     };
   }
 
   Widget getFileRow(BuildContext context, int index) {
     double textBoxSize = MediaQuery.of(context).size.width / 4;
+    double iconSize = MediaQuery.of(context).size.width / 15;
 
     return Column(
       children: [
@@ -38,12 +40,11 @@ class FileData {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.max,
             children: [
+              Image.asset("assets/filearrow.png", height: iconSize,width: iconSize,),
               Expanded(
                 child: SizedBox(
                   width: textBoxSize,
-                  child: Text(fileName,
-                      textAlign: TextAlign
-                          .left), //TODO replace with actual destination, unsure what this means right now
+                  child: Text(fileName, textAlign: TextAlign.left, style: TextStyle(color: AggressorColors.secondaryColor),),
                 ),
               ),
               SizedBox(
@@ -54,9 +55,8 @@ class FileData {
                 ),
               ),
               SizedBox(
-                width: textBoxSize / 2,
                 child: IconButton(
-                    icon: Image.asset("assets/trashcan.png"),
+                    icon: Image.asset("assets/trashcan.png",height: iconSize, width: iconSize,),
                     onPressed: () {
                       print("pressed");
                     }),
