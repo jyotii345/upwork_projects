@@ -14,7 +14,12 @@ import '../classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart' as globals;
 
 class GalleryView extends StatefulWidget {
-  GalleryView(this.user, this.charterId, this.photos, this.trip,);
+  GalleryView(
+    this.user,
+    this.charterId,
+    this.photos,
+    this.trip,
+  );
 
   User user;
   String charterId;
@@ -271,11 +276,14 @@ class GalleryViewState extends State<GalleryView> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         TextButton(
-            child: Image(image: AssetImage("assets/leftarrow.png"), height: iconSize, width: iconSize),
+            child: Image(
+                image: AssetImage("assets/leftarrow.png"),
+                height: iconSize,
+                width: iconSize),
             onPressed: () {
-              if(indexMultiplier > 1){
+              if (indexMultiplier > 1) {
                 setState(() {
-                  indexMultiplier --;
+                  indexMultiplier--;
                 });
               }
             }),
@@ -284,11 +292,14 @@ class GalleryViewState extends State<GalleryView> {
           height: iconSize,
         ),
         TextButton(
-            child: Image(image: AssetImage("assets/rightarrow.png"), height: iconSize, width: iconSize),
+            child: Image(
+                image: AssetImage("assets/rightarrow.png"),
+                height: iconSize,
+                width: iconSize),
             onPressed: () {
-              if(widget.photos.length - (9 * (indexMultiplier - 1)) > 9 ){
+              if (widget.photos.length - (9 * (indexMultiplier - 1)) > 9) {
                 setState(() {
-                  indexMultiplier ++;
+                  indexMultiplier++;
                 });
               }
             }),
@@ -307,13 +318,27 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getDate() {
-    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    List<String> months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         "Date: " +
-            months[DateTime.parse(widget.trip.tripDate).month - 1].substring(0, 3) +
+            months[DateTime.parse(widget.trip.tripDate).month - 1]
+                .substring(0, 3) +
             " " +
             DateTime.parse(widget.trip.tripDate).day.toString() +
             "," +
@@ -324,32 +349,46 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getImageGrid() {
-
     return Padding(
       padding: const EdgeInsets.all(15.0),
-      child: widget.photos.length > 0 ?GridView.builder(
-        shrinkWrap: true,
-        itemCount: widget.photos.length - (9 * (indexMultiplier - 1)) < 9  ?  widget.photos.length - (9 * (indexMultiplier - 1)) : 9 ,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              imageExpansionDialogue(Image.file(
-                File(
-                  widget.photos[(index + (9 * indexMultiplier))].imagePath,
-                ),
-                fit: BoxFit.cover,
-              ));
-            },
-            child: Image.file(
-              File(
-                widget.photos[index].imagePath,
+      child: widget.photos.length > 0
+          ? GridView.builder(
+              shrinkWrap: true,
+              itemCount: widget.photos.length - (9 * (indexMultiplier - 1)) < 9
+                  ? widget.photos.length - (9 * (indexMultiplier - 1))
+                  : 9,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    imageExpansionDialogue(Image.file(
+                      File(
+                        widget
+                            .photos[(index + (9 * indexMultiplier))].imagePath,
+                      ),
+                      fit: BoxFit.cover,
+                    ));
+                  },
+                  child: Image.file(
+                    File(
+                      widget.photos[index].imagePath,
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                );
+              },
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  mainAxisExtent: MediaQuery.of(context).size.width / 6,
+                  maxCrossAxisExtent: MediaQuery.of(context).size.width / 4,
+                  childAspectRatio: 1.2 / 1,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20),
+            )
+          : Center(
+              child: Text(
+                "You have not uploaded any images to this gallery yet.",
+                textAlign: TextAlign.center,
               ),
-              fit: BoxFit.cover,
             ),
-          );
-        },
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(mainAxisExtent:MediaQuery.of(context).size.width / 6,maxCrossAxisExtent:MediaQuery.of(context).size.width / 4, childAspectRatio: 1.2 / 1, crossAxisSpacing: 20, mainAxisSpacing: 20),
-      ) : Center(child: Text("You have not uploaded any images to this gallery yet.", textAlign: TextAlign.center,),),
     );
   }
 
@@ -365,7 +404,8 @@ class GalleryViewState extends State<GalleryView> {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
-        colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        colorFilter:
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -392,61 +432,64 @@ class GalleryViewState extends State<GalleryView> {
     return errorMessage == ""
         ? Container()
         : Padding(
-      padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
-      child: Text(
-        errorMessage,
-        style: TextStyle(color: Colors.red),
-        textAlign: TextAlign.center,
-      ),
-    );
+            padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
+            child: Text(
+              errorMessage,
+              style: TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+          );
   }
 
   Future<void> loadAssets() async {
     List<Asset> resultList = <Asset>[];
     String error = 'No Error Detected';
 
-    if (await Permission.photos.status.isDenied || await Permission.camera.status.isDenied) {
+    if (await Permission.photos.status.isDenied ||
+        await Permission.camera.status.isDenied) {
       await Permission.photos.request();
       await Permission.camera.request();
 
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
     }
 
-      //try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
-        enableCamera: true,
-        selectedAssets: images,
-        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-        materialOptions: MaterialOptions(
-          actionBarColor: "#ff428cc7",
-          actionBarTitle: "Aggressor Adventures",
-          allViewTitle: "All Photos",
-          useDetailsView: false,
-          selectCircleStrokeColor: "#ff428cc7",
-        ),
-      );
+    //try {
+    resultList = await MultiImagePicker.pickImages(
+      maxImages: 300,
+      enableCamera: true,
+      selectedAssets: images,
+      cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+      materialOptions: MaterialOptions(
+        actionBarColor: "#ff428cc7",
+        actionBarTitle: "Aggressor Adventures",
+        allViewTitle: "All Photos",
+        useDetailsView: false,
+        selectCircleStrokeColor: "#ff428cc7",
+      ),
+    );
 
-      for(var result in resultList) {
-        File file = File(await FlutterAbsolutePath.getAbsolutePath(result.identifier));
+    for (var result in resultList) {
+      File file =
+          File(await FlutterAbsolutePath.getAbsolutePath(result.identifier));
 
-         var response = await AggressorApi().uploadAwsFile(widget.user.userId, "gallery", widget.trip.charterId, file.path);
-         await Future.delayed(Duration(milliseconds: 1000));
-         if (response["status"] == "success") {
-           widget.photos.add(Photo("", "", file.path, "", "",""));
-           photosLoaded = false;
-         }
-      };
-      setState(() {
-      });
+      var response = await AggressorApi().uploadAwsFile(
+          widget.user.userId, "gallery", widget.trip.charterId, file.path);
+      await Future.delayed(Duration(milliseconds: 1000));
+      if (response["status"] == "success") {
+        widget.photos.add(Photo("", "", file.path, "", "", ""));
+      }
+    }
 
-      if (!mounted) return;
+    setState(() {
+      photosLoaded = false;
+    });
 
-      setState(() {
-        errorMessage = error;
-      });
+    if (!mounted) return;
+
+    setState(() {
+      errorMessage = error;
+    });
   }
-
 
   Widget getPageTitle() {
     double iconSize = MediaQuery.of(context).size.width / 10;
@@ -460,18 +503,25 @@ class GalleryViewState extends State<GalleryView> {
             Expanded(
               child: Text(
                 "My Photos",
-                style: TextStyle(color: AggressorColors.primaryColor, fontSize: MediaQuery.of(context).size.height / 26, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: AggressorColors.primaryColor,
+                    fontSize: MediaQuery.of(context).size.height / 26,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             TextButton(
-                child: Image(
-                  image: AssetImage("assets/addphotosblue.png"),
-                  height: iconSize,
-                  width: iconSize,
-                ),
-                onPressed: loadAssets,),
+              child: Image(
+                image: AssetImage("assets/addphotosblue.png"),
+                height: iconSize,
+                width: iconSize,
+              ),
+              onPressed: loadAssets,
+            ),
             TextButton(
-                child: Image(image: AssetImage("assets/trashcan.png"), height: iconSize, width: iconSize),
+                child: Image(
+                    image: AssetImage("assets/trashcan.png"),
+                    height: iconSize,
+                    width: iconSize),
                 onPressed: () {
                   //TODO implement button function
                 }),
