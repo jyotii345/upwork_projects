@@ -1,23 +1,23 @@
 import 'dart:async';
-
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
-import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/google_map.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:async/async.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:aggressor_adventures/classes/aggressor_api.dart';
-
 class MyTrips extends StatefulWidget {
-  MyTrips(this.user, this.tripList);
+  MyTrips(
+    this.user,
+    this.tripList,
+      this.callBackList
+  );
 
   final User user;
   final List<Trip> tripList;
+  final List<VoidCallback> callBackList;
 
   @override
   State<StatefulWidget> createState() => new myTripsState();
@@ -30,6 +30,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
   List<Widget> pastTripsList;
   List<Widget> upcomingTripsList;
+
 // coordinates for a center location
 
   /*
@@ -64,7 +65,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 /*
   self implemented
    */
-
 
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
@@ -166,7 +166,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         shrinkWrap: true,
         itemCount: upcomingTripsList.length,
         itemBuilder: (context, position) {
-
           return upcomingTripsList[upcomingTripsList.length - 1 - position];
         });
   }
@@ -226,6 +225,10 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
     pastTrips.forEach((element) {
+
+      element.user = widget.user;
+      element.trip = element;
+      element.callBackList = widget.callBackList;
       pastTripsList.add(element.getPastTripCard(context, index));
       index++;
     });
@@ -334,7 +337,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     );
   }
 
-
   Widget getBackGroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
@@ -351,4 +353,5 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
       ),
     );
   }
+
 }

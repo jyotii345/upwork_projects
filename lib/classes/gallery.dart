@@ -14,15 +14,13 @@ class Gallery {
   List<Photo> photos;
   Trip trip;
   List<VoidCallback> callBackList;
-  VoidCallback newImageCallBack;
 
-  Gallery(User user, String charterId, List<Photo> photos, Trip trip,List<VoidCallback> callBackList, VoidCallback newImageCallback) {
+  Gallery(User user, String charterId, List<Photo> photos, Trip trip,List<VoidCallback> callBackList) {
     this.user = user;
     this.charterId = charterId;
     this.photos = photos;
     this.trip = trip;
     this.callBackList =  callBackList;
-    this.newImageCallBack = newImageCallback;
   }
 
   Map<String, dynamic> toMap() {
@@ -59,16 +57,13 @@ class Gallery {
                 child: SizedBox(
                   width: textBoxSize,
                   child: GestureDetector(
-                    onTap : (){Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GalleryView(user, charterId, photos, trip, callBackList, newImageCallBack)));},
+                    onTap : (){openGalleryView(context);},
                     child: Text(
-                      trip.detailDestination,
+                      trip.charter.destination == ""? trip.destination  :trip.charter.destination,
                       textAlign: TextAlign.left,
                       style: TextStyle(color: AggressorColors.secondaryColor),
                     ),
-                  ), //TODO replace with actual destination
+                  ),
                 ),
               ),
               SizedBox(
@@ -81,7 +76,7 @@ class Gallery {
               SizedBox(
                 width: textBoxSize / 2,
                 child: IconButton(
-                    icon: Image.asset("assets/trashcan.png"),
+                    icon: Image.asset("assets/trashcan.png",),
                     onPressed: () {
                       print("pressed");
                     }),
@@ -91,5 +86,12 @@ class Gallery {
         ),
       ],
     );
+  }
+
+  void openGalleryView(BuildContext context){
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => GalleryView(user, charterId, photos, trip, callBackList)));
   }
 }

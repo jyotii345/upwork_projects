@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
+import 'package:aggressor_adventures/classes/gallery_map.dart';
+import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/gallery_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'aggressor_api.dart';
 
 class Trip {
+  User user;
   String tripDate;
   String title;
   String latitude;
@@ -19,7 +24,20 @@ class Trip {
   String reservationDate;
   String reservationId;
   String imageResource;
-  String charterId, total, discount, payments, due, dueDate, passengers, location, embark, disembark, detailDestination;
+  String charterId,
+      total,
+      discount,
+      payments,
+      due,
+      dueDate,
+      passengers,
+      location,
+      embark,
+      disembark,
+      detailDestination;
+  List<VoidCallback> callBackList;
+  VoidCallback newImageCallBack;
+  Trip trip;
 
   Boat boat;
   Charter charter;
@@ -42,8 +60,25 @@ class Trip {
     this.reservationId = reservationId;
   }
 
-  Trip.TripWithDetails(String tripDate, String title, String latitude, String longitude, String destination, String reservationDate, String reservationId, String charterId, String total,
-      String discount, String payments, String due, String dueDate, String passengers, String location, String embark, String disembark, String detailDestination) {
+  Trip.TripWithDetails(
+      String tripDate,
+      String title,
+      String latitude,
+      String longitude,
+      String destination,
+      String reservationDate,
+      String reservationId,
+      String charterId,
+      String total,
+      String discount,
+      String payments,
+      String due,
+      String dueDate,
+      String passengers,
+      String location,
+      String embark,
+      String disembark,
+      String detailDestination) {
     this.tripDate = tripDate;
     this.title = title;
     this.latitude = latitude;
@@ -141,7 +176,8 @@ class Trip {
 
   Future<dynamic> getTripDetails(String contactId) async {
     //get detials for this specific trip object and add the results to this trip
-    var jsonResponse = await AggressorApi().getReservationDetails(reservationId.toString(), contactId.toString());
+    var jsonResponse = await AggressorApi()
+        .getReservationDetails(reservationId.toString(), contactId.toString());
     if (jsonResponse["status"] == "success") {
       charterId = jsonResponse["charterid"].toString();
       total = jsonResponse["total"].toString();
@@ -171,7 +207,20 @@ class Trip {
     double screenFontSize = MediaQuery.of(context).size.width / 50;
 
     double screenFontSizeSmall = MediaQuery.of(context).size.width / 60;
-    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    List<String> months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
     return Padding(
         padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
         child: Column(
@@ -190,18 +239,18 @@ class Trip {
                           color: Colors.grey[200],
                           height: textBoxSize * 1.5,
                           width: textBoxSize * 1.5,
-                          child: CachedNetworkImage(
-                            imageUrl: boat.imageLink,
-                            progressIndicatorBuilder: (context, url, downloadProgress) => CircularProgressIndicator(value: downloadProgress.progress),
-                            errorWidget: (context, url, error) => Icon(Icons.directions_boat),
-                          ),
+                          child: boat.imageLink != "" ? Image.file(File(boat.imageLink)) : Icon(Icons.directions_boat_sharp),
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text("Days Left: "),
                             Text(
-                              DateTime.now().difference(DateTime.parse(charter.startDate)).inDays.abs().toString(),
+                              DateTime.now()
+                                  .difference(DateTime.parse(charter.startDate))
+                                  .inDays
+                                  .abs()
+                                  .toString(),
                               style: TextStyle(color: Colors.red),
                             )
                           ],
@@ -218,7 +267,11 @@ class Trip {
                       SizedBox(
                         height: 40,
                         width: 40,
-                        child: TextButton(style: TextButton.styleFrom(padding: EdgeInsets.zero), child: Image.asset("assets/notesblue.png"), onPressed: () {}), //TODO add on pressed function
+                        child: TextButton(
+                            style:
+                                TextButton.styleFrom(padding: EdgeInsets.zero),
+                            child: Image.asset("assets/notesblue.png"),
+                            onPressed: () {}), //TODO add on pressed function
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -314,11 +367,17 @@ class Trip {
                             SizedBox(
                               width: textBoxSize,
                               child: Text(
-                                months[DateTime.parse(charter.startDate).month - 1].substring(0, 3) +
+                                months[DateTime.parse(charter.startDate).month -
+                                            1]
+                                        .substring(0, 3) +
                                     " " +
-                                    DateTime.parse(charter.startDate).day.toString() +
+                                    DateTime.parse(charter.startDate)
+                                        .day
+                                        .toString() +
                                     "," +
-                                    DateTime.parse(charter.startDate).year.toString(),
+                                    DateTime.parse(charter.startDate)
+                                        .year
+                                        .toString(),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: screenFontSize),
                               ),
@@ -353,21 +412,29 @@ class Trip {
                               height: 25,
                               width: MediaQuery.of(context).size.width / 4.8,
                               child: TextButton(
-                                style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
                                 onPressed: () {},
-                                child: Text("Guest Information System (GIS)", textAlign: TextAlign.center, style: TextStyle(color: Colors.lightBlue, fontSize: screenFontSizeSmall)),
+                                child: Text("Guest Information System (GIS)",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.lightBlue,
+                                        fontSize: screenFontSizeSmall)),
                               ),
                             ),
                             SizedBox(
                               height: 25,
                               width: MediaQuery.of(context).size.width / 4.8,
                               child: TextButton(
-                                style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
                                 onPressed: () {},
                                 child: Text(
                                   "Know before you go",
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.lightBlue, fontSize: screenFontSizeSmall),
+                                  style: TextStyle(
+                                      color: Colors.lightBlue,
+                                      fontSize: screenFontSizeSmall),
                                 ),
                               ),
                             ),
@@ -375,12 +442,15 @@ class Trip {
                               width: MediaQuery.of(context).size.width / 4.8,
                               height: 25,
                               child: TextButton(
-                                style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
                                 onPressed: () {},
                                 child: Text(
                                   "Make Payment",
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.lightBlue, fontSize: screenFontSizeSmall),
+                                  style: TextStyle(
+                                      color: Colors.lightBlue,
+                                      fontSize: screenFontSizeSmall),
                                 ),
                               ),
                             ),
@@ -406,7 +476,20 @@ class Trip {
   Widget getPastTripCard(BuildContext context, int index) {
     //returns the tile view to be placed into the view for the previous trips this user has been engaged in
     double textBoxSize = MediaQuery.of(context).size.width / 4.3;
-    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    List<String> months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
     return Column(
       children: [
         Container(
@@ -430,7 +513,8 @@ class Trip {
               SizedBox(
                 width: textBoxSize,
                 child: Text(
-                  months[DateTime.parse(charter.startDate).month - 1].substring(0, 3) +
+                  months[DateTime.parse(charter.startDate).month - 1]
+                          .substring(0, 3) +
                       " " +
                       DateTime.parse(charter.startDate).day.toString() +
                       ", " +
@@ -451,7 +535,20 @@ class Trip {
                 child: IconButton(
                     icon: Image.asset("assets/photosblue.png"),
                     onPressed: () {
-                      print("pressed");
+                      print("opening");
+                      print(galleriesMap.toString());
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (pageContext) => GalleryView(
+                            user,
+                            charterId,
+                            galleriesMap.containsKey(charterId)?  galleriesMap[charterId].photos : [],
+                            trip,
+                            callBackList,
+                          ),
+                        ),
+                      );
                     }),
               ),
             ],

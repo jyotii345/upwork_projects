@@ -1,4 +1,3 @@
-
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
@@ -21,11 +20,13 @@ class MyHomePage extends StatefulWidget {
 
   final User user;
   final List<Trip> tripList;
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with AutomaticKeepAliveClientMixin {
   /*
   instance variables
    */
@@ -52,61 +53,60 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: SizedBox(
-          height: AppBar().preferredSize.height,
-          child: IconButton(
-            icon: Container(
-              child: Image.asset("assets/callicon.png"),
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          leading: SizedBox(
+            height: AppBar().preferredSize.height,
+            child: IconButton(
+              icon: Container(
+                child: Image.asset("assets/callicon.png"),
+              ),
+              onPressed: makeCall,
             ),
-            onPressed: makeCall,
           ),
-        ),
-        title: Image.asset(
-          "assets/logo.png",
-          height: AppBar().preferredSize.height,
-          fit: BoxFit.fitHeight,
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-            child: SizedBox(
-              height: AppBar().preferredSize.height,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: PopupMenuButton<String>(
-                    onSelected: handlePopupClick,
-                    child: Container(
-                      child: Image.asset(
-                        "assets/menuicon.png",
+          title: Image.asset(
+            "assets/logo.png",
+            height: AppBar().preferredSize.height,
+            fit: BoxFit.fitHeight,
+          ),
+          actions: <Widget>[
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+              child: SizedBox(
+                height: AppBar().preferredSize.height,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: PopupMenuButton<String>(
+                      onSelected: handlePopupClick,
+                      child: Container(
+                        child: Image.asset(
+                          "assets/menuicon.png",
+                        ),
                       ),
-                    ),
-                    itemBuilder: (BuildContext context) {
-                      return {
-                        "My Profile",
-                      }.map((String option) {
-                        return PopupMenuItem<String>(
-                          value: option,
-                          child: Text(option),
-                        );
-                      }).toList();
-                    }),
+                      itemBuilder: (BuildContext context) {
+                        return {
+                          "My Profile",
+                        }.map((String option) {
+                          return PopupMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList();
+                      }),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      body: Scaffold(
-                resizeToAvoidBottomInset: false,
-                bottomNavigationBar: getBottomNavigation(),
-                body: getIndexStack(),
-              )
-    );
+          ],
+        ),
+        body: Scaffold(
+          resizeToAvoidBottomInset: false,
+          bottomNavigationBar: getBottomNavigation(),
+          body: getIndexStack(),
+        ));
   }
 
 /*
@@ -147,11 +147,25 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
 
     return IndexedStack(
       children: <Widget>[
-        MyTrips(widget.user, widget.tripList),
+        MyTrips(widget.user, widget.tripList,[
+          tripsCallback,
+          notesCallback,
+          photosCallback,
+          rewardsCallBack,
+          filesCallBack,
+          profileCallBack
+        ]),
         //trips page
-         Notes(widget.user,widget.tripList),
+        Notes(widget.user, widget.tripList),
         // notes page
-         Photos(widget.user, widget.tripList, [tripsCallback, notesCallback, photosCallback, rewardsCallBack,filesCallBack,profileCallBack]),
+        Photos(widget.user, widget.tripList, [
+          tripsCallback,
+          notesCallback,
+          photosCallback,
+          rewardsCallBack,
+          filesCallBack,
+          profileCallBack
+        ]),
         // photos page
         Rewards(),
         // rewards page
@@ -297,7 +311,6 @@ class _MyHomePageState extends State<MyHomePage> with AutomaticKeepAliveClientMi
       _currentIndex = 6;
     });
   }
-
 
   @override
   bool get wantKeepAlive => true;

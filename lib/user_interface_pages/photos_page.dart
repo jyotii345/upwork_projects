@@ -5,6 +5,7 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
+import 'package:aggressor_adventures/classes/gallery_map.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -18,6 +19,7 @@ import 'package:http/http.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:aggressor_adventures/classes/gallery_map.dart' as galleryMap;
 
 class Photos extends StatefulWidget {
   Photos(this.user, this.tripList, this.callbackList);
@@ -40,8 +42,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   List<Trip> sortedTripList;
   List<dynamic> galleriesList = [];
   List<Asset> images = <Asset>[];
-  bool photosLoaded = false;
-  Map<String, Gallery> galleriesMap = <String, Gallery>{};
+
+
 
   /*
   initState
@@ -321,7 +323,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           future: getGalleries(),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
-              return galleriesMap.length == 0
+              return galleryMap.galleriesMap.length == 0
                   ? Column(
                 mainAxisSize: MainAxisSize.min,
                       children: [
@@ -410,7 +412,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
 
     int index = 0;
-    galleriesMap.forEach((key, value) {
+    galleryMap.galleriesMap.forEach((key, value) {
       galleriesList.add(value.getGalleryRow(context, index));
       index++;
     });
@@ -490,28 +492,34 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.charterId)) {
-                  tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[],element, widget.callbackList, newImageCallBack);
+                  tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[],element, widget.callbackList);
                 }
-                StreamedResponse downloadResponse = await AggressorApi().downloadAwsFile(elementJson["Key"].toString());
+                if(! await photoHelper.keyExists(elementJson["Key"])) {
+                  print("does not exist");
+                  StreamedResponse downloadResponse = await AggressorApi()
+                      .downloadAwsFile(elementJson["Key"].toString());
 
-                Uint8List bytes = await readByteStream(downloadResponse.stream);
+                  Uint8List bytes = await readByteStream(
+                      downloadResponse.stream);
 
-                String fileName = downloadResponse.headers["content-disposition"];
-                int whereIndex = fileName.indexOf("=");
-                fileName = fileName.substring(whereIndex + 1);
-                fileName.replaceAll("\"", "");
+                  String fileName = downloadResponse
+                      .headers["content-disposition"];
+                  int whereIndex = fileName.indexOf("=");
+                  fileName = fileName.substring(whereIndex + 1);
+                  fileName.replaceAll("\"", "");
 
-                Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
-                String appDocumentsPath = appDocumentsDirectory.path; // 2
-                String filePath = '$appDocumentsPath/$fileName';
-                File imageFile = File(filePath);
-                imageFile.writeAsBytes(bytes);
+                  Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+                  String appDocumentsPath = appDocumentsDirectory.path; // 2
+                  String filePath = '$appDocumentsPath/$fileName';
+                  File imageFile = File(filePath);
+                  imageFile.writeAsBytes(bytes);
 
+                    Photo photo = Photo(
+                        fileName, widget.user.userId, imageFile.path,
+                        element.tripDate, element.charterId,
+                        elementJson["Key"]);
 
-                if (!await photoHelper.photoExists(fileName, element.charterId)) {
-                  Photo photo = Photo(fileName, widget.user.userId, imageFile.path, element.tripDate, element.charterId);
-
-                  photoHelper.insertPhoto(photo);
+                    photoHelper.insertPhoto(photo);
                 }
               }
             }
@@ -530,24 +538,19 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               tripIndex = i;
             }
           }
-          tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[], widget.tripList[tripIndex], widget.callbackList, newImageCallBack);
+          tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[], widget.tripList[tripIndex], widget.callbackList);
         }
         tempGalleries[element.charterId].addPhoto(element);
       });
 
       setState(() {
-        galleriesMap = tempGalleries;
+        galleryMap.galleriesMap = tempGalleries;
         photosLoaded = true;
       });
     }
     return "finished";
   }
 
-  void newImageCallBack(){
-    setState(() {
-      photosLoaded = true;
-    });
-  }
 
   @override
   bool get wantKeepAlive => true;

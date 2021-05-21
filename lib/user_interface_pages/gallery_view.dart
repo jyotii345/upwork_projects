@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/gallery_map.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -14,14 +15,13 @@ import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
 
 class GalleryView extends StatefulWidget {
-  GalleryView(this.user, this.charterId, this.photos, this.trip, this.callBackList, this.newImagesCallBack);
+  GalleryView(this.user, this.charterId, this.photos, this.trip, this.callBackList,);
 
   User user;
   String charterId;
   List<Photo> photos;
   Trip trip;
   List<VoidCallback> callBackList;
-  VoidCallback newImagesCallBack;
 
   @override
   State<StatefulWidget> createState() => new GalleryViewState();
@@ -329,7 +329,7 @@ class GalleryViewState extends State<GalleryView> {
 
     return Padding(
       padding: const EdgeInsets.all(15.0),
-      child: GridView.builder(
+      child: widget.photos.length > 0 ?GridView.builder(
         shrinkWrap: true,
         itemCount: widget.photos.length - (9 * (indexMultiplier - 1)) < 9  ?  widget.photos.length - (9 * (indexMultiplier - 1)) : 9 ,
         itemBuilder: (context, index) {
@@ -351,7 +351,7 @@ class GalleryViewState extends State<GalleryView> {
           );
         },
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(mainAxisExtent:MediaQuery.of(context).size.width / 6,maxCrossAxisExtent:MediaQuery.of(context).size.width / 4, childAspectRatio: 1.2 / 1, crossAxisSpacing: 20, mainAxisSpacing: 20),
-      ),
+      ) : Center(child: Text("You have not uploaded any images to this gallery yet.", textAlign: TextAlign.center,),),
     );
   }
 
@@ -435,8 +435,8 @@ class GalleryViewState extends State<GalleryView> {
          var response = await AggressorApi().uploadAwsFile(widget.user.userId, "gallery", widget.trip.charterId, file.path);
          await Future.delayed(Duration(milliseconds: 1000));
          if (response["status"] == "success") {
-           widget.photos.add(Photo("", "", file.path, "", ""));
-           widget.newImagesCallBack();
+           widget.photos.add(Photo("", "", file.path, "", "",""));
+           photosLoaded = false;
          }
       };
       setState(() {

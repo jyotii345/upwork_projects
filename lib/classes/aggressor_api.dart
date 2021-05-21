@@ -7,6 +7,7 @@ import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:http/http.dart';
+import 'package:image_downloader/image_downloader.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
 
@@ -36,10 +37,12 @@ class AggressorApi {
     //create and send a reservation list request to the Aggressor Api and return a list of Trip objects also removes duplicates from the received list
 
     TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
-    CharterDatabaseHelper charterDatabaseHelper = CharterDatabaseHelper.instance;
+    CharterDatabaseHelper charterDatabaseHelper =
+        CharterDatabaseHelper.instance;
     BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
 
-    String url = "https://secure.aggressor.com/api/app/reservations/list/" + contactId;
+    String url =
+        "https://secure.aggressor.com/api/app/reservations/list/" + contactId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -52,21 +55,22 @@ class AggressorApi {
       int i = 0;
       while (response[i.toString()] != null) {
         Trip newTrip;
-        if (!addedTrips.contains(response[i.toString()]["reservationid"].toString())) {
+        if (!addedTrips
+            .contains(response[i.toString()]["reservationid"].toString())) {
           addedTrips.add(response[i.toString()]["reservationid"].toString());
-          if (!await tripDatabaseHelper.tripExists(response[i.toString()]["reservationid"].toString())) {
+          if (!await tripDatabaseHelper
+              .tripExists(response[i.toString()]["reservationid"].toString())) {
             newTrip = Trip.fromJson(response[i.toString()]);
             await newTrip.getTripDetails(contactId);
             await tripDatabaseHelper.insertTrip(newTrip);
-
+          } else {
+            newTrip = await tripDatabaseHelper
+                .getTrip(response[i.toString()]["reservationid"].toString());
           }
-          else{
-            newTrip = await tripDatabaseHelper.getTrip(response[i.toString()]["reservationid"].toString());
-        }
-
 
           if (!await charterDatabaseHelper.charterExists(newTrip.charterId)) {
-            var charterResponse = await AggressorApi().getCharter(newTrip.charterId);
+            var charterResponse =
+                await AggressorApi().getCharter(newTrip.charterId);
             if (charterResponse["status"] == "success") {
               Charter newCharter = Charter(
                   charterResponse["charterid"].toString(),
@@ -82,28 +86,36 @@ class AggressorApi {
               await charterDatabaseHelper.insertCharter(newCharter);
 
               if (!await boatDatabaseHelper.boatExists(newCharter.boatId)) {
-                var boatResponse = await AggressorApi().getBoat(newCharter.boatId);
+                var boatResponse =
+                    await AggressorApi().getBoat(newCharter.boatId);
                 if (boatResponse["status"] == "success") {
+                  //TODO get boat image here
+
+
+                  var imagePath = await getBoatImage(boatResponse["image"]);
+
+                  print("saved path");
+                  print(imagePath);
+
                   Boat newBoat = Boat(
-                    boatResponse["boatid"].toString(),
-                    boatResponse["name"].toString(),
-                    boatResponse["abbreviation"].toString(),
-                    boatResponse["boat_email"].toString(),
-                    boatResponse["active"].toString(),
-                    boatResponse["image"].toString(),);
+                      boatResponse["boatid"].toString(),
+                      boatResponse["name"].toString(),
+                      boatResponse["abbreviation"].toString(),
+                      boatResponse["boat_email"].toString(),
+                      boatResponse["active"].toString(),
+                      imagePath);
+
                   await boatDatabaseHelper.insertBoat(newBoat);
                 }
               }
             }
           }
 
-          await  newTrip.initCharterInformation();
-
+          await newTrip.initCharterInformation();
         }
 
         i++;
       }
-
 
       Database db = await tripDatabaseHelper.database;
       List<Map> queryList = await db.rawQuery('SELECT * FROM trip');
@@ -112,17 +124,20 @@ class AggressorApi {
       } else {
         tripList = [];
       }
-    }
-    else {
+    } else {
       tripList = [];
     }
 
     return tripList;
   }
 
-  Future<dynamic> getReservationDetails(String reservationId, String contactId) async {
+  Future<dynamic> getReservationDetails(
+      String reservationId, String contactId) async {
     //create and send a reservation view request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/reservations/view/" + reservationId + "/" + contactId;
+    String url = "https://secure.aggressor.com/api/app/reservations/view/" +
+        reservationId +
+        "/" +
+        contactId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -131,9 +146,13 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> getInventoryDetails(String reservationId,) async {
+  Future<dynamic> getInventoryDetails(
+    String reservationId,
+  ) async {
     //create and send a inventory view request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/reservations/inventory/" + reservationId;
+    String url =
+        "https://secure.aggressor.com/api/app/reservations/inventory/" +
+            reservationId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -144,7 +163,8 @@ class AggressorApi {
 
   Future<dynamic> getContact(String contactId) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/contacts/view/" + contactId;
+    String url =
+        "https://secure.aggressor.com/api/app/contacts/view/" + contactId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -153,9 +173,11 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> recordPayment(String reservationId, String amount, String billingContact, String creditType) async {
+  Future<dynamic> recordPayment(String reservationId, String amount,
+      String billingContact, String creditType) async {
     //create and send a payment to be recorded request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/payments/record/" + reservationId;
+    String url =
+        "https://secure.aggressor.com/api/app/payments/record/" + reservationId;
 
     final requestParams = {
       "amount": amount,
@@ -171,7 +193,8 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> sendRegistration(String firstName, String lastName, String email, String password, String dateOfBirth) async {
+  Future<dynamic> sendRegistration(String firstName, String lastName,
+      String email, String password, String dateOfBirth) async {
     //sends collected information to the API and sees if there are matching users, returns a userID for future queries
     Response response = await post(
       Uri.https('secure.aggressor.com', 'api/app/registration/register'),
@@ -193,7 +216,10 @@ class AggressorApi {
 
   Future<dynamic> linkContact(String contactId, String userId) async {
     //allows a user to link user to a contact
-    String url = "https://secure.aggressor.com/api/app/registration/select/" + contactId + "/" + userId;
+    String url = "https://secure.aggressor.com/api/app/registration/select/" +
+        contactId +
+        "/" +
+        userId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -224,11 +250,24 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> sendNewContact(String userId, String address1, String address2, String city, String state, String province, String country, String zip, String email, String homePhone,
-      String mobilePhone, String dateOfBirth, String gender) async {
+  Future<dynamic> sendNewContact(
+      String userId,
+      String address1,
+      String address2,
+      String city,
+      String state,
+      String province,
+      String country,
+      String zip,
+      String email,
+      String homePhone,
+      String mobilePhone,
+      String dateOfBirth,
+      String gender) async {
     //creates a new contact and returns success on completion
     Response response = await post(
-      Uri.https('secure.aggressor.com', "api/app/registration/newcontact/" + userId),
+      Uri.https(
+          'secure.aggressor.com', "api/app/registration/newcontact/" + userId),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -263,22 +302,24 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<dynamic> saveProfileData(String userId,
-      String first,
-      String last,
-      String email,
-      String address1,
-      String address2,
-      String city,
-      String state,
-      String province,
-      String country,
-      String zip,
-      String username,
-      String password,
-      String homePhone,
-      String workPhone,
-      String mobilePhone,) async {
+  Future<dynamic> saveProfileData(
+    String userId,
+    String first,
+    String last,
+    String email,
+    String address1,
+    String address2,
+    String city,
+    String state,
+    String province,
+    String country,
+    String zip,
+    String username,
+    String password,
+    String homePhone,
+    String workPhone,
+    String mobilePhone,
+  ) async {
     //saves the updated profile data for the userId provided
 
     Response response = await post(
@@ -289,47 +330,53 @@ class AggressorApi {
       },
       body: password == null
           ? jsonEncode(<String, dynamic>{
-        'first': first,
-        'last': last,
-        'email': email,
-        'address1': address1,
-        'address2': address2,
-        'city': city,
-        'state': state,
-        'province': province,
-        'country': int.parse(country),
-        'zip': int.parse(zip),
-        'username': username,
-        'home_phone': homePhone,
-        'work_phone': workPhone,
-        'mobile_phone': mobilePhone,
-      })
+              'first': first,
+              'last': last,
+              'email': email,
+              'address1': address1,
+              'address2': address2,
+              'city': city,
+              'state': state,
+              'province': province,
+              'country': int.parse(country),
+              'zip': int.parse(zip),
+              'username': username,
+              'home_phone': homePhone,
+              'work_phone': workPhone,
+              'mobile_phone': mobilePhone,
+            })
           : jsonEncode(<String, dynamic>{
-        'first': first,
-        'last': last,
-        'email': email,
-        'address1': address1,
-        'address2': address2,
-        'city': city,
-        'state': state,
-        'province': province,
-        'country': int.parse(country),
-        'zip': int.parse(zip),
-        'username': username,
-        'password': password,
-        'home_phone': homePhone,
-        'work_phone': workPhone,
-        'mobile_phone': mobilePhone,
-      }),
+              'first': first,
+              'last': last,
+              'email': email,
+              'address1': address1,
+              'address2': address2,
+              'city': city,
+              'state': state,
+              'province': province,
+              'country': int.parse(country),
+              'zip': int.parse(zip),
+              'username': username,
+              'password': password,
+              'home_phone': homePhone,
+              'work_phone': workPhone,
+              'mobile_phone': mobilePhone,
+            }),
     );
 
     return jsonDecode(response.body);
   }
 
-  Future<dynamic> uploadAwsFile(String userId, String gallery, String charterId, String filePath) async {
+  Future<dynamic> uploadAwsFile(
+      String userId, String gallery, String charterId, String filePath) async {
     //saves the updated profile data for the userId provided
 
-    String url = "https://secure.aggressor.com/api/app/gallery/upload/" + userId.toString() + "/" + gallery + "/" + charterId.toString();
+    String url = "https://secure.aggressor.com/api/app/gallery/upload/" +
+        userId.toString() +
+        "/" +
+        gallery +
+        "/" +
+        charterId.toString();
 
     var uri = Uri.parse(url);
     MultipartRequest request = http.MultipartRequest('POST', uri);
@@ -354,10 +401,14 @@ class AggressorApi {
     return pageResponse;
   }
 
-  Future<dynamic> sendForgotPassword(String email,) async {
+  Future<dynamic> sendForgotPassword(
+    String email,
+  ) async {
     //saves the updated profile data for the userId provided
 
-    Response response = await post(Uri.https('secure.aggressor.com', "api/app/authentication/forgotpassword"),
+    Response response = await post(
+        Uri.https(
+            'secure.aggressor.com', "api/app/authentication/forgotpassword"),
         headers: <String, String>{
           'apikey': apiKey,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -371,7 +422,8 @@ class AggressorApi {
 
   Future<dynamic> getCharter(String charterId) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/charters/view/" + charterId;
+    String url =
+        "https://secure.aggressor.com/api/app/charters/view/" + charterId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -393,5 +445,18 @@ class AggressorApi {
 
     var pageJson = json.decode(await pageResponse.stream.bytesToString());
     return pageJson;
+  }
+
+  Future<dynamic> getBoatImage(String url) async {
+    //create and send a contact details request to the Aggressor Api and return json response
+    String path = "";
+    try {
+      var imageId = await ImageDownloader.downloadImage(url);
+
+      path = await ImageDownloader.findPath(imageId);
+    } catch (e) {
+      print(e.toString());
+    }
+    return path;
   }
 }
