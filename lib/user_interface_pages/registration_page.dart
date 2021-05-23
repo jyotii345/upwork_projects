@@ -420,14 +420,10 @@ class RegistrationPageState extends State<RegistrationPage>
               .sendRegistration(firstName, lastName, email, password, birthday);
           print(jsonResponse.toString());
           if (jsonResponse["status"] == "success") {
-            if (jsonResponse["message"] == "The account was registered.") {
-              showSuccessDialogue();
-            } else {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => ContactSelection(jsonResponse)));
-            }
           } else {
             throw Exception("Error creating account, please try again.");
           }

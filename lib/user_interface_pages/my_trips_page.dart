@@ -266,7 +266,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   }
 
   List<List<Trip>> getTripList(List<Trip> tripList) {
-    print("getting lists");
     //returns the list of all active trips and sorts them by upcoming or past
     List<Trip> pastList = [];
     List<Trip> upcomingList = [];
@@ -283,8 +282,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
       }
     });
 
-    print(pastList);
-    print(upcomingList);
 
     return [pastList, upcomingList];
   }

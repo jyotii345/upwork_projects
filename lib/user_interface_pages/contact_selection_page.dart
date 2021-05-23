@@ -242,7 +242,7 @@ class ContactSelectionState extends State<ContactSelection>
     List<dynamic> contactList = [];
     print("creating contact list from: " + widget.jsonResponse.toString());
     if (widget.jsonResponse["status"] == "success") {
-      if(widget.jsonResponse["data"].length != 0) {
+      if(widget.jsonResponse["data"] != null) {
         int i = 1;
         while (widget.jsonResponse["data"][i.toString()] != null) {
           contactList.add(widget.jsonResponse["data"][i.toString()]);
