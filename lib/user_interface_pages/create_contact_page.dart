@@ -593,7 +593,6 @@ class CreateContactState extends State<CreateContact>
 
   Future<dynamic> getCountryAndState() async {
     if (!stateAndCountryLoaded) {
-      print("getting country and states");
       countryList = await AggressorApi().getCountries();
       stateList = await AggressorApi().getStates();
       countryDropDownSelection = countryList[0];

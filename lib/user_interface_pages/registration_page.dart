@@ -418,7 +418,6 @@ class RegistrationPageState extends State<RegistrationPage>
           String birthday = formatDate(dateOfBirth, [yyyy, '-', mm, '-', dd]);
           var jsonResponse = await AggressorApi()
               .sendRegistration(firstName, lastName, email, password, birthday);
-          print(jsonResponse.toString());
           if (jsonResponse["status"] == "success") {
               Navigator.push(
                   context,
