@@ -10,9 +10,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 class MyTrips extends StatefulWidget {
-  MyTrips(
-    this.user
-  );
+  MyTrips(this.user);
 
   final User user;
 
@@ -99,6 +97,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
           color: Colors.white,
           child: pastTrips.length == 0
               ? Column(
+            mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       height: .5,
@@ -140,7 +139,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
                         ],
                       ),
                     ),
-                    Expanded(
+                    Flexible(
                       child:
                           Text("You do not have any past trips to view yet."),
                     ),
@@ -222,7 +221,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
     pastTrips.forEach((element) {
-
       element.user = widget.user;
       element.trip = element;
       pastTripsList.add(element.getPastTripCard(context, index));
@@ -268,6 +266,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
   }
 
   List<List<Trip>> getTripList(List<Trip> tripList) {
+    print("getting lists");
     //returns the list of all active trips and sorts them by upcoming or past
     List<Trip> pastList = [];
     List<Trip> upcomingList = [];
@@ -283,6 +282,9 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         upcomingList.add(element);
       }
     });
+
+    print(pastList);
+    print(upcomingList);
 
     return [pastList, upcomingList];
   }
@@ -349,5 +351,4 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
       ),
     );
   }
-
 }

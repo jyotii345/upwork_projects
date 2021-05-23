@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
@@ -8,6 +9,7 @@ import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:http/http.dart';
 import 'package:image_downloader/image_downloader.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
 
@@ -92,19 +94,36 @@ class AggressorApi {
                   //TODO get boat image here
 
 
-                  var imagePath = await getBoatImage(boatResponse["image"]);
+                  Boat newBoat;
 
-                  print("saved path");
-                  print(imagePath);
+                  var imageDetails = await getBoatImage(boatResponse["image"]);
+                  if(imageDetails[1] != "") {
+                    String imageName = imageDetails[1];
 
-                  Boat newBoat = Boat(
-                      boatResponse["boatid"].toString(),
-                      boatResponse["name"].toString(),
-                      boatResponse["abbreviation"].toString(),
-                      boatResponse["boat_email"].toString(),
-                      boatResponse["active"].toString(),
-                      imagePath);
+                    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+                    String appDocumentsPath = appDocumentsDirectory.path; // 2
+                    String filePath = '$appDocumentsPath/$imageName';
+                    File tempFile = await File(filePath).writeAsBytes(
+                        imageDetails[0]);
 
+
+                    newBoat = Boat(
+                        boatResponse["boatid"].toString(),
+                        boatResponse["name"].toString(),
+                        boatResponse["abbreviation"].toString(),
+                        boatResponse["boat_email"].toString(),
+                        boatResponse["active"].toString(),
+                        tempFile.path);
+                  }
+                  else{
+                    newBoat = Boat(
+                        boatResponse["boatid"].toString(),
+                        boatResponse["name"].toString(),
+                        boatResponse["abbreviation"].toString(),
+                        boatResponse["boat_email"].toString(),
+                        boatResponse["active"].toString(),
+                        "");
+                  }
                   await boatDatabaseHelper.insertBoat(newBoat);
                 }
               }
@@ -449,14 +468,17 @@ class AggressorApi {
 
   Future<dynamic> getBoatImage(String url) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String path = "";
+    var bytes = <int>[];
+    String name = "";
     try {
       var imageId = await ImageDownloader.downloadImage(url);
 
-      path = await ImageDownloader.findPath(imageId);
+      var path = await ImageDownloader.findPath(imageId);
+       bytes = await File(path).readAsBytes();
+      name = await ImageDownloader.findName(imageId);
     } catch (e) {
       print(e.toString());
     }
-    return path;
+    return [bytes,name];
   }
 }

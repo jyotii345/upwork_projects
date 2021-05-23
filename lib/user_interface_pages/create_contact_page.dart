@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'login_page.dart';
+
 class CreateContact extends StatefulWidget {
   CreateContact(this.userId);
 
@@ -162,10 +164,8 @@ class CreateContactState extends State<CreateContact>
           actions: <Widget>[
             new TextButton(
                 onPressed: () {
-                  int popCount = 0;
-                  Navigator.popUntil(context, (route) {
-                    return popCount++ == 4;
-                  });
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (context) => LoginPage()));
                 },
                 child: new Text('Continue')),
           ],
