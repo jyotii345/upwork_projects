@@ -326,7 +326,6 @@ class LoadingPageState extends State<LoadingPage> {
                       await getApplicationDocumentsDirectory(); // 1
                   String appDocumentsPath = appDocumentsDirectory.path; // 2
                   String filePath = '$appDocumentsPath/$fileName';
-                  print(filePath);
                   File imageFile = File(filePath);
                   imageFile.writeAsBytes(bytes);
 

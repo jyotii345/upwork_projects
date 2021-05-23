@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
@@ -9,6 +11,7 @@ import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:path_provider/path_provider.dart';
@@ -108,15 +111,16 @@ class AggressorApi {
                   Boat newBoat;
 
                   var imageDetails = await getBoatImage(boatResponse["image"]);
-                  if (imageDetails[1] != "") {
-                    String imageName = imageDetails[1];
+                  if (imageDetails != null) {
+
+                    var imageName = boatResponse["image"].substring(boatResponse["image"].toString().lastIndexOf("/") + 1);
 
                     Directory appDocumentsDirectory =
-                        await getApplicationDocumentsDirectory(); // 1
-                    String appDocumentsPath = appDocumentsDirectory.path; // 2
+                        await getApplicationDocumentsDirectory();
+                    String appDocumentsPath = appDocumentsDirectory.path;
                     String filePath = '$appDocumentsPath/$imageName';
-                    File tempFile =
-                        await File(filePath).writeAsBytes(imageDetails[0]);
+                    print(filePath);
+                    File tempFile = await File(filePath).writeAsBytes(imageDetails[0]);
 
                     newBoat = Boat(
                         boatResponse["boatid"].toString(),
@@ -478,17 +482,18 @@ class AggressorApi {
 
   Future<dynamic> getBoatImage(String url) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    var bytes = <int>[];
-    String name = "";
+    Uint8List bytes;
     try {
-      var imageId = await ImageDownloader.downloadImage(url); //TODO download images in a way that allows them to be stored in different directory
 
-      var path = await ImageDownloader.findPath(imageId);
-      bytes = await File(path).readAsBytes();
-      name = await ImageDownloader.findName(imageId);
+      final ByteData imageData = await NetworkAssetBundle(Uri.parse(url)).load("");
+      bytes = imageData.buffer.asUint8List();
+
+      return [bytes];
+
+
     } catch (e) {
       print(e.toString());
+      return null;
     }
-    return [bytes, name];
   }
 }
