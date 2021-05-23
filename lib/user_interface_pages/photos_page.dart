@@ -36,7 +36,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
    */
 
   Trip dropDownValue, selectionTrip;
-  String departureDate = "", errorMessage;
+  String departureDate = "", errorMessage = "";
   List<Trip> sortedTripList;
   List<dynamic> galleriesList = [];
   List<Asset> images = <Asset>[];
@@ -93,6 +93,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             getPageTitle(),
             getCreateNewGallery(),
             getMyGalleries(),
+            showErrorMessage(),
           ],
         ),
       ),
@@ -226,6 +227,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     List<Asset> resultList = <Asset>[];
     String error = 'No Error Detected';
 
+    setState(() {
+      errorMessage = "";
+    });
+
     if (await Permission.photos.status.isDenied || await Permission.camera.status.isDenied) {
       await Permission.photos.request();
       await Permission.camera.request();
@@ -233,7 +238,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
     }
 
-    if(dropDownValue.detailDestination == " -- SELECT -- "){
+
+    if(dropDownValue.charter.destination == " -- SELECT -- "){
       setState(() {
         errorMessage = "You must select a trip to create a gallery for.";
       });
@@ -547,6 +553,19 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       });
     }
     return "finished";
+  }
+
+  Widget showErrorMessage() {
+    return errorMessage == ""
+        ? Container()
+        : Padding(
+      padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
+      child: Text(
+        errorMessage,
+        style: TextStyle(color: Colors.red),
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 
 
