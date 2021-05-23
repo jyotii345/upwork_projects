@@ -8,6 +8,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 import 'package:image_downloader/image_downloader.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,7 +37,7 @@ class AggressorApi {
     return jsonDecode(response.body);
   }
 
-  Future<List<Trip>> getReservationList(String contactId) async {
+  Future<List<Trip>> getReservationList(String contactId, VoidCallback loadingCallBack) async {
     //create and send a reservation list request to the Aggressor Api and return a list of Trip objects also removes duplicates from the received list
 
     TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
@@ -52,6 +53,16 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
     var response = json.decode(await pageResponse.stream.bytesToString());
+
+
+
+    int length = 0;
+    while (response[length.toString()] != null) {
+      length++;
+    }
+
+    loadingLength = length.toDouble();
+
     List<String> addedTrips = [];
     List<Trip> tripList = [];
     if (response["status"] == "success") {
@@ -94,19 +105,18 @@ class AggressorApi {
                 if (boatResponse["status"] == "success") {
                   //TODO get boat image here
 
-
                   Boat newBoat;
 
                   var imageDetails = await getBoatImage(boatResponse["image"]);
-                  if(imageDetails[1] != "") {
+                  if (imageDetails[1] != "") {
                     String imageName = imageDetails[1];
 
-                    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+                    Directory appDocumentsDirectory =
+                        await getApplicationDocumentsDirectory(); // 1
                     String appDocumentsPath = appDocumentsDirectory.path; // 2
                     String filePath = '$appDocumentsPath/$imageName';
-                    File tempFile = await File(filePath).writeAsBytes(
-                        imageDetails[0]);
-
+                    File tempFile =
+                        await File(filePath).writeAsBytes(imageDetails[0]);
 
                     newBoat = Boat(
                         boatResponse["boatid"].toString(),
@@ -115,10 +125,8 @@ class AggressorApi {
                         boatResponse["boat_email"].toString(),
                         boatResponse["active"].toString(),
                         tempFile.path);
-                  }
-                  else{
+                  } else {
                     newBoat = Boat(
-                        boatResponse["boatid"].toString(),
                         boatResponse["boatid"].toString(),
                         boatResponse["name"].toString(),
                         boatResponse["abbreviation"].toString(),
@@ -134,8 +142,7 @@ class AggressorApi {
 
           await newTrip.initCharterInformation();
         }
-
-        loadedCount ++;
+        loadingCallBack();
         i++;
       }
 
@@ -477,11 +484,11 @@ class AggressorApi {
       var imageId = await ImageDownloader.downloadImage(url);
 
       var path = await ImageDownloader.findPath(imageId);
-       bytes = await File(path).readAsBytes();
+      bytes = await File(path).readAsBytes();
       name = await ImageDownloader.findName(imageId);
     } catch (e) {
       print(e.toString());
     }
-    return [bytes,name];
+    return [bytes, name];
   }
 }

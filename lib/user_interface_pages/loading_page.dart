@@ -242,7 +242,13 @@ class LoadingPageState extends State<LoadingPage> {
   }
 
   void loadData() async {
-    tripList = await AggressorApi().getReservationList(widget.user.contactId);
+    tripList = await AggressorApi().getReservationList(widget.user.contactId, loadingCallBack);
+
+    print("trip list received");
+    setState(() {
+      loadedCount = tripList.length.toDouble();
+      percent = ((loadedCount / loadingLength * 3));
+    });
 
     if (tripList == null) {
       tripList = [];
@@ -252,7 +258,7 @@ class LoadingPageState extends State<LoadingPage> {
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
-        percent = ((loadedCount / (tripList.length * 3)));
+        percent = ((loadedCount / (loadingLength * 3)));
       });
     }
 
@@ -366,5 +372,12 @@ class LoadingPageState extends State<LoadingPage> {
       });
     }
     return "finished";
+  }
+
+  VoidCallback loadingCallBack(){
+    setState(() {
+      loadedCount++;
+      percent = ((loadedCount / (loadingLength * 3)));
+    });
   }
 }

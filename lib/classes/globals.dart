@@ -8,6 +8,7 @@ import 'gallery.dart';
 
 
 double loadedCount = 0;
+double loadingLength = 0;
 
 Map<String, Gallery> galleriesMap = <String, Gallery>{};
 List<Trip> notLoadedList = [];

@@ -2,6 +2,8 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/boat_database.dart';
+import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
@@ -955,7 +957,16 @@ class EditMyProfileState extends State<EditMyProfile>
     FileDatabaseHelper fileDatabaseHelper = FileDatabaseHelper.instance;
     await fileDatabaseHelper.deleteFileTable();
 
+    CharterDatabaseHelper charterDatabaseHelper = CharterDatabaseHelper.instance;
+    await charterDatabaseHelper.deleteCharterTable();
+
+    BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
+    await boatDatabaseHelper.deleteBoatTable();
+
+
+
     loadedCount = 0;
+    currentIndex = 0;
 
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));
