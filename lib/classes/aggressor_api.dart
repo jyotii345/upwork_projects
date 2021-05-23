@@ -481,7 +481,7 @@ class AggressorApi {
     var bytes = <int>[];
     String name = "";
     try {
-      var imageId = await ImageDownloader.downloadImage(url);
+      var imageId = await ImageDownloader.downloadImage(url); //TODO download images in a way that allows them to be stored in different directory
 
       var path = await ImageDownloader.findPath(imageId);
       bytes = await File(path).readAsBytes();
