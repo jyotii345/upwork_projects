@@ -142,9 +142,6 @@ class _MyHomePageState extends State<MyHomePage>
     Returns an indexed Stack widget containing the value of what dart page belongs at which button of the navitgation bar, the extra option is for the login page, will show if the user is not verified
      */
 
-
-    print(tripList);
-
     return IndexedStack(
       children: <Widget>[
         MyTrips(widget.user, ),

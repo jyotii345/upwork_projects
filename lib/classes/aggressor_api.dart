@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:io';
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
@@ -118,6 +119,7 @@ class AggressorApi {
                   else{
                     newBoat = Boat(
                         boatResponse["boatid"].toString(),
+                        boatResponse["boatid"].toString(),
                         boatResponse["name"].toString(),
                         boatResponse["abbreviation"].toString(),
                         boatResponse["boat_email"].toString(),
@@ -133,6 +135,7 @@ class AggressorApi {
           await newTrip.initCharterInformation();
         }
 
+        loadedCount ++;
         i++;
       }
 

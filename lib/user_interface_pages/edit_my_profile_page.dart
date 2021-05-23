@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
@@ -953,6 +954,8 @@ class EditMyProfileState extends State<EditMyProfile>
 
     FileDatabaseHelper fileDatabaseHelper = FileDatabaseHelper.instance;
     await fileDatabaseHelper.deleteFileTable();
+
+    loadedCount = 0;
 
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));

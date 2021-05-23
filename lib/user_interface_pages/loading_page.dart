@@ -34,7 +34,6 @@ class LoadingPageState extends State<LoadingPage> {
    */
 
   double percent = 0.0;
-  double loadedCount = 0;
 
   /*
   initState
@@ -108,13 +107,13 @@ class LoadingPageState extends State<LoadingPage> {
               children: [
                 CircularPercentIndicator(
                   radius: MediaQuery.of(context).size.width / 3,
-                  percent: percent,
+                  percent: percent > 1 ? 1 : percent,
                   animateFromLastPercent: true,
                   backgroundColor: AggressorColors.secondaryColor,
                   progressColor: AggressorColors.primaryColor,
                 ),
-                Text("Downloading trip data: " +
-                    (percent * 100).toString() +
+                percent > 1 ? Text("Downloading trip data: 100%", textAlign: TextAlign.center,) : Text("Downloading trip data: " +
+                    int.parse((percent * 100).round().toString()).toString() +
                     "%", textAlign: TextAlign.center,),
               ],
             ),
@@ -253,7 +252,7 @@ class LoadingPageState extends State<LoadingPage> {
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
-        percent = ((loadedCount / (tripList.length * 2)));
+        percent = ((loadedCount / (tripList.length * 3)));
       });
     }
 
@@ -284,7 +283,7 @@ class LoadingPageState extends State<LoadingPage> {
         for (var element in tripList) {
           setState(() {
             loadedCount++;
-            percent = ((loadedCount / (tripList.length * 2)));
+            percent = ((loadedCount / (tripList.length * 3)));
           });
           var response;
           try {
