@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -32,6 +33,8 @@ class LoadingPageState extends State<LoadingPage> {
   instance vars
    */
 
+  double percent = 0.0;
+  double loadedCount = 0;
 
   /*
   initState
@@ -99,7 +102,23 @@ class LoadingPageState extends State<LoadingPage> {
       ),
       body: Stack(
         children: <Widget>[
-          Center(child: CircularProgressIndicator(),),
+          Center(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                CircularPercentIndicator(
+                  radius: MediaQuery.of(context).size.width / 3,
+                  percent: percent,
+                  animateFromLastPercent: true,
+                  backgroundColor: AggressorColors.secondaryColor,
+                  progressColor: AggressorColors.primaryColor,
+                ),
+                Text("Downloading trip data: " +
+                    (percent * 100).toString() +
+                    "%", textAlign: TextAlign.center,),
+              ],
+            ),
+          ),
         ],
       ),
       bottomNavigationBar: getBottomNavigation(),
@@ -109,7 +128,6 @@ class LoadingPageState extends State<LoadingPage> {
 /*
   self implemented
    */
-
 
   makeCall() async {
     const url = 'tel:7069932531';
@@ -126,7 +144,6 @@ class LoadingPageState extends State<LoadingPage> {
         print("loading");
     }
   }
-
 
   Widget getBottomNavigation() {
     /*
@@ -225,21 +242,28 @@ class LoadingPageState extends State<LoadingPage> {
     );
   }
 
-
-  void loadData()async{
-
+  void loadData() async {
     tripList = await AggressorApi().getReservationList(widget.user.contactId);
 
-    if(tripList == null){
+    if (tripList == null) {
       tripList = [];
     }
 
-    for(var trip in tripList){
+    for (var trip in tripList) {
       await trip.initCharterInformation();
+      setState(() {
+        loadedCount++;
+        percent = ((loadedCount / (tripList.length * 2)));
+      });
     }
 
     await getGalleries();
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(user: widget.user,)));
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MyHomePage(
+                  user: widget.user,
+                )));
   }
 
   Future<dynamic> getGalleries() async {
@@ -247,50 +271,65 @@ class LoadingPageState extends State<LoadingPage> {
     if (!photosLoaded) {
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
-      final AwsS3Client s3client =
-      AwsS3Client(region: region, host: "s3.$region.amazonaws.com", bucketId: bucketId, accessKey: "AKIA43MMI6CI2KP4CUUY", secretKey: "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");
+      final AwsS3Client s3client = AwsS3Client(
+          region: region,
+          host: "s3.$region.amazonaws.com",
+          bucketId: bucketId,
+          accessKey: "AKIA43MMI6CI2KP4CUUY",
+          secretKey: "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");
       PhotoDatabaseHelper photoHelper = PhotoDatabaseHelper.instance;
       Map<String, Gallery> tempGalleries = <String, Gallery>{};
 
       try {
-        for(var element in tripList) {
+        for (var element in tripList) {
+          setState(() {
+            loadedCount++;
+            percent = ((loadedCount / (tripList.length * 2)));
+          });
           var response;
           try {
-            response = await s3client.listObjects(prefix: widget.user.userId + "/gallery/" + element.charterId + "/", delimiter: "/");
-          }
-          catch(e){
+            response = await s3client.listObjects(
+                prefix:
+                    widget.user.userId + "/gallery/" + element.charterId + "/",
+                delimiter: "/");
+          } catch (e) {
             print(e);
           }
 
           if (response.contents != null) {
-            for(var content in response.contents) {
+            for (var content in response.contents) {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.charterId)) {
-                  tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[],element);
+                  tempGalleries[element.charterId] = Gallery(
+                      widget.user, element.charterId, <Photo>[], element);
                 }
-                if(! await photoHelper.keyExists(elementJson["Key"])) {
+                if (!await photoHelper.keyExists(elementJson["Key"])) {
                   StreamedResponse downloadResponse = await AggressorApi()
                       .downloadAwsFile(elementJson["Key"].toString());
 
-                  Uint8List bytes = await readByteStream(
-                      downloadResponse.stream);
+                  Uint8List bytes =
+                      await readByteStream(downloadResponse.stream);
 
-                  String fileName = downloadResponse
-                      .headers["content-disposition"];
+                  String fileName =
+                      downloadResponse.headers["content-disposition"];
                   int whereIndex = fileName.indexOf("=");
                   fileName = fileName.substring(whereIndex + 1);
                   fileName.replaceAll("\"", "");
 
-                  Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+                  Directory appDocumentsDirectory =
+                      await getApplicationDocumentsDirectory(); // 1
                   String appDocumentsPath = appDocumentsDirectory.path; // 2
                   String filePath = '$appDocumentsPath/$fileName';
                   File imageFile = File(filePath);
                   imageFile.writeAsBytes(bytes);
 
                   Photo photo = Photo(
-                      fileName, widget.user.userId, imageFile.path,
-                      element.tripDate, element.charterId,
+                      fileName,
+                      widget.user.userId,
+                      imageFile.path,
+                      element.tripDate,
+                      element.charterId,
                       elementJson["Key"]);
 
                   photoHelper.insertPhoto(photo);
@@ -312,11 +351,15 @@ class LoadingPageState extends State<LoadingPage> {
               tripIndex = i;
             }
           }
-          tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[], tripList[tripIndex],);
+          tempGalleries[element.charterId] = Gallery(
+            widget.user,
+            element.charterId,
+            <Photo>[],
+            tripList[tripIndex],
+          );
         }
         tempGalleries[element.charterId].addPhoto(element);
       });
-
 
       setState(() {
         galleriesMap = tempGalleries;
@@ -325,5 +368,4 @@ class LoadingPageState extends State<LoadingPage> {
     }
     return "finished";
   }
-
 }
