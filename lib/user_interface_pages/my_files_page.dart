@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/file_data.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
@@ -17,10 +18,9 @@ import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MyFiles extends StatefulWidget {
-  MyFiles(this.user, this.tripList);
+  MyFiles(this.user, );
 
   final User user;
-  final List<Trip> tripList;
 
   @override
   State<StatefulWidget> createState() => new MyFilesState();
@@ -115,7 +115,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             style: TextStyle(color: AggressorColors.secondaryColor, fontSize: MediaQuery.of(context).size.height / 35, fontWeight: FontWeight.bold),
           ),
           getFilePrompt(),
-          getDestinationDropdown(widget.tripList),
+          getDestinationDropdown(tripList),
           getFileInformation(),
           getUploadFileButton(),
         ],
@@ -421,7 +421,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       List<FileData> tempFiles = [];
 
       try {
-        for(var element in widget.tripList) {
+        for(var element in tripList) {
           var response;
           try {
             response = await s3client.listObjects(prefix: widget.user.userId + "/files/" + element.charterId + "/", delimiter: "/");

@@ -22,9 +22,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:aggressor_adventures/classes/globals.dart' as galleryMap;
 
 class Photos extends StatefulWidget {
-  Photos(this.user, this.tripList);
+  Photos(this.user, );
 
-  final List<Trip> tripList;
   final User user;
 
   @override
@@ -287,7 +286,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             "CREATE NEW GALLERY",
             style: TextStyle(color: AggressorColors.secondaryColor, fontSize: MediaQuery.of(context).size.height / 35, fontWeight: FontWeight.bold),
           ),
-          getDestinationDropdown(widget.tripList),
+          getDestinationDropdown(tripList),
           getDepartureInformation(),
           getUploadPhotosButton(),
         ],
@@ -478,7 +477,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       Map<String, Gallery> tempGalleries = <String, Gallery>{};
 
       try {
-        for(var element in widget.tripList) {
+        for(var element in tripList) {
           var response;
           try {
             response = await s3client.listObjects(prefix: widget.user.userId + "/gallery/" + element.charterId + "/", delimiter: "/");
@@ -532,12 +531,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       photos.forEach((element) {
         if (!tempGalleries.containsKey(element.charterId)) {
           int tripIndex = 0;
-          for (int i = 0; i < widget.tripList.length - 1; i++) {
-            if (widget.tripList[i].charterId == element.charterId) {
+          for (int i = 0; i < tripList.length - 1; i++) {
+            if (tripList[i].charterId == element.charterId) {
               tripIndex = i;
             }
           }
-          tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[], widget.tripList[tripIndex]);
+          tempGalleries[element.charterId] = Gallery(widget.user, element.charterId, <Photo>[], tripList[tripIndex]);
         }
         tempGalleries[element.charterId].addPhoto(element);
       });

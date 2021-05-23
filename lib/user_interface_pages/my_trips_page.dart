@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/google_map.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -10,12 +11,10 @@ import 'package:flutter/widgets.dart';
 
 class MyTrips extends StatefulWidget {
   MyTrips(
-    this.user,
-    this.tripList
+    this.user
   );
 
   final User user;
-  final List<Trip> tripList;
 
   @override
   State<StatefulWidget> createState() => new myTripsState();
@@ -71,9 +70,9 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         GoogleMapWidget(context).getMap(),
         getPageTitle(),
         getSectionUpcomingTitle(),
-        getUpcomingSection(getTripList(widget.tripList)[1]),
+        getUpcomingSection(getTripList(tripList)[1]),
         getSectionPastTitle(),
-        getPastSection(getTripList(widget.tripList)[0]),
+        getPastSection(getTripList(tripList)[0]),
       ],
     );
   }

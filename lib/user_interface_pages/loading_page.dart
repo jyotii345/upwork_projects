@@ -32,8 +32,6 @@ class LoadingPageState extends State<LoadingPage> {
   instance vars
    */
 
-  List<Trip> tripList = [];
-
 
   /*
   initState
@@ -229,14 +227,24 @@ class LoadingPageState extends State<LoadingPage> {
 
 
   void loadData()async{
+    print("loading trip lists");
+
     tripList = await AggressorApi().getReservationList(widget.user.contactId);
+
+    print("loading trip lists succeeded");
+
+    print("intializing trips");
     for(var trip in tripList){
       await trip.initCharterInformation();
     }
+
+    print("trips initialized");
     if(tripList == null){
       tripList = [];
     }
+    print("getting galleries");
     await getGalleries();
+    print("getting galleries finished");
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(user: widget.user,tripList : tripList)));
   }
 

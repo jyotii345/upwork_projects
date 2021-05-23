@@ -144,15 +144,15 @@ class _MyHomePageState extends State<MyHomePage>
 
     return IndexedStack(
       children: <Widget>[
-        MyTrips(widget.user, widget.tripList),
+        MyTrips(widget.user, ),
         //trips page
-        Notes(widget.user, widget.tripList),
+        Notes(widget.user, ),
         // notes page
-        Photos(widget.user, widget.tripList, ),
+        Photos(widget.user, ),
         // photos page
         Rewards(),
         // rewards page
-        MyFiles(widget.user, widget.tripList),
+        MyFiles(widget.user,),
         // login page
         MyProfile(widget.user),
         //my profile page

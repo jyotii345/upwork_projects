@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:date_format/date_format.dart';
@@ -9,10 +10,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_summernote/flutter_summernote.dart';
 
 class Notes extends StatefulWidget {
-  Notes(this.user, this.tripList);
+  Notes(this.user,);
 
   User user;
-  List<Trip> tripList;
 
   @override
   State<StatefulWidget> createState() => new NotesState();
@@ -86,7 +86,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 height: MediaQuery.of(context).size.height / 7,
               ),
               getPageTitle(),
-              getDestinationDropdown(widget.tripList),
+              getDestinationDropdown(tripList),
               getDepartureDate(),
               getReturnDate(),
               getPreTripNotes(),
