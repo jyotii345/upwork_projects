@@ -18,6 +18,7 @@ import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wakelock/wakelock.dart';
 
 class LoadingPage extends StatefulWidget {
   LoadingPage(this.user);
@@ -242,6 +243,10 @@ class LoadingPageState extends State<LoadingPage> {
   }
 
   void loadData() async {
+
+    setState(() {
+      Wakelock.enable();
+    });
     tripList = await AggressorApi().getReservationList(widget.user.contactId, loadingCallBack);
 
     print("trip list received");
@@ -263,6 +268,10 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     await getGalleries();
+
+    setState(() {
+      Wakelock.disable();
+    });
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(

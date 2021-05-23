@@ -268,7 +268,6 @@ class EditMyProfileState extends State<EditMyProfile>
                         getTotalNumberOfDives(),
                         getAccountType(),
                         getUpdateButton(),
-                        getSignOutButton(),
                         showErrorMessage(),
                       ],
                     ),
@@ -931,46 +930,7 @@ class EditMyProfileState extends State<EditMyProfile>
         ));
   }
 
-  Widget getSignOutButton() {
-    return TextButton(
-        onPressed: () {
-          signOutUser();
-        },
-        style: TextButton.styleFrom(backgroundColor: Colors.red),
-        child: Text(
-          "Sign out",
-          style: TextStyle(color: Colors.white),
-        ));
-  }
 
-  void signOutUser() async {
-    //sings user out and clears databases
-    UserDatabaseHelper helper = UserDatabaseHelper.instance;
-    await helper.deleteUser(100);
-
-    TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
-    await tripDatabaseHelper.deleteTripTable();
-
-    PhotoDatabaseHelper photoDatabaseHelper = PhotoDatabaseHelper.instance;
-    await photoDatabaseHelper.deletePhotoTable();
-
-    FileDatabaseHelper fileDatabaseHelper = FileDatabaseHelper.instance;
-    await fileDatabaseHelper.deleteFileTable();
-
-    CharterDatabaseHelper charterDatabaseHelper = CharterDatabaseHelper.instance;
-    await charterDatabaseHelper.deleteCharterTable();
-
-    BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
-    await boatDatabaseHelper.deleteBoatTable();
-
-
-
-    loadedCount = 0;
-    currentIndex = 0;
-
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
-  }
 
   Widget getBackgroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.

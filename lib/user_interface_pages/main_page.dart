@@ -2,12 +2,18 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/boat_database.dart';
+import 'package:aggressor_adventures/databases/charter_database.dart';
+import 'package:aggressor_adventures/databases/files_database.dart';
+import 'package:aggressor_adventures/databases/photo_database.dart';
+import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'login_page.dart';
 import 'my_files_page.dart';
 import 'my_profile_page.dart';
 import 'my_trips_page.dart';
@@ -125,8 +131,40 @@ class _MyHomePageState extends State<MyHomePage>
         setState(() {
           currentIndex = 5;
         });
+        break;
+      case 'Sign Out':
+        signOutUser();
+        break;
     }
   }
+
+  void signOutUser() async {
+    //sings user out and clears databases
+    UserDatabaseHelper helper = UserDatabaseHelper.instance;
+    await helper.deleteUser(100);
+
+    TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
+    await tripDatabaseHelper.deleteTripTable();
+
+    PhotoDatabaseHelper photoDatabaseHelper = PhotoDatabaseHelper.instance;
+    await photoDatabaseHelper.deletePhotoTable();
+
+    FileDatabaseHelper fileDatabaseHelper = FileDatabaseHelper.instance;
+    await fileDatabaseHelper.deleteFileTable();
+
+    CharterDatabaseHelper charterDatabaseHelper = CharterDatabaseHelper.instance;
+    await charterDatabaseHelper.deleteCharterTable();
+
+    BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
+    await boatDatabaseHelper.deleteBoatTable();
+
+    loadedCount = 0;
+    currentIndex = 0;
+
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginPage()));
+  }
+
 
   void onTabTapped(int index) {
     /*
