@@ -92,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage>
                       ),
                       itemBuilder: (BuildContext context) {
                         return {
-                          "My Profile",
+                          "My Profile","Sign Out"
                         }.map((String option) {
                           return PopupMenuItem<String>(
                             value: option,

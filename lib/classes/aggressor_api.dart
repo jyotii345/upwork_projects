@@ -496,4 +496,18 @@ class AggressorApi {
       return null;
     }
   }
+
+
+  Future<dynamic> checkProfileLink(String userId) async {
+    //create and send a contact details request to the Aggressor Api and return json response
+    String url = "https://secure.aggressor.com/api/app/profile.checklinked/" + userId;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    var pageJson = json.decode(await pageResponse.stream.bytesToString());
+    return pageJson;
+  }
 }

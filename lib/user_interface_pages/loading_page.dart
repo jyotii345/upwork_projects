@@ -11,6 +11,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/profile_linke_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
@@ -113,9 +114,18 @@ class LoadingPageState extends State<LoadingPage> {
                   backgroundColor: AggressorColors.secondaryColor,
                   progressColor: AggressorColors.primaryColor,
                 ),
-                percent > 1 ? Text("Downloading trip data: 100%", textAlign: TextAlign.center,) : Text("Downloading trip data: " +
-                    int.parse((percent * 100).round().toString()).toString() +
-                    "%", textAlign: TextAlign.center,),
+                percent > 1
+                    ? Text(
+                        "Downloading trip data: 100%",
+                        textAlign: TextAlign.center,
+                      )
+                    : Text(
+                        "Downloading trip data: " +
+                            int.parse((percent * 100).round().toString())
+                                .toString() +
+                            "%",
+                        textAlign: TextAlign.center,
+                      ),
               ],
             ),
           ),
@@ -243,11 +253,23 @@ class LoadingPageState extends State<LoadingPage> {
   }
 
   void loadData() async {
-
     setState(() {
       Wakelock.enable();
     });
-    tripList = await AggressorApi().getReservationList(widget.user.contactId, loadingCallBack);
+
+    var profileLinkResponse =
+        await AggressorApi().checkProfileLink(widget.user.userId);
+    if (profileLinkResponse["status"] != "success") {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              ProfileLinkPage(widget.user, profileLinkResponse["messsage"]),
+        ),
+      );
+    }
+    tripList = await AggressorApi()
+        .getReservationList(widget.user.contactId, loadingCallBack);
 
     print("trip list received");
     setState(() {
@@ -383,7 +405,7 @@ class LoadingPageState extends State<LoadingPage> {
     return "finished";
   }
 
-  VoidCallback loadingCallBack(){
+  VoidCallback loadingCallBack() {
     setState(() {
       loadedCount++;
       percent = ((loadedCount / (loadingLength * 3)));

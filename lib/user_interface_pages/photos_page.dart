@@ -42,7 +42,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   List<Trip> sortedTripList;
   List<dynamic> galleriesList = [];
   List<Asset> images = <Asset>[];
-  bool loading = true;
+  bool loading = false;
 
   /*
   initState
@@ -519,7 +519,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
-
+    print("getting galleries");
     setState(() {
       loading = true;
     });
@@ -613,9 +613,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         photosLoaded = true;
       });
     }
-    // setState(() {
-    //   loading = false; TODO remove these comments after testing
-    // });
+    setState(() {
+      loading = false;
+    });
     return "finished";
   }
 
@@ -633,7 +633,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showLoading(){
-    return loading ? LinearProgressIndicator(color: AggressorColors.primaryColor,) : Container();
+    return loading ? Padding(
+      padding: const EdgeInsets.fromLTRB(0.0,4.0,0,0),
+      child: LinearProgressIndicator(backgroundColor: AggressorColors.primaryColor,valueColor: AlwaysStoppedAnimation(AggressorColors.secondaryColor),),
+    ) : Container();
   }
 
   @override
