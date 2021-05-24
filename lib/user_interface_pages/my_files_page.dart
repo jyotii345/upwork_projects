@@ -18,7 +18,9 @@ import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MyFiles extends StatefulWidget {
-  MyFiles(this.user, );
+  MyFiles(
+    this.user,
+  );
 
   final User user;
 
@@ -50,9 +52,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    selectionTrip = Trip(DateTime.now().toString(), "", "", "", "General", "", "");
+    selectionTrip =
+        Trip(DateTime.now().toString(), "", "", "", "General", "", "");
     selectionTrip.detailDestination = "General";
-
     selectionTrip.charterId = "General";
     dropDownValue = selectionTrip;
   }
@@ -112,7 +114,10 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         children: [
           Text(
             "UPLOAD FILE",
-            style: TextStyle(color: AggressorColors.secondaryColor, fontSize: MediaQuery.of(context).size.height / 35, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                color: AggressorColors.secondaryColor,
+                fontSize: MediaQuery.of(context).size.height / 35,
+                fontWeight: FontWeight.bold),
           ),
           getFilePrompt(),
           getDestinationDropdown(tripList),
@@ -139,7 +144,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "Destination:",
-              style: TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+              style:
+                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
           ),
           Expanded(
@@ -168,8 +174,24 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                     child: Container(
                       width: MediaQuery.of(context).size.width / 2,
                       child: Text(
-                        value.detailDestination,
-                        style: TextStyle(fontSize: MediaQuery.of(context).size.height / 40 - 4),
+                        value.detailDestination == "General"
+                            ? value.detailDestination
+                            : value.detailDestination +
+                                " - " +
+                                DateTime.parse(value.charter.startDate)
+                                    .month
+                                    .toString() +
+                                "/" +
+                                DateTime.parse(value.charter.startDate)
+                                    .day
+                                    .toString() +
+                                "/" +
+                                DateTime.parse(value.charter.startDate)
+                                    .year
+                                    .toString(),
+                        style: TextStyle(
+                            fontSize:
+                                MediaQuery.of(context).size.height / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -185,7 +207,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   List<Trip> sortTripList(List<Trip> tripList) {
     List<Trip> tempList = tripList;
-    tempList.sort((a, b) => DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+    tempList.sort((a, b) =>
+        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
     return tempList;
   }
@@ -200,7 +223,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             width: MediaQuery.of(context).size.height / 6,
             child: Text(
               "File Name:",
-              style: TextStyle(fontSize: MediaQuery.of(context).size.height / 45),
+              style:
+                  TextStyle(fontSize: MediaQuery.of(context).size.height / 45),
             ),
           ),
           Expanded(
@@ -214,7 +238,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 ),
                 child: Text(
                   fileName,
-                  style: TextStyle(fontSize: MediaQuery.of(context).size.height / 40 - 4),
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height / 40 - 4),
                   textAlign: TextAlign.center,
                 )),
           ),
@@ -235,7 +260,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             "Upload File",
             style: TextStyle(color: Colors.white),
           ),
-          style: TextButton.styleFrom(backgroundColor: AggressorColors.secondaryColor),
+          style: TextButton.styleFrom(
+              backgroundColor: AggressorColors.secondaryColor),
         ),
       ],
     );
@@ -246,7 +272,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
-        colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        colorFilter:
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -276,7 +303,10 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         alignment: Alignment.topLeft,
         child: Text(
           "My Files",
-          style: TextStyle(color: AggressorColors.primaryColor, fontSize: MediaQuery.of(context).size.height / 25, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: AggressorColors.primaryColor,
+              fontSize: MediaQuery.of(context).size.height / 25,
+              fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -289,7 +319,10 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         alignment: Alignment.topLeft,
         child: Text(
           "Files must be uploaded as: PDF, TXT, DOC, JPG, PNG",
-          style: TextStyle(color: Colors.grey[400], fontSize: MediaQuery.of(context).size.height / 55, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.grey[400],
+              fontSize: MediaQuery.of(context).size.height / 55,
+              fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -323,12 +356,14 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                               Expanded(
                                 child: SizedBox(
                                   width: textBoxSize,
-                                  child: Text("Destination", textAlign: TextAlign.center),
+                                  child: Text("Destination",
+                                      textAlign: TextAlign.center),
                                 ),
                               ),
                               SizedBox(
                                 width: textBoxSize,
-                                child: Text("Date", textAlign: TextAlign.center),
+                                child:
+                                    Text("Date", textAlign: TextAlign.center),
                               ),
                               SizedBox(
                                 width: textBoxSize / 2,
@@ -415,30 +450,40 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     if (!filesLoaded) {
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
-      final AwsS3Client s3client =
-          AwsS3Client(region: region, host: "s3.$region.amazonaws.com", bucketId: bucketId, accessKey: "AKIA43MMI6CI2KP4CUUY", secretKey: "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");
+      final AwsS3Client s3client = AwsS3Client(
+          region: region,
+          host: "s3.$region.amazonaws.com",
+          bucketId: bucketId,
+          accessKey: "AKIA43MMI6CI2KP4CUUY",
+          secretKey: "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");
       FileDatabaseHelper fileHelper = FileDatabaseHelper.instance;
       List<FileData> tempFiles = [];
 
       try {
-        for(var element in tripList) {
+        for (var element in tripList) {
           var response;
           try {
-            response = await s3client.listObjects(prefix: widget.user.userId + "/files/" + element.charterId + "/", delimiter: "/");
+            response = await s3client.listObjects(
+                prefix:
+                    widget.user.userId + "/files/" + element.charterId + "/",
+                delimiter: "/");
 
             if (response.contents != null) {
               response.contents.forEach((content) async {
                 var elementJson = await jsonDecode(content.toJson());
                 if (elementJson["Size"] != "0") {
-                  StreamedResponse downloadResponse = await AggressorApi().downloadAwsFile(elementJson["Key"].toString());
+                  StreamedResponse downloadResponse = await AggressorApi()
+                      .downloadAwsFile(elementJson["Key"].toString());
 
-                  Uint8List bytes = await readByteStream(downloadResponse.stream);
+                  Uint8List bytes =
+                      await readByteStream(downloadResponse.stream);
 
                   String fileName = elementJson["Key"];
                   int whereIndex = fileName.lastIndexOf("/");
                   fileName = fileName.substring(whereIndex + 1);
 
-                  Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+                  Directory appDocumentsDirectory =
+                      await getApplicationDocumentsDirectory(); // 1
                   String appDocumentsPath = appDocumentsDirectory.path; // 2
                   String filePath = '$appDocumentsPath/$fileName';
                   File tempFile = File(filePath);
@@ -460,17 +505,18 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 }
               });
             }
-          } catch (e) {
-          }
+          } catch (e) {}
         }
 
-        var response = await s3client.listObjects(prefix: widget.user.userId + "/files/general/", delimiter: "/");
+        var response = await s3client.listObjects(
+            prefix: widget.user.userId + "/files/general/", delimiter: "/");
 
         if (response.contents != null) {
-          for(var content in response.contents) {
+          for (var content in response.contents) {
             var elementJson = await jsonDecode(content.toJson());
             if (elementJson["Size"] != "0") {
-              StreamedResponse downloadResponse = await AggressorApi().downloadAwsFile(elementJson["Key"].toString());
+              StreamedResponse downloadResponse = await AggressorApi()
+                  .downloadAwsFile(elementJson["Key"].toString());
 
               Uint8List bytes = await readByteStream(downloadResponse.stream);
 
@@ -478,13 +524,15 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               int whereIndex = fileName.lastIndexOf("/");
               fileName = fileName.substring(whereIndex + 1);
 
-              Directory appDocumentsDirectory = await getApplicationDocumentsDirectory(); // 1
+              Directory appDocumentsDirectory =
+                  await getApplicationDocumentsDirectory(); // 1
               String appDocumentsPath = appDocumentsDirectory.path; // 2
               String filePath = '$appDocumentsPath/$fileName';
               File tempFile = File(filePath);
               tempFile.writeAsBytes(bytes);
 
-              String date = downloadResponse.headers["date"].substring(5, downloadResponse.headers["date"].length - 13);
+              String date = downloadResponse.headers["date"]
+                  .substring(5, downloadResponse.headers["date"].length - 13);
 
               if (!await fileHelper.fileExists(
                 fileName,
@@ -521,7 +569,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     );
 
     if (result != null) {
-      var uploadResult = await AggressorApi().uploadAwsFile(widget.user.userId, "files", dropDownValue.charterId, result.files.single.path);
+      var uploadResult = await AggressorApi().uploadAwsFile(widget.user.userId,
+          "files", dropDownValue.charterId, result.files.single.path);
       if (uploadResult["status"] == "success") {
         setState(() {
           filesLoaded = false;
