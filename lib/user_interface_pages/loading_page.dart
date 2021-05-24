@@ -257,8 +257,8 @@ class LoadingPageState extends State<LoadingPage> {
       Wakelock.enable();
     });
 
-    var profileLinkResponse =
-        await AggressorApi().checkProfileLink(widget.user.userId);
+    var profileLinkResponse = await AggressorApi().checkProfileLink(widget.user.userId);
+
     if (profileLinkResponse["status"] != "success") {
       Navigator.pushReplacement(
         context,

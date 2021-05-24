@@ -363,7 +363,7 @@ class GalleryViewState extends State<GalleryView> {
                     imageExpansionDialogue(Image.file(
                       File(
                         widget
-                            .photos[(index + (9 * indexMultiplier))].imagePath,
+                            .photos[(index + (9 * (indexMultiplier - 1)))].imagePath,
                       ),
                       fit: BoxFit.cover,
                     ));
