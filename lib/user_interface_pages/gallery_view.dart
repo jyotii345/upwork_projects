@@ -358,6 +358,8 @@ class GalleryViewState extends State<GalleryView> {
                   ? widget.photos.length - (9 * (indexMultiplier - 1))
                   : 9,
               itemBuilder: (context, index) {
+                print(widget
+                    .photos[(index + (9 * (indexMultiplier - 1)))].imagePath);
                 return GestureDetector(
                   onTap: () {
                     imageExpansionDialogue(Image.file(
