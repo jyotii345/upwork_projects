@@ -321,6 +321,7 @@ class LoadingPageState extends State<LoadingPage> {
             loadedCount++;
             percent = ((loadedCount / (tripList.length * 3)));
           });
+
           var response;
           try {
             response = await s3client.listObjects(
@@ -333,6 +334,7 @@ class LoadingPageState extends State<LoadingPage> {
 
           if (response.contents != null) {
             for (var content in response.contents) {
+              print(content.toString());
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.charterId)) {
@@ -379,6 +381,8 @@ class LoadingPageState extends State<LoadingPage> {
 
       List<Photo> photos = await photoHelper.queryPhoto();
       photos.forEach((element) {
+        print("in database");
+        print(element.toMap().toString());
         if (!tempGalleries.containsKey(element.charterId)) {
           int tripIndex = 0;
           for (int i = 0; i < tripList.length - 1; i++) {

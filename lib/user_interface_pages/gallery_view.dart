@@ -472,12 +472,14 @@ class GalleryViewState extends State<GalleryView> {
       File file =
           File(await FlutterAbsolutePath.getAbsolutePath(result.identifier));
 
-      var response = await AggressorApi().uploadAwsFile(
-          widget.user.userId, "gallery", widget.trip.charterId, file.path);
-      await Future.delayed(Duration(milliseconds: 1000));
-      if (response["status"] == "success") {
+      print(result.identifier);
+      print(result.name);
+      // var response = await AggressorApi().uploadAwsFile(
+      //     widget.user.userId, "gallery", widget.trip.charterId, file.path);
+      // await Future.delayed(Duration(milliseconds: 1000));
+      // if (response["status"] == "success") {
         widget.photos.add(Photo("", "", file.path, "", "", ""));
-      }
+      //}
     }
 
     setState(() {

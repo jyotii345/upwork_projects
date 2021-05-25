@@ -74,15 +74,11 @@ class AggressorApi {
         Trip newTrip;
         if (!addedTrips
             .contains(response[i.toString()]["reservationid"].toString())) {
-
-          print("new trip intializing");
           addedTrips.add(response[i.toString()]["reservationid"].toString());
           if (!await tripDatabaseHelper
               .tripExists(response[i.toString()]["reservationid"].toString())) {
             newTrip = Trip.fromJson(response[i.toString()]);
-            print("getting new trip details");
             await newTrip.getTripDetails(contactId);
-            print("adding new trip to database");
             await tripDatabaseHelper.insertTrip(newTrip);
           } else {
             newTrip = await tripDatabaseHelper
@@ -90,7 +86,6 @@ class AggressorApi {
           }
 
           if (!await charterDatabaseHelper.charterExists(newTrip.charterId)) {
-            print("getting the charter for this trip");
             var charterResponse =
                 await AggressorApi().getCharter(newTrip.charterId);
             if (charterResponse["status"] == "success") {
@@ -105,11 +100,9 @@ class AggressorApi {
                   charterResponse["disembarkment"].toString(),
                   charterResponse["destination"].toString());
 
-              print("adding charter to database");
               await charterDatabaseHelper.insertCharter(newCharter);
 
               if (!await boatDatabaseHelper.boatExists(newCharter.boatId)) {
-                print("getting the boat for this charter as the boat does not exist");
                 var boatResponse =
                     await AggressorApi().getBoat(newCharter.boatId);
                 if (boatResponse["status"] == "success") {
@@ -117,7 +110,6 @@ class AggressorApi {
 
                   Boat newBoat;
 
-                  print("getting boat image");
                   var imageDetails = await getBoatImage(boatResponse["image"]);
                   if (imageDetails != null) {
 
@@ -148,17 +140,13 @@ class AggressorApi {
                         "");
                   }
 
-                  print("adding boat to database");
                   await boatDatabaseHelper.insertBoat(newBoat);
                 }
               }
             }
           }
-
-          print("initializing charter");
           await newTrip.initCharterInformation();
         }
-        print("finished this trip");
         loadingCallBack();
         i++;
       }
