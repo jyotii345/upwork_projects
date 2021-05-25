@@ -75,17 +75,90 @@ class AggressorApi {
         if (!addedTrips
             .contains(response[i.toString()]["reservationid"].toString())) {
 
+          print("new trip intializing");
           addedTrips.add(response[i.toString()]["reservationid"].toString());
           if (!await tripDatabaseHelper
               .tripExists(response[i.toString()]["reservationid"].toString())) {
             newTrip = Trip.fromJson(response[i.toString()]);
+            print("getting new trip details");
             await newTrip.getTripDetails(contactId);
+            print("adding new trip to database");
             await tripDatabaseHelper.insertTrip(newTrip);
           } else {
             newTrip = await tripDatabaseHelper
                 .getTrip(response[i.toString()]["reservationid"].toString());
           }
+
+          if (!await charterDatabaseHelper.charterExists(newTrip.charterId)) {
+            print("getting the charter for this trip");
+            var charterResponse =
+                await AggressorApi().getCharter(newTrip.charterId);
+            if (charterResponse["status"] == "success") {
+              Charter newCharter = Charter(
+                  charterResponse["charterid"].toString(),
+                  charterResponse["startdate"].toString(),
+                  charterResponse["statusid"].toString(),
+                  charterResponse["boatid"].toString(),
+                  charterResponse["nights"].toString(),
+                  charterResponse["itinerary"].toString(),
+                  charterResponse["embarkment"].toString(),
+                  charterResponse["disembarkment"].toString(),
+                  charterResponse["destination"].toString());
+
+              print("adding charter to database");
+              await charterDatabaseHelper.insertCharter(newCharter);
+
+              if (!await boatDatabaseHelper.boatExists(newCharter.boatId)) {
+                print("getting the boat for this charter as the boat does not exist");
+                var boatResponse =
+                    await AggressorApi().getBoat(newCharter.boatId);
+                if (boatResponse["status"] == "success") {
+                  //TODO get boat image here
+
+                  Boat newBoat;
+
+                  print("getting boat image");
+                  var imageDetails = await getBoatImage(boatResponse["image"]);
+                  if (imageDetails != null) {
+
+                    var imageName = boatResponse["image"].substring(boatResponse["image"].toString().lastIndexOf("/") + 1);
+
+                    Directory appDocumentsDirectory =
+                        await getApplicationDocumentsDirectory();
+                    String appDocumentsPath = appDocumentsDirectory.path;
+                    String filePath = '$appDocumentsPath/$imageName';
+                    print(filePath);
+                    File tempFile = await File(filePath).writeAsBytes(imageDetails[0]);
+
+                    print(boatResponse.toString());
+                    newBoat = Boat(
+                        boatResponse["boatid"].toString(),
+                        boatResponse["name"].toString(),
+                        boatResponse["abbreviation"].toString(),
+                        boatResponse["boat_email"].toString(),
+                        boatResponse["active"].toString(),
+                        tempFile.path);
+                  } else {
+                    newBoat = Boat(
+                        boatResponse["boatid"].toString(),
+                        boatResponse["name"].toString(),
+                        boatResponse["abbreviation"].toString(),
+                        boatResponse["boat_email"].toString(),
+                        boatResponse["active"].toString(),
+                        "");
+                  }
+
+                  print("adding boat to database");
+                  await boatDatabaseHelper.insertBoat(newBoat);
+                }
+              }
+            }
+          }
+
+          print("initializing charter");
+          await newTrip.initCharterInformation();
         }
+        print("finished this trip");
         loadingCallBack();
         i++;
       }
