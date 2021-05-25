@@ -18,12 +18,12 @@ class GoogleMapWidget {
   Widget getMap() {
     return SizedBox(
       width: MediaQuery.of(context).size.width, // or use fixed size like 200
-      height: MediaQuery.of(context).size.height / 5,
+      height: MediaQuery.of(context).size.height / 5.5,
       child: FlutterMap(
           options: new MapOptions(
             interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag, //TODO follow offline guide to cache world tiles
             minZoom: 0,
-            zoom: 0.0,
+            zoom: 0.5,
           ),
 
           layers: [
