@@ -684,7 +684,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             child: LinearProgressIndicator(
               backgroundColor: AggressorColors.primaryColor,
               valueColor:
-                  AlwaysStoppedAnimation(AggressorColors.secondaryColor),
+                  AlwaysStoppedAnimation(Colors.white),
             ),
           )
         : Container();

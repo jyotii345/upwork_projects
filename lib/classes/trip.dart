@@ -10,6 +10,7 @@ import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/gallery_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'aggressor_api.dart';
 
 class Trip {
@@ -219,6 +220,7 @@ class Trip {
       'November',
       'December'
     ];
+
     return Padding(
         padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
         child: Column(
@@ -237,7 +239,13 @@ class Trip {
                           color: Colors.grey[200],
                           height: textBoxSize * 1.5,
                           width: textBoxSize * 1.5,
-                          child: boat.imageLink != "" ? Image.file(File(boat.imageLink), fit: BoxFit.fill,) : Icon(Icons.directions_boat_sharp),
+                          child: FutureBuilder(future: downloadBoatImage(),builder: (context, snapshot){
+                            if(snapshot.hasData && snapshot.data != null){
+                              return snapshot.data != "" ? Image.file(File(snapshot.data), fit: BoxFit.fill,) : Icon(Icons.directions_boat_sharp);
+                            }
+                            else{return Center(child: CircularProgressIndicator(),);
+                            }
+                          },),
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -469,6 +477,37 @@ class Trip {
             ),
           ],
         ));
+  }
+
+
+  Future<dynamic> downloadBoatImage() async {
+
+    BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
+
+    String path = "";
+
+    if(boat.imagePath == "" || boat.imagePath == null){
+      var imageDetails = await AggressorApi().getBoatImage(boat.imageLink);
+      if (imageDetails != null) {
+        var imageName = boat.imageLink.substring(
+            boat.imageLink.toString().lastIndexOf("/") + 1);
+
+        Directory appDocumentsDirectory =
+        await getApplicationDocumentsDirectory();
+        String appDocumentsPath = appDocumentsDirectory.path;
+        String filePath = '$appDocumentsPath/$imageName';
+        File tempFile = await File(filePath).writeAsBytes(imageDetails[0]);
+        boat.imagePath = tempFile.path;
+        path = boat.imagePath;
+      }
+      await boatDatabaseHelper.deleteBoat(boat.boatId);
+      await boatDatabaseHelper.insertBoat(boat);
+    }
+    else{
+      path = boat.imagePath;
+    }
+
+    return path;
   }
 
   Widget getPastTripCard(BuildContext context, int index) {

@@ -40,7 +40,8 @@ class AggressorApi {
     return jsonDecode(response.body);
   }
 
-  Future<List<Trip>> getReservationList(String contactId, VoidCallback loadingCallBack) async {
+  Future<List<Trip>> getReservationList(
+      String contactId, VoidCallback loadingCallBack) async {
     //create and send a reservation list request to the Aggressor Api and return a list of Trip objects also removes duplicates from the received list
 
     TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
@@ -56,8 +57,6 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
     var response = json.decode(await pageResponse.stream.bytesToString());
-
-
 
     int length = 0;
     while (response[length.toString()] != null) {
@@ -110,33 +109,14 @@ class AggressorApi {
 
                   Boat newBoat;
 
-                  var imageDetails = await getBoatImage(boatResponse["image"]);
-                  if (imageDetails != null) {
-
-                    var imageName = boatResponse["image"].substring(boatResponse["image"].toString().lastIndexOf("/") + 1);
-
-                    Directory appDocumentsDirectory =
-                        await getApplicationDocumentsDirectory();
-                    String appDocumentsPath = appDocumentsDirectory.path;
-                    String filePath = '$appDocumentsPath/$imageName';
-                    File tempFile = await File(filePath).writeAsBytes(imageDetails[0]);
-
-                    newBoat = Boat(
-                        boatResponse["boatid"].toString(),
-                        boatResponse["name"].toString(),
-                        boatResponse["abbreviation"].toString(),
-                        boatResponse["boat_email"].toString(),
-                        boatResponse["active"].toString(),
-                        tempFile.path);
-                  } else {
-                    newBoat = Boat(
-                        boatResponse["boatid"].toString(),
-                        boatResponse["name"].toString(),
-                        boatResponse["abbreviation"].toString(),
-                        boatResponse["boat_email"].toString(),
-                        boatResponse["active"].toString(),
-                        "");
-                  }
+                  newBoat = Boat(
+                      boatResponse["boatid"].toString(),
+                      boatResponse["name"].toString(),
+                      boatResponse["abbreviation"].toString(),
+                      boatResponse["boat_email"].toString(),
+                      boatResponse["active"].toString(),
+                      boatResponse["image"],
+                      "");
 
                   await boatDatabaseHelper.insertBoat(newBoat);
                 }
@@ -482,23 +462,21 @@ class AggressorApi {
     //create and send a contact details request to the Aggressor Api and return json response
     Uint8List bytes;
     try {
-
-      final ByteData imageData = await NetworkAssetBundle(Uri.parse(url)).load("");
+      final ByteData imageData =
+          await NetworkAssetBundle(Uri.parse(url)).load("");
       bytes = imageData.buffer.asUint8List();
 
       return [bytes];
-
-
     } catch (e) {
       print(e.toString());
       return null;
     }
   }
 
-
   Future<dynamic> checkProfileLink(String userId) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/profile/checklinked/" + userId;
+    String url =
+        "https://secure.aggressor.com/api/app/profile/checklinked/" + userId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -509,7 +487,7 @@ class AggressorApi {
     return pageJson;
   }
 
-  Future<dynamic> getBoatList() async{
+  Future<dynamic> getBoatList() async {
     String url = "https://secure.aggressor.com/api/app/boats/list";
 
     Request request = Request("GET", Uri.parse(url))
@@ -517,7 +495,8 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
 
-    List<dynamic> pageJson = json.decode(await pageResponse.stream.bytesToString());
+    List<dynamic> pageJson =
+        json.decode(await pageResponse.stream.bytesToString());
 
     pageJson.forEach((element) {
       boatList.add(element);
