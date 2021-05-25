@@ -7,6 +7,7 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,12 +15,10 @@ import '../classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart' as globals;
 
 class GalleryView extends StatefulWidget {
-  GalleryView(
-    this.user,
-    this.charterId,
-    this.photos,
-    this.trip,
-  );
+  GalleryView(this.user,
+      this.charterId,
+      this.photos,
+      this.trip,);
 
   User user;
   String charterId;
@@ -110,7 +109,10 @@ class GalleryViewState extends State<GalleryView> {
           getBackgroundImage(),
           getPageForm(),
           Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height / 7 + 4,
             width: double.infinity,
             color: AggressorColors.secondaryColor,
           ),
@@ -129,7 +131,10 @@ class GalleryViewState extends State<GalleryView> {
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.width / 8;
+    double iconSize = MediaQuery
+        .of(context)
+        .size
+        .width / 8;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
@@ -254,8 +259,14 @@ class GalleryViewState extends State<GalleryView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 7,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height / 7,
             ),
             getPageTitle(),
             getDestination(),
@@ -270,7 +281,10 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getScrollButtons() {
-    double iconSize = MediaQuery.of(context).size.width / 10;
+    double iconSize = MediaQuery
+        .of(context)
+        .size
+        .width / 10;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -337,12 +351,20 @@ class GalleryViewState extends State<GalleryView> {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         "Date: " +
-            months[DateTime.parse(widget.trip.tripDate).month - 1]
+            months[DateTime
+                .parse(widget.trip.tripDate)
+                .month - 1]
                 .substring(0, 3) +
             " " +
-            DateTime.parse(widget.trip.tripDate).day.toString() +
+            DateTime
+                .parse(widget.trip.tripDate)
+                .day
+                .toString() +
             "," +
-            DateTime.parse(widget.trip.tripDate).year.toString(),
+            DateTime
+                .parse(widget.trip.tripDate)
+                .year
+                .toString(),
         textAlign: TextAlign.left,
       ),
     );
@@ -353,44 +375,50 @@ class GalleryViewState extends State<GalleryView> {
       padding: const EdgeInsets.all(15.0),
       child: widget.photos.length > 0
           ? GridView.builder(
-              shrinkWrap: true,
-              itemCount: widget.photos.length - (9 * (indexMultiplier - 1)) < 9
-                  ? widget.photos.length - (9 * (indexMultiplier - 1))
-                  : 9,
-              itemBuilder: (context, index) {
-                print(widget
-                    .photos[(index + (9 * (indexMultiplier - 1)))].imagePath);
-                return GestureDetector(
-                  onTap: () {
-                    imageExpansionDialogue(Image.file(
-                      File(
-                        widget
-                            .photos[(index + (9 * (indexMultiplier - 1)))].imagePath,
-                      ),
-                      fit: BoxFit.cover,
-                    ));
-                  },
-                  child: Image.file(
-                    File(
-                      widget.photos[index].imagePath,
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: MediaQuery.of(context).size.width / 6,
-                  maxCrossAxisExtent: MediaQuery.of(context).size.width / 4,
-                  childAspectRatio: 1.2 / 1,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20),
-            )
-          : Center(
-              child: Text(
-                "You have not uploaded any images to this gallery yet.",
-                textAlign: TextAlign.center,
+        shrinkWrap: true,
+        itemCount: widget.photos.length - (9 * (indexMultiplier - 1)) < 9
+            ? widget.photos.length - (9 * (indexMultiplier - 1))
+            : 9,
+        itemBuilder: (context, index) {
+          print(widget
+              .photos[(index + (9 * (indexMultiplier - 1)))].imagePath);
+          return GestureDetector(
+            onTap: () {
+              imageExpansionDialogue(Image.file(
+                File(
+                  widget
+                      .photos[(index + (9 * (indexMultiplier - 1)))].imagePath,
+                ),
+                fit: BoxFit.cover,
+              ));
+            },
+            child: Image.file(
+              File(
+                widget.photos[index].imagePath,
               ),
+              fit: BoxFit.cover,
             ),
+          );
+        },
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+            mainAxisExtent: MediaQuery
+                .of(context)
+                .size
+                .width / 6,
+            maxCrossAxisExtent: MediaQuery
+                .of(context)
+                .size
+                .width / 4,
+            childAspectRatio: 1.2 / 1,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20),
+      )
+          : Center(
+        child: Text(
+          "You have not uploaded any images to this gallery yet.",
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 
@@ -407,7 +435,7 @@ class GalleryViewState extends State<GalleryView> {
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -421,8 +449,14 @@ class GalleryViewState extends State<GalleryView> {
   Widget getBannerImage() {
     //returns banner image
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 7,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      height: MediaQuery
+          .of(context)
+          .size
+          .height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
         fit: BoxFit.cover,
@@ -434,13 +468,13 @@ class GalleryViewState extends State<GalleryView> {
     return errorMessage == ""
         ? Container()
         : Padding(
-            padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
-            child: Text(
-              errorMessage,
-              style: TextStyle(color: Colors.red),
-              textAlign: TextAlign.center,
-            ),
-          );
+      padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
+      child: Text(
+        errorMessage,
+        style: TextStyle(color: Colors.red),
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 
   Future<void> loadAssets() async {
@@ -471,16 +505,24 @@ class GalleryViewState extends State<GalleryView> {
     );
 
     for (var result in resultList) {
+      String path = "";
+      if (result.name.toLowerCase().contains(".heic")) {
+        path = await HeicToJpg.convert(
+            await FlutterAbsolutePath.getAbsolutePath(result.identifier));
+      }
+      else {
+        path = await FlutterAbsolutePath.getAbsolutePath(result.identifier)
+      }
       File file =
-          File(await FlutterAbsolutePath.getAbsolutePath(result.identifier));
+      File(path);
 
-      print(result.identifier);
       print(result.name);
+      print(path);
       // var response = await AggressorApi().uploadAwsFile(
       //     widget.user.userId, "gallery", widget.trip.charterId, file.path);
       // await Future.delayed(Duration(milliseconds: 1000));
       // if (response["status"] == "success") {
-        widget.photos.add(Photo("", "", file.path, "", "", ""));
+      widget.photos.add(Photo("", "", file.path, "", "", ""));
       //}
     }
 
@@ -496,11 +538,17 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getPageTitle() {
-    double iconSize = MediaQuery.of(context).size.width / 10;
+    double iconSize = MediaQuery
+        .of(context)
+        .size
+        .width / 10;
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Container(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -509,7 +557,10 @@ class GalleryViewState extends State<GalleryView> {
                 "My Photos",
                 style: TextStyle(
                     color: AggressorColors.primaryColor,
-                    fontSize: MediaQuery.of(context).size.height / 26,
+                    fontSize: MediaQuery
+                        .of(context)
+                        .size
+                        .height / 26,
                     fontWeight: FontWeight.bold),
               ),
             ),
