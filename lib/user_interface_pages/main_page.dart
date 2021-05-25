@@ -1,4 +1,5 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -91,9 +92,7 @@ class _MyHomePageState extends State<MyHomePage>
                         ),
                       ),
                       itemBuilder: (BuildContext context) {
-                        return {
-                          "My Profile","Sign Out"
-                        }.map((String option) {
+                        return {"My Profile", "Sign Out"}.map((String option) {
                           return PopupMenuItem<String>(
                             value: option,
                             child: Text(option),
@@ -152,19 +151,28 @@ class _MyHomePageState extends State<MyHomePage>
     FileDatabaseHelper fileDatabaseHelper = FileDatabaseHelper.instance;
     await fileDatabaseHelper.deleteFileTable();
 
-    CharterDatabaseHelper charterDatabaseHelper = CharterDatabaseHelper.instance;
+    CharterDatabaseHelper charterDatabaseHelper =
+        CharterDatabaseHelper.instance;
     await charterDatabaseHelper.deleteCharterTable();
 
     BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
     await boatDatabaseHelper.deleteBoatTable();
 
     loadedCount = 0;
-    currentIndex = 0;
+    loadingLength = 0;
+
+    galleriesMap = <String, Gallery>{};
+    notLoadedList = [];
+    tripList = [];
+    loadSize = [];
+
+    bool photosLoaded = false;
+
+    int currentIndex = 0;
 
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));
   }
-
 
   void onTabTapped(int index) {
     /*
@@ -182,15 +190,23 @@ class _MyHomePageState extends State<MyHomePage>
 
     return IndexedStack(
       children: <Widget>[
-        MyTrips(widget.user, ),
+        MyTrips(
+          widget.user,
+        ),
         //trips page
-        Notes(widget.user, ),
+        Notes(
+          widget.user,
+        ),
         // notes page
-        Photos(widget.user, ),
+        Photos(
+          widget.user,
+        ),
         // photos page
         Rewards(),
         // rewards page
-        MyFiles(widget.user,),
+        MyFiles(
+          widget.user,
+        ),
         // login page
         MyProfile(widget.user),
         //my profile page
@@ -295,7 +311,6 @@ class _MyHomePageState extends State<MyHomePage>
       ],
     );
   }
-
 
   @override
   bool get wantKeepAlive => true;

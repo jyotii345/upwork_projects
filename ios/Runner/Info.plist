@@ -30,6 +30,8 @@
 	<string>Used for taking new photos for galleries</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Used for calling for support</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Not used in this application</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Not used in this application</string>
 	<key>NSMotionUsageDescription</key>
@@ -58,8 +60,6 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>kTCCServiceMediaLibrary</key>
-	<string>Not used in this application</string>
-	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Not used in this application</string>
 </dict>
 </plist>

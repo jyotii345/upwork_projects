@@ -271,7 +271,6 @@ class LoadingPageState extends State<LoadingPage> {
     tripList = await AggressorApi()
         .getReservationList(widget.user.contactId, loadingCallBack);
 
-    print("trip list received");
     setState(() {
       loadedCount = tripList.length.toDouble();
       percent = ((loadedCount / loadingLength * 3));
