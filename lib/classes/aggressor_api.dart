@@ -74,6 +74,7 @@ class AggressorApi {
         Trip newTrip;
         if (!addedTrips
             .contains(response[i.toString()]["reservationid"].toString())) {
+
           addedTrips.add(response[i.toString()]["reservationid"].toString());
           if (!await tripDatabaseHelper
               .tripExists(response[i.toString()]["reservationid"].toString())) {
@@ -84,67 +85,6 @@ class AggressorApi {
             newTrip = await tripDatabaseHelper
                 .getTrip(response[i.toString()]["reservationid"].toString());
           }
-
-          if (!await charterDatabaseHelper.charterExists(newTrip.charterId)) {
-            var charterResponse =
-                await AggressorApi().getCharter(newTrip.charterId);
-            if (charterResponse["status"] == "success") {
-              Charter newCharter = Charter(
-                  charterResponse["charterid"].toString(),
-                  charterResponse["startdate"].toString(),
-                  charterResponse["statusid"].toString(),
-                  charterResponse["boatid"].toString(),
-                  charterResponse["nights"].toString(),
-                  charterResponse["itinerary"].toString(),
-                  charterResponse["embarkment"].toString(),
-                  charterResponse["disembarkment"].toString(),
-                  charterResponse["destination"].toString());
-
-              await charterDatabaseHelper.insertCharter(newCharter);
-
-              if (!await boatDatabaseHelper.boatExists(newCharter.boatId)) {
-                var boatResponse =
-                    await AggressorApi().getBoat(newCharter.boatId);
-                if (boatResponse["status"] == "success") {
-                  //TODO get boat image here
-
-                  Boat newBoat;
-
-                  var imageDetails = await getBoatImage(boatResponse["image"]);
-                  if (imageDetails != null) {
-
-                    var imageName = boatResponse["image"].substring(boatResponse["image"].toString().lastIndexOf("/") + 1);
-
-                    Directory appDocumentsDirectory =
-                        await getApplicationDocumentsDirectory();
-                    String appDocumentsPath = appDocumentsDirectory.path;
-                    String filePath = '$appDocumentsPath/$imageName';
-                    print(filePath);
-                    File tempFile = await File(filePath).writeAsBytes(imageDetails[0]);
-
-                    newBoat = Boat(
-                        boatResponse["boatid"].toString(),
-                        boatResponse["name"].toString(),
-                        boatResponse["abbreviation"].toString(),
-                        boatResponse["boat_email"].toString(),
-                        boatResponse["active"].toString(),
-                        tempFile.path);
-                  } else {
-                    newBoat = Boat(
-                        boatResponse["boatid"].toString(),
-                        boatResponse["name"].toString(),
-                        boatResponse["abbreviation"].toString(),
-                        boatResponse["boat_email"].toString(),
-                        boatResponse["active"].toString(),
-                        "");
-                  }
-                  await boatDatabaseHelper.insertBoat(newBoat);
-                }
-              }
-            }
-          }
-
-          await newTrip.initCharterInformation();
         }
         loadingCallBack();
         i++;
