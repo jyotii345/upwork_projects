@@ -37,12 +37,13 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   instance vars
    */
 
-  Trip dropDownValue, selectionTrip;
+  Map<String, dynamic> dropDownValue, selectionTrip;
   String departureDate = "", errorMessage = "";
-  List<Trip> sortedTripList;
   List<dynamic> galleriesList = [];
   List<Asset> images = <Asset>[];
   bool loading = false;
+  List<Trip> dateDropDownList = [];
+  Trip dateDropDownValue;
 
   /*
   initState
@@ -50,9 +51,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    selectionTrip =
-        Trip(DateTime.now().toString(), "", "", "", " -- SELECT -- ", "", "");
-    selectionTrip.charter = Charter(
+    selectionTrip = {
+      "boatid": -1,
+      "name": " -- SELECT -- ",
+      "abbreviation": "SEL"
+    };
+    dateDropDownValue = Trip(
       "",
       "",
       "",
@@ -60,9 +64,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       "",
       "",
       "",
-      "",
-      " -- SELECT -- ",
     );
+    dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
+    boatList.insert(0, selectionTrip);
     dropDownValue = selectionTrip;
   }
 
@@ -72,6 +76,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+
+    getGalleries();
 
     return Stack(
       children: [
@@ -113,12 +120,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget getDestinationDropdown(List<Trip> tripList) {
-    sortedTripList = [selectionTrip];
-    tripList = sortTripList(tripList);
-    tripList.forEach((element) {
-      sortedTripList.add(element);
-    });
+  Widget getYachtDropDown(List<Map<String, dynamic>> boatList) {
+    // sortedTripList = [selectionTrip];
+    // tripList = sortTripList(tripList); // sort boatList instead
+    // tripList.forEach((element) {
+    //   sortedTripList.add(element);
+    // });
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -128,7 +135,73 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           SizedBox(
             width: MediaQuery.of(context).size.height / 6,
             child: Text(
-              "Destination:",
+              "Yacht:",
+              style:
+                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 35,
+              decoration: ShapeDecoration(
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                ),
+              ),
+              child: DropdownButton<Map<String, dynamic>>(
+                underline: Container(),
+                value: dropDownValue,
+                elevation: 0,
+                isExpanded: true,
+                iconSize: MediaQuery.of(context).size.height / 35,
+                onChanged: (Map<String, dynamic> newValue) {
+                  setState(() {
+                    dropDownValue = newValue;
+                    dateDropDownList = getDateDropDownList(
+                        newValue); //TODO replace with drop down
+                  });
+                },
+                items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
+                    (Map<String, dynamic> value) {
+                  return DropdownMenuItem<Map<String, dynamic>>(
+                    value: value,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: Text(
+                        value["name"],
+                        style: TextStyle(
+                            fontSize:
+                                MediaQuery.of(context).size.height / 40 - 4),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getDateDropDown() {
+    // sortedTripList = [selectionTrip];
+    // tripList = sortTripList(tripList); // sort boatList instead
+    // tripList.forEach((element) {
+    //   sortedTripList.add(element);
+    // });
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 6,
+            child: Text(
+              "DepartureDate:",
               style:
                   TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
@@ -144,37 +217,26 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               ),
               child: DropdownButton<Trip>(
                 underline: Container(),
-                value: dropDownValue,
+                value: dateDropDownValue,
                 elevation: 0,
                 isExpanded: true,
                 iconSize: MediaQuery.of(context).size.height / 35,
                 onChanged: (Trip newValue) {
                   setState(() {
-                    dropDownValue = newValue;
-                    departureDate = DateTime.parse(newValue.charter.startDate)
-                            .month
-                            .toString() +
-                        "/" +
-                        DateTime.parse(newValue.charter.startDate)
-                            .day
-                            .toString() +
-                        "/" +
-                        DateTime.parse(newValue.charter.startDate)
-                            .year
-                            .toString();
+                    dateDropDownValue = newValue;
                   });
                 },
-                items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
+                items:
+                    dateDropDownList.map<DropdownMenuItem<Trip>>((Trip value) {
                   return DropdownMenuItem<Trip>(
                     value: value,
                     child: Container(
                       width: MediaQuery.of(context).size.width / 2,
                       child: Text(
-                        value.charter.destination == " -- SELECT -- "
-                            ? value.charter.destination
-                            : value.charter.destination +
-                                " - " +
-                                DateTime.parse(value.charter.startDate)
+                        value.charter == null
+                            ? "No trips on this yacht."
+                            : DateTime.parse(
+                                        value.charter.startDate)
                                     .month
                                     .toString() +
                                 "/" +
@@ -201,47 +263,23 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  List<Trip> sortTripList(List<Trip> tripList) {
-    List<Trip> tempList = tripList;
-    tempList.sort((a, b) =>
-        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+  List<Trip> getDateDropDownList(Map<String, dynamic> boatMap) {
+    List<Trip> tempList = [];
+    tripList.forEach((element) {
+      if (element.boat.boatId.toString() == boatMap["boatid"].toString()) {
+        tempList.add(element);
+      }
+    });
+
+    if (tempList.length == 0) {
+      tempList = [Trip("", "", "", "", "", "", "")];
+    }
+
+    setState(() {
+      dateDropDownValue = tempList[0];
+    });
 
     return tempList;
-  }
-
-  Widget getDepartureInformation() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
-            child: Text(
-              "Departure Date:",
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
-            ),
-          ),
-          Expanded(
-            child: Container(
-                height: MediaQuery.of(context).size.height / 35,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                ),
-                child: Text(
-                  departureDate,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 40 - 4),
-                  textAlign: TextAlign.center,
-                )),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget getUploadPhotosButton() {
@@ -279,7 +317,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
     }
 
-    if (dropDownValue.charter.destination == " -- SELECT -- ") {
+    if (dropDownValue["name"] == " -- SELECT -- " ||
+        dateDropDownValue.charter == null ||
+        dateDropDownValue.charter.startDate == "") {
       setState(() {
         errorMessage = "You must select a trip to create a gallery for.";
       });
@@ -298,30 +338,35 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           selectCircleStrokeColor: "#ff428cc7",
         ),
       );
+      setState(() {
+        loading = true;
+      });
 
       for (var element in resultList) {
         File file =
             File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
 
         var response = await AggressorApi().uploadAwsFile(
-            widget.user.userId, "gallery", dropDownValue.charterId, file.path);
+            widget.user.userId.toString(),
+            "gallery",
+            dropDownValue["boatid"].toString(),
+            file.path);
 
         await Future.delayed(Duration(milliseconds: 1000));
         if (response["status"] == "success") {
-          setState(() {
-            photosLoaded = false;
-          });
+          print("uploaded");
         }
       }
-      ;
-
-      if (!mounted) return;
 
       setState(() {
+        photosLoaded = false;
+        loading = false;
         images = resultList;
         errorMessage = error;
         photosLoaded = false;
       });
+
+      if (!mounted) return;
     }
   }
 
@@ -338,8 +383,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 fontSize: MediaQuery.of(context).size.height / 35,
                 fontWeight: FontWeight.bold),
           ),
-          getDestinationDropdown(tripList),
-          getDepartureInformation(),
+          getYachtDropDown(boatList),
+          getDateDropDown(),
           getUploadPhotosButton(),
         ],
       ),
@@ -389,8 +434,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                         Flexible(
                           child: SizedBox(
                             width: textBoxSize,
-                            child: Text("Destination",
-                                textAlign: TextAlign.center),
+                            child: Text("Yacht", textAlign: TextAlign.center),
                           ),
                         ),
                         SizedBox(
@@ -418,8 +462,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Widget getGalleriesListView() {
     //returns the list item containing gallery objects
 
-    getGalleries();
-
     double textBoxSize = MediaQuery.of(context).size.width / 4;
     galleriesList.clear();
     galleriesList.add(
@@ -439,7 +481,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 Expanded(
                   child: SizedBox(
                     width: textBoxSize,
-                    child: Text("Destination", textAlign: TextAlign.left),
+                    child: Text("Yacht:", textAlign: TextAlign.left),
                   ),
                 ),
                 SizedBox(
@@ -459,7 +501,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
     galleryMap.galleriesMap.forEach((key, value) {
-      galleriesList.add(value.getGalleryRow(context, index));
+      if (value.photos.length > 0) {
+        galleriesList.add(value.getGalleryRow(context, index));
+      }
       index++;
     });
 
@@ -519,7 +563,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
-    print("getting galleries");
     setState(() {
       loading = true;
     });
@@ -540,8 +583,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           var response;
           try {
             response = await s3client.listObjects(
-                prefix:
-                    widget.user.userId + "/gallery/" + element.charterId + "/",
+                prefix: widget.user.userId +
+                    "/gallery/" +
+                    element.boat.boatId +
+                    "/",
                 delimiter: "/");
           } catch (e) {
             print(e);
@@ -595,17 +640,17 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
       List<Photo> photos = await photoHelper.queryPhoto();
       photos.forEach((element) {
-        if (!tempGalleries.containsKey(element.charterId)) {
+        if (!tempGalleries.containsKey(element.boatId)) {
           int tripIndex = 0;
           for (int i = 0; i < tripList.length - 1; i++) {
-            if (tripList[i].charterId == element.charterId) {
+            if (tripList[i].charterId == element.boatId) {
               tripIndex = i;
             }
           }
-          tempGalleries[element.charterId] = Gallery(
-              widget.user, element.charterId, <Photo>[], tripList[tripIndex]);
+          tempGalleries[element.boatId] = Gallery(
+              widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
         }
-        tempGalleries[element.charterId].addPhoto(element);
+        tempGalleries[element.boatId].addPhoto(element);
       });
 
       setState(() {
@@ -632,11 +677,17 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           );
   }
 
-  Widget showLoading(){
-    return loading ? Padding(
-      padding: const EdgeInsets.fromLTRB(0.0,4.0,0,0),
-      child: LinearProgressIndicator(backgroundColor: AggressorColors.primaryColor,valueColor: AlwaysStoppedAnimation(AggressorColors.secondaryColor),),
-    ) : Container();
+  Widget showLoading() {
+    return loading
+        ? Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
+            child: LinearProgressIndicator(
+              backgroundColor: AggressorColors.primaryColor,
+              valueColor:
+                  AlwaysStoppedAnimation(AggressorColors.secondaryColor),
+            ),
+          )
+        : Container();
   }
 
   @override

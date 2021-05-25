@@ -10,14 +10,14 @@ import 'package:flutter/material.dart';
 
 class Gallery {
   User user;
-  String charterId;
+  String boatId;
   List<Photo> photos;
   Trip trip;
   List<VoidCallback> callBackList;
 
-  Gallery(User user, String charterId, List<Photo> photos, Trip trip,) {
+  Gallery(User user, String boatId, List<Photo> photos, Trip trip,) {
     this.user = user;
-    this.charterId = charterId;
+    this.boatId = boatId;
     this.photos = photos;
     this.trip = trip;
     this.callBackList =  callBackList;
@@ -26,7 +26,7 @@ class Gallery {
   Map<String, dynamic> toMap() {
     //create a map object from user object
     return {
-      'charterId': charterId,
+      'boatId': boatId,
       'photos': photos,
       'trip': trip,
     };
@@ -59,7 +59,7 @@ class Gallery {
                   child: GestureDetector(
                     onTap : (){openGalleryView(context);},
                     child: Text(
-                      trip.charter.destination == ""? trip.destination  :trip.charter.destination,
+                      trip.boat.name,
                       textAlign: TextAlign.left,
                       style: TextStyle(color: AggressorColors.secondaryColor),
                     ),
@@ -92,6 +92,6 @@ class Gallery {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => GalleryView(user, charterId, photos, trip,)));
+            builder: (context) => GalleryView(user, boatId, photos, trip,)));
   }
 }

@@ -165,10 +165,11 @@ class _MyHomePageState extends State<MyHomePage>
     notLoadedList = [];
     tripList = [];
     loadSize = [];
+    boatList = [];
 
-    bool photosLoaded = false;
+    photosLoaded = false;
 
-    int currentIndex = 0;
+    currentIndex = 0;
 
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));

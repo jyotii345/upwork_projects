@@ -40,7 +40,7 @@ class PhotoDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE photo(id INTEGER PRIMARY KEY,imageName TEXT,userId TEXT,imagePath TEXT,date TEXT,charterId TEXT,key TEXT)",
+      "CREATE TABLE photo(id INTEGER PRIMARY KEY,imageName TEXT,userId TEXT,imagePath TEXT,date TEXT,boatId TEXT,key TEXT)",
     );
   }
 
@@ -76,10 +76,10 @@ class PhotoDatabaseHelper {
     await db.delete('photo');
   }
 
-  Future<bool> photoExists(String image, String charterId) async {
+  Future<bool> photoExists(String image, String boatId) async {
     final db = await database;
     var result = await db
-        .rawQuery('SELECT EXISTS(SELECT 1 FROM photo WHERE imageName = ? AND charterId = ?)', [image, charterId]);
+        .rawQuery('SELECT EXISTS(SELECT 1 FROM photo WHERE imageName = ? AND boatId = ?)', [image, boatId]);
     int exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
@@ -105,7 +105,7 @@ class PhotoDatabaseHelper {
         maps[i]['userId'],
         maps[i]['imagePath'],
         maps[i]['date'],
-        maps[i]['charterId'],
+        maps[i]['boatId'],
         maps[i]['key']
       );
     });

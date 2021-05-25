@@ -5,19 +5,19 @@ class Photo {
   String userId;
   String imagePath;
   String date;
-  String charterId;
+  String boatId;
   String key;
 
   Photo(
       String imageName,
       String userId,
-      String imagePath, String date,String charterId, String key
+      String imagePath, String date,String boatId, String key
       ) {
     this.imageName = imageName;
     this.userId = userId;
     this.imagePath = imagePath;
     this.date = date;
-    this.charterId = charterId;
+    this.boatId = boatId;
     this.key = key;
   }
 
@@ -28,7 +28,7 @@ class Photo {
       'userId': userId,
       'imagePath': imagePath,
       'date' : date,
-      'charterId' : charterId,
+      'boatId' : boatId,
       'key' : key,
     };
   }

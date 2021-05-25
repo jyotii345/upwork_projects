@@ -106,7 +106,6 @@ class AggressorApi {
                 var boatResponse =
                     await AggressorApi().getBoat(newCharter.boatId);
                 if (boatResponse["status"] == "success") {
-                  print("boat id not found");
                   //TODO get boat image here
 
                   Boat newBoat;
@@ -120,10 +119,8 @@ class AggressorApi {
                         await getApplicationDocumentsDirectory();
                     String appDocumentsPath = appDocumentsDirectory.path;
                     String filePath = '$appDocumentsPath/$imageName';
-                    print(filePath);
                     File tempFile = await File(filePath).writeAsBytes(imageDetails[0]);
 
-                    print(boatResponse.toString());
                     newBoat = Boat(
                         boatResponse["boatid"].toString(),
                         boatResponse["name"].toString(),
@@ -402,15 +399,15 @@ class AggressorApi {
   }
 
   Future<dynamic> uploadAwsFile(
-      String userId, String gallery, String charterId, String filePath) async {
+      String userId, String gallery, String boatId, String filePath) async {
     //saves the updated profile data for the userId provided
 
-    String url = "https://secure.aggressor.com/api/app/gallery/upload/" +
+    String url = "https://secure.aggressor.com/api/app/s3/upload/" +
         userId.toString() +
         "/" +
         gallery +
         "/" +
-        charterId.toString();
+        boatId.toString();
 
     var uri = Uri.parse(url);
     MultipartRequest request = http.MultipartRequest('POST', uri);
@@ -425,7 +422,7 @@ class AggressorApi {
 
   Future<dynamic> downloadAwsFile(String key) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/gallery/download/" + key;
+    String url = "https://secure.aggressor.com/api/app/s3/download/" + key;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -510,5 +507,21 @@ class AggressorApi {
 
     var pageJson = json.decode(await pageResponse.stream.bytesToString());
     return pageJson;
+  }
+
+  Future<dynamic> getBoatList() async{
+    String url = "https://secure.aggressor.com/api/app/boats/list";
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    List<dynamic> pageJson = json.decode(await pageResponse.stream.bytesToString());
+
+    pageJson.forEach((element) {
+      boatList.add(element);
+    });
+    return boatList;
   }
 }
