@@ -511,7 +511,7 @@ class GalleryViewState extends State<GalleryView> {
             await FlutterAbsolutePath.getAbsolutePath(result.identifier));
       }
       else {
-        path = await FlutterAbsolutePath.getAbsolutePath(result.identifier)
+        path = await FlutterAbsolutePath.getAbsolutePath(result.identifier);
       }
       File file =
       File(path);
