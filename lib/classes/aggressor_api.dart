@@ -106,6 +106,7 @@ class AggressorApi {
                 var boatResponse =
                     await AggressorApi().getBoat(newCharter.boatId);
                 if (boatResponse["status"] == "success") {
+                  print("boat id not found");
                   //TODO get boat image here
 
                   Boat newBoat;
@@ -145,7 +146,6 @@ class AggressorApi {
               }
             }
           }
-          await newTrip.initCharterInformation();
         }
         loadingCallBack();
         i++;

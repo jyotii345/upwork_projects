@@ -518,12 +518,12 @@ class GalleryViewState extends State<GalleryView> {
 
       print(result.name);
       print(path);
-      // var response = await AggressorApi().uploadAwsFile(
-      //     widget.user.userId, "gallery", widget.trip.charterId, file.path);
-      // await Future.delayed(Duration(milliseconds: 1000));
-      // if (response["status"] == "success") {
+      var response = await AggressorApi().uploadAwsFile(
+          widget.user.userId, "gallery", widget.trip.charterId, file.path);
+      await Future.delayed(Duration(milliseconds: 1000));
+      if (response["status"] == "success") {
       widget.photos.add(Photo("", "", file.path, "", "", ""));
-      //}
+      }
     }
 
     setState(() {

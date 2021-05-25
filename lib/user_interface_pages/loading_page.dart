@@ -257,7 +257,8 @@ class LoadingPageState extends State<LoadingPage> {
       Wakelock.enable();
     });
 
-    var profileLinkResponse = await AggressorApi().checkProfileLink(widget.user.userId);
+    var profileLinkResponse =
+        await AggressorApi().checkProfileLink(widget.user.userId);
 
     if (profileLinkResponse["status"] != "success") {
       Navigator.pushReplacement(
@@ -268,9 +269,14 @@ class LoadingPageState extends State<LoadingPage> {
         ),
       );
     }
-    tripList = await AggressorApi()
-        .getReservationList(widget.user.contactId, loadingCallBack);
 
+    var tempList = await AggressorApi()
+        .getReservationList(widget.user.contactId, loadingCallBack);
+    setState(() {
+      tripList = tempList;
+    });
+
+    print("got trip list");
     setState(() {
       loadedCount = tripList.length.toDouble();
       percent = ((loadedCount / loadingLength * 3));
@@ -281,6 +287,7 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     for (var trip in tripList) {
+      print("initializing the trips");
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
@@ -302,109 +309,106 @@ class LoadingPageState extends State<LoadingPage> {
   }
 
   Future<dynamic> getGalleries() async {
+    print("getting galleries");
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
-    if (!photosLoaded) {
-      String region = "us-east-1";
-      String bucketId = "aggressor.app.user.images";
-      final AwsS3Client s3client = AwsS3Client(
-          region: region,
-          host: "s3.$region.amazonaws.com",
-          bucketId: bucketId,
-          accessKey: "AKIA43MMI6CI2KP4CUUY",
-          secretKey: "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");
-      PhotoDatabaseHelper photoHelper = PhotoDatabaseHelper.instance;
-      Map<String, Gallery> tempGalleries = <String, Gallery>{};
+    String region = "us-east-1";
+    String bucketId = "aggressor.app.user.images";
+    final AwsS3Client s3client = AwsS3Client(
+        region: region,
+        host: "s3.$region.amazonaws.com",
+        bucketId: bucketId,
+        accessKey: "AKIA43MMI6CI2KP4CUUY",
+        secretKey: "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");
+    PhotoDatabaseHelper photoHelper = PhotoDatabaseHelper.instance;
+    Map<String, Gallery> tempGalleries = <String, Gallery>{};
 
-      try {
-        for (var element in tripList) {
-          setState(() {
-            loadedCount++;
-            percent = ((loadedCount / (tripList.length * 3)));
-          });
+    print(tripList.length);
+    try {
+      for (var element in tripList) {
+        setState(() {
+          loadedCount++;
+          percent = ((loadedCount / (tripList.length * 3)));
+        });
 
-          var response;
-          try {
-            response = await s3client.listObjects(
-                prefix:
-                    widget.user.userId + "/gallery/" + element.charterId + "/",
-                delimiter: "/");
-          } catch (e) {
-            print(e);
-          }
+        var response;
+        try {
+          response = await s3client.listObjects(
+              prefix:
+                  widget.user.userId + "/gallery/" + element.charterId + "/",
+              delimiter: "/");
+        } catch (e) {
+          print(e);
+        }
 
-          if (response.contents != null) {
-            for (var content in response.contents) {
-              print(content.toString());
-              var elementJson = await jsonDecode(content.toJson());
-              if (elementJson["Size"] != "0") {
-                if (!tempGalleries.containsKey(element.charterId)) {
-                  tempGalleries[element.charterId] = Gallery(
-                      widget.user, element.charterId, <Photo>[], element);
-                }
-                if (!await photoHelper.keyExists(elementJson["Key"])) {
-                  StreamedResponse downloadResponse = await AggressorApi()
-                      .downloadAwsFile(elementJson["Key"].toString());
+        if (response.contents != null) {
+          for (var content in response.contents) {
+            var elementJson = await jsonDecode(content.toJson());
+            if (elementJson["Size"] != "0") {
+              if (!tempGalleries.containsKey(element.charterId)) {
+                tempGalleries[element.charterId] =
+                    Gallery(widget.user, element.charterId, <Photo>[], element);
+              }
+              if (!await photoHelper.keyExists(elementJson["Key"])) {
+                StreamedResponse downloadResponse = await AggressorApi()
+                    .downloadAwsFile(elementJson["Key"].toString());
 
-                  Uint8List bytes =
-                      await readByteStream(downloadResponse.stream);
+                Uint8List bytes = await readByteStream(downloadResponse.stream);
 
-                  String fileName =
-                      downloadResponse.headers["content-disposition"];
-                  int whereIndex = fileName.indexOf("=");
-                  fileName = fileName.substring(whereIndex + 1);
-                  fileName.replaceAll("\"", "");
+                String fileName =
+                    downloadResponse.headers["content-disposition"];
+                int whereIndex = fileName.indexOf("=");
+                fileName = fileName.substring(whereIndex + 1);
+                fileName.replaceAll("\"", "");
 
-                  Directory appDocumentsDirectory =
-                      await getApplicationDocumentsDirectory(); // 1
-                  String appDocumentsPath = appDocumentsDirectory.path; // 2
-                  String filePath = '$appDocumentsPath/$fileName';
-                  File imageFile = File(filePath);
-                  imageFile.writeAsBytes(bytes);
+                Directory appDocumentsDirectory =
+                    await getApplicationDocumentsDirectory(); // 1
+                String appDocumentsPath = appDocumentsDirectory.path; // 2
+                String filePath = '$appDocumentsPath/$fileName';
+                File imageFile = File(filePath);
+                imageFile.writeAsBytes(bytes);
 
-                  Photo photo = Photo(
-                      fileName,
-                      widget.user.userId,
-                      imageFile.path,
-                      element.tripDate,
-                      element.charterId,
-                      elementJson["Key"]);
+                Photo photo = Photo(
+                    fileName,
+                    widget.user.userId,
+                    imageFile.path,
+                    element.tripDate,
+                    element.charterId,
+                    elementJson["Key"]);
 
-                  photoHelper.insertPhoto(photo);
-                }
+                photoHelper.insertPhoto(photo);
               }
             }
           }
         }
-      } catch (e) {
-        print(e.toString());
       }
-
-      List<Photo> photos = await photoHelper.queryPhoto();
-      photos.forEach((element) {
-        print("in database");
-        print(element.toMap().toString());
-        if (!tempGalleries.containsKey(element.charterId)) {
-          int tripIndex = 0;
-          for (int i = 0; i < tripList.length - 1; i++) {
-            if (tripList[i].charterId == element.charterId) {
-              tripIndex = i;
-            }
-          }
-          tempGalleries[element.charterId] = Gallery(
-            widget.user,
-            element.charterId,
-            <Photo>[],
-            tripList[tripIndex],
-          );
-        }
-        tempGalleries[element.charterId].addPhoto(element);
-      });
-
-      setState(() {
-        galleriesMap = tempGalleries;
-        photosLoaded = true;
-      });
+    } catch (e) {
+      print(e.toString());
     }
+
+    List<Photo> photos = await photoHelper.queryPhoto();
+    photos.forEach((element) {
+      if (!tempGalleries.containsKey(element.charterId)) {
+        int tripIndex = 0;
+        for (int i = 0; i < tripList.length - 1; i++) {
+          if (tripList[i].charterId == element.charterId) {
+            tripIndex = i;
+          }
+        }
+        tempGalleries[element.charterId] = Gallery(
+          widget.user,
+          element.charterId,
+          <Photo>[],
+          tripList[tripIndex],
+        );
+      }
+      tempGalleries[element.charterId].addPhoto(element);
+    });
+
+    setState(() {
+      galleriesMap = tempGalleries;
+      photosLoaded = true;
+    });
+
     return "finished";
   }
 
