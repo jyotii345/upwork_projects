@@ -4,16 +4,19 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:latlong/latlong.dart';
 
-class GoogleMapWidget {
+class FlutterMapWidget {
   BuildContext context;
 
   bool hasLoaded = false;
 
-  GoogleMapWidget(BuildContext context) {
+  List<Marker> markerList = [];
+
+  FlutterMapWidget(BuildContext context) {
     this.context = context;
   }
+
 
   Widget getMap() {
     return SizedBox(
@@ -23,7 +26,8 @@ class GoogleMapWidget {
           options: new MapOptions(
             interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag, //TODO follow offline guide to cache world tiles
             minZoom: 0,
-            zoom: 0.5,
+            zoom: 1.0,
+            bounds: LatLngBounds(LatLng(-80.0,-180.0), LatLng(80.0,180.0)),
           ),
 
           layers: [
@@ -31,22 +35,24 @@ class GoogleMapWidget {
                 urlTemplate:
                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 subdomains: ['a', 'b', 'c']),
-          ],),
-      //     // new MarkerLayerOptions(
-      //     //   markers: [
-      //     //     new Marker(
-      //     //       width: 80.0,
-      //     //       height: 80.0,
-      //     //       point: new LatLng(51.5, -0.09),
-      //     //       builder: (ctx) =>
-      //     //       new Container(
-      //     //         child: new FlutterLogo(),
-      //     //       ),
-      //     //     ),
-      //     //   ],
-      //     // ),
-      //   ],
-      // ),
+          MarkerLayerOptions(
+            markers: markerList,
+          ),
+        ],
+      ),
     );
+  }
+
+  void addMarker(var lat, var long, size){
+
+    markerList.add( Marker(
+      width: size,
+      height: size,
+      point: new LatLng(lat, long),
+      builder: (ctx) =>
+      new Container(
+        child: Icon(Icons.location_on, color: Colors.red,),
+      ),
+    ));
   }
 }

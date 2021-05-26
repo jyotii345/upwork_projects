@@ -35,7 +35,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.1"
+    version: "2.5.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -331,13 +331,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.1"
-  latlong2:
-    dependency: "direct main"
-    description:
-      name: latlong2
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.8.0"
   lists:
     dependency: transitive
     description:
@@ -538,7 +531,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.1"
+    version: "1.8.0"
   sqflite:
     dependency: "direct main"
     description:
@@ -594,7 +587,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0"
+    version: "0.2.19"
   transparent_image:
     dependency: transitive
     description:

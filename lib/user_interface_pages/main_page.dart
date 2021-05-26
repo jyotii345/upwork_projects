@@ -221,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage>
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.width / 8;
+    double iconSize = MediaQuery.of(context).size.height / 20;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,

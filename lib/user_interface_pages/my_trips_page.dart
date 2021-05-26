@@ -25,6 +25,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
   List<Widget> pastTripsList;
   List<Widget> upcomingTripsList;
+  FlutterMapWidget flutterMapWidget;
 
 // coordinates for a center location
 
@@ -63,9 +64,10 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
+    flutterMapWidget = FlutterMapWidget(context);
     return ListView(
       children: [
-        GoogleMapWidget(context).getMap(),
+        flutterMapWidget.getMap(),
         getPageTitle(),
         getSectionUpcomingTitle(),
         getUpcomingSection(getTripList(tripList)[1]),
@@ -97,7 +99,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
           color: Colors.white,
           child: pastTrips.length == 0
               ? Column(
-            mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
                       height: .5,
@@ -275,13 +277,21 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
     tripList.forEach((element) {
+      if (element.latitude != "" &&
+          element.latitude != null &&
+          element.longitude != "" &&
+          element.longitude != null) {
+        flutterMapWidget.addMarker(
+            double.parse(element.latitude),
+            double.parse(element.longitude),
+            MediaQuery.of(context).size.width / 30);
+      }
       if (DateTime.parse(element.tripDate).isBefore(DateTime.now())) {
         pastList.add(element);
       } else {
         upcomingList.add(element);
       }
     });
-
 
     return [pastList, upcomingList];
   }

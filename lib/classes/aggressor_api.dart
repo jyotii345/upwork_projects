@@ -516,7 +516,9 @@ class AggressorApi {
     json.decode(await pageResponse.stream.bytesToString());
     List<String> imageNames = [];
     pageJson.forEach((element) {
-      imageNames.add(element);
+      if(element != "sliders/"){
+        imageNames.add(element);
+      }
     });
     return imageNames;
   }
@@ -529,9 +531,6 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
 
-    var pageJson =
-    json.decode(await pageResponse.stream.bytesToString());
-
-    return boatList;
+    return pageResponse;
   }
 }

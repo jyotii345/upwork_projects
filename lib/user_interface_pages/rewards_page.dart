@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -6,16 +10,16 @@ import '../classes/aggressor_colors.dart';
 class Rewards extends StatefulWidget {
   Rewards();
 
-
   @override
   State<StatefulWidget> createState() => new RewardsState();
 }
 
-class RewardsState extends State<Rewards>
-    with AutomaticKeepAliveClientMixin {
+class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
+  List<dynamic> sliderImages = [];
+  int sliderIndex = 0;
 
   /*
   initState
@@ -23,6 +27,7 @@ class RewardsState extends State<Rewards>
   @override
   void initState() {
     super.initState();
+    updateSliderImages();
   }
 
   /*
@@ -37,12 +42,7 @@ class RewardsState extends State<Rewards>
       children: [
         getBackgroundImage(),
         getPageForm(),
-        Container(
-          height: MediaQuery.of(context).size.height / 7 + 4,
-          width: double.infinity,
-          color: AggressorColors.secondaryColor,
-        ),
-        getBannerImage(),
+        getSliderImages(),
       ],
     );
   }
@@ -60,7 +60,7 @@ class RewardsState extends State<Rewards>
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 7,
+              height: MediaQuery.of(context).size.height / 6,
             ),
             getPageTitle(),
           ],
@@ -75,7 +75,7 @@ class RewardsState extends State<Rewards>
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -86,16 +86,61 @@ class RewardsState extends State<Rewards>
     );
   }
 
-
-  Widget getBannerImage() {
+  Widget getSliderImages() {
     //returns banner image
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 7,
-      child: Image.asset(
-        "assets/bannerimage.png",
-        fit: BoxFit.cover,
-      ),
+    return Stack(
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 6,
+          child: Image.memory(
+            sliderImages[sliderIndex],
+            fit: BoxFit.cover,
+          ),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 6,
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () {
+                if (sliderIndex < 2) {
+                  setState(() {
+                    sliderIndex++;
+                  });
+                }
+              },
+              child: Icon(
+                Icons.chevron_right,
+                color: Colors.white70,
+                size: MediaQuery.of(context).size.width / 7.5,
+              ),
+            ),
+          ),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height / 6,
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              onPressed: () {
+                if (sliderIndex > 0) {
+                  setState(() {
+                    sliderIndex--;
+                  });
+                }
+              },
+              child: Icon(
+                Icons.chevron_left,
+                color: Colors.white70,
+                size: MediaQuery.of(context).size.width / 7.5,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -115,9 +160,19 @@ class RewardsState extends State<Rewards>
     );
   }
 
+  void updateSliderImages() async {
+    //TODO store these files somewhere
+    List<String> fileNames = await AggressorApi().getRewardsSliderList();
+    print(fileNames.toString());
+    for (var file in fileNames) {
+      var fileResponse = await AggressorApi()
+          .getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
+      Uint8List bytes = await readByteStream(fileResponse.stream);
+      print(bytes);
+      sliderImages.add(bytes);
+    }
+  }
+
   @override
   bool get wantKeepAlive => true;
-
-
-
 }
