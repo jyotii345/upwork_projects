@@ -503,4 +503,35 @@ class AggressorApi {
     });
     return boatList;
   }
+
+  Future<dynamic> getRewardsSliderList() async {
+    String url = "https://secure.aggressor.com/api/app/s3/slider/list";
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    List<dynamic> pageJson =
+    json.decode(await pageResponse.stream.bytesToString());
+    List<String> imageNames = [];
+    pageJson.forEach((element) {
+      imageNames.add(element);
+    });
+    return imageNames;
+  }
+
+  Future<dynamic> getRewardsSliderImage(String imageName) async {
+    String url = "https://secure.aggressor.com/api/app/s3/slider/download/" + imageName;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    var pageJson =
+    json.decode(await pageResponse.stream.bytesToString());
+
+    return boatList;
+  }
 }
