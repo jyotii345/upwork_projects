@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
-  List<dynamic> sliderImages = [];
   int sliderIndex = 0;
 
   /*
@@ -27,7 +27,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    updateSliderImages();
   }
 
   /*
@@ -88,13 +87,14 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   Widget getSliderImages() {
     //returns banner image
+
     return Stack(
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height / 6,
           child: Image.memory(
-            sliderImages[sliderIndex],
+            sliderImageList[sliderIndex],
             fit: BoxFit.cover,
           ),
         ),
@@ -158,19 +158,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ),
       ),
     );
-  }
-
-  void updateSliderImages() async {
-    //TODO store these files somewhere
-    List<String> fileNames = await AggressorApi().getRewardsSliderList();
-    print(fileNames.toString());
-    for (var file in fileNames) {
-      var fileResponse = await AggressorApi()
-          .getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
-      Uint8List bytes = await readByteStream(fileResponse.stream);
-      print(bytes);
-      sliderImages.add(bytes);
-    }
   }
 
   @override

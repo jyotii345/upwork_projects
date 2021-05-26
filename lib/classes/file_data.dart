@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
 
 class FileData {
   String filePath;
@@ -40,11 +41,22 @@ class FileData {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Image.asset("assets/filearrow.png", height: iconSize,width: iconSize,),
+              Image.asset(
+                "assets/filearrow.png",
+                height: iconSize,
+                width: iconSize,
+              ),
               Expanded(
-                child: SizedBox(
-                  width: textBoxSize,
-                  child: Text(fileName, textAlign: TextAlign.left, style: TextStyle(color: AggressorColors.secondaryColor),),
+                child: GestureDetector(
+                  onTap: openFile,
+                  child: SizedBox(
+                    width: textBoxSize,
+                    child: Text(
+                      fileName,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(color: AggressorColors.secondaryColor),
+                    ),
+                  ),
                 ),
               ),
               SizedBox(
@@ -56,7 +68,11 @@ class FileData {
               ),
               SizedBox(
                 child: IconButton(
-                    icon: Image.asset("assets/trashcan.png",height: iconSize, width: iconSize,),
+                    icon: Image.asset(
+                      "assets/trashcan.png",
+                      height: iconSize,
+                      width: iconSize,
+                    ),
                     onPressed: () {
                       print("pressed");
                     }),
@@ -66,5 +82,12 @@ class FileData {
         ),
       ],
     );
+  }
+
+
+  Future<void> openFile() async {
+    final _result = await OpenFile.open(filePath);
+    print(_result.message);
+    print(_result.type);
   }
 }

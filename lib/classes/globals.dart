@@ -16,6 +16,7 @@ List<Trip> notLoadedList = [];
 List<Trip> tripList = [];
 List<Trip> loadSize = [];
 List<Map<String, dynamic>> boatList = [];
+List<dynamic> sliderImageList = [];
 
 bool photosLoaded = false;
 

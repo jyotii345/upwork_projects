@@ -162,6 +162,7 @@ class _MyHomePageState extends State<MyHomePage>
     loadingLength = 0;
 
     galleriesMap = <String, Gallery>{};
+    sliderImageList = [];
     notLoadedList = [];
     tripList = [];
     loadSize = [];

@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_linke_page.dart';
+import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -245,6 +248,7 @@ class LoadingPageState extends State<LoadingPage> {
       Wakelock.enable();
     });
 
+    updateSliderImages();
     var profileLinkResponse =
         await AggressorApi().checkProfileLink(widget.user.userId);
 
@@ -294,6 +298,19 @@ class LoadingPageState extends State<LoadingPage> {
             builder: (context) => MyHomePage(
                   user: widget.user,
                 )));
+  }
+
+  Future<dynamic> updateSliderImages() async {
+    //TODO store these files somewhere
+    List<String> fileNames = await AggressorApi().getRewardsSliderList();
+    print(fileNames.toString());
+    for (var file in fileNames) {
+      var fileResponse = await AggressorApi()
+          .getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
+      Uint8List bytes = await readByteStream(fileResponse.stream);
+      sliderImageList.add(bytes);
+    }
+    return "done";
   }
 
 
