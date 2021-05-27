@@ -25,18 +25,18 @@ dependencies:
     sdk: flutter
   http: ^0.12.1
   sqflite: ^1.0.0
-  path_provider: ^1.6.10
-  html_editor_enhanced: ^1.6.1
+  path_provider: ^2.0.2
+  html_editor_enhanced: ^2.1.1
   async: ^2.5.0
   flutter_cache_manager: ^2.1.2
   date_format: ^2.0.2
-  url_launcher: ^5.7.10
+  url_launcher: ^6.0.4
   multi_image_picker: ^4.8.0
-  permission_handler: ^5.0.0
+  permission_handler: ^8.0.0+2
   flutter_aws_s3_client: ^0.5.2
   flutter_absolute_path: ^1.0.6
   chunked_stream: ^1.4.1
-  file_picker: ^2.1.7
+  file_picker: ^3.0.2
   persistent_bottom_nav_bar: ^4.0.2
   cached_network_image: ^2.5.1
   flutter_map: any

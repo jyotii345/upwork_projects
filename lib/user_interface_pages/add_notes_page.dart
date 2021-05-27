@@ -7,7 +7,7 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_summernote/flutter_summernote.dart';
+import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AddNotes extends StatefulWidget {
@@ -35,9 +35,9 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
   String returnDate = "";
   Trip dropDownValue;
 
-  GlobalKey<FlutterSummernoteState> preNotesEditor = GlobalKey();
-  GlobalKey<FlutterSummernoteState> postNotesEditor = GlobalKey();
-  GlobalKey<FlutterSummernoteState> miscNotesEditor = GlobalKey();
+  HtmlEditorController preNotesController = HtmlEditorController();
+  HtmlEditorController postNotesController = HtmlEditorController();
+  HtmlEditorController miscNotesController = HtmlEditorController();
 
   bool loading = false;
 
@@ -274,14 +274,8 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
           Expanded(
             child: Container(
               height: MediaQuery.of(context).size.height / 3,
-              child: FlutterSummernote(
-                key: preNotesEditor,
-                hasAttachment: false,
-                customToolbar: """
-                                [
-                                ]
-                               """,
-                showBottomToolbar: false,
+              child: HtmlEditor(
+                controller: preNotesController,
               ),
             ),
           ),
@@ -304,7 +298,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
             .add(Duration(days: int.parse(widget.noteTrip.charter.nights))),
         [yyyy, '-', mm, '-', dd]);
 
-  print(await preNotesEditor.currentState.getText());
+    print(await preNotesController.getText());
 
     setState(() {
       loading = false;
@@ -333,15 +327,15 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
           Expanded(
             child: Container(
               height: MediaQuery.of(context).size.height / 3,
-              child: FlutterSummernote(
-                key: postNotesEditor,
-                hasAttachment: false,
-                customToolbar: """
-            [
-            ]
-        """,
-                showBottomToolbar: false,
-              ),
+              //       child: FlutterSummernote(
+              //         key: postNotesEditor,
+              //         hasAttachment: false,
+              //         customToolbar: """
+              //     [
+              //     ]
+              // """,
+              //         showBottomToolbar: false,
+              //       ),
             ),
           ),
         ],
@@ -369,15 +363,15 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
           Expanded(
             child: Container(
               height: MediaQuery.of(context).size.height / 3,
-              child: FlutterSummernote(
-                key: miscNotesEditor,
-                hasAttachment: false,
-                customToolbar: """
-            [
-            ]
-        """,
-                showBottomToolbar: false,
-              ),
+              //       child: FlutterSummernote(
+              //         key: miscNotesEditor,
+              //         hasAttachment: false,
+              //         customToolbar: """
+              //     [
+              //     ]
+              // """,
+              //         showBottomToolbar: false,
+              //       ),
             ),
           ),
         ],
