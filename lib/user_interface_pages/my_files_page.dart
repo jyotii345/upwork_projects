@@ -46,6 +46,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   String errorMessage = "";
 
+  FilePickerResult result;
+
   /*
   initState
    */
@@ -228,20 +230,23 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             ),
           ),
           Expanded(
-            child: Container(
-                height: MediaQuery.of(context).size.height / 35,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            child: GestureDetector(
+              onTap: pickFile,
+              child: Container(
+                  height: MediaQuery.of(context).size.height / 35,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    ),
                   ),
-                ),
-                child: Text(
-                  fileName,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 40 - 4),
-                  textAlign: TextAlign.center,
-                )),
+                  child: Text(
+                    fileName,
+                    style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.height / 40 - 4),
+                    textAlign: TextAlign.center,
+                  )),
+            ),
           ),
         ],
       ),
@@ -255,7 +260,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           width: MediaQuery.of(context).size.height / 4,
         ),
         TextButton(
-          onPressed: pickFile,
+          onPressed: uploadFile,
           child: Text(
             "Upload File",
             style: TextStyle(color: Colors.white),
@@ -563,17 +568,26 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   void pickFile() async {
-    FilePickerResult result = await FilePicker.platform.pickFiles(
+   result = await FilePicker.platform.pickFiles(
+
       type: FileType.custom,
       allowedExtensions: ['pdf', 'txt', 'doc', 'jpg', 'png'],
     );
 
+   setState(() {
+     fileName = result.names[0];
+   });
+  }
+
+  void uploadFile() async{
     if (result != null) {
       var uploadResult = await AggressorApi().uploadAwsFile(widget.user.userId,
           "files", dropDownValue.charterId, result.files.single.path);
       if (uploadResult["status"] == "success") {
         setState(() {
           filesLoaded = false;
+          fileName = "";
+          result = null;
         });
       } else {
         setState(() {

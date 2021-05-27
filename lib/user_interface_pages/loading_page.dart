@@ -264,6 +264,8 @@ class LoadingPageState extends State<LoadingPage> {
 
     boatList  = await AggressorApi().getBoatList();
 
+    //print(await AggressorApi().getNoteList(widget.user.userId.toString()));
+
     var tempList = await AggressorApi()
         .getReservationList(widget.user.contactId, loadingCallBack);
     setState(() {

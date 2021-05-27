@@ -1,3 +1,4 @@
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
@@ -57,6 +58,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
     super.build(context);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -207,6 +209,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
   }
 
   void handleBottomNavigation(int index) {
+    print("called");
     currentIndex = index - 1;
     Navigator.pop(context);
   }
@@ -265,7 +268,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "Pre-Trip Notes:",
+                "Pre-Adventure Notes:",
                 style: TextStyle(
                     fontSize: MediaQuery.of(context).size.height / 45 - 4),
               ),
@@ -276,6 +279,8 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 3,
               child: HtmlEditor(
                 controller: preNotesController,
+                htmlEditorOptions: HtmlEditorOptions(hint: "Pre-Adventure notes"),
+                htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
               ),
             ),
           ),
@@ -298,13 +303,15 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
             .add(Duration(days: int.parse(widget.noteTrip.charter.nights))),
         [yyyy, '-', mm, '-', dd]);
 
-    print(await preNotesController.getText());
+    var res = await AggressorApi().saveNote(startDate, endDate, await preNotesController.getText(), await postNotesController.getText(), await miscNotesController.getText(), widget.boat["boatid"].toString(), widget.user.userId);
+
+    print(res.toString());
 
     setState(() {
       loading = false;
       notesLoaded = false;
     });
-    //Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   Widget getPostTripNotes() {
@@ -318,7 +325,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "Post-Trip Notes:",
+                "Post-Adventure Notes:",
                 style: TextStyle(
                     fontSize: MediaQuery.of(context).size.height / 45 - 4),
               ),
@@ -327,15 +334,11 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
           Expanded(
             child: Container(
               height: MediaQuery.of(context).size.height / 3,
-              //       child: FlutterSummernote(
-              //         key: postNotesEditor,
-              //         hasAttachment: false,
-              //         customToolbar: """
-              //     [
-              //     ]
-              // """,
-              //         showBottomToolbar: false,
-              //       ),
+              // child: HtmlEditor(
+              //   controller: postNotesController,
+              //   htmlEditorOptions: HtmlEditorOptions(hint: "Post-Adventure notes"),
+              //   htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
+              // ),
             ),
           ),
         ],
@@ -354,7 +357,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
-                "Post-Trip Notes:",
+                "Miscellaneous Adventure Notes:",
                 style: TextStyle(
                     fontSize: MediaQuery.of(context).size.height / 45 - 4),
               ),
@@ -363,15 +366,11 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
           Expanded(
             child: Container(
               height: MediaQuery.of(context).size.height / 3,
-              //       child: FlutterSummernote(
-              //         key: miscNotesEditor,
-              //         hasAttachment: false,
-              //         customToolbar: """
-              //     [
-              //     ]
-              // """,
-              //         showBottomToolbar: false,
-              //       ),
+              // child: HtmlEditor(
+              //   controller: miscNotesController,
+              //   htmlEditorOptions: HtmlEditorOptions(hint: "Miscellaneous adventure notes"),
+              //   htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
+              // ),
             ),
           ),
         ],

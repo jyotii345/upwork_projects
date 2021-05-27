@@ -543,6 +543,7 @@ class AggressorApi {
   }
 
   Future<dynamic> getNoteList(String userId) async {
+    print(userId);
     String url = "https://secure.aggressor.com/api/app/tripnotes/list/" + userId;
 
     Request request = Request("GET", Uri.parse(url))
