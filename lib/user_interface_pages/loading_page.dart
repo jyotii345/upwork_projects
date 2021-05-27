@@ -303,7 +303,6 @@ class LoadingPageState extends State<LoadingPage> {
   Future<dynamic> updateSliderImages() async {
     //TODO store these files somewhere
     List<String> fileNames = await AggressorApi().getRewardsSliderList();
-    print(fileNames.toString());
     for (var file in fileNames) {
       var fileResponse = await AggressorApi()
           .getRewardsSliderImage(file.substring(file.indexOf("/") + 1));

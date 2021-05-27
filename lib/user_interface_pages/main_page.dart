@@ -18,6 +18,7 @@ import 'login_page.dart';
 import 'my_files_page.dart';
 import 'my_profile_page.dart';
 import 'my_trips_page.dart';
+import 'edit_notes_page.dart';
 import 'notes_page.dart';
 
 class MyHomePage extends StatefulWidget {

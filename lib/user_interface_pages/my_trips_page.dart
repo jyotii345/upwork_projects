@@ -84,7 +84,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
           color: Colors.white,
           child: upcomingTrips.length == 0
               ? Center(
-                  child: Text("You do not have any upcoming trips booked yet."),
+                  child: Text("You do not have any upcoming adventures booked yet."),
                 )
               : getUpcomingListViews(upcomingTrips)),
     );
@@ -143,7 +143,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
                     ),
                     Flexible(
                       child:
-                          Text("You do not have any past trips to view yet."),
+                          Text("You do not have any past adventures to view yet."),
                     ),
                   ],
                 )
@@ -247,7 +247,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "Past Trips",
+              "Past Adventures",
               style: TextStyle(
                 color: Colors.black,
                 fontSize: MediaQuery.of(context).size.height / 45,
@@ -305,7 +305,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "Upcoming Trips",
+              "Upcoming Adventures",
               style: TextStyle(
                 color: Colors.black,
                 fontSize: MediaQuery.of(context).size.height / 45,
@@ -332,7 +332,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
       child: Padding(
         padding: EdgeInsets.fromLTRB(5, 10, 0, 10),
         child: Text(
-          "Manage My Trips",
+          "Manage My Adventures",
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: MediaQuery.of(context).size.height / 30,

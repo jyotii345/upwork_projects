@@ -17,8 +17,10 @@ List<Trip> tripList = [];
 List<Trip> loadSize = [];
 List<Map<String, dynamic>> boatList = [];
 List<dynamic> sliderImageList = [];
+List<dynamic> notesList = []; //TODO add to sign out
 
 bool photosLoaded = false;
+bool notesLoaded = false;
 
 int currentIndex = 0;
 

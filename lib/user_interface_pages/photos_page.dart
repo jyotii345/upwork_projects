@@ -37,7 +37,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   instance vars
    */
 
-  Map<String, dynamic> dropDownValue, selectionTrip;
+  Map<String, dynamic> dropDownValue;
   String departureDate = "", errorMessage = "";
   List<dynamic> galleriesList = [];
   List<Asset> images = <Asset>[];
@@ -51,11 +51,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    selectionTrip = {
-      "boatid": -1,
-      "name": " -- SELECT -- ",
-      "abbreviation": "SEL"
-    };
     dateDropDownValue = Trip(
       "",
       "",
@@ -66,8 +61,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       "",
     );
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
-    boatList.insert(0, selectionTrip);
-    dropDownValue = selectionTrip;
+    dropDownValue = boatList[0];
   }
 
   /*
@@ -76,7 +70,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
 
     getGalleries();
 
@@ -234,7 +227,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                       width: MediaQuery.of(context).size.width / 2,
                       child: Text(
                         value.charter == null
-                            ? "No trips on this yacht."
+                            ? "You have adventures on this yacht."
                             : DateTime.parse(
                                         value.charter.startDate)
                                     .month
@@ -683,8 +676,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
             child: LinearProgressIndicator(
               backgroundColor: AggressorColors.primaryColor,
-              valueColor:
-                  AlwaysStoppedAnimation(Colors.white),
+              valueColor: AlwaysStoppedAnimation(Colors.white),
             ),
           )
         : Container();

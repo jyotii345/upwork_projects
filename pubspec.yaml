@@ -26,7 +26,7 @@ dependencies:
   http: ^0.12.1
   sqflite: ^1.0.0
   path_provider: ^1.6.10
-  flutter_summernote: ^0.2.3
+  html_editor_enhanced: ^1.6.1
   async: ^2.5.0
   flutter_cache_manager: ^2.1.2
   date_format: ^2.0.2
