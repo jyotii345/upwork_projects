@@ -17,6 +17,7 @@ class Note {
   String miscNotes;
   User user;
   BuildContext pageContext;
+  VoidCallback callback;
 
   Note(
       String id,
@@ -28,7 +29,7 @@ class Note {
       String postTripNotes,
       String miscNotes,
       User user,
-      BuildContext pageContext) {
+      BuildContext pageContext, VoidCallback callback) {
     this.id = id;
     this.boatId = boatId;
     this.destination = destination;
@@ -39,6 +40,7 @@ class Note {
     this.miscNotes = miscNotes;
     this.user = user;
     this.pageContext = pageContext;
+    this.callback = callback;
   }
 
   Map<String, dynamic> toMap() {
@@ -116,6 +118,6 @@ class Note {
             builder: (context) => ViewNote(
                 user,
                 Note(id, boatId, destination, startDate, endDate, preTripNotes,
-                    postTripNotes, miscNotes, user, context))));
+                    postTripNotes, miscNotes, user, context, callback))));
   }
 }

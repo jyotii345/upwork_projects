@@ -41,8 +41,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   Map<String, dynamic> dropDownValue;
 
-  bool notesLoaded = false;
-
   List<dynamic> notesList = [];
   List<Note> noteList = <Note>[];
 
@@ -54,6 +52,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Trip dateDropDownValue;
 
   BuildContext pageContext;
+
+  bool loading = false;
 
   /*
   initState
@@ -81,6 +81,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    getNotes();
 
     pageContext = context;
     return Stack(
@@ -319,8 +321,17 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       child: Align(
         alignment: Alignment.center,
         child: TextButton(
-          onPressed: () {Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddNotes(widget.user, dateDropDownValue,dropDownValue, )));},
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AddNotes(
+                          widget.user,
+                          dateDropDownValue,
+                          dropDownValue,
+                          notesCallBack,
+                        )));
+          },
           child: Text(
             "Create note",
             style: TextStyle(color: Colors.white),
@@ -400,56 +411,43 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Container(
         color: Colors.white,
-        child: FutureBuilder(
-          future: getFiles(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              return noteList.length == 0
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
+        child: noteList.length == 0
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: .5,
+                    color: Colors.grey,
+                  ),
+                  Container(
+                    color: Colors.grey[300],
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
                       children: [
-                        Container(
-                          height: .5,
-                          color: Colors.grey,
-                        ),
-                        Container(
-                          color: Colors.grey[300],
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  width: textBoxSize,
-                                  child: Text("Yacht",
-                                      textAlign: TextAlign.center),
-                                ),
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child:
-                                    Text("Date", textAlign: TextAlign.center),
-                              ),
-                              SizedBox(
-                                width: textBoxSize / 2,
-                                child: Container(),
-                              ),
-                            ],
+                        Expanded(
+                          child: SizedBox(
+                            width: textBoxSize,
+                            child: Text("Yacht", textAlign: TextAlign.center),
                           ),
                         ),
-                        Flexible(
-                          child: Text("You do not have any notes to view yet."),
+                        SizedBox(
+                          width: textBoxSize,
+                          child: Text("Date", textAlign: TextAlign.center),
+                        ),
+                        SizedBox(
+                          width: textBoxSize / 2,
+                          child: Container(),
                         ),
                       ],
-                    )
-                  : getNotesView();
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
+                    ),
+                  ),
+                  Flexible(
+                    child: Text("You do not have any notes to view yet."),
+                  ),
+                ],
+              )
+            : getNotesView(),
       ),
     );
   }
@@ -496,9 +494,11 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
 
-
     noteList.forEach((value) {
-      notesList.add(value.getNoteRow(context, index));
+      notesList.add(value.getNoteRow(
+        context,
+        index,
+      ));
       index++;
     });
 
@@ -511,23 +511,44 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         });
   }
 
-  Future<dynamic> getFiles() async {
+  Future<dynamic> getNotes() async {
     //downloads file from aws. If the file is not already in storage, it will be stored on the device.
+    setState(() {
+      loading = true;
+    });
     if (!notesLoaded) {
-      FileDatabaseHelper fileHelper = FileDatabaseHelper.instance;
-      List<Note> tempNotes = [];
+      Map<String, Note> notesMap = <String, Note>{};
 
-      List<dynamic> noteResponse = await AggressorApi().getNoteList(widget.user.userId);
+      List<dynamic> noteResponse =
+          await AggressorApi().getNoteList(widget.user.userId);
 
-      for(var element in noteResponse){
-        tempNotes.add(Note(element["id"].toString(), element["boatID"].toString(), element["destination"], element["startDate"], element["endDate"], element["preTripNotes"], element["postTripNotes"], element["misc"], widget.user, pageContext));
+      for (var element in noteResponse) {
+        notesMap[element["id"].toString()] = Note(
+            element["id"].toString(),
+            element["boatID"].toString(),
+            element["destination"],
+            element["startDate"],
+            element["endDate"],
+            element["preTripNotes"],
+            element["postTripNotes"],
+            element["misc"],
+            widget.user,
+            pageContext,
+            notesCallBack);
       }
 
+      List<Note> tempNotes = [];
+      notesMap.forEach((key, value) {
+        tempNotes.add(value);
+      });
       setState(() {
         noteList = tempNotes;
         notesLoaded = true;
       });
     }
+    setState(() {
+      loading = false;
+    });
     return "finished";
   }
 
@@ -542,6 +563,22 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               textAlign: TextAlign.center,
             ),
           );
+  }
+
+  Widget showLoading() {
+    return loading
+        ? Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
+            child: LinearProgressIndicator(
+              backgroundColor: AggressorColors.primaryColor,
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ),
+          )
+        : Container();
+  }
+
+  VoidCallback notesCallBack() {
+    setState(() {});
   }
 
   @override

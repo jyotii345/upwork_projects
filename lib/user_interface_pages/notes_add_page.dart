@@ -15,12 +15,13 @@ class AddNotes extends StatefulWidget {
   AddNotes(
     this.user,
     this.noteTrip,
-    this.boat,
+    this.boat,this.callback,
   );
 
   final User user;
   final Trip noteTrip;
   final Map<String, dynamic> boat;
+  final VoidCallback callback;
 
   @override
   State<StatefulWidget> createState() => new AddNotesState();
@@ -311,6 +312,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
       loading = false;
       notesLoaded = false;
     });
+    widget.callback();
     Navigator.pop(context);
   }
 

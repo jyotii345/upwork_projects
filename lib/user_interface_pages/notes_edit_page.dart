@@ -302,7 +302,14 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
       loading = false;
       notesLoaded = false;
     });
-    Navigator.pop(context);
+
+    widget.note.callback();
+
+
+    var count = 0;
+    Navigator.popUntil(context, (route) {
+      return count++ == 2;
+    });
   }
 
   Widget getPostTripNotes() {

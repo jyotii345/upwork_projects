@@ -20,10 +20,10 @@ class GalleryView extends StatefulWidget {
       this.photos,
       this.trip,);
 
-  User user;
-  String charterId;
-  List<Photo> photos;
-  Trip trip;
+  final User user;
+  final String charterId;
+  final List<Photo> photos;
+  final Trip trip;
 
   @override
   State<StatefulWidget> createState() => new GalleryViewState();
