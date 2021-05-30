@@ -18,7 +18,7 @@ class MyTrips extends StatefulWidget {
   State<StatefulWidget> createState() => new myTripsState();
 }
 
-class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
+class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   /*
   instance vars
    */
@@ -156,6 +156,9 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
 
     upcomingTripsList.clear();
     upcomingTrips.forEach((element) {
+      element.controllerReset  = AnimationController(
+        duration: const Duration(milliseconds: 400), vsync:this ,
+      );
       upcomingTripsList.add(element.getUpcomingTripCard(context));
     });
 

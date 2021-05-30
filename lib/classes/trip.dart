@@ -47,6 +47,13 @@ class Trip {
   Boat boat;
   Charter charter;
 
+
+  final TransformationController _transformationController =
+  TransformationController();
+  Animation<Matrix4> animationReset;
+  AnimationController controllerReset;
+
+
   Trip(
     String tripDate,
     String title,
@@ -212,8 +219,8 @@ class Trip {
     //returns the tile view to be placed into the view for the previous trips this user has been engaged in
     double textBoxSize = MediaQuery.of(context).size.width / 6.3;
     double screenFontSize = MediaQuery.of(context).size.width / 50;
-
     double screenFontSizeSmall = MediaQuery.of(context).size.width / 60;
+
     List<String> months = [
       'January',
       'February',
@@ -229,262 +236,271 @@ class Trip {
       'December'
     ];
 
-    return Padding(
-        padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                  child: Container(
+    return InteractiveViewer(
+      panEnabled: false,
+      boundaryMargin: EdgeInsets.all(13),
+      transformationController: _transformationController,
+      minScale: 1.0,
+      maxScale: 2.5,
+      onInteractionStart: _onInteractionStart,
+      onInteractionEnd: _onInteractionEnd,
+      child: Padding(
+          padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                    child: Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            color: Colors.grey[200],
+                            height: textBoxSize * 1.5,
+                            width: textBoxSize * 1.5,
+                            child: FutureBuilder(future: downloadBoatImage(),builder: (context, snapshot){
+                              if(snapshot.hasData && snapshot.data != null){
+                                return snapshot.data != "" ? Image.file(File(snapshot.data), fit: BoxFit.fill,) : Icon(Icons.directions_boat_sharp);
+                              }
+                              else{return Center(child: CircularProgressIndicator(),);
+                              }
+                            },),
+                          ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("Days Left: "),
+                              Text(
+                                DateTime.now()
+                                    .difference(DateTime.parse(charter.startDate))
+                                    .inDays
+                                    .abs()
+                                    .toString(),
+                                style: TextStyle(color: Colors.red),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Container(
-                          color: Colors.grey[200],
-                          height: textBoxSize * 1.5,
-                          width: textBoxSize * 1.5,
-                          child: FutureBuilder(future: downloadBoatImage(),builder: (context, snapshot){
-                            if(snapshot.hasData && snapshot.data != null){
-                              return snapshot.data != "" ? Image.file(File(snapshot.data), fit: BoxFit.fill,) : Icon(Icons.directions_boat_sharp);
-                            }
-                            else{return Center(child: CircularProgressIndicator(),);
-                            }
-                          },),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height / 20,
+                          width: MediaQuery.of(context).size.height / 20,
+                          child: TextButton(
+                              style:
+                                  TextButton.styleFrom(padding: EdgeInsets.zero),
+                              child: Image.asset("assets/notesblue.png"),
+                              onPressed: () { viewTripNotes();}),
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("Days Left: "),
-                            Text(
-                              DateTime.now()
-                                  .difference(DateTime.parse(charter.startDate))
-                                  .inDays
-                                  .abs()
-                                  .toString(),
-                              style: TextStyle(color: Colors.red),
-                            )
-                          ],
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.yellow[200],
+                            border: Border(
+                              top: BorderSide(width: 1.0, color: Colors.grey),
+                              left: BorderSide(width: 1.0, color: Colors.grey),
+                              right: BorderSide(width: 1.0, color: Colors.grey),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  "conf#",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: screenFontSize),
+                                ),
+                              ),
+                              Spacer(
+                                flex: 3,
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  "Yacht",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: screenFontSize),
+                                ),
+                              ),
+                              Spacer(
+                                flex: 3,
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  "Embarkment Date",
+                                  style: TextStyle(fontSize: screenFontSize),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Spacer(
+                                flex: 3,
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  "Nights",
+                                  style: TextStyle(fontSize: screenFontSize),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 1,
+                          width: double.infinity,
+                          color: Colors.grey,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left: BorderSide(width: 1.0, color: Colors.grey),
+                              right: BorderSide(width: 1.0, color: Colors.grey),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  reservationId,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: screenFontSize),
+                                ),
+                              ),
+                              Spacer(
+                                flex: 10,
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  boat.name,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: screenFontSize),
+                                ),
+                              ),
+                              Spacer(
+                                flex: 10,
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  months[DateTime.parse(charter.startDate).month -
+                                              1]
+                                          .substring(0, 3) +
+                                      " " +
+                                      DateTime.parse(charter.startDate)
+                                          .day
+                                          .toString() +
+                                      ", " +
+                                      DateTime.parse(charter.startDate)
+                                          .year
+                                          .toString(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: screenFontSize),
+                                ),
+                              ),
+                              SizedBox(
+                                width: textBoxSize,
+                                child: Text(
+                                  charter.nights,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: screenFontSize),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          height: 1,
+                          width: double.infinity,
+                          color: Colors.grey,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(width: 1.0, color: Colors.grey),
+                              left: BorderSide(width: 1.0, color: Colors.grey),
+                              right: BorderSide(width: 1.0, color: Colors.grey),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height: 25,
+                                width: MediaQuery.of(context).size.width / 4.8,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      padding: EdgeInsets.all(0)),
+                                  onPressed: () {},
+                                  child: Text("Guest Information System (GIS)",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.lightBlue,
+                                          fontSize: screenFontSizeSmall)),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 25,
+                                width: MediaQuery.of(context).size.width / 4.8,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      padding: EdgeInsets.all(0)),
+                                  onPressed: () {},
+                                  child: Text(
+                                    "Know before you go",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.lightBlue,
+                                        fontSize: screenFontSizeSmall),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 4.8,
+                                height: 25,
+                                child: TextButton(
+                                  style: TextButton.styleFrom(
+                                      padding: EdgeInsets.all(0)),
+                                  onPressed: () {},
+                                  child: Text(
+                                    "Make Payment",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.lightBlue,
+                                        fontSize: screenFontSizeSmall),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height / 20,
-                        width: MediaQuery.of(context).size.height / 20,
-                        child: TextButton(
-                            style:
-                                TextButton.styleFrom(padding: EdgeInsets.zero),
-                            child: Image.asset("assets/notesblue.png"),
-                            onPressed: () { viewTripNotes();}),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.yellow[200],
-                          border: Border(
-                            top: BorderSide(width: 1.0, color: Colors.grey),
-                            left: BorderSide(width: 1.0, color: Colors.grey),
-                            right: BorderSide(width: 1.0, color: Colors.grey),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text(
-                                "conf#",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: screenFontSize),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 3,
-                            ),
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text(
-                                "Yacht",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: screenFontSize),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 3,
-                            ),
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text(
-                                "Embarkment Date",
-                                style: TextStyle(fontSize: screenFontSize),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Spacer(
-                              flex: 3,
-                            ),
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text(
-                                "Nights",
-                                style: TextStyle(fontSize: screenFontSize),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 1,
-                        width: double.infinity,
-                        color: Colors.grey,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            left: BorderSide(width: 1.0, color: Colors.grey),
-                            right: BorderSide(width: 1.0, color: Colors.grey),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text(
-                                reservationId,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: screenFontSize),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 10,
-                            ),
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text(
-                                boat.name,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: screenFontSize),
-                              ),
-                            ),
-                            Spacer(
-                              flex: 10,
-                            ),
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text(
-                                months[DateTime.parse(charter.startDate).month -
-                                            1]
-                                        .substring(0, 3) +
-                                    " " +
-                                    DateTime.parse(charter.startDate)
-                                        .day
-                                        .toString() +
-                                    ", " +
-                                    DateTime.parse(charter.startDate)
-                                        .year
-                                        .toString(),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: screenFontSize),
-                              ),
-                            ),
-                            SizedBox(
-                              width: textBoxSize,
-                              child: Text(
-                                charter.nights,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: screenFontSize),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: 1,
-                        width: double.infinity,
-                        color: Colors.grey,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(width: 1.0, color: Colors.grey),
-                            left: BorderSide(width: 1.0, color: Colors.grey),
-                            right: BorderSide(width: 1.0, color: Colors.grey),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              height: 25,
-                              width: MediaQuery.of(context).size.width / 4.8,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    padding: EdgeInsets.all(0)),
-                                onPressed: () {},
-                                child: Text("Guest Information System (GIS)",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.lightBlue,
-                                        fontSize: screenFontSizeSmall)),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 25,
-                              width: MediaQuery.of(context).size.width / 4.8,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    padding: EdgeInsets.all(0)),
-                                onPressed: () {},
-                                child: Text(
-                                  "Know before you go",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.lightBlue,
-                                      fontSize: screenFontSizeSmall),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 4.8,
-                              height: 25,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    padding: EdgeInsets.all(0)),
-                                onPressed: () {},
-                                child: Text(
-                                  "Make Payment",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.lightBlue,
-                                      fontSize: screenFontSizeSmall),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-              child: Container(
-                height: 1,
-                color: Colors.grey[300],
+                ],
               ),
-            ),
-          ],
-        ));
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                child: Container(
+                  height: 1,
+                  color: Colors.grey[300],
+                ),
+              ),
+            ],
+          )),
+    );
   }
 
 
@@ -625,5 +641,46 @@ class Trip {
         ),
       ],
     );
+  }
+
+  void _animateResetInitialize() {
+    //animation reset for pnich to zoom
+    controllerReset.reset();
+    animationReset = Matrix4Tween(
+      begin: _transformationController.value,
+      end: Matrix4.identity(),
+    ).animate(controllerReset);
+    animationReset.addListener(_onAnimateReset);
+    controllerReset.forward();
+  }
+
+  void _onAnimateReset() {
+    //notifies when the animation is resetting on pinch to zoom
+    _transformationController.value = animationReset.value;
+    if (!controllerReset.isAnimating) {
+      animationReset?.removeListener(_onAnimateReset);
+      animationReset = null;
+      controllerReset.reset();
+    }
+  }
+
+  void _onInteractionStart(ScaleStartDetails details) {
+    //cancels the reset if a user clicks again
+    if (controllerReset.status == AnimationStatus.forward) {
+      _animateResetStop();
+    }
+  }
+
+  void _animateResetStop() {
+    //cancel the reset for the pinch to zoom
+    controllerReset.stop();
+    animationReset?.removeListener(_onAnimateReset);
+    animationReset = null;
+    controllerReset.reset();
+  }
+
+  void _onInteractionEnd(ScaleEndDetails details) {
+    //called when zoom ends for pinch to zoom
+    _animateResetInitialize();
   }
 }
