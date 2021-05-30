@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
@@ -230,6 +232,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
                 height: MediaQuery.of(context).size.height / 7,
               ),
               getPageTitle(),
+              getYachtInformation(),
               getYachtInformation(),
               getDepartureDate(),
               getReturnDate(),
@@ -530,17 +533,24 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      child: ColorFiltered(
-        colorFilter:
-            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
-        child: Image.asset(
-          "assets/pagebackground.png",
-          fit: BoxFit.cover,
-          height: double.infinity,
-          width: double.infinity,
+      child:
+      Container(
+        height: double.infinity,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+              "assets/pagebackground.png",),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-    );
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+          child: Container(
+            color: Colors.white.withOpacity(.6),
+          ),
+        ),
+      ),);
   }
 
   Widget getBannerImage() {
