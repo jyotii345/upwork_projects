@@ -7,6 +7,7 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
@@ -18,7 +19,7 @@ import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'add_notes_page.dart';
+import 'notes_add_page.dart';
 
 class Notes extends StatefulWidget {
   Notes(
@@ -40,10 +41,10 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   Map<String, dynamic> dropDownValue;
 
-  bool filesLoaded = false;
+  bool notesLoaded = false;
 
-  List<dynamic> filesList = [];
-  List<FileData> fileDataList = <FileData>[];
+  List<dynamic> notesList = [];
+  List<Note> noteList = <Note>[];
 
   List<Trip> sortedTripList;
 
@@ -51,6 +52,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   List<Trip> dateDropDownList = [];
   Trip dateDropDownValue;
+
+  BuildContext pageContext;
 
   /*
   initState
@@ -79,6 +82,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
+    pageContext = context;
     return Stack(
       children: [
         getBackgroundImage(),
@@ -318,7 +322,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           onPressed: () {Navigator.push(
               context, MaterialPageRoute(builder: (context) => AddNotes(widget.user, dateDropDownValue,dropDownValue, )));},
           child: Text(
-            "Create this note",
+            "Create note",
             style: TextStyle(color: Colors.white),
           ),
           style: TextButton.styleFrom(
@@ -400,7 +404,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           future: getFiles(),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
-              return fileDataList.length == 0
+              return noteList.length == 0
                   ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -417,7 +421,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                               Expanded(
                                 child: SizedBox(
                                   width: textBoxSize,
-                                  child: Text("Destination",
+                                  child: Text("Yacht",
                                       textAlign: TextAlign.center),
                                 ),
                               ),
@@ -434,11 +438,11 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                           ),
                         ),
                         Flexible(
-                          child: Text("You do not have any files to view yet."),
+                          child: Text("You do not have any notes to view yet."),
                         ),
                       ],
                     )
-                  : getFilesView();
+                  : getNotesView();
             } else {
               return Center(
                 child: CircularProgressIndicator(),
@@ -450,12 +454,12 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget getFilesView() {
+  Widget getNotesView() {
     //returns the list item containing fileData objects
 
     double textBoxSize = MediaQuery.of(context).size.width / 4;
-    filesList.clear();
-    filesList.add(
+    notesList.clear();
+    notesList.add(
       Container(
         width: double.infinity,
         color: Colors.grey[100],
@@ -472,7 +476,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 Expanded(
                   child: SizedBox(
                     width: textBoxSize,
-                    child: Text("Destination", textAlign: TextAlign.left),
+                    child: Text("Yacht", textAlign: TextAlign.left),
                   ),
                 ),
                 SizedBox(
@@ -492,132 +496,36 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
 
-    fileDataList.forEach((value) {
-      filesList.add(value.getFileRow(context, index));
+
+    noteList.forEach((value) {
+      notesList.add(value.getNoteRow(context, index));
       index++;
     });
 
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemCount: filesList.length,
+        itemCount: notesList.length,
         itemBuilder: (context, position) {
-          return filesList[position];
+          return notesList[position];
         });
   }
 
   Future<dynamic> getFiles() async {
     //downloads file from aws. If the file is not already in storage, it will be stored on the device.
-    if (!filesLoaded) {
-      String region = "us-east-1";
-      String bucketId = "aggressor.app.user.images";
-      final AwsS3Client s3client = AwsS3Client(
-          region: region,
-          host: "s3.$region.amazonaws.com",
-          bucketId: bucketId,
-          accessKey: "AKIA43MMI6CI2KP4CUUY",
-          secretKey: "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");
+    if (!notesLoaded) {
       FileDatabaseHelper fileHelper = FileDatabaseHelper.instance;
-      List<FileData> tempFiles = [];
+      List<Note> tempNotes = [];
 
-      try {
-        for (var element in tripList) {
-          var response;
-          try {
-            response = await s3client.listObjects(
-                prefix:
-                    widget.user.userId + "/files/" + element.charterId + "/",
-                delimiter: "/");
+      List<dynamic> noteResponse = await AggressorApi().getNoteList(widget.user.userId);
 
-            if (response.contents != null) {
-              response.contents.forEach((content) async {
-                var elementJson = await jsonDecode(content.toJson());
-                if (elementJson["Size"] != "0") {
-                  StreamedResponse downloadResponse = await AggressorApi()
-                      .downloadAwsFile(elementJson["Key"].toString());
-
-                  Uint8List bytes =
-                      await readByteStream(downloadResponse.stream);
-
-                  String fileName = elementJson["Key"];
-                  int whereIndex = fileName.lastIndexOf("/");
-                  fileName = fileName.substring(whereIndex + 1);
-
-                  Directory appDocumentsDirectory =
-                      await getApplicationDocumentsDirectory(); // 1
-                  String appDocumentsPath = appDocumentsDirectory.path; // 2
-                  String filePath = '$appDocumentsPath/$fileName';
-                  File tempFile = File(filePath);
-                  tempFile.writeAsBytes(bytes);
-
-                  String date = downloadResponse.headers["date"].substring(4);
-
-                  if (!await fileHelper.fileExists(
-                    fileName,
-                  )) {
-                    FileData fileData = FileData(
-                      tempFile.path,
-                      date, //TODO potentially replace with embarkment date
-                      fileName,
-                    );
-
-                    fileHelper.insertFile(fileData);
-                  }
-                }
-              });
-            }
-          } catch (e) {}
-        }
-
-        var response = await s3client.listObjects(
-            prefix: widget.user.userId + "/files/general/", delimiter: "/");
-
-        if (response.contents != null) {
-          for (var content in response.contents) {
-            var elementJson = await jsonDecode(content.toJson());
-            if (elementJson["Size"] != "0") {
-              StreamedResponse downloadResponse = await AggressorApi()
-                  .downloadAwsFile(elementJson["Key"].toString());
-
-              Uint8List bytes = await readByteStream(downloadResponse.stream);
-
-              String fileName = elementJson["Key"];
-              int whereIndex = fileName.lastIndexOf("/");
-              fileName = fileName.substring(whereIndex + 1);
-
-              Directory appDocumentsDirectory =
-                  await getApplicationDocumentsDirectory(); // 1
-              String appDocumentsPath = appDocumentsDirectory.path; // 2
-              String filePath = '$appDocumentsPath/$fileName';
-              File tempFile = File(filePath);
-              tempFile.writeAsBytes(bytes);
-
-              String date = downloadResponse.headers["date"]
-                  .substring(5, downloadResponse.headers["date"].length - 13);
-
-              if (!await fileHelper.fileExists(
-                fileName,
-              )) {
-                FileData fileData = FileData(
-                  tempFile.path,
-                  date,
-                  fileName,
-                );
-
-                fileHelper.insertFile(fileData);
-              }
-            }
-          }
-        }
-      } catch (e) {
-        print(e.toString());
+      for(var element in noteResponse){
+        tempNotes.add(Note(element["id"].toString(), element["boatID"].toString(), element["destination"], element["startDate"], element["endDate"], element["preTripNotes"], element["postTripNotes"], element["misc"], widget.user, pageContext));
       }
 
-      tempFiles = await fileHelper.queryFile();
-
       setState(() {
-        fileDataList = tempFiles;
-        filesLoaded = true;
+        noteList = tempNotes;
+        notesLoaded = true;
       });
     }
     return "finished";

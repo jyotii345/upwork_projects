@@ -361,7 +361,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                               Expanded(
                                 child: SizedBox(
                                   width: textBoxSize,
-                                  child: Text("Destination",
+                                  child: Text("File Name ",
                                       textAlign: TextAlign.center),
                                 ),
                               ),
@@ -416,7 +416,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 Expanded(
                   child: SizedBox(
                     width: textBoxSize,
-                    child: Text("Destination", textAlign: TextAlign.left),
+                    child: Text("File Name", textAlign: TextAlign.left),
                   ),
                 ),
                 SizedBox(
