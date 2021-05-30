@@ -6,6 +6,7 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -66,6 +67,21 @@ class Note {
     double textBoxSize = MediaQuery.of(context).size.width / 4;
     double iconSize = MediaQuery.of(context).size.width / 15;
 
+    List<String> months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+
     return Column(
       children: [
         Container(
@@ -94,7 +110,7 @@ class Note {
               SizedBox(
                 width: textBoxSize,
                 child: Text(
-                  startDate,
+                  months[DateTime.parse(startDate).month].substring(0,3) + " " + DateTime.parse(startDate).day.toString() + ", " + DateTime.parse(startDate).year.toString() ,
                   textAlign: TextAlign.left,
                 ),
               ),

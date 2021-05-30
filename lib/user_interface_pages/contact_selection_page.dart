@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import 'create_contact_page.dart';
+import 'contact_create_page.dart';
 
 class ContactSelection extends StatefulWidget {
   ContactSelection(this.jsonResponse);

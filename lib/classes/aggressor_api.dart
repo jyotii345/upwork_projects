@@ -563,6 +563,9 @@ class AggressorApi {
 
   Future<dynamic> saveNote(String startDate, String endDate, String preTripNotes, String postTripNotes, String miscNotes, String boatId, String userId) async {
     //create and send a login request to the Aggressor Api and return the current user
+
+    print(startDate + " " + endDate);
+    print(boatId + " " + userId);
     Response response = await post(
       Uri.https('secure.aggressor.com', 'api/app/tripnotes/save/' + userId),
       headers: <String, String>{

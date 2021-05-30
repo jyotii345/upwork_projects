@@ -224,7 +224,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
     int index = 0;
     pastTrips.forEach((element) {
       element.user = widget.user;
-      element.trip = element;
       pastTripsList.add(element.getPastTripCard(context, index));
       index++;
     });
@@ -277,6 +276,8 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin {
         DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
     tripList.forEach((element) {
+
+      element.context = context;
       if (element.latitude != "" &&
           element.latitude != null &&
           element.longitude != "" &&

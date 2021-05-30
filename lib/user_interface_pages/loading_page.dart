@@ -5,7 +5,7 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
-import 'package:aggressor_adventures/user_interface_pages/profile_linke_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/profile_link_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -282,6 +282,7 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     for (var trip in tripList) {
+      trip.user = widget.user;
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;

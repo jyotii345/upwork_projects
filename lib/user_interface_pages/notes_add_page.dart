@@ -17,12 +17,11 @@ class AddNotes extends StatefulWidget {
   AddNotes(
     this.user,
     this.noteTrip,
-    this.boat,this.callback,
+    this.callback,
   );
 
   final User user;
   final Trip noteTrip;
-  final Map<String, dynamic> boat;
   final VoidCallback callback;
 
   @override
@@ -283,8 +282,11 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 3,
               child: HtmlEditor(
                 controller: preNotesController,
-                htmlEditorOptions: HtmlEditorOptions(hint: "Pre-Adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
+                htmlEditorOptions:
+                    HtmlEditorOptions(hint: "Pre-Adventure notes"),
+                htmlToolbarOptions: HtmlToolbarOptions(
+                  toolbarPosition: ToolbarPosition.custom,
+                ),
               ),
             ),
           ),
@@ -307,7 +309,14 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
             .add(Duration(days: int.parse(widget.noteTrip.charter.nights))),
         [yyyy, '-', mm, '-', dd]);
 
-    var res = await AggressorApi().saveNote(startDate, endDate, await preNotesController.getText(), await postNotesController.getText(), await miscNotesController.getText(), widget.boat["boatid"].toString(), widget.user.userId);
+    var res = await AggressorApi().saveNote(
+        startDate,
+        endDate,
+        await preNotesController.getText(),
+        await postNotesController.getText(),
+        await miscNotesController.getText(),
+        widget.noteTrip.boat.boatId,
+        widget.user.userId);
 
     print(res.toString());
 
@@ -341,8 +350,11 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 3,
               child: HtmlEditor(
                 controller: postNotesController,
-                htmlEditorOptions: HtmlEditorOptions(hint: "Post-Adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
+                htmlEditorOptions:
+                    HtmlEditorOptions(hint: "Post-Adventure notes"),
+                htmlToolbarOptions: HtmlToolbarOptions(
+                  toolbarPosition: ToolbarPosition.custom,
+                ),
               ),
             ),
           ),
@@ -373,8 +385,11 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 3,
               child: HtmlEditor(
                 controller: miscNotesController,
-                htmlEditorOptions: HtmlEditorOptions(hint: "Miscellaneous adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
+                htmlEditorOptions:
+                    HtmlEditorOptions(hint: "Miscellaneous adventure notes"),
+                htmlToolbarOptions: HtmlToolbarOptions(
+                  toolbarPosition: ToolbarPosition.custom,
+                ),
               ),
             ),
           ),
@@ -412,7 +427,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
                     MediaQuery.of(context).size.height / 40 -
                     10,
                 child: Text(
-                  widget.boat["name"],
+                  widget.noteTrip.boat.name,
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.height / 45 - 4),
                   textAlign: TextAlign.center,
@@ -533,14 +548,14 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      child:
-      Container(
+      child: Container(
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
-              "assets/pagebackground.png",),
+              "assets/pagebackground.png",
+            ),
             fit: BoxFit.cover,
           ),
         ),
@@ -550,7 +565,8 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
             color: Colors.white.withOpacity(.6),
           ),
         ),
-      ),);
+      ),
+    );
   }
 
   Widget getBannerImage() {

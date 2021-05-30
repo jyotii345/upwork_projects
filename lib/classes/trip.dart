@@ -6,10 +6,13 @@ import 'dart:ui';
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
-import 'package:aggressor_adventures/user_interface_pages/gallery_view.dart';
+import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.dart';
+import 'package:aggressor_adventures/user_interface_pages/notes_add_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -38,8 +41,9 @@ class Trip {
       detailDestination;
   List<VoidCallback> callBackList;
   VoidCallback newImageCallBack;
-  Trip trip;
+  BuildContext context;
 
+  Note note;
   Boat boat;
   Charter charter;
 
@@ -275,13 +279,13 @@ class Trip {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       SizedBox(
-                        height: 40,
-                        width: 40,
+                        height: MediaQuery.of(context).size.height / 20,
+                        width: MediaQuery.of(context).size.height / 20,
                         child: TextButton(
                             style:
                                 TextButton.styleFrom(padding: EdgeInsets.zero),
                             child: Image.asset("assets/notesblue.png"),
-                            onPressed: () {}), //TODO add on pressed function
+                            onPressed: () { viewTripNotes();}),
                       ),
                       Container(
                         decoration: BoxDecoration(
@@ -384,7 +388,7 @@ class Trip {
                                     DateTime.parse(charter.startDate)
                                         .day
                                         .toString() +
-                                    "," +
+                                    ", " +
                                     DateTime.parse(charter.startDate)
                                         .year
                                         .toString(),
@@ -484,6 +488,32 @@ class Trip {
   }
 
 
+  void viewTripNotes(){
+    if(note != null){
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ViewNote(
+            user,
+            note,
+          ),
+        ),
+      );
+    }
+    else{
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddNotes(
+            user,
+            this,
+            (){},
+          ),
+        ),
+      );
+    }
+  }
+
   Future<dynamic> downloadBoatImage() async {
     //downloads and saves the boat image associated with this trip
 
@@ -568,9 +598,7 @@ class Trip {
                 width: textBoxSize / 2,
                 child: IconButton(
                     icon: Image.asset("assets/notesblue.png"),
-                    onPressed: () {
-                      print("pressed");
-                    }),
+                    onPressed:() { viewTripNotes();}),
               ),
               SizedBox(
                 width: textBoxSize / 2,
@@ -586,7 +614,7 @@ class Trip {
                             user,
                             charterId,
                             galleriesMap.containsKey(charterId)?  galleriesMap[charterId].photos : [],
-                            trip,
+                            this,
                           ),
                         ),
                       );

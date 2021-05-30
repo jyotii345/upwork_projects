@@ -131,7 +131,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Add a new note",
+            "ADD A NEW NOTE",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
                 fontSize: MediaQuery.of(context).size.height / 35,
@@ -311,33 +311,36 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget getCreateNoteButton() {
     return Padding(
       padding: const EdgeInsets.all(5.0),
-      child: Align(
-        alignment: Alignment.center,
-        child: TextButton(
-          onPressed: () {
-            if (dateDropDownValue.charter != null) {
-              if (dateDropDownValue.charter.startDate != "") {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddNotes(
-                      widget.user,
-                      dateDropDownValue,
-                      dropDownValue,
-                      notesCallBack,
-                    ),
-                  ),
-                );
-              }
-            }
-          },
-          child: Text(
-            "Create note",
-            style: TextStyle(color: Colors.white),
+      child: Row(
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.height / 4,
           ),
-          style: TextButton.styleFrom(
-              backgroundColor: AggressorColors.secondaryColor),
-        ),
+          TextButton(
+            onPressed: () {
+              if (dateDropDownValue.charter != null) {
+                if (dateDropDownValue.charter.startDate != "") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddNotes(
+                        widget.user,
+                        dateDropDownValue,
+                        notesCallBack,
+                      ),
+                    ),
+                  );
+                }
+              }
+            },
+            child: Text(
+              "Create note",
+              style: TextStyle(color: Colors.white),
+            ),
+            style: TextButton.styleFrom(
+                backgroundColor: AggressorColors.secondaryColor),
+          ),
+        ],
       ),
     );
   }
@@ -539,6 +542,13 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       List<Note> tempNotes = [];
       notesMap.forEach((key, value) {
         tempNotes.add(value);
+        int insertAt = tripList.indexWhere((element) =>
+            element.boat.boatId == value.boatId &&
+            DateTime.parse(value.startDate) ==
+                DateTime.parse(element.charter.startDate));
+        if (insertAt != -1) {
+          tripList[insertAt].note = value;
+        }
       });
 
       setState(() {
@@ -577,7 +587,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         : Container();
   }
 
-  VoidCallback notesCallBack(){
+  VoidCallback notesCallBack() {
     setState(() {
       notesLoaded = false;
     });

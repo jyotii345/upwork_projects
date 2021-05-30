@@ -15,9 +15,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'login_page.dart';
-import 'my_files_page.dart';
-import 'my_profile_page.dart';
-import 'my_trips_page.dart';
+import 'files_page.dart';
+import 'profile_view_page.dart';
+import 'trips_page.dart';
 import 'notes_page.dart';
 
 class MyHomePage extends StatefulWidget {

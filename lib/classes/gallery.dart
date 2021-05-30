@@ -6,7 +6,7 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:aggressor_adventures/user_interface_pages/gallery_view.dart';
+import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

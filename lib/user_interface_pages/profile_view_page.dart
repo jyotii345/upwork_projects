@@ -1,7 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:aggressor_adventures/user_interface_pages/edit_my_profile_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/profile_edit_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
