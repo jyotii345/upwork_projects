@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
@@ -101,7 +102,7 @@ class Note {
                       width: iconSize,
                     ),
                     onPressed: () {
-                      print("pressed");
+                      deleteNote();
                     }),
               ),
             ],
@@ -109,6 +110,12 @@ class Note {
         ),
       ],
     );
+  }
+
+  void deleteNote() async {
+   var delRes = await AggressorApi().deleteNote(user.userId, id);
+   print(delRes);
+   callback();
   }
 
   void openNote() {

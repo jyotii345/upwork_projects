@@ -183,8 +183,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 onChanged: (Map<String, dynamic> newValue) {
                   setState(() {
                     dropDownValue = newValue;
-                    dateDropDownList = getDateDropDownList(
-                        newValue); //TODO replace with drop down
+                    dateDropDownList = getDateDropDownList(newValue);
                   });
                 },
                 items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
@@ -212,12 +211,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getDateDropDown() {
-    // sortedTripList = [selectionTrip];
-    // tripList = sortTripList(tripList); // sort boatList instead
-    // tripList.forEach((element) {
-    //   sortedTripList.add(element);
-    // });
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -322,15 +315,21 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         alignment: Alignment.center,
         child: TextButton(
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
+            if (dateDropDownValue.charter != null) {
+              if (dateDropDownValue.charter.startDate != "") {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
                     builder: (context) => AddNotes(
-                          widget.user,
-                          dateDropDownValue,
-                          dropDownValue,
-                          notesCallBack,
-                        )));
+                      widget.user,
+                      dateDropDownValue,
+                      dropDownValue,
+                      notesCallBack,
+                    ),
+                  ),
+                );
+              }
+            }
           },
           child: Text(
             "Create note",
@@ -541,6 +540,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       notesMap.forEach((key, value) {
         tempNotes.add(value);
       });
+
       setState(() {
         noteList = tempNotes;
         notesLoaded = true;
@@ -577,8 +577,10 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         : Container();
   }
 
-  VoidCallback notesCallBack() {
-    setState(() {});
+  VoidCallback notesCallBack(){
+    setState(() {
+      notesLoaded = false;
+    });
   }
 
   @override
