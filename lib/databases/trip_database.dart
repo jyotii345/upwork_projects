@@ -69,11 +69,13 @@ class TripDatabaseHelper {
   }
 
   Future<void> deleteTripTable() async {
+    //delete the entire table of the trip database
     final db = await database;
     await db.delete('trip');
   }
 
   Future<bool> tripExists(String id) async {
+    //check if a trip exists in the database based on the trip id
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM trip WHERE id = ?)', [id]);
@@ -82,6 +84,7 @@ class TripDatabaseHelper {
   }
 
   Future<Trip> getTrip(String reservationId) async {
+    //get a specific trip from the database by the reservationId
     final db = await database;
     var result = await db
         .rawQuery('SELECT * FROM trip WHERE reservationId = ?', [reservationId]);
@@ -109,7 +112,7 @@ class TripDatabaseHelper {
   }
 
   Future<List<Trip>> queryTrip() async {
-    // Get a trip from the database
+    // Get all trip entries from the database
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query('trip');

@@ -72,11 +72,13 @@ class PhotoDatabaseHelper {
   }
 
   Future<void> deletePhotoTable() async {
+    //delete the entire photo table of the database
     final db = await database;
     await db.delete('photo');
   }
 
   Future<bool> photoExists(String image, String boatId) async {
+    //check if a photo exists in the database by the image extension and the boat id
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM photo WHERE imageName = ? AND boatId = ?)', [image, boatId]);
@@ -85,6 +87,7 @@ class PhotoDatabaseHelper {
   }
 
   Future<bool> keyExists(String key) async {
+    //check if a photo exists by the aws download key
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM photo WHERE key = ?)', [key]);

@@ -49,7 +49,7 @@ class FileDatabaseHelper {
    */
 
   Future<int> insertFile(FileData file) async {
-    //add a photo to the database
+    //add a file to the database
     final Database db = await database;
 
     int id = await db.insert(
@@ -72,11 +72,13 @@ class FileDatabaseHelper {
   }
 
   Future<void> deleteFileTable() async {
+    //delete the entire file table in the database
     final db = await database;
     await db.delete('file');
   }
 
   Future<bool> fileExists(String file) async {
+    //check if a file exists in the database by the file path and name
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM file WHERE fileName = ?)', [file]);

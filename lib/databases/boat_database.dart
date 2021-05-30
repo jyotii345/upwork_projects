@@ -50,7 +50,7 @@ class BoatDatabaseHelper {
    */
 
   Future<int> insertBoat(Boat boat) async {
-    //add a photo to the database
+    //add a boat to the database
     final Database db = await database;
 
     int id = await db.insert(
@@ -62,7 +62,7 @@ class BoatDatabaseHelper {
   }
 
   Future<void> deleteBoat(String id) async {
-    // delete a file in the database
+    // delete a boat in the database
     final db = await database;
 
     await db.delete(
@@ -73,11 +73,13 @@ class BoatDatabaseHelper {
   }
 
   Future<void> deleteBoatTable() async {
+    //delete the entire boat table from the database
     final db = await database;
     await db.delete('boat');
   }
 
   Future<bool> boatExists(String boatId) async {
+    //check if a boat exists by the boatId
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM boat WHERE boatId = ?)', [boatId]);
@@ -86,6 +88,7 @@ class BoatDatabaseHelper {
   }
 
   Future<Boat> getBoat(String boatId) async {
+    //get a boat by its the BoatId
     final db = await database;
     var result = await db
         .rawQuery('SELECT * FROM boat WHERE boatId = ?', [boatId]);
@@ -101,7 +104,7 @@ class BoatDatabaseHelper {
   }
 
   Future<List<Boat>> queryBoat() async {
-    // Get a file from the database
+    // Get the entire boat table from the database
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query('boat');

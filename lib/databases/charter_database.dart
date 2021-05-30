@@ -43,7 +43,7 @@ class CharterDatabaseHelper {
    */
 
   Future<int> insertCharter(Charter charter) async {
-    //add a photo to the database
+    //add a charter to the database
     final Database db = await database;
 
     int id = await db.insert(
@@ -55,7 +55,7 @@ class CharterDatabaseHelper {
   }
 
   Future<void> deleteCharter(String id) async {
-    // delete a file in the database
+    // delete a charter in the database
     final db = await database;
 
     await db.delete(
@@ -66,11 +66,13 @@ class CharterDatabaseHelper {
   }
 
   Future<void> deleteCharterTable() async {
+    //delete the entire charter table in the database
     final db = await database;
     await db.delete('charter');
   }
 
   Future<bool> charterExists(String charterId) async {
+    //check if a charter exists based on its charter id
     final db = await database;
     var result = await db.rawQuery('SELECT EXISTS(SELECT 1 FROM charter WHERE charterId = ?)', [charterId]);
     int exists = Sqflite.firstIntValue(result);
@@ -78,6 +80,7 @@ class CharterDatabaseHelper {
   }
 
   Future<Charter> getCharter(String charterId) async {
+    //get a charter from the database based on its charterId
     final db = await database;
     var result = await db
         .rawQuery('SELECT * FROM charter WHERE charterId = ?', [charterId]);
@@ -95,7 +98,7 @@ class CharterDatabaseHelper {
   }
 
   Future<List<Charter>> queryCharter() async {
-    // Get a file from the database
+    // Get the entire charter table from the database
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query('charter');
