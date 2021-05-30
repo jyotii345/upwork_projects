@@ -1,3 +1,6 @@
+/*
+creates a note class to hold the contents of a note object
+ */
 import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
@@ -5,7 +8,6 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:open_file/open_file.dart';
 
 class Note {
   String id;
@@ -31,6 +33,7 @@ class Note {
       String miscNotes,
       User user,
       BuildContext pageContext, VoidCallback callback) {
+    //default constructor
     this.id = id;
     this.boatId = boatId;
     this.destination = destination;
@@ -45,7 +48,7 @@ class Note {
   }
 
   Map<String, dynamic> toMap() {
-    //create a map object from user object
+    //create a map object from note object
     return {
       'id': id,
       'boatId': boatId,
@@ -59,6 +62,7 @@ class Note {
   }
 
   Widget getNoteRow(BuildContext context, int index) {
+    //creates a note row to be displayed on the notes page
     double textBoxSize = MediaQuery.of(context).size.width / 4;
     double iconSize = MediaQuery.of(context).size.width / 15;
 
@@ -113,12 +117,14 @@ class Note {
   }
 
   void deleteNote() async {
+
+    //deletes this note object and updates the notes page list
    var delRes = await AggressorApi().deleteNote(user.userId, id);
-   print(delRes);
    callback();
   }
 
   void openNote() {
+    //opens a note in the note view page
     Navigator.push(
         pageContext,
         MaterialPageRoute(

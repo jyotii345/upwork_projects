@@ -1,4 +1,6 @@
-import 'dart:io';
+/*
+file_data class to hold the contents of a file object generated from the aws s3 bucket
+ */
 import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,13 +13,14 @@ class FileData {
   String fileName;
 
   FileData(String filePath, String date, String fileName) {
+    //default constructor
     this.filePath = filePath;
     this.date = date;
     this.fileName = fileName;
   }
 
   Map<String, dynamic> toMap() {
-    //create a map object from user object
+    //create a map object from file_data object
     return {
       'filePath': filePath,
       'date': date,
@@ -26,6 +29,7 @@ class FileData {
   }
 
   Widget getFileRow(BuildContext context, int index) {
+    //create a file row widget to display on the files page
     double textBoxSize = MediaQuery.of(context).size.width / 4;
     double iconSize = MediaQuery.of(context).size.width / 15;
 
@@ -86,6 +90,7 @@ class FileData {
 
 
   Future<void> openFile() async {
+    //opens the contents of a file on the defualt application for the native device
     final _result = await OpenFile.open(filePath);
     print(_result.message);
     print(_result.type);

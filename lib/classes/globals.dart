@@ -1,9 +1,9 @@
-// ignore: library_names
+/*
+holds global variables for the application
+ */
 library globals;
 
 import 'package:aggressor_adventures/classes/trip.dart';
-
-import 'boat.dart';
 import 'gallery.dart';
 
 
@@ -17,7 +17,7 @@ List<Trip> tripList = [];
 List<Trip> loadSize = [];
 List<Map<String, dynamic>> boatList = [];
 List<dynamic> sliderImageList = [];
-List<dynamic> notesList = []; //TODO add to sign out
+List<dynamic> notesList = [];
 
 bool photosLoaded = false;
 bool notesLoaded = false;

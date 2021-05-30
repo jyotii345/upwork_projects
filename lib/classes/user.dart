@@ -1,5 +1,6 @@
-import 'dart:ui';
-
+/*
+creates a user class to hold the contens of a user class
+ */
 class User {
   String userId;
   String nameF;
@@ -20,6 +21,7 @@ class User {
     String userType,
     String contactType,
   ) {
+    //default constructor
     this.userId = userId;
     this.nameF = nameF;
     this.nameL = nameL;

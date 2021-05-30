@@ -1,5 +1,7 @@
+/*
+gallery class that create a gallery object to hold objects of photos
+ */
 import 'dart:ui';
-
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
@@ -16,6 +18,7 @@ class Gallery {
   List<VoidCallback> callBackList;
 
   Gallery(User user, String boatId, List<Photo> photos, Trip trip,) {
+    //default constructor
     this.user = user;
     this.boatId = boatId;
     this.photos = photos;
@@ -24,7 +27,7 @@ class Gallery {
   }
 
   Map<String, dynamic> toMap() {
-    //create a map object from user object
+    //create a map object from gallery object
     return {
       'boatId': boatId,
       'photos': photos,
@@ -33,10 +36,12 @@ class Gallery {
   }
 
   addPhoto(Photo photo) {
+    //adds a photo to the photos list
     photos.add(photo);
   }
 
   Widget getGalleryRow(BuildContext context, int index) {
+    //creates a gallery row to be displayed on the photos page
     double textBoxSize = MediaQuery.of(context).size.width / 4;
 
     List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -89,6 +94,7 @@ class Gallery {
   }
 
   void openGalleryView(BuildContext context){
+    //open a gallery to view its contents on the gallery view page
     Navigator.push(
         context,
         MaterialPageRoute(

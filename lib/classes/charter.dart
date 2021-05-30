@@ -1,5 +1,6 @@
-import 'dart:ui';
-
+/*
+Charter class to create the contents of a charter objects
+ */
 class Charter {
   String charterId;
   String startDate;
@@ -22,6 +23,7 @@ class Charter {
     String disembarkment,
     String destination,
   ) {
+    //default constructor
     this.charterId = charterId;
     this.startDate = startDate;
     this.statusId = statusId;
@@ -35,7 +37,7 @@ class Charter {
 
 
   Map<String, dynamic> toMap() {
-    //create a map object from user object
+    //create a map object from charter object
     return {
       'charterId' : charterId,
       'startDate' : startDate,

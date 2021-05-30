@@ -1,6 +1,8 @@
+/*
+creates a trip class to hold the contents of a trip object
+ */
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
@@ -78,6 +80,7 @@ class Trip {
       String embark,
       String disembark,
       String detailDestination) {
+    //default constructor
     this.tripDate = tripDate;
     this.title = title;
     this.latitude = latitude;
@@ -150,7 +153,7 @@ class Trip {
   }
 
   factory Trip.fromMap(Map<String, dynamic> map) {
-    //create a trip object from a json file
+    //create a trip object from a map object
     return Trip.TripWithDetails(
       map['tripDate'].toString(),
       map['title'].toString(),
@@ -174,7 +177,7 @@ class Trip {
   }
 
   Future<dynamic> getTripDetails(String contactId) async {
-    //get detials for this specific trip object and add the results to this trip
+    //get details for this specific trip object and add the results to this trip
     var jsonResponse = await AggressorApi()
         .getReservationDetails(reservationId.toString(), contactId.toString());
     if (jsonResponse["status"] == "success") {
@@ -196,6 +199,7 @@ class Trip {
   }
 
   Future<dynamic> initCharterInformation() async {
+    //gets charter and boat information about this trip
     charter = await CharterDatabaseHelper.instance.getCharter(charterId);
     boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
   }
@@ -481,6 +485,7 @@ class Trip {
 
 
   Future<dynamic> downloadBoatImage() async {
+    //downloads and saves the boat image associated with this trip
 
     BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
 

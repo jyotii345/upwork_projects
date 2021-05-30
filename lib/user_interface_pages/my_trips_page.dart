@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
-import 'package:aggressor_adventures/classes/google_map.dart';
+import 'package:aggressor_adventures/classes/flutter_map.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
