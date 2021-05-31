@@ -19,6 +19,8 @@ class Note {
   String preTripNotes;
   String postTripNotes;
   String miscNotes;
+
+
   User user;
   BuildContext pageContext;
   VoidCallback callback;
@@ -110,7 +112,7 @@ class Note {
               SizedBox(
                 width: textBoxSize,
                 child: Text(
-                  months[DateTime.parse(startDate).month].substring(0,3) + " " + DateTime.parse(startDate).day.toString() + ", " + DateTime.parse(startDate).year.toString() ,
+                  months[DateTime.parse(startDate).month - 1].substring(0,3) + " " + DateTime.parse(startDate).day.toString() + ", " + DateTime.parse(startDate).year.toString() ,
                   textAlign: TextAlign.left,
                 ),
               ),
