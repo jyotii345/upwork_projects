@@ -1,24 +1,12 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
-import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:aggressor_adventures/databases/files_database.dart';
-import 'package:chunked_stream/chunked_stream.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
-import 'package:http/http.dart';
-import 'package:path_provider/path_provider.dart';
-
 import 'notes_add_page.dart';
 
 class Notes extends StatefulWidget {
@@ -37,7 +25,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   instance vars
    */
 
-  String fileName = "";
 
   Map<String, dynamic> dropDownValue;
 
@@ -104,6 +91,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
    */
 
   Widget getPageForm() {
+    //returns the main contents of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -116,7 +104,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             ),
             getPageTitle(),
             getCreateNote(),
-            getFilesSection(),
+            getNotesSection(),
             showErrorMessage(),
           ],
         ),
@@ -125,6 +113,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getCreateNote() {
+    //returns the create note section of the page
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -146,12 +135,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getYachtDropDown(List<Map<String, dynamic>> boatList) {
-    // sortedTripList = [selectionTrip];
-    // tripList = sortTripList(tripList); // sort boatList instead
-    // tripList.forEach((element) {
-    //   sortedTripList.add(element);
-    // });
-
+    //returns the drop down of yachts associated with the users trips
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -211,6 +195,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getDateDropDown() {
+    //returns the drop down of the dates associated with a specific yachts trips with the user
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -282,6 +267,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   List<Trip> getDateDropDownList(Map<String, dynamic> boatMap) {
+    //returns the list of dates to be displayed with the selected trip
     List<Trip> tempList = [];
     tripList.forEach((element) {
       if (element.boat.boatId.toString() == boatMap["boatid"].toString()) {
@@ -309,6 +295,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getCreateNoteButton() {
+    //returns the button to create the note as it is
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Row(
@@ -375,6 +362,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPageTitle() {
+    //returns the title of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
       child: Align(
@@ -390,23 +378,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget getFilePrompt() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: Text(
-          "Files must be uploaded as: PDF, TXT, DOC, JPG, PNG",
-          style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: MediaQuery.of(context).size.height / 55,
-              fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
 
-  Widget getFilesSection() {
+  Widget getNotesSection() {
+    //returns the section of the page that displays notes already made
     double textBoxSize = MediaQuery.of(context).size.width / 4;
 
     return Padding(
@@ -455,7 +429,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getNotesView() {
-    //returns the list item containing fileData objects
+    //returns the list item containing notes objects
 
     double textBoxSize = MediaQuery.of(context).size.width / 4;
     notesList.clear();
@@ -514,7 +488,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Future<dynamic> getNotes() async {
-    //downloads file from aws. If the file is not already in storage, it will be stored on the device.
+    //downloads notes from aws. //TODO add the cache ability here
     setState(() {
       loading = true;
     });
@@ -563,6 +537,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showErrorMessage() {
+    //shows an error message if there is one
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -576,6 +551,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showLoading() {
+    //shows a loading line if the notes are being downloaded
     return loading
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
@@ -588,6 +564,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   VoidCallback notesCallBack() {
+    //this callback ensures that notes are updated after a new one is created
     setState(() {
       notesLoaded = false;
     });

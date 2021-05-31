@@ -188,6 +188,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   } //TODO change bottom nav icon size
 
   makeCall() async {
+    //calls the given number from the application
     const url = 'tel:7069932531';
     try {
       await launch(url);
@@ -197,12 +198,13 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   void handleBottomNavigation(int index) {
-    print("called");
+    //handles what the application does when the bottom navigation bar is clicked
     currentIndex = index - 1;
     Navigator.pop(context);
   }
 
   Widget getPageForm() {
+    //returns the main contents of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -231,6 +233,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPreTripNotes() {
+    //returns the pre trip notes portion of the page
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -267,6 +270,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPostTripNotes() {
+    //returns the post trip notes portion of the page
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -302,6 +306,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getMiscNotes() {
+    //returns the misc trip notes portion of the page
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -337,6 +342,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getYachtInformation() {
+    //returns the information about the yacht and trip the notes are saved for
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -379,6 +385,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getDepartureDate() {
+    //returns the date the trip the note is for begins
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -415,6 +422,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getReturnDate() {
+    //returns the date the trip the note is for ends
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -486,7 +494,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPageTitle() {
-    double iconSize = MediaQuery.of(context).size.width / 10;
+    //returns the title for the page
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: Container(
@@ -524,6 +532,7 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getLoading() {
+    //if data is loading it displays the loading icon
     return loading
         ? Center(
             child: CircularProgressIndicator(),

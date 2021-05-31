@@ -1,18 +1,8 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
-import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:aggressor_adventures/databases/boat_database.dart';
-import 'package:aggressor_adventures/databases/charter_database.dart';
-import 'package:aggressor_adventures/databases/files_database.dart';
-import 'package:aggressor_adventures/databases/photo_database.dart';
-import 'package:aggressor_adventures/databases/trip_database.dart';
-import 'package:aggressor_adventures/databases/user_database.dart';
-import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../main.dart';
 
 class EditMyProfile extends StatefulWidget {
   EditMyProfile(
@@ -127,6 +117,7 @@ class EditMyProfileState extends State<EditMyProfile>
    */
 
   bool validateAndSave() {
+    //ensure all fields are valid before saving
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
@@ -136,6 +127,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   void validateAndSubmit() async {
+    //once data is verified send the data
     setState(() {
       errorMessage = "";
       isLoading = true;
@@ -205,6 +197,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   bool validatePassword(String password) {
+    //ensures password meets the requirements
     String pattern =
         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
     RegExp regExp = new RegExp(pattern);
@@ -212,6 +205,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   void showSuccessDialogue() {
+    //shows a success message when the profile is updated successfully
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
@@ -231,6 +225,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Widget getPageForm() {
+    //returns the main contents of the page
     return FutureBuilder(
         future: getCountryAndState(),
         builder: (context, snapshot) {
@@ -915,6 +910,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Widget getUpdateButton() {
+    //returns a button to verify you are done with your updates
     return TextButton(
         onPressed: () {
           setState(() {
@@ -962,6 +958,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Widget getPageTitle() {
+    //returns the title of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
       child: Container(
@@ -1061,7 +1058,8 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Widget getCountryDropDown() {
-    print("getting drop down");
+    //returns a dropdown of all countries
+    //TODO make the countries load in loading screen and save as a global
 
     return Expanded(
       child: Padding(
@@ -1103,6 +1101,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Future<dynamic> getCountryAndState() async {
+    //load the initial data for the page
     if (!stateAndCountryLoaded) {
       name = widget.profileData["first"] + " " + widget.profileData["last"];
       profileImagePath = widget.profileData["avatar"];
@@ -1150,6 +1149,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Widget showErrorMessage() {
+    //returns the value of an error message if there is an error message to display
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -1163,6 +1163,7 @@ class EditMyProfileState extends State<EditMyProfile>
   }
 
   Widget getLoadingWheel() {
+    //returns a loading wheel if data is loading or sending
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 

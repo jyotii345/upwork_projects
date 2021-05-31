@@ -12,7 +12,6 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
-import 'package:aggressor_adventures/classes/globals.dart' as globals;
 
 class GalleryView extends StatefulWidget {
   GalleryView(this.user,
@@ -229,6 +228,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   makeCall() async {
+    //calls the provided number when clicked
     const url = 'tel:7069932531';
     try {
       await launch(url);
@@ -238,11 +238,13 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   void handleBottomNavigation(int index) {
+    //handles what the app does when a bottom navigation bar item is clicked
     currentIndex = index - 1;
     Navigator.pop(context);
   }
 
   void handlePopupClick(String value) {
+    //handles the options in the menu bar
     switch (value) {
       case 'My Profile':
         currentIndex = 5;
@@ -251,6 +253,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getPageForm() {
+    //returns the main contents of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -281,6 +284,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getScrollButtons() {
+    //returns arrow images to scroll pages on the bottom of the page
     double iconSize = MediaQuery
         .of(context)
         .size
@@ -322,6 +326,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getDestination() {
+    //returns the destination widgets of the gallery
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Text(
@@ -332,6 +337,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getDate() {
+    //returns the date widgets of the gallery
     List<String> months = [
       'January',
       'February',
@@ -371,6 +377,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getImageGrid() {
+    //returns the grid of the images to be displayed
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: widget.photos.length > 0
@@ -423,6 +430,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   void imageExpansionDialogue(Widget content) {
+    //shows the image in a larger view
     showDialog(
       context: context,
       builder: (_) => new AlertDialog(title: Container(), content: content),
@@ -465,6 +473,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget showErrorMessage() {
+    //displays an error message if there is one
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -478,6 +487,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Future<void> loadAssets() async {
+    //loads the asset objects from the image picker
     List<Asset> resultList = <Asset>[];
     String error = 'No Error Detected';
 
@@ -485,8 +495,6 @@ class GalleryViewState extends State<GalleryView> {
         await Permission.camera.status.isDenied) {
       await Permission.photos.request();
       await Permission.camera.request();
-
-      // We didn't ask for permission yet or the permission has been denied before but not permanently.
     }
 
     //try {
@@ -538,6 +546,7 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   Widget getPageTitle() {
+    //returns the title of the page
     double iconSize = MediaQuery
         .of(context)
         .size

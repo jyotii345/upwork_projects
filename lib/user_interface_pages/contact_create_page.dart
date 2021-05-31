@@ -10,7 +10,7 @@ import 'login_page.dart';
 class CreateContact extends StatefulWidget {
   CreateContact(this.userId);
 
-  String userId;
+  final String userId;
 
   @override
   State<StatefulWidget> createState() => new CreateContactState();
@@ -108,6 +108,7 @@ class CreateContactState extends State<CreateContact>
    */
 
   bool validateAndSave() {
+    //
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();

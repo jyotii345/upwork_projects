@@ -1,8 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
-import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -51,6 +47,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
    */
 
   Widget getPageForm() {
+    //returns the listview containing the content of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -86,7 +83,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getSliderImages() {
-    //returns banner image
+    //returns slider images on top of the page
 
     return Stack(
       children: [
@@ -145,6 +142,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPageTitle() {
+    //returns the title of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
       child: Align(

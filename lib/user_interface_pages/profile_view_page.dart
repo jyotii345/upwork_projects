@@ -59,6 +59,7 @@ class MyProfileState extends State<MyProfile>
    */
 
   Widget getPageForm() {
+    //shows the main contents of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -78,6 +79,7 @@ class MyProfileState extends State<MyProfile>
   }
 
   Widget getPageContents() {
+    //shows the contents of the user data
     return FutureBuilder(
         future: getProfileContents(),
         builder: (context, snapshot) {
@@ -123,6 +125,7 @@ class MyProfileState extends State<MyProfile>
   }
 
   Widget getAddress() {
+    //gets the address of the user
     String territory = profileData["country"].toString() == "2"
         ? profileData["state"]
         : profileData["province"];
@@ -145,6 +148,7 @@ class MyProfileState extends State<MyProfile>
   }
 
   String getCountry(String countryCode) {
+    //gets the country list from the api
     String country = countryCode;
     countries.forEach((element) {
       if (element["countryid"].toString() == countryCode) {
@@ -155,6 +159,7 @@ class MyProfileState extends State<MyProfile>
   }
 
   Widget getAccountInformation() {
+    //displays the account information section
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Column(
@@ -223,6 +228,7 @@ class MyProfileState extends State<MyProfile>
   }
 
   Widget getPersonalInfo() {
+    //returns the personal information section
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,6 +265,7 @@ class MyProfileState extends State<MyProfile>
   }
 
   Future<dynamic> getProfileContents() async {
+    //loads the profile details
     if (!profileDataLoaded) {
       var jsonResponse =
           await AggressorApi().getProfileData(widget.user.userId);
@@ -305,6 +312,7 @@ class MyProfileState extends State<MyProfile>
   }
 
   Widget getPageTitle() {
+    //returns the page's title
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
       child: Row(
@@ -339,6 +347,7 @@ class MyProfileState extends State<MyProfile>
   }
 
   void updateCallback(){
+    //update to show profile data should be reloaded
     setState(() {
       profileDataLoaded = false;
     });

@@ -96,6 +96,7 @@ class RegistrationPageState extends State<RegistrationPage>
    */
 
   Widget getPageForm() {
+    //returns the main listview containing the contents of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -130,6 +131,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget getFirstName() {
+    //returns the field prompting for the first name
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
@@ -152,6 +154,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget getLastName() {
+    //returns the field prompting for the last name
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
@@ -174,6 +177,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget getEmail() {
+    //returns the field prompting for the email
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
@@ -195,6 +199,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget getDateOfBirth() {
+    //returns the date picker for the user's date of birth
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: Row(
@@ -246,6 +251,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Future<void> selectBirthDay(BuildContext context) async {
+    //calls the date picker to open and prompts for the users birthday
     final DateTime selection = await showDatePicker(
         context: context,
         initialDate: dateOfBirth,
@@ -258,6 +264,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget getPassword() {
+    //prompts for the password
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
@@ -280,6 +287,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget getConfirmPassword() {
+    //prompts for the password confirmation
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
@@ -303,6 +311,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget showPasswordRequirements() {
+    //displays the criteria of a valid password
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: ListView(
@@ -340,6 +349,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget showRegisterButton() {
+    //returns the registration button
     return Padding(
         padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
         child: SizedBox(
@@ -359,6 +369,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget showErrorMessage() {
+    //displays the error message if there is one
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -371,8 +382,9 @@ class RegistrationPageState extends State<RegistrationPage>
           );
   }
 
-  // Check if form is valid before perform login or signup
   bool validateAndSave() {
+
+    // Check if form is valid before perform login or signup
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
@@ -382,6 +394,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   void showSuccessDialogue() {
+    //shows a dialogue confirming the profile was registered and navigates to the home screen
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
@@ -401,8 +414,9 @@ class RegistrationPageState extends State<RegistrationPage>
             ));
   }
 
-  // Perform login or signup
   void validateAndSubmit() async {
+
+    // Perform login or signup
     setState(() {
       errorMessage = "";
       isLoading = true;
@@ -442,6 +456,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   bool validatePassword(String password) {
+    //used to ensure the password is valid
     String pattern =
         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
     RegExp regExp = new RegExp(pattern);
@@ -478,6 +493,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget getPageTitle() {
+    //returns the page title
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
       child: Align(
@@ -494,6 +510,7 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   Widget getLoadingWheel() {
+    //shows loading wheel if the page is loading data
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 

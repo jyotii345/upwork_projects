@@ -99,6 +99,7 @@ class ProfileLinkPageState extends State<ProfileLinkPage> {
    */
 
   makeCall() async {
+    //method to open phone call from application
     const url = 'tel:7069932531';
     try {
       await launch(url);
@@ -108,6 +109,7 @@ class ProfileLinkPageState extends State<ProfileLinkPage> {
   }
 
   void handlePopupClick(String value) {
+    //handles the menu bar options
     switch (value) {
       case 'My Profile':
         print("loading");

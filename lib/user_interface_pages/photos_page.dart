@@ -92,6 +92,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
    */
 
   Widget getPageForm() {
+    //returns the main contents of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -114,11 +115,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getYachtDropDown(List<Map<String, dynamic>> boatList) {
-    // sortedTripList = [selectionTrip];
-    // tripList = sortTripList(tripList); // sort boatList instead
-    // tripList.forEach((element) {
-    //   sortedTripList.add(element);
-    // });
+    //returns a drop down of all yachts that an adventure is associated with
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -180,11 +177,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getDateDropDown() {
-    // sortedTripList = [selectionTrip];
-    // tripList = sortTripList(tripList); // sort boatList instead
-    // tripList.forEach((element) {
-    //   sortedTripList.add(element);
-    // });
+    //returns a drop down of all dates when a trip is on a particular yacht
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
@@ -257,6 +250,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   List<Trip> getDateDropDownList(Map<String, dynamic> boatMap) {
+    //generates the list of dates a trip is scheduled on a particular yacht
     List<Trip> tempList = [];
     tripList.forEach((element) {
       if (element.boat.boatId.toString() == boatMap["boatid"].toString()) {
@@ -276,6 +270,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getUploadPhotosButton() {
+    //returns the button to create a new gallery
     return Row(
       children: [
         SizedBox(
@@ -295,6 +290,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Future<void> loadAssets() async {
+    //loads images as an asset object that are selected from an image picker
     List<Asset> resultList = <Asset>[];
     String error = '';
 
@@ -364,6 +360,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getCreateNewGallery() {
+    //returns the create a gallery section of the page
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -385,6 +382,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getMyGalleries() {
+    //returns the header for the my galleries section
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -404,6 +402,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getGalleriesSection() {
+    //returns the gallery section of the page
     double textBoxSize = MediaQuery.of(context).size.width / 4;
 
     return Padding(
@@ -539,6 +538,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPageTitle() {
+    //returns the title of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
       child: Align(
@@ -658,6 +658,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showErrorMessage() {
+
+    //displays an error message if there is one
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -671,6 +673,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showLoading() {
+    //displays a loading bar if data is being downloaded
     return loading
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),

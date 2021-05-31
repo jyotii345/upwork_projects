@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/flutter_map.dart';
@@ -15,10 +14,10 @@ class MyTrips extends StatefulWidget {
   final User user;
 
   @override
-  State<StatefulWidget> createState() => new myTripsState();
+  State<StatefulWidget> createState() => new MyTripsState();
 }
 
-class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   /*
   instance vars
    */
@@ -78,6 +77,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
   }
 
   Widget getUpcomingSection(List<Trip> upcomingTrips) {
+    //returns either the no upcoming trips dialogue or the listview
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Container(
@@ -91,6 +91,7 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
   }
 
   Widget getPastSection(List<Trip> pastTrips) {
+    //returns either the no past trips dialogue or the listview
     double textBoxSize = MediaQuery.of(context).size.width / 4.3;
 
     return Padding(
@@ -273,8 +274,6 @@ class myTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
     //returns the list of all active trips and sorts them by upcoming or past
     List<Trip> pastList = [];
     List<Trip> upcomingList = [];
-
-    double textBoxSize = MediaQuery.of(context).size.width / 4.3;
     tripList.sort((a, b) =>
         DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
