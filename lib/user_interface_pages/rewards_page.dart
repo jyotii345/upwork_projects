@@ -60,82 +60,203 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             ),
             getPageTitle(),
             getUserRow(),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Divider(
+                height: 2,
+                color: Colors.grey[400],
+              ),
+            ),
+            getProgressSection(),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Divider(
+                height: 2,
+                color: Colors.grey[400],
+              ),
+            ),
+            getBadgeSection(),
           ],
         ),
       ),
     );
   }
 
+  Widget getBadgeSection() {
+    //returns the bottom section containing the lists of badges and awards the user has earned
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            children: [
+              Text(
+                "My Certifications",
+                style: TextStyle(color: AggressorColors.primaryColor),
+              ),
+              TextButton(
+                onPressed: () {
+                  print("pressed");
+                },
+                style: TextButton.styleFrom(
+                    backgroundColor: AggressorColors.secondaryColor),
+                child: Text(
+                  "Add Iron Diver",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text(
+                "Club Membership",
+                style: TextStyle(color: AggressorColors.primaryColor),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text(
+                "Iron Diver Awards",
+                style: TextStyle(color: AggressorColors.primaryColor),
+              ),
+              TextButton(
+                onPressed: () {
+                  print("pressed");
+                },
+                style: TextButton.styleFrom(
+                    backgroundColor: AggressorColors.secondaryColor),
+                child: Text(
+                  "Add Certification",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getProgressSection() {
+    //returns the section of tha page that holds the progress bars
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          Text("VIP Progress Bar"),
+          Text("VIPplus Progress Bar"),
+          Text("7 Seas Progress Bar"),
+          Text("Adventurer Progress Bar")
+        ],
+      ),
+    );
+  }
+
   Widget getUserRow() {
     //returns the row widget containing the user information and boutique points
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Padding(
+      padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-        Image.asset("assets/noprofile.png",
+          Container(
             height: MediaQuery.of(context).size.width / 4,
-            width: MediaQuery.of(context).size.width / 4),
-        Column(
-          children: [
-            Text("First Last Name" +
-                "," +
-                "GA" +
-                "\nGuest since " +
-                "2010\n\nTotal Adventures - " +
-                "2"), //TODO replace with the proper values for the user
-            TextButton(
-              onPressed: () {
-                print("pressed");
-              },
-              style: TextButton.styleFrom(
-                  backgroundColor: AggressorColors.secondaryColor),
-              child: Text(
-                "Update My Profile",
-                style: TextStyle(color: Colors.white),
+            child: Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Image.asset(
+                "assets/noprofile.png",
               ),
             ),
-          ],
-        ),
-        Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          ),
+          Container(
+            height: MediaQuery.of(context).size.width / 4,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Boutique Points",
-                  style: TextStyle(color: AggressorColors.primaryColor),
+                  "First Last Name" +
+                      "," +
+                      "GA" +
+                      "\nGuest since " +
+                      "2010\nTotal Adventures - " +
+                      "2",
+                  textAlign: TextAlign.center,
                 ),
-                TextButton(
-                  onPressed: () {
-                    print("pressed");
-                  },
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size(10, 10),
-                  ),
-                  child: Image.asset(
-                    "assets/redquestion.png",
-                    height: 10,
-                    width: 10,
+                //TODO replace with the proper values for the user
+                Flexible(
+                  child: TextButton(
+                    onPressed: () {
+                      print("pressed");
+                    },
+                    style: TextButton.styleFrom(
+                        backgroundColor: AggressorColors.secondaryColor),
+                    child: Text(
+                      "Update My Profile",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],
             ),
-            Text("916"),
-            TextButton(
-              onPressed: () {
-                print("pressed");
-              },
-              style: TextButton.styleFrom(
-                  backgroundColor: AggressorColors.secondaryColor),
-              child: Text(
-                "REDEEM NOW >",
-                style: TextStyle(color: Colors.white),
-              ),
+          ),
+          Container(
+            height: MediaQuery.of(context).size.width / 4,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      "Boutique Points",
+                      style: TextStyle(color: AggressorColors.primaryColor),
+                    ),
+                    Container(
+                      height: 15,
+                      width: 15,
+                      child: TextButton(
+                        onPressed: () {
+                          print("pressed");
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size(10, 10),
+                        ),
+                        child: Image.asset(
+                          "assets/redquestion.png",
+                          height: 10,
+                          width: 10,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Text("969"),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: TextButton(
+                    onPressed: () {
+                      print("pressed");
+                    },
+                    style: TextButton.styleFrom(
+                        backgroundColor: AggressorColors.secondaryColor),
+                    child: Text(
+                      "REDEEM NOW >",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
