@@ -621,6 +621,38 @@ class AggressorApi {
   }
 
 
+  Future<dynamic> getIronDiverList(String userId) async {
+    //gets the list of iron diver awards for the given user from the API
+    notesList.clear();
+    String url =  "https://secure.aggressor.com/api/app/club/irondiver/list/" + userId;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    List<dynamic> pageJson =
+    json.decode(await pageResponse.stream.bytesToString());
+
+    return pageJson;
+  }
+
+  Future<dynamic> getCertificationList(String userId) async {
+    //gets the certificates for a particular user from the API
+    notesList.clear();
+    String url =  "https://secure.aggressor.com/api/app/club/irondiver/list/" + userId;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    List<dynamic> pageJson =
+    json.decode(await pageResponse.stream.bytesToString());
+
+    return pageJson;
+  }
+
 
 
 

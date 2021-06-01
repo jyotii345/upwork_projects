@@ -59,9 +59,83 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 6,
             ),
             getPageTitle(),
+            getUserRow(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget getUserRow() {
+    //returns the row widget containing the user information and boutique points
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+        Image.asset("assets/noprofile.png",
+            height: MediaQuery.of(context).size.width / 4,
+            width: MediaQuery.of(context).size.width / 4),
+        Column(
+          children: [
+            Text("First Last Name" +
+                "," +
+                "GA" +
+                "\nGuest since " +
+                "2010\n\nTotal Adventures - " +
+                "2"), //TODO replace with the proper values for the user
+            TextButton(
+              onPressed: () {
+                print("pressed");
+              },
+              style: TextButton.styleFrom(
+                  backgroundColor: AggressorColors.secondaryColor),
+              child: Text(
+                "Update My Profile",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+        Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  "Boutique Points",
+                  style: TextStyle(color: AggressorColors.primaryColor),
+                ),
+                TextButton(
+                  onPressed: () {
+                    print("pressed");
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size(10, 10),
+                  ),
+                  child: Image.asset(
+                    "assets/redquestion.png",
+                    height: 10,
+                    width: 10,
+                  ),
+                ),
+              ],
+            ),
+            Text("916"),
+            TextButton(
+              onPressed: () {
+                print("pressed");
+              },
+              style: TextButton.styleFrom(
+                  backgroundColor: AggressorColors.secondaryColor),
+              child: Text(
+                "REDEEM NOW >",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 
@@ -84,7 +158,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   Widget getSliderImages() {
     //returns slider images on top of the page
-
     return Stack(
       children: [
         Container(
