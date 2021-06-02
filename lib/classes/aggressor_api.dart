@@ -637,6 +637,38 @@ class AggressorApi {
     return pageJson;
   }
 
+  Future<dynamic> saveIronDiver(String userId, String boatId) async {
+    //Save a new iron diver award to a specific boat
+    Response response = await post(
+      Uri.https('secure.aggressor.com', '/api/app/club/irondiver/save/' + userId),
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "boatID" : boatId,
+      }),
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  Future<dynamic> deleteIronDiver(String userId, String id) async {
+    //delete an iron diver award by a certain id
+    notesList.clear();
+    String url =  "https://secure.aggressor.com/api/app/club/irondiver/delete/" + userId + "/" + id;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    List<dynamic> pageJson =
+    json.decode(await pageResponse.stream.bytesToString());
+
+    return pageJson;
+  }
+
   Future<dynamic> getCertificationList(String userId) async {
     //gets the certificates for a particular user from the API
     notesList.clear();
@@ -653,6 +685,37 @@ class AggressorApi {
     return pageJson;
   }
 
+  Future<dynamic> saveCertification(String userId, String certificationType) async {
+    //save a new certification with a certain certification type to the user
+    Response response = await post(
+      Uri.https('secure.aggressor.com', '/api/app/club/certifications/save/' + userId),
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "certificationType" : certificationType,
+      }),
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  Future<dynamic> deleteCertification(String userId, String id) async {
+    //delete a certification by a certain id
+    notesList.clear();
+    String url =  "https://secure.aggressor.com/api/app/club/certifications/delete/" + userId + "/" + id;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    List<dynamic> pageJson =
+    json.decode(await pageResponse.stream.bytesToString());
+
+    return pageJson;
+  }
 
 
 
