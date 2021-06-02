@@ -1,11 +1,17 @@
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/user_interface_pages/rewards_add_certifications_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/aggressor_colors.dart';
 
 class Rewards extends StatefulWidget {
-  Rewards();
+  Rewards(this.user);
+
+  final User user;
 
   @override
   State<StatefulWidget> createState() => new RewardsState();
@@ -90,24 +96,37 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            children: [
-              Text(
-                "My Certifications",
-                style: TextStyle(color: AggressorColors.primaryColor),
-              ),
-              TextButton(
-                onPressed: () {
-                  print("pressed");
-                },
-                style: TextButton.styleFrom(
-                    backgroundColor: AggressorColors.secondaryColor),
-                child: Text(
-                  "Add Iron Diver",
-                  style: TextStyle(color: Colors.white),
+          Expanded(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Text(
+                  "My Certifications",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AggressorColors.primaryColor),
                 ),
-              ),
-            ],
+                getCertificationListView(),
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddCertification(
+                                    widget.user,
+                                  )));
+                    },
+                    style: TextButton.styleFrom(
+                        backgroundColor: AggressorColors.secondaryColor),
+                    child: Text(
+                      "Add Certification",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Column(
             children: [
@@ -117,24 +136,37 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               ),
             ],
           ),
-          Column(
-            children: [
-              Text(
-                "Iron Diver Awards",
-                style: TextStyle(color: AggressorColors.primaryColor),
-              ),
-              TextButton(
-                onPressed: () {
-                  print("pressed");
-                },
-                style: TextButton.styleFrom(
-                    backgroundColor: AggressorColors.secondaryColor),
-                child: Text(
-                  "Add Certification",
-                  style: TextStyle(color: Colors.white),
+          Expanded(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Text(
+                  "Iron Diver Awards",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AggressorColors.primaryColor),
                 ),
-              ),
-            ],
+                getIronDiverListView(),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AddIronDiver(
+                                    widget.user,
+                                  )));
+                    },
+                    style: TextButton.styleFrom(
+                        backgroundColor: AggressorColors.secondaryColor),
+                    child: Text(
+                      "Add Iron Diver",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -145,8 +177,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     //returns the section of tha page that holds the progress bars
     return Padding(
       padding: const EdgeInsets.all(5.0),
-      child: ListView(
-        shrinkWrap: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("VIP Progress Bar"),
           Text("VIPplus Progress Bar"),
@@ -335,6 +367,150 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     );
   }
 
+  Widget getCertificationListView() {
+    //returns the list view of the awards the user has earned
+    getCertifications();
+    return certificationList.length == 0
+        ? Text(
+            "No certifications added yet",
+            textAlign: TextAlign.center,
+          )
+        : ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: certificationList.length,
+            itemBuilder: (context, position) {
+              return Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: GestureDetector(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "assets/certification.png",
+                        height: 25, //TODO replace with a dynamic value
+                        width: 25,
+                      ),
+                      Flexible(
+                          child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child:
+                            Text(certificationList[position]["certification"]),
+                      ))
+                    ],
+                  ),
+                  onLongPressStart: (LongPressStartDetails details) =>
+                      showOptionsMenuCertificate(
+                          details, certificationList[position]),
+                ),
+              );
+            });
+  }
+
+  Widget getIronDiverListView() {
+    //returns the list view of the awards the user has earned
+    getIronDivers();
+    return ironDiverList.length == 0
+        ? Text(
+            "No Iron Diver awards added yet",
+            textAlign: TextAlign.center,
+          )
+        : ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: ironDiverList.length,
+            itemBuilder: (context, position) {
+              return Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: GestureDetector(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "assets/irondiver.png",
+                        height: 25,
+                        width: 25,
+                      ),
+                      Flexible(child: Text(ironDiverList[position]["name"]))
+                    ],
+                  ),
+                  onLongPressStart: (LongPressStartDetails details) =>
+                      showOptionsMenuIronDiver(
+                          details, ironDiverList[position]),
+                ),
+              );
+            });
+  }
+
+  void showOptionsMenuIronDiver(
+      LongPressStartDetails details, var ironDiver) async {
+    //display the delete option for an iron diver
+    RenderBox overlay = Overlay.of(context).context.findRenderObject();
+
+    int selection = await showMenu(
+      position: RelativeRect.fromRect(
+          details.globalPosition & Size(20, 20), // smaller rect, the touch area
+          Offset.zero & overlay.size // Bigger rect, the entire screen
+          ),
+      context: context,
+      items: <PopupMenuEntry<int>>[
+        PopupMenuItem(
+          value: 0,
+          child: Text('Delete'),
+        )
+      ],
+    );
+
+    if (selection == 0) {
+      var response = await AggressorApi()
+          .deleteIronDiver(widget.user.userId, ironDiver["id"].toString());
+      if (response["status"].toString().toLowerCase() == "success") {
+        setState(() {
+          getIronDivers();
+        });
+      } else {
+        setState(() {
+          //TODO show error message
+        });
+      }
+    }
+  }
+
+  void showOptionsMenuCertificate(
+      LongPressStartDetails details, var certificate) async {
+    //display the delete option for a certificate
+    RenderBox overlay = Overlay.of(context).context.findRenderObject();
+
+    int selection = await showMenu(
+      position: RelativeRect.fromRect(
+          details.globalPosition & Size(20, 20), // smaller rect, the touch area
+          Offset.zero & overlay.size // Bigger rect, the entire screen
+          ),
+      context: context,
+      items: <PopupMenuEntry<int>>[
+        PopupMenuItem(
+          value: 0,
+          child: Text('Delete'),
+        )
+      ],
+    );
+
+    if (selection == 0) {
+      var response = await AggressorApi()
+          .deleteCertification(widget.user.userId, certificate["id"].toString());
+      print(response.toString());
+      if (response["status"].toString().toLowerCase() == "success") {
+        setState(() {
+          getCertifications();
+        });
+      } else {
+        setState(() {
+          //TODO show error message
+        });
+      }
+    }
+  }
+
   Widget getPageTitle() {
     //returns the title of the page
     return Padding(
@@ -350,6 +526,27 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ),
       ),
     );
+  }
+
+  void getCertifications() async {
+    //this widget updates the certifications in the list
+    //TODO add loading indicators
+
+    List<dynamic> tempList =
+        await AggressorApi().getCertificationList(widget.user.userId);
+    setState(() {
+      certificationList = tempList;
+    });
+  }
+
+  void getIronDivers() async {
+    //this widget updates the Iron Divers in the list
+    //TODO add loading indicators
+    List<dynamic> tempList =
+        await AggressorApi().getCertificationList(widget.user.userId);
+    setState(() {
+      certificationList = tempList;
+    });
   }
 
   @override

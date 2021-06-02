@@ -564,8 +564,6 @@ class AggressorApi {
   Future<dynamic> saveNote(String startDate, String endDate, String preTripNotes, String postTripNotes, String miscNotes, String boatId, String userId) async {
     //create and send a login request to the Aggressor Api and return the current user
 
-    print(startDate + " " + endDate);
-    print(boatId + " " + userId);
     Response response = await post(
       Uri.https('secure.aggressor.com', 'api/app/tripnotes/save/' + userId),
       headers: <String, String>{
@@ -639,6 +637,8 @@ class AggressorApi {
 
   Future<dynamic> saveIronDiver(String userId, String boatId) async {
     //Save a new iron diver award to a specific boat
+    print(boatId);
+    print(userId);
     Response response = await post(
       Uri.https('secure.aggressor.com', '/api/app/club/irondiver/save/' + userId),
       headers: <String, String>{
@@ -663,7 +663,7 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
 
-    List<dynamic> pageJson =
+    var pageJson =
     json.decode(await pageResponse.stream.bytesToString());
 
     return pageJson;
@@ -672,7 +672,7 @@ class AggressorApi {
   Future<dynamic> getCertificationList(String userId) async {
     //gets the certificates for a particular user from the API
     notesList.clear();
-    String url =  "https://secure.aggressor.com/api/app/club/irondiver/list/" + userId;
+    String url =  "https://secure.aggressor.com/api/app/club/certifications/list/" + userId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -711,7 +711,7 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
 
-    List<dynamic> pageJson =
+    var pageJson =
     json.decode(await pageResponse.stream.bytesToString());
 
     return pageJson;

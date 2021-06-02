@@ -209,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage>
           widget.user,
         ),
         // photos page
-        Rewards(),
+        Rewards(widget.user),
         // rewards page
         MyFiles(
           widget.user,

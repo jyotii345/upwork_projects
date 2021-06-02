@@ -149,7 +149,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   setState(() {
                     dropDownValue = newValue;
                     dateDropDownList = getDateDropDownList(
-                        newValue); //TODO replace with drop down
+                        newValue);
                   });
                 },
                 items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(

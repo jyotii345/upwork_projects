@@ -263,6 +263,8 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     boatList  = await AggressorApi().getBoatList();
+    ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId);
+    certificationList = await AggressorApi().getCertificationList(widget.user.userId);
 
 
     var tempList = await AggressorApi()
