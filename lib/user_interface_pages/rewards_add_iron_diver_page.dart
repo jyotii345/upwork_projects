@@ -320,6 +320,7 @@ class AddIronDiverState extends State<AddIronDiver> {
     }
 
     setState(() {
+      ironDiversLoaded = false;
       loading = false;
     });
   }

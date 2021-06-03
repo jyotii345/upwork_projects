@@ -266,7 +266,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                       tripList.length.toString(),
                   textAlign: TextAlign.center,
                 ),
-                //TODO replace with the proper values for the user
+                //TODO proper year
                 Flexible(
                   child: TextButton(
                     onPressed: () {
@@ -375,10 +375,13 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             child: TextButton(
               onPressed: () {
                 if (sliderIndex + 1 < sliderImageList.length) {
-                  print(sliderIndex + 1);
-                  print(sliderImageList.length);
                   setState(() {
                     sliderIndex++;
+                  });
+                }
+                else{
+                  setState(() {
+                    sliderIndex = 0;
                   });
                 }
               },
@@ -579,38 +582,48 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     //this widget updates the certifications in the list
     //TODO add loading indicators
 
-    List<dynamic> tempList =
-        await AggressorApi().getCertificationList(widget.user.userId);
-    setState(() {
-      certificationList = tempList;
-    });
+    if(!certificateLoaded){
+
+      List<dynamic> tempList =
+      await AggressorApi().getCertificationList(widget.user.userId);
+      setState(() {
+        certificationList = tempList;
+        certificateLoaded = true;
+      });
+    }
   }
 
   void getIronDivers() async {
     //this widget updates the Iron Divers in the list
     //TODO add loading indicators
-    List<dynamic> tempList =
-        await AggressorApi().getCertificationList(widget.user.userId);
-    setState(() {
-      certificationList = tempList;
-    });
+    if(!ironDiversLoaded){
+      List<dynamic> tempList =
+      await AggressorApi().getCertificationList(widget.user.userId);
+      setState(() {
+        certificationList = tempList;
+        ironDiversLoaded = true;
+      });
+    }
   }
 
   void getContactDetails() async {
-    var response = await AggressorApi().getContact(widget.user.contactId);
-    setState(() {
-      contact = Contact(
-          response["contactid"],
-          response["first_name"],
-          response["middle_name"],
-          response["last_name"],
-          response["email"],
-          response["vipcount"],
-          response["vippluscount"],
-          response["sevenseascount"],
-          response["aacount"],
-          response["boutique_points"]);
-    });
+    if(!contactLoaded){
+      var response = await AggressorApi().getContact(widget.user.contactId);
+      setState(() {
+        contact = Contact(
+            response["contactid"],
+            response["first_name"],
+            response["middle_name"],
+            response["last_name"],
+            response["email"],
+            response["vipcount"],
+            response["vippluscount"],
+            response["sevenseascount"],
+            response["aacount"],
+            response["boutique_points"]);
+        contactLoaded = true;
+      });
+    }
   }
 
   @override

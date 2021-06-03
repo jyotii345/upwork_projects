@@ -298,6 +298,7 @@ class AddCertificationState extends State<AddCertification> {
     }
 
     setState(() {
+      certificateLoaded = false;
       loading = false;
     });
   }

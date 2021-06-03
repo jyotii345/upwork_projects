@@ -12,6 +12,9 @@ double loadingLength = 0;
 
 bool photosLoaded = false;
 bool notesLoaded = false;
+bool certificateLoaded = false;
+bool ironDiversLoaded = false;
+bool contactLoaded = false;
 
 int currentIndex = 0;
 
