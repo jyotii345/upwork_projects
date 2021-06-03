@@ -3,6 +3,7 @@ holds global variables for the application
  */
 library globals;
 
+import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'gallery.dart';
 
@@ -25,6 +26,8 @@ List<dynamic> notesList = [];
 List<dynamic> ironDiverList = [];
 List<dynamic> certificationList = [];
 
+
+Contact contact;
 
 List<String> certificationOptionList = [
   'Non-Diver',

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
@@ -249,6 +250,8 @@ class LoadingPageState extends State<LoadingPage> {
     });
 
     updateSliderImages();
+    getContactDetails();
+
     var profileLinkResponse =
         await AggressorApi().checkProfileLink(widget.user.userId);
 
@@ -261,6 +264,8 @@ class LoadingPageState extends State<LoadingPage> {
         ),
       );
     }
+
+
 
     boatList  = await AggressorApi().getBoatList();
     ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId);
@@ -316,12 +321,29 @@ class LoadingPageState extends State<LoadingPage> {
     return "done";
   }
 
-
-
   VoidCallback loadingCallBack() {
     setState(() {
       loadedCount++;
       percent = ((loadedCount / (loadingLength * 2)));
+    });
+  }
+
+  void getContactDetails() async {
+    //initialize the contact details needed for the page
+    var response = await AggressorApi().getContact(widget.user.contactId);
+    print(response.toString());
+    setState(() {
+      contact = Contact(
+          response["contactid"],
+          response["first_name"],
+          response["middle_name"],
+          response["last_name"],
+          response["email"],
+          response["vipcount"],
+          response["vippluscount"],
+          response["sevenseascount"],
+          response["aacount"],
+          response["boutique_points"]);
     });
   }
 }

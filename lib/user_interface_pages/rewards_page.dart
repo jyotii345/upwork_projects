@@ -1,10 +1,12 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_certifications_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import '../classes/aggressor_colors.dart';
 
@@ -180,10 +182,50 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("VIP Progress Bar"),
-          Text("VIPplus Progress Bar"),
-          Text("7 Seas Progress Bar"),
-          Text("Adventurer Progress Bar")
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            child: Text("VIP Progress Bar"),
+          ),
+          LinearPercentIndicator(
+            percent: contact.vipCount == null
+                ? 0
+                : (double.parse(contact.vipCount) * 6.67) / 100,
+            progressColor: Colors.green,
+            lineHeight: 20,
+          ), //TODO dynamic height
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            child: Text("VIPplus Progress Bar"),
+          ),
+          LinearPercentIndicator(
+            percent: contact.vipPlusCount == null
+                ? 0
+                : (double.parse(contact.vipPlusCount) * 4.0) / 100,
+            progressColor: Colors.green,
+            lineHeight: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            child: Text("7 Seas Progress Bar"),
+          ),
+          LinearPercentIndicator(
+            percent: contact.sevenSeasCount == null
+                ? 0
+                : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
+            progressColor: Colors.green,
+            lineHeight: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            child: Text("Adventurer Progress Bar"),
+          ),
+          LinearPercentIndicator(
+            percent: contact.aaCount == null
+                ? 0
+                : (double.parse(contact.aaCount) * 33.34) / 100,
+            progressColor: Colors.green,
+            lineHeight: 20,
+          ),
         ],
       ),
     );
@@ -212,12 +254,16 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "First Last Name" +
+                  contact.nameF +
+                      " " +
+                      contact.nameM +
+                      " " +
+                      contact.nameL +
                       "," +
                       "GA" +
                       "\nGuest since " +
                       "2010\nTotal Adventures - " +
-                      "2",
+                      tripList.length.toString(),
                   textAlign: TextAlign.center,
                 ),
                 //TODO replace with the proper values for the user
@@ -269,7 +315,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     ),
                   ],
                 ),
-                Text("969"),
+                Text(contact.boutiquePoints),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: TextButton(
@@ -328,7 +374,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: () {
-                if (sliderIndex < 2) {
+                if (sliderIndex + 1 < sliderImageList.length) {
+                  print(sliderIndex + 1);
+                  print(sliderImageList.length);
                   setState(() {
                     sliderIndex++;
                   });
@@ -496,9 +544,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     );
 
     if (selection == 0) {
-      var response = await AggressorApi()
-          .deleteCertification(widget.user.userId, certificate["id"].toString());
-      print(response.toString());
+      var response = await AggressorApi().deleteCertification(
+          widget.user.userId, certificate["id"].toString());
       if (response["status"].toString().toLowerCase() == "success") {
         setState(() {
           getCertifications();
@@ -546,6 +593,23 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         await AggressorApi().getCertificationList(widget.user.userId);
     setState(() {
       certificationList = tempList;
+    });
+  }
+
+  void getContactDetails() async {
+    var response = await AggressorApi().getContact(widget.user.contactId);
+    setState(() {
+      contact = Contact(
+          response["contactid"],
+          response["first_name"],
+          response["middle_name"],
+          response["last_name"],
+          response["email"],
+          response["vipcount"],
+          response["vippluscount"],
+          response["sevenseascount"],
+          response["aacount"],
+          response["boutique_points"]);
     });
   }
 
