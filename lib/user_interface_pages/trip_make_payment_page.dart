@@ -3,7 +3,9 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
 
@@ -31,6 +33,10 @@ class MakePaymentState extends State<MakePayment> {
   String cardYear;
   String paymentAmount;
   String cvv;
+
+  final paymentController = TextEditingController();
+  String _formatNumber(String s) => NumberFormat.decimalPattern("en").format(int.parse(s));
+
 
   /*
   initState
@@ -247,8 +253,7 @@ class MakePaymentState extends State<MakePayment> {
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
@@ -258,6 +263,7 @@ class MakePaymentState extends State<MakePayment> {
             getPaymentInformation(),
             getPaymentDetails(),
             showErrorMessage(),
+            Container(height: 400,),
           ],
         ),
       ),
@@ -558,13 +564,16 @@ class MakePaymentState extends State<MakePayment> {
       padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: TextFormField(
         keyboardType: TextInputType.number,
+        controller: paymentController,
+        textAlign: TextAlign.center,
         inputFormatters: [
           WhitelistingTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(3),
+          LengthLimitingTextInputFormatter(7),
         ],
         decoration: new InputDecoration(
           icon: Icon(Icons.attach_money),
           hintText: "000.00",
+          hintStyle: TextStyle(),
           labelText: "Payment Amount",
         ),
         validator: (value) =>
@@ -572,6 +581,13 @@ class MakePaymentState extends State<MakePayment> {
         onSaved: (value) => () {
           cardNumber = value.trim();
           cardNumber.replaceAll('  ', '');
+        },
+        onChanged: (string) {
+          string = '${_formatNumber(string.replaceAll(',', ''))}';
+          paymentController.value = TextEditingValue(
+            text: string,
+            selection: TextSelection.collapsed(offset: string.length),
+          );
         },
       ),
     );
@@ -708,3 +724,4 @@ class CardDateInputFormatter extends TextInputFormatter {
         selection: new TextSelection.collapsed(offset: string.length));
   }
 }
+

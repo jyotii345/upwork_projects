@@ -17,6 +17,7 @@ import 'package:aggressor_adventures/user_interface_pages/trip_make_payment_page
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'aggressor_api.dart';
 
 class Trip {
@@ -39,7 +40,9 @@ class Trip {
       location,
       embark,
       disembark,
-      detailDestination;
+      detailDestination,
+      loginKey,
+      passengerId;
   List<VoidCallback> callBackList;
   VoidCallback newImageCallBack;
   BuildContext context;
@@ -48,22 +51,21 @@ class Trip {
   Boat boat;
   Charter charter;
 
-
   final TransformationController _transformationController =
-  TransformationController();
+      TransformationController();
   Animation<Matrix4> animationReset;
   AnimationController controllerReset;
 
-
   Trip(
-    String tripDate,
-    String title,
-    String latitude,
-    String longitude,
-    String destination,
-    String reservationDate,
-    String reservationId,
-  ) {
+      String tripDate,
+      String title,
+      String latitude,
+      String longitude,
+      String destination,
+      String reservationDate,
+      String reservationId,
+      String loginKey,
+      String passengerId) {
     this.tripDate = tripDate;
     this.title = title;
     this.latitude = latitude;
@@ -71,6 +73,8 @@ class Trip {
     this.destination = destination;
     this.reservationDate = reservationDate;
     this.reservationId = reservationId;
+    this.loginKey = loginKey;
+    this.passengerId = passengerId;
   }
 
   Trip.TripWithDetails(
@@ -91,7 +95,9 @@ class Trip {
       String location,
       String embark,
       String disembark,
-      String detailDestination) {
+      String detailDestination,
+      String loginKey,
+      String passengerId) {
     //default constructor
     this.tripDate = tripDate;
     this.title = title;
@@ -111,6 +117,8 @@ class Trip {
     this.embark = embark;
     this.disembark = disembark;
     this.detailDestination = detailDestination;
+    this.loginKey = loginKey;
+    this.passengerId = passengerId;
   }
 
   factory Trip.fromJson(Map<String, dynamic> json) {
@@ -123,6 +131,8 @@ class Trip {
       json['destination'].toString(),
       json['reservationDate'].toString(),
       json['reservationid'].toString(),
+      json['loginKey'].toString(),
+      json['passengerid'].toString(),
     );
   }
 
@@ -161,6 +171,8 @@ class Trip {
       'embark': embark,
       'disembark': disembark,
       'detailDestination': detailDestination,
+      'loginKey': loginKey,
+      'passengerId' : passengerId,
     };
   }
 
@@ -185,6 +197,8 @@ class Trip {
       map['embark'].toString(),
       map['disembark'].toString(),
       map['detailDestination'].toString(),
+      map['loginKey'].toString(),
+      map['passengerId'].toString(),
     );
   }
 
@@ -263,13 +277,23 @@ class Trip {
                             color: Colors.grey[200],
                             height: textBoxSize * 1.5,
                             width: textBoxSize * 1.5,
-                            child: FutureBuilder(future: downloadBoatImage(),builder: (context, snapshot){
-                              if(snapshot.hasData && snapshot.data != null){
-                                return snapshot.data != "" ? Image.file(File(snapshot.data), fit: BoxFit.fill,) : Icon(Icons.directions_boat_sharp);
-                              }
-                              else{return Center(child: CircularProgressIndicator(),);
-                              }
-                            },),
+                            child: FutureBuilder(
+                              future: downloadBoatImage(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData && snapshot.data != null) {
+                                  return snapshot.data != ""
+                                      ? Image.file(
+                                          File(snapshot.data),
+                                          fit: BoxFit.fill,
+                                        )
+                                      : Icon(Icons.directions_boat_sharp);
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                              },
+                            ),
                           ),
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -277,7 +301,8 @@ class Trip {
                               Text("Days Left: "),
                               Text(
                                 DateTime.now()
-                                    .difference(DateTime.parse(charter.startDate))
+                                    .difference(
+                                        DateTime.parse(charter.startDate))
                                     .inDays
                                     .abs()
                                     .toString(),
@@ -298,10 +323,12 @@ class Trip {
                           height: MediaQuery.of(context).size.height / 20,
                           width: MediaQuery.of(context).size.height / 20,
                           child: TextButton(
-                              style:
-                                  TextButton.styleFrom(padding: EdgeInsets.zero),
+                              style: TextButton.styleFrom(
+                                  padding: EdgeInsets.zero),
                               child: Image.asset("assets/notesblue.png"),
-                              onPressed: () { viewTripNotes();}),
+                              onPressed: () {
+                                viewTripNotes();
+                              }),
                         ),
                         Container(
                           decoration: BoxDecoration(
@@ -397,7 +424,8 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  months[DateTime.parse(charter.startDate).month -
+                                  months[DateTime.parse(charter.startDate)
+                                                  .month -
                                               1]
                                           .substring(0, 3) +
                                       " " +
@@ -431,7 +459,8 @@ class Trip {
                         Container(
                           decoration: BoxDecoration(
                             border: Border(
-                              bottom: BorderSide(width: 1.0, color: Colors.grey),
+                              bottom:
+                                  BorderSide(width: 1.0, color: Colors.grey),
                               left: BorderSide(width: 1.0, color: Colors.grey),
                               right: BorderSide(width: 1.0, color: Colors.grey),
                             ),
@@ -444,7 +473,7 @@ class Trip {
                                 child: TextButton(
                                   style: TextButton.styleFrom(
                                       padding: EdgeInsets.all(0)),
-                                  onPressed: () {},
+                                  onPressed: launchGIS,
                                   child: Text("Guest Information System (GIS)",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -474,15 +503,17 @@ class Trip {
                                 child: TextButton(
                                   style: TextButton.styleFrom(
                                       padding: EdgeInsets.all(0)),
-                                  onPressed: () {Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MakePayment(
-                                        user,
-                                        this,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MakePayment(
+                                          user,
+                                          this,
+                                        ),
                                       ),
-                                    ),
-                                  );},
+                                    );
+                                  },
                                   child: Text(
                                     "Make Payment",
                                     textAlign: TextAlign.center,
@@ -512,9 +543,21 @@ class Trip {
     );
   }
 
+  void launchGIS() async {
+    if(loginKey!= null){
+      await launch("https://gis.liveaboardfleet.com/gis/index.php/" +
+          passengerId.toString() +
+          "/" +
+          reservationId.toString() +
+          "/" +
+          charterId.toString() +
+          "/" +
+          loginKey.toString());
+    }
+  }
 
-  void viewTripNotes(){
-    if(note != null){
+  void viewTripNotes() {
+    if (note != null) {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -524,15 +567,14 @@ class Trip {
           ),
         ),
       );
-    }
-    else{
+    } else {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => AddNotes(
             user,
             this,
-            (){},
+            () {},
           ),
         ),
       );
@@ -546,14 +588,14 @@ class Trip {
 
     String path = "";
 
-    if(boat.imagePath == "" || boat.imagePath == null){
+    if (boat.imagePath == "" || boat.imagePath == null) {
       var imageDetails = await AggressorApi().getBoatImage(boat.imageLink);
       if (imageDetails != null) {
-        var imageName = boat.imageLink.substring(
-            boat.imageLink.toString().lastIndexOf("/") + 1);
+        var imageName = boat.imageLink
+            .substring(boat.imageLink.toString().lastIndexOf("/") + 1);
 
         Directory appDocumentsDirectory =
-        await getApplicationDocumentsDirectory();
+            await getApplicationDocumentsDirectory();
         String appDocumentsPath = appDocumentsDirectory.path;
         String filePath = '$appDocumentsPath/$imageName';
         File tempFile = await File(filePath).writeAsBytes(imageDetails[0]);
@@ -562,8 +604,7 @@ class Trip {
       }
       await boatDatabaseHelper.deleteBoat(boat.boatId);
       await boatDatabaseHelper.insertBoat(boat);
-    }
-    else{
+    } else {
       path = boat.imagePath;
     }
 
@@ -623,7 +664,9 @@ class Trip {
                 width: textBoxSize / 2,
                 child: IconButton(
                     icon: Image.asset("assets/notesblue.png"),
-                    onPressed:() { viewTripNotes();}),
+                    onPressed: () {
+                      viewTripNotes();
+                    }),
               ),
               SizedBox(
                 width: textBoxSize / 2,
@@ -636,7 +679,9 @@ class Trip {
                           builder: (pageContext) => GalleryView(
                             user,
                             charterId,
-                            galleriesMap.containsKey(charterId)?  galleriesMap[charterId].photos : [],
+                            galleriesMap.containsKey(charterId)
+                                ? galleriesMap[charterId].photos
+                                : [],
                             this,
                           ),
                         ),

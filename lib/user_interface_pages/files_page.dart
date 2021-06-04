@@ -55,7 +55,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     selectionTrip =
-        Trip(DateTime.now().toString(), "", "", "", "General", "", "");
+        Trip(DateTime.now().toString(), "", "", "", "General", "", "","","");
     selectionTrip.detailDestination = "General";
     selectionTrip.charterId = "General";
     dropDownValue = selectionTrip;

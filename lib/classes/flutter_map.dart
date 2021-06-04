@@ -49,10 +49,7 @@ class FlutterMapWidget {
       height: size,
       point: new LatLng(lat, long),
       builder: (ctx) => new Container(
-        child: Icon(
-          Icons.location_on,
-          color: Colors.red,
-        ),
+        child: Image.asset("assets/redflag.png"),
       ),
     ));
   }

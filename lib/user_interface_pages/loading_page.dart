@@ -250,6 +250,7 @@ class LoadingPageState extends State<LoadingPage> {
     });
 
     updateSliderImages();
+
     getContactDetails();
 
     var profileLinkResponse =
@@ -265,19 +266,16 @@ class LoadingPageState extends State<LoadingPage> {
       );
     }
 
-
-
-    boatList  = await AggressorApi().getBoatList();
+    boatList = await AggressorApi().getBoatList();
     ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId);
-    certificationList = await AggressorApi().getCertificationList(widget.user.userId);
-
+    certificationList =
+        await AggressorApi().getCertificationList(widget.user.userId);
 
     var tempList = await AggressorApi()
         .getReservationList(widget.user.contactId, loadingCallBack);
     setState(() {
       tripList = tempList;
     });
-
 
     setState(() {
       loadedCount = tripList.length.toDouble();
@@ -296,7 +294,6 @@ class LoadingPageState extends State<LoadingPage> {
         percent = ((loadedCount / (loadingLength * 2)));
       });
     }
-
 
     setState(() {
       Wakelock.disable();
@@ -331,7 +328,6 @@ class LoadingPageState extends State<LoadingPage> {
   void getContactDetails() async {
     //initialize the contact details needed for the page
     var response = await AggressorApi().getContact(widget.user.contactId);
-    print(response.toString());
     setState(() {
       contact = Contact(
           response["contactid"],
@@ -343,7 +339,12 @@ class LoadingPageState extends State<LoadingPage> {
           response["vippluscount"],
           response["sevenseascount"],
           response["aacount"],
-          response["boutique_points"]);
+          response["boutique_points"],
+          response["vip"],
+          response["vipPlus"],
+          response["sevenSeas"],
+          response["adventuresClub"],
+          response["memberSince"]);
     });
   }
 }

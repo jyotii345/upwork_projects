@@ -12,6 +12,11 @@ class Contact {
   String sevenSeasCount;
   String aaCount;
   String boutiquePoints;
+  String vip;
+  String vipPlus;
+  String sevenSeas;
+  String adventuresClub;
+  String memberSince;
 
   Contact(
     String contactId,
@@ -24,6 +29,11 @@ class Contact {
     String sevenSeasCount,
     String aaCount,
     String boutiquePoints,
+    String vip,
+    String vipPlus,
+    String sevenSeas,
+    String adventuresClub,
+    String memberSince,
   ) {
     //default constructor
 
@@ -37,6 +47,11 @@ class Contact {
     this.sevenSeasCount = sevenSeasCount;
     this.aaCount = aaCount;
     this.boutiquePoints = boutiquePoints;
+    this.vip = vip;
+    this.vipPlus = vipPlus;
+    this.sevenSeas = sevenSeas;
+    this.adventuresClub = adventuresClub;
+    this.memberSince = memberSince;
   }
 
   Map<String, dynamic> toMap() {
@@ -52,6 +67,11 @@ class Contact {
       'sevenSeasCount': sevenSeasCount,
       'aaCount': aaCount,
       'boutiquePoints': boutiquePoints,
+      'vip': vip,
+      'vipPlus': vipPlus,
+      'sevenSeas': sevenSeas,
+      'adventuresClub': adventuresClub,
+      'memberSince': memberSince,
     };
   }
 }

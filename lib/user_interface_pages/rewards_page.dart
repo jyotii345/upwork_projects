@@ -100,6 +100,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         children: [
           Expanded(
             child: ListView(
+              physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               children: [
                 Text(
@@ -122,7 +123,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
                     child: Text(
-                      "Add Certification",
+                      "Add Certificate",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -130,16 +131,49 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               ],
             ),
           ),
-          Column(
-            children: [
-              Text(
-                "Club Membership",
-                style: TextStyle(color: AggressorColors.primaryColor),
-              ),
-            ],
+          Expanded(
+            child: ListView(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              children: [
+                Text(
+                  "Club Membership",
+                  style: TextStyle(color: AggressorColors.primaryColor),
+                ),
+                contact.vip == null
+                    ? Container()
+                    : Image.asset(
+                        "assets/vipclub.png",
+                        height: MediaQuery.of(context).size.width / 5,
+                        width: MediaQuery.of(context).size.width / 4,
+                      ),
+                contact.vipPlus == null
+                    ? Container()
+                    : Image.asset(
+                        "assets/vipplusclub.png",
+                        height: MediaQuery.of(context).size.width / 5,
+                        width: MediaQuery.of(context).size.width / 4,
+                      ),
+                contact.sevenSeas == null
+                    ? Container()
+                    : Image.asset(
+                        "assets/vipclub.png",
+                        height: MediaQuery.of(context).size.width / 5,
+                        width: MediaQuery.of(context).size.width / 4,
+                      ), //TODO replace with seven seas logo
+                contact.adventuresClub == null
+                    ? Container()
+                    : Image.asset(
+                        "assets/adventureclub.png",
+                        height: MediaQuery.of(context).size.width / 5,
+                        width: MediaQuery.of(context).size.width / 4,
+                      ),
+              ],
+            ),
           ),
           Expanded(
             child: ListView(
+              physics: NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               children: [
                 Text(
@@ -206,7 +240,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Text("7 Seas Progress Bar"),
+            child: Text("Seven Seas Progress Bar"),
           ),
           LinearPercentIndicator(
             percent: contact.sevenSeasCount == null
@@ -262,11 +296,11 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                       "," +
                       "GA" +
                       "\nGuest since " +
-                      "2010\nTotal Adventures - " +
+                      contact.memberSince +
+                      "\nTotal Adventures - " +
                       tripList.length.toString(),
                   textAlign: TextAlign.center,
                 ),
-                //TODO proper year
                 Flexible(
                   child: TextButton(
                     onPressed: () {
@@ -378,8 +412,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                   setState(() {
                     sliderIndex++;
                   });
-                }
-                else{
+                } else {
                   setState(() {
                     sliderIndex = 0;
                   });
@@ -582,10 +615,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     //this widget updates the certifications in the list
     //TODO add loading indicators
 
-    if(!certificateLoaded){
-
+    if (!certificateLoaded) {
       List<dynamic> tempList =
-      await AggressorApi().getCertificationList(widget.user.userId);
+          await AggressorApi().getCertificationList(widget.user.userId);
       setState(() {
         certificationList = tempList;
         certificateLoaded = true;
@@ -596,9 +628,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   void getIronDivers() async {
     //this widget updates the Iron Divers in the list
     //TODO add loading indicators
-    if(!ironDiversLoaded){
+    if (!ironDiversLoaded) {
       List<dynamic> tempList =
-      await AggressorApi().getCertificationList(widget.user.userId);
+          await AggressorApi().getCertificationList(widget.user.userId);
       setState(() {
         certificationList = tempList;
         ironDiversLoaded = true;
@@ -607,7 +639,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   }
 
   void getContactDetails() async {
-    if(!contactLoaded){
+    if (!contactLoaded) {
       var response = await AggressorApi().getContact(widget.user.contactId);
       setState(() {
         contact = Contact(
@@ -620,7 +652,12 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             response["vippluscount"],
             response["sevenseascount"],
             response["aacount"],
-            response["boutique_points"]);
+            response["boutique_points"],
+            response["vip"],
+            response["vipPlus"],
+            response["sevenSeas"],
+            response["adventuresClub"],
+            response["memberSince"]);
         contactLoaded = true;
       });
     }

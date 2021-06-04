@@ -37,7 +37,7 @@ class TripDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE trip(id INTEGER PRIMARY KEY,tripDate TEXT,title TEXT,latitude TEXT,longitude TEXT,destination TEXT,reservationDate TEXT,reservationId TEXT, charterId TEXT,total TEXT,discount TEXT,payments TEXT,due TEXT, dueDate TEXT,passengers TEXT,location TEXT,embark TEXT,disembark TEXT,detailDestination TEXT)",
+      "CREATE TABLE trip(id INTEGER PRIMARY KEY,tripDate TEXT,title TEXT,latitude TEXT,longitude TEXT,destination TEXT,reservationDate TEXT,reservationId TEXT, charterId TEXT,total TEXT,discount TEXT,payments TEXT,due TEXT, dueDate TEXT,passengers TEXT,location TEXT,embark TEXT,disembark TEXT,detailDestination TEXT, loginKey TEXT, passengerId TEXT)",
     );
   }
 
@@ -107,6 +107,8 @@ class TripDatabaseHelper {
       result[0]['embark'],
       result[0]['disembark'],
       result[0]['detailDestination'],
+      result[0]['loginKey'],
+      result[0]['passengerId']
     );
 
   }
@@ -137,6 +139,8 @@ class TripDatabaseHelper {
         maps[i]['embark'],
         maps[i]['disembark'],
         maps[i]['detailDestination'],
+        maps[i]['loginKey'],
+        maps[i]['passengerId'],
       );
     });
   }

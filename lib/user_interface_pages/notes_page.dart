@@ -25,7 +25,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   instance vars
    */
 
-
   Map<String, dynamic> dropDownValue;
 
   List<dynamic> notesList = [];
@@ -49,6 +48,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     dateDropDownValue = Trip(
+      "",
+      "",
       "",
       "",
       "",
@@ -276,7 +277,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     });
 
     if (tempList.length == 0) {
-      tempList = [Trip("", "", "", "", "", "", "")];
+      tempList = [Trip("", "", "", "", "", "", "", "", "")];
     }
 
     setState(() {
@@ -377,7 +378,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       ),
     );
   }
-
 
   Widget getNotesSection() {
     //returns the section of the page that displays notes already made

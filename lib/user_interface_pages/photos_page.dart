@@ -59,6 +59,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       "",
       "",
       "",
+      "",
+      "",
     );
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
     dropDownValue = boatList[0];
@@ -148,8 +150,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 onChanged: (Map<String, dynamic> newValue) {
                   setState(() {
                     dropDownValue = newValue;
-                    dateDropDownList = getDateDropDownList(
-                        newValue);
+                    dateDropDownList = getDateDropDownList(newValue);
                   });
                 },
                 items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
@@ -259,7 +260,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     });
 
     if (tempList.length == 0) {
-      tempList = [Trip("", "", "", "", "", "", "")];
+      tempList = [Trip("", "", "", "", "", "", "", "","")];
     }
 
     setState(() {
@@ -658,7 +659,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showErrorMessage() {
-
     //displays an error message if there is one
     return errorMessage == ""
         ? Container()

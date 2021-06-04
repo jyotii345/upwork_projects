@@ -48,6 +48,8 @@ dependencies:
   flutter_launcher_icons: ^0.8.0
   flutter_html: ^1.0.0
   html_editor_enhanced: ^2.1.1
+  intl: ^0.17.0
+
 
 flutter_icons:
   android: "launcher_icon"
@@ -135,3 +137,4 @@ flutter:
     - assets/trashcan.png
     - assets/vipclub.png
     - assets/vipplusclub.png
+    - assets/redflag.png

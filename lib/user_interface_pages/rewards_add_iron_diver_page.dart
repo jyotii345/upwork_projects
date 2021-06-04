@@ -48,6 +48,8 @@ class AddIronDiverState extends State<AddIronDiver> {
       "",
       "",
       "",
+      "",
+      "",
     );
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
   }
@@ -469,7 +471,7 @@ class AddIronDiverState extends State<AddIronDiver> {
     });
 
     if (tempList.length == 0) {
-      tempList = [Trip("", "", "", "", "", "", "")];
+      tempList = [Trip("", "", "", "", "", "", "", "","")];
     }
 
     setState(() {
