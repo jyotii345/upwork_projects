@@ -13,6 +13,7 @@ import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_add_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/trip_make_payment_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -473,7 +474,15 @@ class Trip {
                                 child: TextButton(
                                   style: TextButton.styleFrom(
                                       padding: EdgeInsets.all(0)),
-                                  onPressed: () {},
+                                  onPressed: () {Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => MakePayment(
+                                        user,
+                                        this,
+                                      ),
+                                    ),
+                                  );},
                                   child: Text(
                                     "Make Payment",
                                     textAlign: TextAlign.center,
@@ -621,8 +630,6 @@ class Trip {
                 child: IconButton(
                     icon: Image.asset("assets/photosblue.png"),
                     onPressed: () {
-                      print("opening");
-                      print(galleriesMap.toString());
                       Navigator.push(
                         context,
                         MaterialPageRoute(
