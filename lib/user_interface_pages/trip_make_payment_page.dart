@@ -1,3 +1,4 @@
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -29,13 +30,17 @@ class MakePaymentState extends State<MakePayment> {
   String errorMessage = "";
   bool loading = false;
 
-  String cardNumber;
-  String cardMonth;
-  String cardYear;
-  String paymentAmount;
-  String cvv;
+  String cardNumber = "";
+  String cardExpirationDate = "";
+  String paymentAmount = "";
+  String cvv = "";
 
-  final paymentController = MoneyMaskedTextController(thousandSeparator: ",", decimalSeparator: ".",);
+  final paymentController = MoneyMaskedTextController(
+    thousandSeparator: ",",
+    decimalSeparator: ".",
+  );
+
+  final formKey = new GlobalKey<FormState>();
 
   /*
   initState
@@ -262,7 +267,9 @@ class MakePaymentState extends State<MakePayment> {
             getPaymentInformation(),
             getPaymentDetails(),
             showErrorMessage(),
-            Container(height: 400,),
+            Container(
+              height: 400,
+            ),
           ],
         ),
       ),
@@ -449,29 +456,32 @@ class MakePaymentState extends State<MakePayment> {
 
   Widget getPaymentDetails() {
     //gets card information and displays what cards we accept
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-          child: ListView(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            children: [
-              Text(
-                "• Please note, we only accept Visa and Mastercard",
-                style: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: MediaQuery.of(context).size.height / 60,
+    return Form(
+      key: formKey,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+            child: ListView(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              children: [
+                Text(
+                  "• Please note, we only accept Visa and Mastercard",
+                  style: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: MediaQuery.of(context).size.height / 60,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        getCardNumber(),
-        getCardExpirationDate(),
-        getPaymentAmount(),
-        getPaymentButton(),
-      ],
+          getCardNumber(),
+          getCardExpirationDate(),
+          getPaymentAmount(),
+          getPaymentButton(),
+        ],
+      ),
     );
   }
 
@@ -494,10 +504,7 @@ class MakePaymentState extends State<MakePayment> {
           ),
           validator: (value) =>
               value.isEmpty ? 'Card Number can\'t be empty' : null,
-          onSaved: (value) => () {
-            cardNumber = value.trim();
-            cardNumber.replaceAll('  ', '');
-          },
+          onSaved: (value) => cardNumber = value.trim(),
         ),
       ),
     );
@@ -523,11 +530,8 @@ class MakePaymentState extends State<MakePayment> {
                 labelText: "Expiration Date",
               ),
               validator: (value) =>
-                  value.isEmpty ? 'Card Date can\'t be empty' : null,
-              onSaved: (value) => () {
-                cardNumber = value.trim();
-                cardNumber.replaceAll('  ', '');
-              },
+                  value.isEmpty ? 'Card Expiration Date can\'t be empty' : null,
+              onSaved: (value) => cardExpirationDate = value.trim(),
             ),
           ),
           Flexible(
@@ -546,10 +550,7 @@ class MakePaymentState extends State<MakePayment> {
                 ),
                 validator: (value) =>
                     value.isEmpty ? 'CVV can\'t be empty' : null,
-                onSaved: (value) => () {
-                  cardNumber = value.trim();
-                  cardNumber.replaceAll('  ', '');
-                },
+                onSaved: (value) => cvv = value.trim(),
               ),
             ),
           ),
@@ -574,17 +575,16 @@ class MakePaymentState extends State<MakePayment> {
         ),
         validator: (value) =>
             value.isEmpty ? 'Payment Amount can\'t be empty' : null,
-        onSaved: (value) => () {
-          cardNumber = value.trim();
-          cardNumber.replaceAll('  ', '');
-        },
+        onSaved: (value) => paymentAmount = value.trim(),
       ),
     );
   }
 
   Widget getPaymentButton() {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        validateAndSubmit();
+      },
       child: Text(
         "Make Payment",
         style: TextStyle(color: Colors.white),
@@ -660,6 +660,54 @@ class MakePaymentState extends State<MakePayment> {
       ),
     );
   }
+
+  bool validateAndSave() {
+    // Check if form is valid before perform login or signup
+    final form = formKey.currentState;
+    if (form.validate()) {
+      form.save();
+      return true;
+    }
+    return false;
+  }
+
+  void validateAndSubmit() async {
+    // Perform login or signup
+    setState(() {
+      errorMessage = "";
+      loading = true;
+    });
+
+    if (validateAndSave()) {
+      try {
+        cardNumber = cardNumber.replaceAll('  ', '');
+        String paymentMonth =
+        cardExpirationDate.substring(0, 2);
+
+        var response = await AggressorApi().makePayment(
+            widget.trip.reservationId,
+            widget.trip.charterId,
+            widget.user.contactId,
+            double.parse(paymentAmount).toString(),
+            paymentMonth,
+            cardExpirationDate.substring(3),
+            cardNumber,
+            cvv);
+
+        print(response.toString());
+
+        setState(() {
+          loading = false;
+        });
+      } catch (e) {
+        print('caught Error: $e');
+        setState(() {
+          errorMessage = e.message;
+          loading = false;
+        });
+      }
+    }
+  }
 }
 
 class CardNumberInputFormatter extends TextInputFormatter {
@@ -713,4 +761,3 @@ class CardDateInputFormatter extends TextInputFormatter {
         selection: new TextSelection.collapsed(offset: string.length));
   }
 }
-

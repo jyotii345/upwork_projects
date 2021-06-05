@@ -115,6 +115,7 @@ class RegistrationPageState extends State<RegistrationPage>
                   getFirstName(),
                   getLastName(),
                   getEmail(),
+                  getEmail(),
                   getDateOfBirth(),
                   getPassword(),
                   getConfirmPassword(),
