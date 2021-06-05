@@ -266,10 +266,12 @@ class LoadingPageState extends State<LoadingPage> {
       );
     }
 
-    boatList = await AggressorApi().getBoatList();
-    ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId);
-    certificationList =
-        await AggressorApi().getCertificationList(widget.user.userId);
+    getBoatList();
+    getIronDiverList();
+    getCountriesList();
+    getStatesList();
+    getCertificationList();
+    loadProfileDetails();
 
     var tempList = await AggressorApi()
         .getReservationList(widget.user.contactId, loadingCallBack);
@@ -346,5 +348,44 @@ class LoadingPageState extends State<LoadingPage> {
           response["adventuresClub"],
           response["memberSince"]);
     });
+  }
+
+  void getBoatList() async {
+    //set the initial boat list
+    boatList = await AggressorApi().getBoatList();
+  }
+
+  void getIronDiverList() async {
+    //set the initial iron diver awards
+    ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId);
+  }
+
+  void getCountriesList() async {
+    //set the initial countries list
+    countriesList = await AggressorApi().getCountries();
+  }
+
+  void getStatesList() async {
+    //set the initial states list
+    statesList = await AggressorApi().getStates();
+  }
+
+  void getCertificationList() async {
+    //set the initial certification lists
+    certificationList =
+        await AggressorApi().getCertificationList(widget.user.userId);
+  }
+
+  void loadProfileDetails()async{
+    if (!profileDataLoaded) {
+      var jsonResponse =
+      await AggressorApi().getProfileData(widget.user.userId);
+      if (jsonResponse["status"] == "success") {
+        setState(() {
+          profileData = jsonResponse;
+          profileDataLoaded = true;
+        });
+      }
+    }
   }
 }

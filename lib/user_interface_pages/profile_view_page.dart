@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_edit_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,10 +21,6 @@ class MyProfileState extends State<MyProfile>
   instance vars
    */
 
-  bool profileDataLoaded = false;
-
-  Map<String, dynamic> profileData;
-  List<dynamic> countries;
 
   /*
   initState
@@ -150,7 +147,7 @@ class MyProfileState extends State<MyProfile>
   String getCountry(String countryCode) {
     //gets the country list from the api
     String country = countryCode;
-    countries.forEach((element) {
+    countriesList.forEach((element) {
       if (element["countryid"].toString() == countryCode) {
         country = element["country"];
       }
@@ -273,7 +270,7 @@ class MyProfileState extends State<MyProfile>
         var jsonResponseCountries = await AggressorApi().getCountries();
         print(jsonResponseCountries.runtimeType);
         setState(() {
-          countries = jsonResponseCountries;
+          countriesList = jsonResponseCountries;
           profileData = jsonResponse;
           profileDataLoaded = true;
         });

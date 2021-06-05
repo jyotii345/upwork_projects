@@ -161,21 +161,30 @@ class _MyHomePageState extends State<MyHomePage>
     loadedCount = 0;
     loadingLength = 0;
 
-    loadedCount = 0;
-    loadingLength = 0;
+    photosLoaded = false;
+    notesLoaded = false;
+    certificateLoaded = false;
+    ironDiversLoaded = false;
+    contactLoaded = false;
+    profileDataLoaded = false;
+
+    currentIndex = 0;
 
     galleriesMap = <String, Gallery>{};
+    profileData = <String, dynamic>{};
+
     notLoadedList = [];
     tripList = [];
     loadSize = [];
+    statesList = [];
+    countriesList = [];
     boatList = [];
     sliderImageList = [];
     notesList = [];
+    ironDiverList = [];
+    certificationList = [];
 
-    photosLoaded = false;
-    notesLoaded = false;
-
-    currentIndex = 0;
+    contact = null;
 
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginPage()));

@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,6 @@ class EditMyProfileState extends State<EditMyProfile>
   Map<String, dynamic> countryDropDownSelection;
   Map<String, dynamic> stateDropDownSelection;
 
-  List<dynamic> countryList = [], stateList = [];
 
   bool stateAndCountryLoaded = false;
 
@@ -1013,7 +1013,7 @@ class EditMyProfileState extends State<EditMyProfile>
                           : () {};
                     });
                   },
-                  items: stateList
+                  items: statesList
                       .map<DropdownMenuItem<Map<String, dynamic>>>((value) {
                     return DropdownMenuItem<Map<String, dynamic>>(
                       child: Padding(
@@ -1081,7 +1081,7 @@ class EditMyProfileState extends State<EditMyProfile>
                 country = newValue["countryid"].toString();
               });
             },
-            items: countryList
+            items: countriesList
                 .map<DropdownMenuItem<Map<String, dynamic>>>((value) {
               return DropdownMenuItem<Map<String, dynamic>>(
                 child: Padding(
@@ -1122,19 +1122,17 @@ class EditMyProfileState extends State<EditMyProfile>
       totalDives = widget.profileData["dives"].toString();
       accountType = widget.profileData["account_type"];
 
-      countryList = await AggressorApi().getCountries();
-      stateList = await AggressorApi().getStates();
-      countryDropDownSelection = countryList[0];
-      stateDropDownSelection = stateList[0];
+      countryDropDownSelection = countriesList[0];
+      stateDropDownSelection = statesList[0];
 
-      countryList.forEach((element) {
+      countriesList.forEach((element) {
         if (element["countryid"].toString() == country) {
           countryDropDownSelection = element;
         }
       });
 
       country == "2"
-          ? stateList.forEach((element) {
+          ? statesList.forEach((element) {
               if (element["stateAbbr"].toString() == territory) {
                 stateDropDownSelection = element;
               }

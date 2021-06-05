@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
@@ -34,9 +35,7 @@ class MakePaymentState extends State<MakePayment> {
   String paymentAmount;
   String cvv;
 
-  final paymentController = TextEditingController();
-  String _formatNumber(String s) => NumberFormat.decimalPattern("en").format(int.parse(s));
-
+  final paymentController = MoneyMaskedTextController(thousandSeparator: ",", decimalSeparator: ".",);
 
   /*
   initState
@@ -566,13 +565,10 @@ class MakePaymentState extends State<MakePayment> {
         keyboardType: TextInputType.number,
         controller: paymentController,
         textAlign: TextAlign.center,
-        inputFormatters: [
-          WhitelistingTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(7),
-        ],
+        maxLength: 8,
         decoration: new InputDecoration(
           icon: Icon(Icons.attach_money),
-          hintText: "000.00",
+          hintText: "0",
           hintStyle: TextStyle(),
           labelText: "Payment Amount",
         ),
@@ -581,13 +577,6 @@ class MakePaymentState extends State<MakePayment> {
         onSaved: (value) => () {
           cardNumber = value.trim();
           cardNumber.replaceAll('  ', '');
-        },
-        onChanged: (string) {
-          string = '${_formatNumber(string.replaceAll(',', ''))}';
-          paymentController.value = TextEditingValue(
-            text: string,
-            selection: TextSelection.collapsed(offset: string.length),
-          );
         },
       ),
     );

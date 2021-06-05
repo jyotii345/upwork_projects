@@ -157,7 +157,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                 contact.sevenSeas == null
                     ? Container()
                     : Image.asset(
-                        "assets/vipclub.png",
+                        "assets/sevenseasclub.png",
                         height: MediaQuery.of(context).size.width / 5,
                         width: MediaQuery.of(context).size.width / 4,
                       ), //TODO replace with seven seas logo
@@ -293,8 +293,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                       contact.nameM +
                       " " +
                       contact.nameL +
-                      "," +
-                      "GA" +
+                      ", " +
+                      profileData["state"] +
                       "\nGuest since " +
                       contact.memberSince +
                       "\nTotal Adventures - " +
@@ -398,7 +398,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
           height: MediaQuery.of(context).size.height / 6,
           child: Image.memory(
             sliderImageList[sliderIndex],
-            fit: BoxFit.cover,
+            fit: BoxFit.fill,
           ),
         ),
         Container(
@@ -436,6 +436,11 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                 if (sliderIndex > 0) {
                   setState(() {
                     sliderIndex--;
+                  });
+                }
+                else{
+                  setState(() {
+                    sliderIndex = sliderImageList.length - 1;
                   });
                 }
               },
