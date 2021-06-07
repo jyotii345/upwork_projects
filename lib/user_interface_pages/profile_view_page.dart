@@ -268,7 +268,6 @@ class MyProfileState extends State<MyProfile>
           await AggressorApi().getProfileData(widget.user.userId);
       if (jsonResponse["status"] == "success") {
         var jsonResponseCountries = await AggressorApi().getCountries();
-        print(jsonResponseCountries.runtimeType);
         setState(() {
           countriesList = jsonResponseCountries;
           profileData = jsonResponse;

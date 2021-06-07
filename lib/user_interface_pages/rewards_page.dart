@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
@@ -10,8 +11,8 @@ import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-
 import '../classes/aggressor_colors.dart';
+import 'dart:io';
 
 class Rewards extends StatefulWidget {
   Rewards(this.user);
@@ -399,10 +400,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height / 6,
-          child: Image.memory(
-            sliderImageList[sliderIndex],
-            fit: BoxFit.fill,
-          ),
+          child:  Image.file(File(sliderImageList[sliderIndex]["filePath"]), fit: BoxFit.fill,),
         ),
         Container(
           width: MediaQuery.of(context).size.width,
@@ -623,7 +621,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     //this widget updates the certifications in the list
     //TODO add loading indicators
 
-    if (!certificateLoaded) {
+    if (!certificateLoaded && online) {
       List<dynamic> tempList =
           await AggressorApi().getCertificationList(widget.user.userId);
       setState(() {
@@ -653,7 +651,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   void getIronDivers() async {
     //this widget updates the Iron Divers in the list
     //TODO add loading indicators
-    if (!ironDiversLoaded) {
+    if (!ironDiversLoaded && online) {
       List<dynamic> tempList =
           await AggressorApi().getIronDiverList(widget.user.userId);
       setState(() {
@@ -678,7 +676,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   }
 
   void getContactDetails() async {
-    if (!contactLoaded) {
+    if (!contactLoaded  && online) {
       var response = await AggressorApi().getContact(widget.user.contactId);
       setState(() {
         contact = Contact(

@@ -4,12 +4,25 @@ import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/contact.dart';
+import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/photo.dart';
+import 'package:aggressor_adventures/databases/notes_database.dart';
+import 'package:aggressor_adventures/databases/photo_database.dart';
+import 'package:aggressor_adventures/databases/profile_database.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/boat_database.dart';
+import 'package:aggressor_adventures/databases/certificate_database.dart';
+import 'package:aggressor_adventures/databases/contact_database.dart';
+import 'package:aggressor_adventures/databases/countries_database.dart';
+import 'package:aggressor_adventures/databases/iron_diver_database.dart';
 import 'package:aggressor_adventures/databases/slider_database.dart';
+import 'package:aggressor_adventures/databases/states_database.dart';
+import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_link_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -248,13 +261,155 @@ class LoadingPageState extends State<LoadingPage> {
   }
 
   void loadData() async {
+    //determines if the device is online or offline and loads data from the appropriate place.
     setState(() {
       Wakelock.enable();
     });
 
-    updateSliderImages();
+    online = await DataConnectionChecker().hasConnection;
+    if (online == true) {
+      await getOnlineLoad();
+    } else {
+      await getOfflineLoad();
+    }
 
+    setState(() {
+      Wakelock.disable();
+    });
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MyHomePage(
+                  user: widget.user,
+                )));
+  }
+
+  Future<dynamic> getOfflineLoad() async {
+    //load data from the device if the application is offline
+
+    var tempTripList = await TripDatabaseHelper.instance.queryTrip();
+    setState(() {
+      tripList = tempTripList;
+      loadedCount++;
+    });
+
+    setState(() {
+      loadingLength = tripList.length + 12.toDouble();
+    });
+
+    var tempSliderImageList =
+        await SlidersDatabaseHelper.instance.querySliders();
+    setState(() {
+      loadedCount++;
+    });
+    var contactList = await ContactDatabaseHelper.instance.queryContact();
+    setState(() {
+      loadedCount++;
+    });
+    var contactResponse = contactList[0];
+    setState(() {
+      loadedCount++;
+    });
+    var tempBoatList = await BoatDatabaseHelper.instance.queryBoat();
+    setState(() {
+      loadedCount++;
+    });
+    var tempIronDiverList =
+        await IronDiverDatabaseHelper.instance.queryIronDiver();
+    setState(() {
+      loadedCount++;
+    });
+    var tempCertificationList =
+        await CertificateDatabaseHelper.instance.queryCertificate();
+    setState(() {
+      loadedCount++;
+    });
+    var tempCountriesList =
+        await CountriesDatabaseHelper.instance.queryCountries();
+    setState(() {
+      loadedCount++;
+    });
+    var tempStatesList = await StatesDatabaseHelper.instance.queryStates();
+    setState(() {
+      loadedCount++;
+    });
+    var tempProfileData = await ProfileDatabaseHelper.instance.queryProfile();
+    setState(() {
+      loadedCount++;
+    });
+
+    var tempNotesList = await NotesDatabaseHelper.instance.queryNotes();
+    setState(() {
+      loadedCount++;
+    });
+
+    var photosList = await PhotoDatabaseHelper.instance.queryPhoto();
+    var tempGalleriesMap = await getGalleries(photosList);
+    setState(() {
+      loadedCount++;
+    });
+
+    setState(() {
+      sliderImageList = tempSliderImageList;
+      contact = Contact(
+          contactResponse["contactId"].toString(),
+          contactResponse["firstName"],
+          contactResponse["middleName"],
+          contactResponse["lastName"],
+          contactResponse["email"],
+          contactResponse["vipCount"].toString(),
+          contactResponse["vipPlusCount"].toString(),
+          contactResponse["sevenSeasCount"].toString(),
+          contactResponse["aaCount"].toString(),
+          contactResponse["boutiquePoints"].toString(),
+          contactResponse["vip"],
+          contactResponse["vipPlus"],
+          contactResponse["sevenSeas"],
+          contactResponse["adventuresClub"],
+          contactResponse["memberSince"].toString());
+      tempBoatList.forEach((element) {
+        boatList.add(element.toMap());
+      });
+      ironDiverList = tempIronDiverList;
+      certificationList = tempCertificationList;
+      countriesList = tempCountriesList;
+      statesList = tempStatesList;
+      profileData = tempProfileData[0];
+      notesList = tempNotesList;
+      galleriesMap = tempGalleriesMap;
+    });
+
+    if (tripList == null) {
+      tripList = [];
+    }
+
+    for (var trip in tripList) {
+      trip.user = widget.user;
+      await trip.initCharterInformation();
+      setState(() {
+        loadedCount++;
+        percent = (loadedCount / (loadingLength));
+      });
+    }
+
+    return "done";
+  }
+
+  Future<dynamic> getOnlineLoad() async {
+    //load data from the internet if the application is online
+    try {
+      sliderImageList = await SlidersDatabaseHelper.instance.querySliders();
+    } catch (e) {
+      print("no sliders");
+    }
+    updateSliderImages();
     getContactDetails();
+    getBoatList();
+    getIronDiverList();
+    getCountriesList();
+    getStatesList();
+    getCertificationList();
+    loadProfileDetails();
 
     var profileLinkResponse =
         await AggressorApi().checkProfileLink(widget.user.userId);
@@ -269,22 +424,10 @@ class LoadingPageState extends State<LoadingPage> {
       );
     }
 
-    getBoatList();
-    getIronDiverList();
-    getCountriesList();
-    getStatesList();
-    getCertificationList();
-    loadProfileDetails();
-
     var tempList = await AggressorApi()
         .getReservationList(widget.user.contactId, loadingCallBack);
     setState(() {
       tripList = tempList;
-    });
-
-    setState(() {
-      loadedCount = tripList.length.toDouble();
-      percent = ((loadedCount / loadingLength * 2));
     });
 
     if (tripList == null) {
@@ -296,43 +439,36 @@ class LoadingPageState extends State<LoadingPage> {
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
-        percent = ((loadedCount / (loadingLength * 2)));
+        percent = (loadedCount / (loadingLength));
       });
     }
-
-    setState(() {
-      Wakelock.disable();
-    });
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => MyHomePage(
-                  user: widget.user,
-                )));
+    return "done";
   }
 
   Future<dynamic> updateSliderImages() async {
-    //TODO store these files somewhere
-    SlidersDatabaseHelper slidersDatabaseHelper = SlidersDatabaseHelper.instance;
+    SlidersDatabaseHelper slidersDatabaseHelper =
+        SlidersDatabaseHelper.instance;
     List<String> fileNames = await AggressorApi().getRewardsSliderList();
     for (String file in fileNames) {
-      var fileResponse = await AggressorApi().getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
+      var fileResponse = await AggressorApi()
+          .getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
       Uint8List bytes = await readByteStream(fileResponse.stream);
-
 
       String fileName = file.substring(7);
       Directory appDocumentsDirectory =
-      await getApplicationDocumentsDirectory();
+          await getApplicationDocumentsDirectory();
       String appDocumentsPath = appDocumentsDirectory.path;
       String filePath = '$appDocumentsPath/$fileName';
       File tempFile = await File(filePath).writeAsBytes(bytes);
 
-      try{await slidersDatabaseHelper.deleteSliders(fileName);}
-      catch(e){
+      try {
+        await slidersDatabaseHelper.deleteSliders(fileName);
+      } catch (e) {
         print("no such file");
       }
-      await slidersDatabaseHelper.insertSliders({'fileName':fileName, 'filePath' : tempFile.path});
-      sliderImageList.add(bytes);
+      await slidersDatabaseHelper
+          .insertSliders({'fileName': fileName, 'filePath': tempFile.path});
+      sliderImageList.add({'filePath': tempFile.path, 'fileName': fileName});
     }
     return "done";
   }
@@ -365,6 +501,7 @@ class LoadingPageState extends State<LoadingPage> {
           response["adventuresClub"],
           response["memberSince"]);
     });
+    updateContactCache(response);
   }
 
   void getBoatList() async {
@@ -375,34 +512,179 @@ class LoadingPageState extends State<LoadingPage> {
   void getIronDiverList() async {
     //set the initial iron diver awards
     ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId);
+    updateIronDiversCache();
   }
 
   void getCountriesList() async {
     //set the initial countries list
     countriesList = await AggressorApi().getCountries();
+    updateCountryCache();
   }
 
   void getStatesList() async {
     //set the initial states list
     statesList = await AggressorApi().getStates();
+    updateStatesCache();
   }
 
   void getCertificationList() async {
     //set the initial certification lists
     certificationList =
         await AggressorApi().getCertificationList(widget.user.userId);
+    updateCertificationCache();
   }
 
-  void loadProfileDetails()async{
+  void updateContactCache(var response) async {
+    //cleans and saves the contacts to the database
+    ContactDatabaseHelper contactDatabaseHelper =
+        ContactDatabaseHelper.instance;
+    try {
+      await contactDatabaseHelper.deleteContactTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    await contactDatabaseHelper.insertContact(
+        response["contactid"],
+        response["first_name"],
+        response["middle_name"],
+        response["last_name"],
+        response["email"],
+        response["vipcount"],
+        response["vippluscount"],
+        response["sevenseascount"],
+        response["aacount"],
+        response["boutique_points"],
+        response["vip"],
+        response["vipPlus"],
+        response["sevenSeas"],
+        response["adventuresClub"],
+        response["memberSince"]);
+  }
+
+  void updateCertificationCache() async {
+    //cleans and saves the certifications to the database
+    CertificateDatabaseHelper certificateDatabaseHelper =
+        CertificateDatabaseHelper.instance;
+    try {
+      await certificateDatabaseHelper.deleteCertificateTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var certification in certificationList) {
+      await certificateDatabaseHelper.insertCertificate(
+          certification['id'].toString(), certification['certification']);
+    }
+  }
+
+  void updateIronDiversCache() async {
+    //cleans and saves the iron divers to the database
+    IronDiverDatabaseHelper ironDiverDatabaseHelper =
+        IronDiverDatabaseHelper.instance;
+    try {
+      await ironDiverDatabaseHelper.deleteIronDiverTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var ironDiver in ironDiverList) {
+      await ironDiverDatabaseHelper.insertIronDiver(
+          ironDiver['id'].toString(), ironDiver['name']);
+    }
+  }
+
+  void updateCountryCache() async {
+    //cleans and saves the countries to the database
+    CountriesDatabaseHelper countriesDatabaseHelper =
+        CountriesDatabaseHelper.instance;
+    try {
+      await countriesDatabaseHelper.deleteCountriesTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var country in countriesList) {
+      await countriesDatabaseHelper.insertCountries(country);
+    }
+  }
+
+  void updateStatesCache() async {
+    //cleans and saves the states to the database
+    StatesDatabaseHelper statesDatabaseHelper = StatesDatabaseHelper.instance;
+    try {
+      await statesDatabaseHelper.deleteStatesTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var state in statesList) {
+      await statesDatabaseHelper.insertStates(state);
+    }
+  }
+
+  void updateProfileDetailsCache(var response) async {
+    //cleans and saves the profile to the database
+    ProfileDatabaseHelper profileDatabaseHelper =
+        ProfileDatabaseHelper.instance;
+    try {
+      await profileDatabaseHelper.deleteProfileTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    await profileDatabaseHelper.insertProfile(
+      response['userId'],
+      response['first'],
+      response['last'],
+      response['email'],
+      response['address1'],
+      response['address2'],
+      response['address2'],
+      response['state'],
+      response['province'],
+      response['country'].toString(),
+      response['zip'],
+      response['username'],
+      response['password'],
+      response['homePhone'],
+      response['workPhone'],
+      response['mobilePhone'],
+    );
+  }
+
+  void loadProfileDetails() async {
+    //loads the initial value of the users profile data
     if (!profileDataLoaded) {
       var jsonResponse =
-      await AggressorApi().getProfileData(widget.user.userId);
+          await AggressorApi().getProfileData(widget.user.userId);
       if (jsonResponse["status"] == "success") {
         setState(() {
           profileData = jsonResponse;
           profileDataLoaded = true;
         });
       }
+      updateProfileDetailsCache(jsonResponse);
     }
+  }
+
+  Future<dynamic> getGalleries(List<Photo> photos) async {
+    //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
+
+    Map<String, Gallery> tempGalleries = <String, Gallery>{};
+    photos.forEach((element) {
+      if (!tempGalleries.containsKey(element.boatId)) {
+        int tripIndex = 0;
+        for (int i = 0; i < tripList.length - 1; i++) {
+          if (tripList[i].charterId == element.boatId) {
+            tripIndex = i;
+          }
+        }
+        tempGalleries[element.boatId] = Gallery(
+            widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
+      }
+      tempGalleries[element.boatId].addPhoto(element);
+    });
+    return tempGalleries;
   }
 }

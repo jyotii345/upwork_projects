@@ -1,10 +1,13 @@
 /*
 returns the flutter map to the home page and preserves the state
  */
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+
+import 'globals.dart';
 
 class FlutterMapWidget {
   BuildContext context;
@@ -19,7 +22,7 @@ class FlutterMapWidget {
 
   Widget getMap() {
     //returns the widget that contains the flutter map
-    return SizedBox(
+    return online ? SizedBox(
       width: MediaQuery.of(context).size.width, // or use fixed size like 200
       height: MediaQuery.of(context).size.height / 5.5,
       child: FlutterMap(
@@ -39,7 +42,18 @@ class FlutterMapWidget {
           ),
         ],
       ),
-    );
+    ) : Stack(children: [Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 7 + 4,
+      color: AggressorColors.secondaryColor,
+    ),Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height / 7,
+      child: Image.asset(
+        "assets/bannerimage.png",
+        fit: BoxFit.cover,
+      ),
+    )],);
   }
 
   void addMarker(var lat, var long, size) {

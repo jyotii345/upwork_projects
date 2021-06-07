@@ -452,7 +452,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getFiles() async {
     //downloads file from aws. If the file is not already in storage, it will be stored on the device.
-    if (!filesLoaded) {
+    if (!filesLoaded && online) {
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
       final AwsS3Client s3client = AwsS3Client(

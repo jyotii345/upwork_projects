@@ -4,18 +4,20 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class IronDiverDatabaseHelper {
+class StatesDatabaseHelper {
   //a helper class to drive the database
 
-  static final _databaseName = "ironDiverDatabase.db";
+  static final _databaseName = "statesDatabase.db";
 
   static final _databaseVersion = 1;
 
-  IronDiverDatabaseHelper._privateConstructor();
+  StatesDatabaseHelper._privateConstructor();
 
-  static final IronDiverDatabaseHelper instance =
-      IronDiverDatabaseHelper._privateConstructor();
+  static final StatesDatabaseHelper instance =
+  StatesDatabaseHelper._privateConstructor();
   static Database _database;
+
+
 
   Future<Database> get database async {
     //get the database object
@@ -32,10 +34,12 @@ class IronDiverDatabaseHelper {
         version: _databaseVersion, onCreate: _onCreate);
   }
 
+
+
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE irondiver(id INTEGER PRIMARY KEY,idval TEXT,name TEXT)",
+      "CREATE TABLE states(state TEXT,stateAbbr TEXT)",
     );
   }
 
@@ -43,55 +47,53 @@ class IronDiverDatabaseHelper {
    Database helper methods
    */
 
-  Future<int> insertIronDiver(String idVal, String name) async {
-    //add a iron diver to the database
+  Future<int> insertStates(Map<String, dynamic> state) async {
+    //add a states to the database
     final Database db = await database;
 
     int id = await db.insert(
-      'irondiver',
-      {'idval': idVal, 'name': name},
+      'states',
+      state,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return id;
   }
 
-  Future<void> deleteIronDiver(int id) async {
-    // delete a iron diver in the database
+  Future<void> deleteStates(String state) async {
+    // delete a states in the database
     final db = await database;
 
     await db.delete(
-      'irondiver',
-      where: "id = ?",
-      whereArgs: [id],
+      'states',
+      where: "state = ?",
+      whereArgs: [state],
     );
   }
 
-  Future<void> deleteIronDiverTable() async {
-    //delete the entire iron diver table in the database
+  Future<void> deleteStatesTable() async {
+    //delete the entire states table in the database
     final db = await database;
-    await db.delete('irondiver');
+    await db.delete('states');
   }
 
-  Future<bool> ironDiverExists(String idVal) async {
-    //check if a iron diver exists in the database by the iron diver path and name
+  Future<bool> statesExists(String state) async {
+    //check if a states exists in the database by the states path and name
     final db = await database;
-    var result = await db.rawQuery(
-        'SELECT EXISTS(SELECT 1 FROM irondiver WHERE idval = ?)', [idVal]);
+    var result = await db
+        .rawQuery('SELECT EXISTS(SELECT 1 FROM states WHERE state = ?)', [state]);
     int exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
-  Future<List<Map<String, dynamic>>> queryIronDiver() async {
-    // Get a iron diver from the database
+  Future<List<Map<String, dynamic>>> queryStates() async {
+    // Get a states from the database
     final Database db = await database;
 
-    final List<Map<String, dynamic>> maps = await db.query('irondiver');
+    final List<Map<String, dynamic>> maps = await db.query('states');
+
 
     return List.generate(maps.length, (i) {
-      return {
-        'id' : maps[i]['idval'],
-        'name' : maps[i]['name'],
-      };
+      return {'state':maps[i]["state"], 'stateAbbr' : maps[i]["stateAbbr"]};
     });
   }
 }

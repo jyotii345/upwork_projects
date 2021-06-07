@@ -560,7 +560,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     setState(() {
       loading = true;
     });
-    if (!photosLoaded) {
+    if (!photosLoaded  && online) {
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
       final AwsS3Client s3client = AwsS3Client(

@@ -35,7 +35,7 @@ class CertificateDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE certificate(id INTEGER PRIMARY KEY,idval TEXT,name TEXT,)",
+      "CREATE TABLE certificate(id INTEGER PRIMARY KEY,idval TEXT,name TEXT)",
     );
   }
 
@@ -81,17 +81,17 @@ class CertificateDatabaseHelper {
     return exists == 1;
   }
 
-  Future<List<dynamic>> queryCertificate() async {
+  Future<List<Map<String, dynamic>>> queryCertificate() async {
     // Get a iron diver from the database
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query('certificate');
 
     return List.generate(maps.length, (i) {
-      return [
-        maps[i]['idval'],
-        maps[i]['name'],
-      ];
+      return {
+        'id': maps[i]['idval'],
+        'certification': maps[i]['name'],
+      };
     });
   }
 }

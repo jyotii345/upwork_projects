@@ -28,8 +28,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   Map<String, dynamic> dropDownValue;
 
-  List<dynamic> notesList = [];
-  List<Note> noteList = <Note>[];
+  List<dynamic> noteList = [];
 
   List<Trip> sortedTripList;
 
@@ -388,7 +387,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Container(
         color: Colors.white,
-        child: noteList.length == 0
+        child: notesList.length == 0
             ? Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -433,8 +432,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     //returns the list item containing notes objects
 
     double textBoxSize = MediaQuery.of(context).size.width / 4;
-    notesList.clear();
-    notesList.add(
+    noteList.clear();
+    noteList.add(
       Container(
         width: double.infinity,
         color: Colors.grey[100],
@@ -471,29 +470,33 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
 
-    noteList.forEach((value) {
-      notesList.add(value.getNoteRow(
+    for(Note note in notesList){
+      note.user = widget.user;
+      note.pageContext = context;
+      note.callback = notesCallBack();
+      noteList.add(note.getNoteRow(
         context,
         index,
       ));
       index++;
-    });
+    };
 
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemCount: notesList.length,
+        itemCount: noteList.length,
         itemBuilder: (context, position) {
-          return notesList[position];
+          return noteList[position];
         });
   }
 
   Future<dynamic> getNotes() async {
     //downloads notes from aws. //TODO add the cache ability here
+
     setState(() {
       loading = true;
     });
-    if (!notesLoaded) {
+    if (!notesLoaded && online) {
       Map<String, Note> notesMap = <String, Note>{};
 
       List<dynamic> noteResponse =

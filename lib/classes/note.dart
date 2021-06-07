@@ -19,8 +19,6 @@ class Note {
   String preTripNotes;
   String postTripNotes;
   String miscNotes;
-
-
   User user;
   BuildContext pageContext;
   VoidCallback callback;

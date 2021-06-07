@@ -588,7 +588,7 @@ class Trip {
 
     String path = "";
 
-    if (boat.imagePath == "" || boat.imagePath == null) {
+    if (boat.imagePath == "" || boat.imagePath == null  && online) {
       var imageDetails = await AggressorApi().getBoatImage(boat.imageLink);
       if (imageDetails != null) {
         var imageName = boat.imageLink

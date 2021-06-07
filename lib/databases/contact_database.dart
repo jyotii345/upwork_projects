@@ -113,30 +113,29 @@ class ContactDatabaseHelper {
     return exists == 1;
   }
 
-  Future<List<dynamic>> queryContact() async {
+  Future<List<Map<String, dynamic>>> queryContact() async {
     // Get a contact from the database
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query('contact');
 
     return List.generate(maps.length, (i) {
-      return [
-        maps[i]['contactid'],
-        maps[i]['firstname'],
-        maps[i]['middlename'],
-        maps[i]['lastname'],
-        maps[i]['email'],
-        maps[i]['vipcount'],
-        maps[i]['vippluscount'],
-        maps[i]['sevenseascount'],
-        maps[i]['aacount'],
-        maps[i]['boutiquepoints'],
-        maps[i]["vip"],
-        maps[i]["vipPlus"],
-        maps[i]["sevenSeas"],
-        maps[i]["adventuresClub"],
-        maps[i]["memberSince"]
-      ];
+      return
+        {'contactId': maps[i]['contactid'],
+        'firstName' : maps[i]['firstname'],
+        'middleName' : maps[i]['middlename'],
+        'lastName' : maps[i]['lastname'],
+        'email' : maps[i]['email'],
+        'vipCount': maps[i]['vipcount'],
+        'vipPlusCount' : maps[i]['vippluscount'],
+        'sevenSeasCount' : maps[i]['sevenseascount'],
+        'aaCount' : maps[i]['aacount'],
+        'boutiquePoints' : maps[i]['boutiquepoints'],
+        'vip' : maps[i]["vip"],
+        'vipPlus' : maps[i]["vipPlus"],
+        'sevenSeas' : maps[i]["sevenSeas"],
+        'adventureSClub' : maps[i]["adventuresClub"],
+        'memberSince' : maps[i]["memberSince"]};
     });
   }
 }
