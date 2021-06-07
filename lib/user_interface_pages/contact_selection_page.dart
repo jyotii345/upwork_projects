@@ -205,7 +205,6 @@ class ContactSelectionState extends State<ContactSelection>
 
   Widget getContactList() {
     contactList = populateContactList();
-    print(contactList.toString());
     if (contactList.length == 0) {
       return Expanded(
         child: Text(

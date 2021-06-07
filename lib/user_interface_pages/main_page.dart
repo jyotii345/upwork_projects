@@ -4,9 +4,17 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
+import 'package:aggressor_adventures/databases/certificate_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
+import 'package:aggressor_adventures/databases/contact_database.dart';
+import 'package:aggressor_adventures/databases/countries_database.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
+import 'package:aggressor_adventures/databases/iron_diver_database.dart';
+import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
+import 'package:aggressor_adventures/databases/profile_database.dart';
+import 'package:aggressor_adventures/databases/slider_database.dart';
+import 'package:aggressor_adventures/databases/states_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_page.dart';
@@ -139,24 +147,21 @@ class _MyHomePageState extends State<MyHomePage>
 
   void signOutUser() async {
     //sings user out and clears databases
-    UserDatabaseHelper helper = UserDatabaseHelper.instance;
-    await helper.deleteUser(100);
 
-    TripDatabaseHelper tripDatabaseHelper = TripDatabaseHelper.instance;
-    await tripDatabaseHelper.deleteTripTable();
-
-    PhotoDatabaseHelper photoDatabaseHelper = PhotoDatabaseHelper.instance;
-    await photoDatabaseHelper.deletePhotoTable();
-
-    FileDatabaseHelper fileDatabaseHelper = FileDatabaseHelper.instance;
-    await fileDatabaseHelper.deleteFileTable();
-
-    CharterDatabaseHelper charterDatabaseHelper =
-        CharterDatabaseHelper.instance;
-    await charterDatabaseHelper.deleteCharterTable();
-
-    BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
-    await boatDatabaseHelper.deleteBoatTable();
+    await BoatDatabaseHelper.instance.deleteBoatTable();
+    await CertificateDatabaseHelper.instance.deleteCertificateTable();
+    await CharterDatabaseHelper.instance.deleteCharterTable();
+    await ContactDatabaseHelper.instance.deleteContactTable();
+    await CountriesDatabaseHelper.instance.deleteCountriesTable();
+    await FileDatabaseHelper.instance.deleteFileTable();
+    await IronDiverDatabaseHelper.instance.deleteIronDiverTable();
+    await NotesDatabaseHelper.instance.deleteNotesTable();
+    await PhotoDatabaseHelper.instance.deletePhotoTable();
+    await ProfileDatabaseHelper.instance.deleteProfileTable();
+    await SlidersDatabaseHelper.instance.deleteSlidersTable();
+    await StatesDatabaseHelper.instance.deleteStatesTable();
+    await TripDatabaseHelper.instance.deleteTripTable();
+    await UserDatabaseHelper.instance.deleteUser(100);
 
     loadedCount = 0;
     loadingLength = 0;
@@ -167,6 +172,7 @@ class _MyHomePageState extends State<MyHomePage>
     ironDiversLoaded = false;
     contactLoaded = false;
     profileDataLoaded = false;
+    online = true;
 
     currentIndex = 0;
 
@@ -236,7 +242,8 @@ class _MyHomePageState extends State<MyHomePage>
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.height / 20;
+    double iconSize = MediaQuery.of(context).size.width / 10;
+
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,

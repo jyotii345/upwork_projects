@@ -135,7 +135,7 @@ class CreateContactState extends State<CreateContact>
         String birthday = formatDate(dateOfBirth, [yyyy, mm, dd]);
 
         var jsonResponse = await AggressorApi().sendNewContact(widget.userId, address1, address2, city, countryDropDownSelection["country"] == "USA" ? territory : "", countryDropDownSelection["country"] != "USA" ? territory : "", countryDropDownSelection["countryid"].toString(), zip, email, homePhone, mobilePhone, birthday, genderDropDownOption.toLowerCase());
-        print(jsonResponse.toString());
+
         if (jsonResponse["status"] == "success") {
             showSuccessDialogue();
         } else {

@@ -167,7 +167,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 iconSize: MediaQuery.of(context).size.height / 35,
                 onChanged: (Map<String, dynamic> newValue) {
                   setState(() {
-                    print(newValue.toString());
                     dropDownValue = newValue;
                     dateDropDownList = getDateDropDownList(newValue);
                   });
@@ -270,7 +269,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   List<Trip> getDateDropDownList(Map<String, dynamic> boatMap) {
     //returns the list of dates to be displayed with the selected trip
-    print(boatMap.toString());
+
     List<Trip> tempList = [];
     tripList.forEach((element) {
       if (element.boat.boatId.toString() == boatMap["boatid"].toString() || element.boat.boatId.toString() == boatMap["boatId"].toString()) {
@@ -499,7 +498,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       loading = true;
     });
     if (!notesLoaded && online) {
-      print("gettings notes");
       Map<String, Note> notesMap = <String, Note>{};
 
       List<dynamic> noteResponse =
@@ -532,7 +530,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         }
       });
 
-      print(tempNotes.length);
       setState(() {
         notesList = tempNotes;
         notesLoaded = true;

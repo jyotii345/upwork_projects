@@ -1,6 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'classes/globals.dart';
 import 'user_interface_pages/login_page.dart';
 
 void main() {
@@ -17,6 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: AggressorColors.primaryColor,
       ),
+      navigatorKey: navigatorKey,
       home: LoginPage(),
     );
   }

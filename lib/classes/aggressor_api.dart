@@ -647,8 +647,6 @@ class AggressorApi {
 
   Future<dynamic> saveIronDiver(String userId, String boatId) async {
     //Save a new iron diver award to a specific boat
-    print(boatId);
-    print(userId);
     Response response = await post(
       Uri.https(
           'secure.aggressor.com', '/api/app/club/irondiver/save/' + userId),
@@ -790,8 +788,6 @@ class AggressorApi {
         charterId +
         '/' +
         contactId;
-    print(url);
-    print(paymentBody.toString());
     var response = await dioObj.post(url, data: formData,);
     return response.data;
   }

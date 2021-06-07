@@ -107,7 +107,7 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.width / 8;
+    double iconSize = MediaQuery.of(context).size.width / 10;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
@@ -317,8 +317,6 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
         await miscNotesController.getText(),
         widget.noteTrip.boat.boatId,
         widget.user.userId);
-
-    print(res.toString());
 
     setState(() {
       loading = false;

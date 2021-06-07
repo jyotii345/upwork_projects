@@ -132,7 +132,7 @@ class MakePaymentState extends State<MakePayment> {
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.width / 8;
+    double iconSize = MediaQuery.of(context).size.width / 10;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
@@ -684,7 +684,6 @@ class MakePaymentState extends State<MakePayment> {
         String paymentMonth =
         cardExpirationDate.substring(0, 2);
 
-        print(cardExpirationDate);
 
         var response = await AggressorApi().makePayment(
             widget.trip.reservationId,
@@ -695,8 +694,6 @@ class MakePaymentState extends State<MakePayment> {
             cardExpirationDate.substring(3),
             cardNumber,
             cvv);
-
-        print(response.toString());
 
         setState(() {
           loading = false;

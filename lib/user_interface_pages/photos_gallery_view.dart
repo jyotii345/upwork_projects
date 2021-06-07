@@ -133,7 +133,7 @@ class GalleryViewState extends State<GalleryView> {
     double iconSize = MediaQuery
         .of(context)
         .size
-        .width / 8;
+        .width / 10;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
@@ -387,8 +387,6 @@ class GalleryViewState extends State<GalleryView> {
             ? widget.photos.length - (9 * (indexMultiplier - 1))
             : 9,
         itemBuilder: (context, index) {
-          print(widget
-              .photos[(index + (9 * (indexMultiplier - 1)))].imagePath);
           return GestureDetector(
             onTap: () {
               imageExpansionDialogue(Image.file(
@@ -524,8 +522,6 @@ class GalleryViewState extends State<GalleryView> {
       File file =
       File(path);
 
-      print(result.name);
-      print(path);
       var response = await AggressorApi().uploadAwsFile(
           widget.user.userId, "gallery", widget.trip.charterId, file.path);
       await Future.delayed(Duration(milliseconds: 1000));

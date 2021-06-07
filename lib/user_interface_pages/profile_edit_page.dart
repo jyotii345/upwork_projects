@@ -170,7 +170,6 @@ class EditMyProfileState extends State<EditMyProfile>
             workPhone,
             mobilePhone);
 
-        print(jsonResponse.toString());
         if (jsonResponse["status"] == "success") {
           stateAndCountryLoaded = false;
           widget.updateCallback();

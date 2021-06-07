@@ -107,7 +107,7 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.width / 8;
+    double iconSize = MediaQuery.of(context).size.width / 10;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
@@ -298,7 +298,6 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
     });
 
     var res = await AggressorApi().updateNote(widget.note.startDate, widget.note.endDate, await preNotesController.getText(), await postNotesController.getText(), await miscNotesController.getText(), widget.note.boatId, widget.user.userId, widget.note.id,);
-    print(res.toString());
 
     setState(() {
       loading = false;

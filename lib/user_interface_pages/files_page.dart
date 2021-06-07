@@ -38,6 +38,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Trip dropDownValue, selectionTrip;
 
   bool filesLoaded = false;
+  bool loading = false;
 
   List<dynamic> filesList = [];
   List<FileData> fileDataList = <FileData>[];
@@ -55,7 +56,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     selectionTrip =
-        Trip(DateTime.now().toString(), "", "", "", "General", "", "","","");
+        Trip(DateTime.now().toString(), "", "", "", "General", "", "", "", "");
     selectionTrip.detailDestination = "General";
     selectionTrip.charterId = "General";
     dropDownValue = selectionTrip;
@@ -68,6 +69,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    getFiles();
 
     return Stack(
       children: [
@@ -98,6 +101,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 7,
             ),
+            showLoading(),
             getPageTitle(),
             getUploadFile(),
             getFilesSection(),
@@ -339,58 +343,45 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Container(
-        color: Colors.white,
-        child: FutureBuilder(
-          future: getFiles(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              return fileDataList.length == 0
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          height: .5,
-                          color: Colors.grey,
-                        ),
-                        Container(
-                          color: Colors.grey[300],
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  width: textBoxSize,
-                                  child: Text("File Name ",
-                                      textAlign: TextAlign.center),
-                                ),
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child:
-                                    Text("Date", textAlign: TextAlign.center),
-                              ),
-                              SizedBox(
-                                width: textBoxSize / 2,
-                                child: Container(),
-                              ),
-                            ],
+          color: Colors.white,
+          child: fileDataList.length == 0
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      height: .5,
+                      color: Colors.grey,
+                    ),
+                    Container(
+                      color: Colors.grey[300],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              width: textBoxSize,
+                              child: Text("File Name ",
+                                  textAlign: TextAlign.center),
+                            ),
                           ),
-                        ),
-                        Flexible(
-                          child: Text("You do not have any files to view yet."),
-                        ),
-                      ],
-                    )
-                  : getFilesView();
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-        ),
-      ),
+                          SizedBox(
+                            width: textBoxSize,
+                            child: Text("Date", textAlign: TextAlign.center),
+                          ),
+                          SizedBox(
+                            width: textBoxSize / 2,
+                            child: Container(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text("You do not have any files to view yet."),
+                    ),
+                  ],
+                )
+              : getFilesView()),
     );
   }
 
@@ -452,6 +443,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getFiles() async {
     //downloads file from aws. If the file is not already in storage, it will be stored on the device.
+    setState(() {
+      loading = true;
+    });
     if (!filesLoaded && online) {
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
@@ -564,22 +558,27 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         filesLoaded = true;
       });
     }
+    setState(() {
+      loading = false;
+    });
     return "finished";
   }
 
   void pickFile() async {
-   result = await FilePicker.platform.pickFiles(
-
+    result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'txt', 'doc', 'jpg', 'png'],
     );
 
-   setState(() {
-     fileName = result.names[0];
-   });
+    setState(() {
+      fileName = result.names[0];
+    });
   }
 
-  void uploadFile() async{
+  void uploadFile() async {
+    setState(() {
+      loading = true;
+    });
     if (result != null) {
       var uploadResult = await AggressorApi().uploadAwsFile(widget.user.userId,
           "files", dropDownValue.charterId, result.files.single.path);
@@ -595,6 +594,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         });
       }
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   Widget showErrorMessage() {
@@ -608,6 +610,19 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               textAlign: TextAlign.center,
             ),
           );
+  }
+
+  Widget showLoading() {
+    //displays a loading bar if data is being downloaded
+    return loading
+        ? Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
+            child: LinearProgressIndicator(
+              backgroundColor: AggressorColors.primaryColor,
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ),
+          )
+        : Container();
   }
 
   @override

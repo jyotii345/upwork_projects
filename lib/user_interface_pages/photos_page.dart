@@ -322,7 +322,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
         materialOptions: MaterialOptions(
           actionBarColor: "#ff428cc7",
-          actionBarTitle: "Example App",
+          actionBarTitle: "Adventure Of A Lifetime",
           allViewTitle: "All Photos",
           useDetailsView: false,
           selectCircleStrokeColor: "#ff428cc7",
@@ -353,7 +353,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         loading = false;
         images = resultList;
         errorMessage = error;
-        photosLoaded = false;
       });
 
       if (!mounted) return;

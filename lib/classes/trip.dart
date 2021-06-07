@@ -544,7 +544,8 @@ class Trip {
   }
 
   void launchGIS() async {
-    if(loginKey!= null){
+    print(loginKey);
+    if(loginKey != null && loginKey != "null"){
       await launch("https://gis.liveaboardfleet.com/gis/index.php/" +
           passengerId.toString() +
           "/" +
@@ -558,8 +559,7 @@ class Trip {
 
   void viewTripNotes() {
     if (note != null) {
-      Navigator.push(
-        context,
+      navigatorKey.currentState.push(
         MaterialPageRoute(
           builder: (context) => ViewNote(
             user,
@@ -568,16 +568,13 @@ class Trip {
         ),
       );
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => AddNotes(
-            user,
-            this,
-            () {},
-          ),
+      navigatorKey.currentState.push( MaterialPageRoute(
+        builder: (context) => AddNotes(
+          user,
+          this,
+              () {},
         ),
-      );
+      ),);
     }
   }
 

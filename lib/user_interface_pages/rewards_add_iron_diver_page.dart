@@ -136,7 +136,7 @@ class AddIronDiverState extends State<AddIronDiver> {
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.width / 8;
+    double iconSize = MediaQuery.of(context).size.width / 10;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
@@ -307,7 +307,6 @@ class AddIronDiverState extends State<AddIronDiver> {
         errorMessage = "You must select a trip to create a gallery for.";
       });
     } else {
-      print(dropDownValue["boatid"].toString());
 
       var response = await AggressorApi().saveIronDiver(
           widget.user.userId.toString(), dropDownValue["boatid"].toString());

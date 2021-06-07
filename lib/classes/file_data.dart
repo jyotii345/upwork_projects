@@ -51,14 +51,17 @@ class FileData {
                 width: iconSize,
               ),
               Expanded(
-                child: GestureDetector(
-                  onTap: openFile,
-                  child: SizedBox(
-                    width: textBoxSize,
-                    child: Text(
-                      fileName,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(color: AggressorColors.secondaryColor),
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: GestureDetector(
+                    onTap: openFile,
+                    child: SizedBox(
+                      width: textBoxSize,
+                      child: Text(
+                        fileName,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(color: AggressorColors.secondaryColor),
+                      ),
                     ),
                   ),
                 ),
@@ -92,7 +95,5 @@ class FileData {
   Future<void> openFile() async {
     //opens the contents of a file on the defualt application for the native device
     final _result = await OpenFile.open(filePath);
-    print(_result.message);
-    print(_result.type);
   }
 }
