@@ -254,7 +254,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     //generates the list of dates a trip is scheduled on a particular yacht
     List<Trip> tempList = [];
     tripList.forEach((element) {
-      if (element.boat.boatId.toString() == boatMap["boatid"].toString()) {
+      if (element.boat.boatId.toString() == boatMap["boatid"].toString() || element.boat.boatId.toString() == boatMap["boatId"].toString()) {
         tempList.add(element);
       }
     });

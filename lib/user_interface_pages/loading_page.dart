@@ -370,6 +370,12 @@ class LoadingPageState extends State<LoadingPage> {
       tempBoatList.forEach((element) {
         boatList.add(element.toMap());
       });
+      Map<String, dynamic> selectionTrip = {
+        "boatid": -1,
+        "name": " -- SELECT -- ",
+        "abbreviation": "SEL"
+      };
+      boatList.insert(0, selectionTrip);
       ironDiverList = tempIronDiverList;
       certificationList = tempCertificationList;
       countriesList = tempCountriesList;

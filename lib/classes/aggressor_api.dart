@@ -551,10 +551,8 @@ class AggressorApi {
     List<dynamic> pageJson =
         json.decode(await pageResponse.stream.bytesToString());
 
-    pageJson.forEach((element) {
-      notesList.add(element);
-    });
-    return notesList;
+
+    return pageJson;
   }
 
   Future<dynamic> saveNote(

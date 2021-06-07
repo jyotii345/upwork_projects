@@ -28,7 +28,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   Map<String, dynamic> dropDownValue;
 
-  List<dynamic> noteList = [];
+  List<Widget> noteList = [];
 
   List<Trip> sortedTripList;
 
@@ -167,6 +167,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 iconSize: MediaQuery.of(context).size.height / 35,
                 onChanged: (Map<String, dynamic> newValue) {
                   setState(() {
+                    print(newValue.toString());
                     dropDownValue = newValue;
                     dateDropDownList = getDateDropDownList(newValue);
                   });
@@ -269,9 +270,10 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   List<Trip> getDateDropDownList(Map<String, dynamic> boatMap) {
     //returns the list of dates to be displayed with the selected trip
+    print(boatMap.toString());
     List<Trip> tempList = [];
     tripList.forEach((element) {
-      if (element.boat.boatId.toString() == boatMap["boatid"].toString()) {
+      if (element.boat.boatId.toString() == boatMap["boatid"].toString() || element.boat.boatId.toString() == boatMap["boatId"].toString()) {
         tempList.add(element);
       }
     });
@@ -473,7 +475,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     for(Note note in notesList){
       note.user = widget.user;
       note.pageContext = context;
-      note.callback = notesCallBack();
+      note.callback = notesCallBack;
       noteList.add(note.getNoteRow(
         context,
         index,
@@ -497,6 +499,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       loading = true;
     });
     if (!notesLoaded && online) {
+      print("gettings notes");
       Map<String, Note> notesMap = <String, Note>{};
 
       List<dynamic> noteResponse =
@@ -529,8 +532,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         }
       });
 
+      print(tempNotes.length);
       setState(() {
-        noteList = tempNotes;
+        notesList = tempNotes;
         notesLoaded = true;
       });
       updateNotesCache();
@@ -550,7 +554,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       print("no notes in the table");
     }
 
-    for (var note in noteList) {
+    for (var note in notesList) {
       await notesDatabaseHelper.insertNotes(note);
     }
   }
