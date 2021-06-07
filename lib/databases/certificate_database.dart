@@ -4,17 +4,17 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class certificateDatabaseHelper {
+class CertificateDatabaseHelper {
   //a helper class to drive the database
 
   static final _databaseName = "certificateDatabase.db";
 
   static final _databaseVersion = 1;
 
-  certificateDatabaseHelper._privateConstructor();
+  CertificateDatabaseHelper._privateConstructor();
 
-  static final certificateDatabaseHelper instance =
-  certificateDatabaseHelper._privateConstructor();
+  static final CertificateDatabaseHelper instance =
+  CertificateDatabaseHelper._privateConstructor();
   static Database _database;
 
   Future<Database> get database async {
@@ -43,7 +43,7 @@ class certificateDatabaseHelper {
    Database helper methods
    */
 
-  Future<int> insertcertificate(String idVal, String name) async {
+  Future<int> insertCertificate(String idVal, String name) async {
     //add a iron diver to the database
     final Database db = await database;
 
@@ -55,7 +55,7 @@ class certificateDatabaseHelper {
     return id;
   }
 
-  Future<void> deletecertificate(int id) async {
+  Future<void> deleteCertificate(int id) async {
     // delete a iron diver in the database
     final db = await database;
 
@@ -66,7 +66,7 @@ class certificateDatabaseHelper {
     );
   }
 
-  Future<void> deletecertificateTable() async {
+  Future<void> deleteCertificateTable() async {
     //delete the entire iron diver table in the database
     final db = await database;
     await db.delete('certificate');
@@ -81,7 +81,7 @@ class certificateDatabaseHelper {
     return exists == 1;
   }
 
-  Future<List<dynamic>> querycertificate() async {
+  Future<List<dynamic>> queryCertificate() async {
     // Get a iron diver from the database
     final Database db = await database;
 

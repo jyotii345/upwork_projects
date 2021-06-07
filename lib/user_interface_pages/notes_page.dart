@@ -5,6 +5,7 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'notes_add_page.dart';
@@ -529,11 +530,26 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         noteList = tempNotes;
         notesLoaded = true;
       });
+      updateNotesCache();
     }
     setState(() {
       loading = false;
     });
     return "finished";
+  }
+
+  void updateNotesCache() async {
+    //cleans and saves the notes to the database
+    NotesDatabaseHelper notesDatabaseHelper = NotesDatabaseHelper.instance;
+    try {
+      await notesDatabaseHelper.deleteNotesTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var note in noteList) {
+      await notesDatabaseHelper.insertNotes(note);
+    }
   }
 
   Widget showErrorMessage() {

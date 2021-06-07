@@ -4,17 +4,17 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class contactDatabaseHelper {
+class ContactDatabaseHelper {
   //a helper class to drive the database
 
   static final _databaseName = "contactDatabase.db";
 
   static final _databaseVersion = 1;
 
-  contactDatabaseHelper._privateConstructor();
+  ContactDatabaseHelper._privateConstructor();
 
-  static final contactDatabaseHelper instance =
-      contactDatabaseHelper._privateConstructor();
+  static final ContactDatabaseHelper instance =
+      ContactDatabaseHelper._privateConstructor();
   static Database _database;
 
   Future<Database> get database async {
@@ -35,7 +35,7 @@ class contactDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE contact(id INTEGER PRIMARY KEY,contactid TEXT, firstname TEXT, middlename TEXT, lastname TEXT, email TEXT, vipcount TEXT, vippluscount TEXT, sevenseascount TEXT, aacount TEXT, boutiquepoints TEXT)",
+      "CREATE TABLE contact(id INTEGER PRIMARY KEY,contactid TEXT, firstname TEXT, middlename TEXT, lastname TEXT, email TEXT, vipcount TEXT, vippluscount TEXT, sevenseascount TEXT, aacount TEXT, boutiquepoints TEXT,vip TEXT, vipPlus TEXT, sevenSeas TEXT, adventuresClub TEXT, memberSince TEXT)",
     );
   }
 
@@ -53,7 +53,12 @@ class contactDatabaseHelper {
       String vipPlusCount,
       String sevenSeasCount,
       String aaCount,
-      String boutiquePoints) async {
+      String boutiquePoints,
+      String vip,
+      String vipPlus,
+      String sevenSeas,
+      String adventuresClub,
+      String memberSince) async {
     //add a contact to the database
     final Database db = await database;
 
@@ -69,7 +74,12 @@ class contactDatabaseHelper {
         'vippluscount': vipPlusCount,
         'sevenseascount': sevenSeasCount,
         'aacount': aaCount,
-        'boutiquepoints': boutiquePoints
+        'boutiquepoints': boutiquePoints,
+        'vip': vip,
+        'vipPlus': vipPlus,
+        'sevenSeas': sevenSeas,
+        'adventuresClub': adventuresClub,
+        'memberSince': memberSince,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -103,7 +113,7 @@ class contactDatabaseHelper {
     return exists == 1;
   }
 
-  Future<List<dynamic>> querycontact() async {
+  Future<List<dynamic>> queryContact() async {
     // Get a contact from the database
     final Database db = await database;
 
@@ -121,6 +131,11 @@ class contactDatabaseHelper {
         maps[i]['sevenseascount'],
         maps[i]['aacount'],
         maps[i]['boutiquepoints'],
+        maps[i]["vip"],
+        maps[i]["vipPlus"],
+        maps[i]["sevenSeas"],
+        maps[i]["adventuresClub"],
+        maps[i]["memberSince"]
       ];
     });
   }

@@ -684,6 +684,8 @@ class MakePaymentState extends State<MakePayment> {
         String paymentMonth =
         cardExpirationDate.substring(0, 2);
 
+        print(cardExpirationDate);
+
         var response = await AggressorApi().makePayment(
             widget.trip.reservationId,
             widget.trip.charterId,

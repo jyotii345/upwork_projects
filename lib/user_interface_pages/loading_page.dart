@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
@@ -5,10 +6,12 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/slider_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_link_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock/wakelock.dart';
@@ -310,11 +313,25 @@ class LoadingPageState extends State<LoadingPage> {
 
   Future<dynamic> updateSliderImages() async {
     //TODO store these files somewhere
+    SlidersDatabaseHelper slidersDatabaseHelper = SlidersDatabaseHelper.instance;
     List<String> fileNames = await AggressorApi().getRewardsSliderList();
-    for (var file in fileNames) {
-      var fileResponse = await AggressorApi()
-          .getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
+    for (String file in fileNames) {
+      var fileResponse = await AggressorApi().getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
       Uint8List bytes = await readByteStream(fileResponse.stream);
+
+
+      String fileName = file.substring(7);
+      Directory appDocumentsDirectory =
+      await getApplicationDocumentsDirectory();
+      String appDocumentsPath = appDocumentsDirectory.path;
+      String filePath = '$appDocumentsPath/$fileName';
+      File tempFile = await File(filePath).writeAsBytes(bytes);
+
+      try{await slidersDatabaseHelper.deleteSliders(fileName);}
+      catch(e){
+        print("no such file");
+      }
+      await slidersDatabaseHelper.insertSliders({'fileName':fileName, 'filePath' : tempFile.path});
       sliderImageList.add(bytes);
     }
     return "done";

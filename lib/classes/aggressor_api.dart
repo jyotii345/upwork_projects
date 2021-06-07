@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
@@ -749,13 +750,37 @@ class AggressorApi {
       String cvv) async {
     //make a card payment
 
-    var paymentBody = {
-      "payment_amount": paymentAmount,
-      "credit_card_month": creditCardMonth,
-      "credit_card_year": creditCardYear,
-      "credit_card_number": creditCardNumber,
-      "credit_card_cvv": cvv,
-    };
+    // Response response = await post(
+    //   Uri.https(
+    //       'secure.aggressor.com',
+    //       '/api/app/payments/credit/' +
+    //           reservationId +
+    //           '/' +
+    //           charterId +
+    //           '/' +
+    //           contactId),
+    //   headers: <String, String>{
+    //     'apikey': apiKey,
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    //   body: jsonEncode(<String, String>{
+    //     "payment_amount": paymentAmount,
+    //     "credit_card_month": creditCardMonth,
+    //     "credit_card_year": creditCardYear,
+    //     "credit_card_number": creditCardNumber,
+    //     "credit_card_cvv": cvv,
+    //   }),
+    // );
+    //
+    // return jsonDecode(response.body);
+
+    //post form field version
+
+    var paymentBody = {"payment_amount": paymentAmount,
+         "credit_card_month": creditCardMonth,
+         "credit_card_year": creditCardYear,
+         "credit_card_number": creditCardNumber,
+         "credit_card_cvv": cvv,};
 
     var dioObj = dio.Dio();
     dio.FormData formData = dio.FormData.fromMap(paymentBody);
@@ -767,11 +792,9 @@ class AggressorApi {
         charterId +
         '/' +
         contactId;
+    print(url);
+    print(paymentBody.toString());
     var response = await dioObj.post(url, data: formData,);
     return response.data;
   }
-
-
 }
-
-

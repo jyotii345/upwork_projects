@@ -2,6 +2,9 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/certificate_database.dart';
+import 'package:aggressor_adventures/databases/contact_database.dart';
+import 'package:aggressor_adventures/databases/iron_diver_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_certifications_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -630,16 +633,47 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     }
   }
 
+  void updateCertificationCache() async {
+    //cleans and saves the certifications to the database
+    CertificateDatabaseHelper certificateDatabaseHelper = CertificateDatabaseHelper.instance;
+    try {
+      await certificateDatabaseHelper.deleteCertificateTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var certification in certificationList) {
+      await certificateDatabaseHelper.insertCertificate(certification['id'], certification['certification']);
+    }
+  }
+
+
+
+
   void getIronDivers() async {
     //this widget updates the Iron Divers in the list
     //TODO add loading indicators
     if (!ironDiversLoaded) {
       List<dynamic> tempList =
-          await AggressorApi().getCertificationList(widget.user.userId);
+          await AggressorApi().getIronDiverList(widget.user.userId);
       setState(() {
-        certificationList = tempList;
+        ironDiverList = tempList;
         ironDiversLoaded = true;
       });
+    }
+  }
+
+  void updateIronDiversCache() async {
+    //cleans and saves the iron divers to the database
+    IronDiverDatabaseHelper ironDiverDatabaseHelper = IronDiverDatabaseHelper.instance;
+    try {
+      await ironDiverDatabaseHelper.deleteIronDiverTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var ironDiver in ironDiverList) {
+      await ironDiverDatabaseHelper.insertIronDiver(ironDiver['id'], ironDiver['name']);
     }
   }
 
@@ -665,7 +699,34 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             response["memberSince"]);
         contactLoaded = true;
       });
+      updateContactCache(response);
     }
+  }
+
+  void updateContactCache(var response) async {
+    //cleans and saves the iron divers to the database
+    ContactDatabaseHelper contactDatabaseHelper = ContactDatabaseHelper.instance;
+    try {
+      await contactDatabaseHelper.deleteContactTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+      await contactDatabaseHelper.insertContact(response["contactid"],
+          response["first_name"],
+          response["middle_name"],
+          response["last_name"],
+          response["email"],
+          response["vipcount"],
+          response["vippluscount"],
+          response["sevenseascount"],
+          response["aacount"],
+          response["boutique_points"],
+          response["vip"],
+          response["vipPlus"],
+          response["sevenSeas"],
+          response["adventuresClub"],
+          response["memberSince"]);
   }
 
   @override
