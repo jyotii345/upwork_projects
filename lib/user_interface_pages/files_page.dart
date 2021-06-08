@@ -10,6 +10,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:chunked_stream/chunked_stream.dart';
+import 'package:date_format/date_format.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -463,8 +464,13 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           var response;
           try {
             response = await s3client.listObjects(
-                prefix:
-                    widget.user.userId + "/files/" + element.charterId + "/",
+                prefix: widget.user.userId +
+                    "/files/" +
+                    element.charterId +
+                    "/" +
+                    formatDate(DateTime.parse(element.charter.startDate),
+                        [yyyy, '-', mm, '-', dd]).toString() +
+                    "/",
                 delimiter: "/");
 
             if (response.contents != null) {
@@ -580,8 +586,15 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       loading = true;
     });
     if (result != null) {
-      var uploadResult = await AggressorApi().uploadAwsFile(widget.user.userId,
-          "files", dropDownValue.charterId, result.files.single.path);
+      String uploadDate = formatDate(
+          DateTime.parse(dropDownValue.charter.startDate),
+          [yyyy, '-', mm, '-', dd]);
+      var uploadResult = await AggressorApi().uploadAwsFile(
+          widget.user.userId,
+          "files",
+          dropDownValue.charterId,
+          result.files.single.path,
+          uploadDate);
       if (uploadResult["status"] == "success") {
         setState(() {
           filesLoaded = false;

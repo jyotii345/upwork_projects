@@ -9,8 +9,9 @@ class Boat {
   String active;
   String imageLink;
   String imagePath;
+  String kbygLink;
 
-  Boat(String boatId, String name, String abbreviation, String email, String active, String imageLink, String imagePath) {
+  Boat(String boatId, String name, String abbreviation, String email, String active, String imageLink, String imagePath, String kbygLink) {
     //default constructor
     this.boatId = boatId;
     this.name = name;
@@ -19,6 +20,7 @@ class Boat {
     this.active = active;
     this.imageLink = imageLink;
     this.imagePath = imagePath;
+    this.kbygLink = kbygLink;
   }
 
   Map<String, dynamic> toMap() {
@@ -31,6 +33,7 @@ class Boat {
       'active': active,
       'imageLink': imageLink,
       'imagePath' : imagePath,
+      'kbygLink' : kbygLink,
     };
   }
 }

@@ -105,6 +105,7 @@ class AggressorApi {
                 if (boatResponse["status"] == "success") {
                   Boat newBoat;
 
+                  print(boatResponse.toString());
                   newBoat = Boat(
                       boatResponse["boatid"].toString(),
                       boatResponse["name"].toString(),
@@ -112,7 +113,8 @@ class AggressorApi {
                       boatResponse["boat_email"].toString(),
                       boatResponse["active"].toString(),
                       boatResponse["image"],
-                      "");
+                      '',
+                      '');
 
                   await boatDatabaseHelper.insertBoat(newBoat);
                 }
@@ -374,8 +376,8 @@ class AggressorApi {
     return jsonDecode(response.body);
   }
 
-  Future<dynamic> uploadAwsFile(
-      String userId, String gallery, String boatId, String filePath) async {
+  Future<dynamic> uploadAwsFile(String userId, String gallery, String boatId,
+      String filePath, String datePath) async {
     //saves the updated profile data for the userId provided
 
     String url = "https://secure.aggressor.com/api/app/s3/upload/" +
@@ -383,7 +385,9 @@ class AggressorApi {
         "/" +
         gallery +
         "/" +
-        boatId.toString();
+        boatId.toString() +
+        "/" +
+        datePath;
 
     var uri = Uri.parse(url);
     MultipartRequest request = http.MultipartRequest('POST', uri);
@@ -484,6 +488,7 @@ class AggressorApi {
   }
 
   Future<dynamic> getBoatList() async {
+    //gets the list of boats from the API and adds the maps to the boat list
     String url = "https://secure.aggressor.com/api/app/boats/list";
 
     Request request = Request("GET", Uri.parse(url))
@@ -508,6 +513,7 @@ class AggressorApi {
   }
 
   Future<dynamic> getRewardsSliderList() async {
+    //gets the list of the slider imgaes and downloads the items from the API
     String url = "https://secure.aggressor.com/api/app/s3/slider/list";
 
     Request request = Request("GET", Uri.parse(url))
@@ -527,6 +533,7 @@ class AggressorApi {
   }
 
   Future<dynamic> getRewardsSliderImage(String imageName) async {
+    //Downloads the image from the database for a slider image
     String url =
         "https://secure.aggressor.com/api/app/s3/slider/download/" + imageName;
 
@@ -539,6 +546,7 @@ class AggressorApi {
   }
 
   Future<dynamic> getNoteList(String userId) async {
+    //gets a list of all the ntoes to be displayed in the app
     notesList.clear();
     String url =
         "https://secure.aggressor.com/api/app/tripnotes/list/" + userId;
@@ -550,7 +558,6 @@ class AggressorApi {
 
     List<dynamic> pageJson =
         json.decode(await pageResponse.stream.bytesToString());
-
 
     return pageJson;
   }
@@ -772,15 +779,17 @@ class AggressorApi {
 
     //post form field version
 
-    var paymentBody = {"payment_amount": paymentAmount,
-         "credit_card_month": creditCardMonth,
-         "credit_card_year": creditCardYear,
-         "credit_card_number": creditCardNumber,
-         "credit_card_cvv": cvv,};
+    var paymentBody = {
+      "payment_amount": paymentAmount,
+      "credit_card_month": creditCardMonth,
+      "credit_card_year": creditCardYear,
+      "credit_card_number": creditCardNumber,
+      "credit_card_cvv": cvv,
+    };
 
     var dioObj = dio.Dio();
     dio.FormData formData = dio.FormData.fromMap(paymentBody);
-    dioObj.options.headers = {'apikey' : apiKey};
+    dioObj.options.headers = {'apikey': apiKey};
 
     String url = 'https://secure.aggressor.com/api/app/payments/credit/' +
         reservationId +
@@ -788,7 +797,10 @@ class AggressorApi {
         charterId +
         '/' +
         contactId;
-    var response = await dioObj.post(url, data: formData,);
+    var response = await dioObj.post(
+      url,
+      data: formData,
+    );
     return response.data;
   }
 }

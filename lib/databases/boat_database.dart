@@ -41,7 +41,7 @@ class BoatDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE boat(id INTEGER PRIMARY KEY,boatId TEXT,name TEXT,abbreviation TEXT, email TEXT,active TEXT,imageLink TEXT, imagePath TEXT)",
+      "CREATE TABLE boat(id INTEGER PRIMARY KEY,boatId TEXT,name TEXT,abbreviation TEXT, email TEXT,active TEXT,imageLink TEXT, imagePath TEXT, kbygLink)",
     );
   }
 
@@ -100,6 +100,7 @@ class BoatDatabaseHelper {
       result[0]['active'],
       result[0]['imageLink'],
       result[0]['imagePath'],
+      result[0]['kbygLink'],
     );
   }
 
@@ -119,6 +120,7 @@ class BoatDatabaseHelper {
         maps[i]['active'],
         maps[i]['imageLink'],
         maps[i]['imagePath'],
+        maps[i]['kbygLink'],
       );
     });
   }

@@ -438,7 +438,7 @@ class MakePaymentState extends State<MakePayment> {
                       ),
                     ),
                     child: Text(
-                      double.parse(widget.trip.due).abs().toString(),
+                      double.parse(widget.trip.due) > 0 ? double.parse(widget.trip.due).toString() : "0.00" ,
                       style: TextStyle(
                           fontSize:
                               MediaQuery.of(context).size.height / 40 - 4),
@@ -680,10 +680,16 @@ class MakePaymentState extends State<MakePayment> {
 
     if (validateAndSave()) {
       try {
-        cardNumber = cardNumber.replaceAll('  ', '');
-        String paymentMonth =
-        cardExpirationDate.substring(0, 2);
+        if (double.parse(widget.trip.due) < double.parse(paymentAmount)) {
+          throw Exception("You may not pay more than is due.");
+        }
 
+        if (double.parse(widget.trip.due) <= 0) {
+          throw Exception("You may not pay for a trip that has nothing due.");
+        }
+
+        cardNumber = cardNumber.replaceAll('  ', '');
+        String paymentMonth = cardExpirationDate.substring(0, 2);
 
         var response = await AggressorApi().makePayment(
             widget.trip.reservationId,
@@ -694,6 +700,16 @@ class MakePaymentState extends State<MakePayment> {
             cardExpirationDate.substring(3),
             cardNumber,
             cvv);
+
+        if(response["status"] == "success"){
+          showSuccessDialogue();
+          widget.trip.updateTripValues();
+        }
+        else{
+          setState(() {
+            errorMessage = response["message"];
+          });
+        }
 
         setState(() {
           loading = false;
@@ -707,6 +723,27 @@ class MakePaymentState extends State<MakePayment> {
       }
     }
   }
+}
+
+void showSuccessDialogue() {
+  //shows a dialogue confirming the profile was registered and navigates to the home screen
+  showDialog(
+      context: navigatorKey.currentContext,
+      builder: (_) => new AlertDialog(
+        title: new Text('Success'),
+        content: new Text(
+            "Your payment was successful"),
+        actions: <Widget>[
+          new TextButton(
+              onPressed: () {
+                int popCount = 0;
+                Navigator.popUntil(navigatorKey.currentContext, (route) {
+                  return popCount++ == 2;
+                });
+              },
+              child: new Text('Continue')),
+        ],
+      ));
 }
 
 class CardNumberInputFormatter extends TextInputFormatter {

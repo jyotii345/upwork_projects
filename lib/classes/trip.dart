@@ -45,7 +45,6 @@ class Trip {
       passengerId;
   List<VoidCallback> callBackList;
   VoidCallback newImageCallBack;
-  BuildContext context;
 
   Note note;
   Boat boat;
@@ -172,7 +171,7 @@ class Trip {
       'disembark': disembark,
       'detailDestination': detailDestination,
       'loginKey': loginKey,
-      'passengerId' : passengerId,
+      'passengerId': passengerId,
     };
   }
 
@@ -228,6 +227,11 @@ class Trip {
     //gets charter and boat information about this trip
     charter = await CharterDatabaseHelper.instance.getCharter(charterId);
     boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
+    boatList.forEach((boatObj) {
+      if (boatObj["boatid"].toString() == boat.boatId) {
+        boat.kbygLink = boatObj["kbyg"];
+      }
+    });
   }
 
   Widget getUpcomingTripCard(BuildContext context) {
@@ -282,9 +286,19 @@ class Trip {
                               builder: (context, snapshot) {
                                 if (snapshot.hasData && snapshot.data != null) {
                                   return snapshot.data != ""
-                                      ? Image.file(
-                                          File(snapshot.data),
-                                          fit: BoxFit.fill,
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            imageExpansionDialogue(
+                                              Image.file(
+                                                File(snapshot.data),
+                                                fit: BoxFit.fill,
+                                              ),
+                                            );
+                                          },
+                                          child: Image.file(
+                                            File(snapshot.data),
+                                            fit: BoxFit.fill,
+                                          ),
                                         )
                                       : Icon(Icons.directions_boat_sharp);
                                 } else {
@@ -487,7 +501,9 @@ class Trip {
                                 child: TextButton(
                                   style: TextButton.styleFrom(
                                       padding: EdgeInsets.all(0)),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    launchKBYG();
+                                  },
                                   child: Text(
                                     "Know before you go",
                                     textAlign: TextAlign.center,
@@ -504,8 +520,7 @@ class Trip {
                                   style: TextButton.styleFrom(
                                       padding: EdgeInsets.all(0)),
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
+                                    navigatorKey.currentState.push(
                                       MaterialPageRoute(
                                         builder: (context) => MakePayment(
                                           user,
@@ -543,9 +558,13 @@ class Trip {
     );
   }
 
+  void launchKBYG() async {
+    await launch(this.boat.kbygLink);
+  }
+
   void launchGIS() async {
     print(loginKey);
-    if(loginKey != null && loginKey != "null"){
+    if (loginKey != null && loginKey != "null") {
       await launch("https://gis.liveaboardfleet.com/gis/index.php/" +
           passengerId.toString() +
           "/" +
@@ -568,13 +587,15 @@ class Trip {
         ),
       );
     } else {
-      navigatorKey.currentState.push( MaterialPageRoute(
-        builder: (context) => AddNotes(
-          user,
-          this,
-              () {},
+      navigatorKey.currentState.push(
+        MaterialPageRoute(
+          builder: (context) => AddNotes(
+            user,
+            this,
+            () {},
+          ),
         ),
-      ),);
+      );
     }
   }
 
@@ -585,7 +606,7 @@ class Trip {
 
     String path = "";
 
-    if (boat.imagePath == "" || boat.imagePath == null  && online) {
+    if (boat.imagePath == "" || boat.imagePath == null && online) {
       var imageDetails = await AggressorApi().getBoatImage(boat.imageLink);
       if (imageDetails != null) {
         var imageName = boat.imageLink
@@ -731,5 +752,30 @@ class Trip {
   void _onInteractionEnd(ScaleEndDetails details) {
     //called when zoom ends for pinch to zoom
     _animateResetInitialize();
+  }
+
+  void updateTripValues() async {
+    //reloads the payment due for the boat
+    var response = await AggressorApi()
+        .getReservationDetails(reservationId, user.contactId);
+    this.reservationId = response['reservationId'];
+    this.charterId = response['charterId'];
+    this.total = response['total'];
+    this.discount = response['discount'];
+    this.payments = response['payments'];
+    this.due = response['due'];
+    this.dueDate = response['dueDate'];
+    this.passengers = response['passengers'];
+    this.location = response['location'];
+    this.embark = response['embark'];
+    this.disembark = response['disembark'];
+  }
+
+  void imageExpansionDialogue(Widget content) {
+    //shows the image in a larger view
+    showDialog(
+      context: navigatorKey.currentContext,
+      builder: (_) => new AlertDialog(title: Container(), content: content),
+    );
   }
 }

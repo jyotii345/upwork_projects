@@ -4,6 +4,7 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
@@ -522,8 +523,10 @@ class GalleryViewState extends State<GalleryView> {
       File file =
       File(path);
 
+      String uploadDate  = formatDate(DateTime.parse(widget.trip.charter.startDate),[yyyy, '-', mm, '-', dd]);
+
       var response = await AggressorApi().uploadAwsFile(
-          widget.user.userId, "gallery", widget.trip.charterId, file.path);
+          widget.user.userId, "gallery", widget.trip.charterId, file.path, uploadDate);
       await Future.delayed(Duration(milliseconds: 1000));
       if (response["status"] == "success") {
       widget.photos.add(Photo("", "", file.path, "", "", ""));

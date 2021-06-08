@@ -11,6 +11,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:chunked_stream/chunked_stream.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
@@ -254,13 +255,14 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     //generates the list of dates a trip is scheduled on a particular yacht
     List<Trip> tempList = [];
     tripList.forEach((element) {
-      if (element.boat.boatId.toString() == boatMap["boatid"].toString() || element.boat.boatId.toString() == boatMap["boatId"].toString()) {
+      if (element.boat.boatId.toString() == boatMap["boatid"].toString() ||
+          element.boat.boatId.toString() == boatMap["boatId"].toString()) {
         tempList.add(element);
       }
     });
 
     if (tempList.length == 0) {
-      tempList = [Trip("", "", "", "", "", "", "", "","")];
+      tempList = [Trip("", "", "", "", "", "", "", "", "")];
     }
 
     setState(() {
@@ -336,11 +338,16 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         File file =
             File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
 
+        String uploadDate = formatDate(
+            DateTime.parse(dateDropDownValue.charter.startDate),
+            [yyyy, '-', mm, '-', dd]);
+
         var response = await AggressorApi().uploadAwsFile(
             widget.user.userId.toString(),
             "gallery",
             dropDownValue["boatid"].toString(),
-            file.path);
+            file.path,
+            uploadDate);
 
         await Future.delayed(Duration(milliseconds: 1000));
         if (response["status"] == "success") {
@@ -559,7 +566,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     setState(() {
       loading = true;
     });
-    if (!photosLoaded  && online) {
+    if (!photosLoaded && online) {
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
       final AwsS3Client s3client = AwsS3Client(
@@ -579,6 +586,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 prefix: widget.user.userId +
                     "/gallery/" +
                     element.boat.boatId +
+                    "/" +
+                    formatDate(DateTime.parse(element.charter.startDate),
+                        [yyyy, '-', mm, '-', dd]).toString() +
                     "/",
                 delimiter: "/");
           } catch (e) {

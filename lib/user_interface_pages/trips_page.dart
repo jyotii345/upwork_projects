@@ -278,8 +278,6 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
         DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
     tripList.forEach((element) {
-
-      element.context = context;
       if (element.latitude != "" &&
           element.latitude != null &&
           element.longitude != "" &&
