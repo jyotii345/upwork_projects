@@ -102,6 +102,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 7,
             ),
+            showOffline(),
             showLoading(),
             getPageTitle(),
             getUploadFile(),
@@ -368,7 +369,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                           ),
                           SizedBox(
                             width: textBoxSize,
-                            child: Text("Date", textAlign: TextAlign.center),
+                            child: Text("Adventure Date",
+                                textAlign: TextAlign.center),
                           ),
                           SizedBox(
                             width: textBoxSize / 2,
@@ -444,10 +446,11 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getFiles() async {
     //downloads file from aws. If the file is not already in storage, it will be stored on the device.
-    setState(() {
-      loading = true;
-    });
+
     if (!filesLoaded && online) {
+      setState(() {
+        loading = true;
+      });
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
       final AwsS3Client s3client = AwsS3Client(
@@ -472,7 +475,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                         [yyyy, '-', mm, '-', dd]).toString() +
                     "/",
                 delimiter: "/");
-
             if (response.contents != null) {
               response.contents.forEach((content) async {
                 var elementJson = await jsonDecode(content.toJson());
@@ -494,14 +496,16 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                   File tempFile = File(filePath);
                   tempFile.writeAsBytes(bytes);
 
-                  String date = downloadResponse.headers["date"].substring(4);
+                  String date = elementJson["Key"].toString().substring(
+                      elementJson["Key"].toString().lastIndexOf('/') - 10,
+                      elementJson["Key"].toString().lastIndexOf('/'));
 
                   if (!await fileHelper.fileExists(
                     fileName,
                   )) {
                     FileData fileData = FileData(
                       tempFile.path,
-                      date, //TODO potentially replace with embarkment date
+                      date,
                       fileName,
                     );
 
@@ -514,7 +518,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         }
 
         var response = await s3client.listObjects(
-            prefix: widget.user.userId + "/files/general/", delimiter: "/");
+            prefix: widget.user.userId + "/files/general/general/",
+            delimiter: "/");
 
         if (response.contents != null) {
           for (var content in response.contents) {
@@ -544,7 +549,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               )) {
                 FileData fileData = FileData(
                   tempFile.path,
-                  date,
+                  "General File",
                   fileName,
                 );
 
@@ -563,6 +568,18 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         fileDataList = tempFiles;
         filesLoaded = true;
       });
+    } else {
+      if (!filesLoaded) {
+        setState(() {
+          loading = true;
+        });
+        var tempList = await FileDatabaseHelper.instance.queryFile();
+        setState(() {
+          fileDataList = tempList;
+          filesLoaded = true;
+          loading = false;
+        });
+      }
     }
     setState(() {
       loading = false;
@@ -582,30 +599,38 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   void uploadFile() async {
+    //uploads a file to the aws bucket
     setState(() {
       loading = true;
     });
-    if (result != null) {
-      String uploadDate = formatDate(
-          DateTime.parse(dropDownValue.charter.startDate),
-          [yyyy, '-', mm, '-', dd]);
-      var uploadResult = await AggressorApi().uploadAwsFile(
-          widget.user.userId,
-          "files",
-          dropDownValue.charterId,
-          result.files.single.path,
-          uploadDate);
-      if (uploadResult["status"] == "success") {
-        setState(() {
-          filesLoaded = false;
-          fileName = "";
-          result = null;
-        });
-      } else {
-        setState(() {
-          errorMessage = "File failed to upload, please try again.";
-        });
+    if (online) {
+      if (result != null) {
+        String uploadDate = dropDownValue.charter == null
+            ? "general"
+            : formatDate(DateTime.parse(dropDownValue.charter.startDate),
+                [yyyy, '-', mm, '-', dd]);
+        var uploadResult = await AggressorApi().uploadAwsFile(
+            widget.user.userId,
+            "files",
+            dropDownValue.charterId,
+            result.files.single.path,
+            uploadDate);
+        if (uploadResult["status"] == "success") {
+          setState(() {
+            filesLoaded = false;
+            fileName = "";
+            result = null;
+          });
+        } else {
+          setState(() {
+            errorMessage = "File failed to upload, please try again.";
+          });
+        }
       }
+    } else {
+      setState(() {
+        errorMessage = "Must be online to upload a file";
+      });
     }
     setState(() {
       loading = false;
@@ -613,6 +638,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showErrorMessage() {
+    //displays an error message if there is an error to be shown
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -636,6 +662,23 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             ),
           )
         : Container();
+  }
+
+  Widget showOffline() {
+    //displays offline when the application does not have internet connection
+    return online
+        ? Container()
+        : Container(
+            color: Colors.red,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+              child: Text(
+                "Application is offline",
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
   }
 
   @override

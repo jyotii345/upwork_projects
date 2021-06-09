@@ -103,6 +103,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 7,
             ),
+            showOffline(),
             getPageTitle(),
             getCreateNote(),
             getNotesSection(),
@@ -272,7 +273,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
     List<Trip> tempList = [];
     tripList.forEach((element) {
-      if (element.boat.boatId.toString() == boatMap["boatid"].toString() || element.boat.boatId.toString() == boatMap["boatId"].toString()) {
+      if (element.boat.boatId.toString() == boatMap["boatid"].toString() ||
+          element.boat.boatId.toString() == boatMap["boatId"].toString()) {
         tempList.add(element);
       }
     });
@@ -308,18 +310,24 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           TextButton(
             onPressed: () {
               if (dateDropDownValue.charter != null) {
-                if (dateDropDownValue.charter.startDate != "") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddNotes(
-                        widget.user,
-                        dateDropDownValue,
-                        notesCallBack,
+                if(online) {
+                  if (dateDropDownValue.charter.startDate != "") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AddNotes(
+                              widget.user,
+                              dateDropDownValue,
+                              notesCallBack,
+                            ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 }
+                else{setState(() {
+                  errorMessage = "Must be online to add a note";
+                });}
               }
             },
             child: Text(
@@ -471,7 +479,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
 
-    for(Note note in notesList){
+    for (Note note in notesList) {
       note.user = widget.user;
       note.pageContext = context;
       note.callback = notesCallBack;
@@ -480,7 +488,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         index,
       ));
       index++;
-    };
+    }
+    ;
 
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),
@@ -492,7 +501,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Future<dynamic> getNotes() async {
-    //downloads notes from aws. //TODO add the cache ability here
+    //downloads notes from aws.
 
     setState(() {
       loading = true;
@@ -581,6 +590,23 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             ),
           )
         : Container();
+  }
+
+  Widget showOffline() {
+    //displays offline when the application does not have internet connection
+    return online
+        ? Container()
+        : Container(
+            color: Colors.red,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+              child: Text(
+                "Application is offline",
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
   }
 
   VoidCallback notesCallBack() {

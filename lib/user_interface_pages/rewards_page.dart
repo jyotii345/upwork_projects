@@ -6,6 +6,8 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/certificate_database.dart';
 import 'package:aggressor_adventures/databases/contact_database.dart';
 import 'package:aggressor_adventures/databases/iron_diver_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/profile_edit_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/profile_view_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_certifications_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,6 +30,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   instance vars
    */
   int sliderIndex = 0;
+
+  bool loading = false;
 
   /*
   initState
@@ -70,6 +74,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 6,
             ),
+            showOffline(),
             getPageTitle(),
             getUserRow(),
             Padding(
@@ -308,7 +313,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                 Flexible(
                   child: TextButton(
                     onPressed: () {
-                      print("pressed");
+                      online
+                          ? openEditProfile()
+                          : openProfileView();
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
@@ -376,6 +383,36 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     );
   }
 
+  void openProfileView(){
+    setState(() {
+      currentIndex = 5;
+    });
+  }
+
+  Future<dynamic> openEditProfile() async {
+    //loads the profile details
+    if (online) {
+      if (!profileDataLoaded) {
+        var jsonResponse =
+            await AggressorApi().getProfileData(widget.user.userId);
+        if (jsonResponse["status"] == "success") {
+          var jsonResponseCountries = await AggressorApi().getCountries();
+          setState(() {
+            countriesList = jsonResponseCountries;
+            profileData = jsonResponse;
+            profileDataLoaded = true;
+          });
+        }
+      }
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  EditMyProfile(widget.user, updateCallback, profileData)));
+    }
+    return "finished";
+  }
+
   Widget getBackgroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
@@ -400,7 +437,10 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height / 6,
-          child:  Image.file(File(sliderImageList[sliderIndex]["filePath"]), fit: BoxFit.fill,),
+          child: Image.file(
+            File(sliderImageList[sliderIndex]["filePath"]),
+            fit: BoxFit.fill,
+          ),
         ),
         Container(
           width: MediaQuery.of(context).size.width,
@@ -438,8 +478,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                   setState(() {
                     sliderIndex--;
                   });
-                }
-                else{
+                } else {
                   setState(() {
                     sliderIndex = sliderImageList.length - 1;
                   });
@@ -619,7 +658,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   void getCertifications() async {
     //this widget updates the certifications in the list
-    //TODO add loading indicators
+    setState(() {
+      loading = true;
+    });
 
     if (!certificateLoaded && online) {
       List<dynamic> tempList =
@@ -629,11 +670,15 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         certificateLoaded = true;
       });
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   void updateCertificationCache() async {
     //cleans and saves the certifications to the database
-    CertificateDatabaseHelper certificateDatabaseHelper = CertificateDatabaseHelper.instance;
+    CertificateDatabaseHelper certificateDatabaseHelper =
+        CertificateDatabaseHelper.instance;
     try {
       await certificateDatabaseHelper.deleteCertificateTable();
     } catch (e) {
@@ -641,16 +686,16 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     }
 
     for (var certification in certificationList) {
-      await certificateDatabaseHelper.insertCertificate(certification['id'], certification['certification']);
+      await certificateDatabaseHelper.insertCertificate(
+          certification['id'], certification['certification']);
     }
   }
 
-
-
-
   void getIronDivers() async {
     //this widget updates the Iron Divers in the list
-    //TODO add loading indicators
+    setState(() {
+      loading = true;
+    });
     if (!ironDiversLoaded && online) {
       List<dynamic> tempList =
           await AggressorApi().getIronDiverList(widget.user.userId);
@@ -659,11 +704,15 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ironDiversLoaded = true;
       });
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   void updateIronDiversCache() async {
     //cleans and saves the iron divers to the database
-    IronDiverDatabaseHelper ironDiverDatabaseHelper = IronDiverDatabaseHelper.instance;
+    IronDiverDatabaseHelper ironDiverDatabaseHelper =
+        IronDiverDatabaseHelper.instance;
     try {
       await ironDiverDatabaseHelper.deleteIronDiverTable();
     } catch (e) {
@@ -671,12 +720,13 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     }
 
     for (var ironDiver in ironDiverList) {
-      await ironDiverDatabaseHelper.insertIronDiver(ironDiver['id'], ironDiver['name']);
+      await ironDiverDatabaseHelper.insertIronDiver(
+          ironDiver['id'], ironDiver['name']);
     }
   }
 
   void getContactDetails() async {
-    if (!contactLoaded  && online) {
+    if (!contactLoaded && online) {
       var response = await AggressorApi().getContact(widget.user.contactId);
       setState(() {
         contact = Contact(
@@ -703,28 +753,67 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   void updateContactCache(var response) async {
     //cleans and saves the iron divers to the database
-    ContactDatabaseHelper contactDatabaseHelper = ContactDatabaseHelper.instance;
+    ContactDatabaseHelper contactDatabaseHelper =
+        ContactDatabaseHelper.instance;
     try {
       await contactDatabaseHelper.deleteContactTable();
     } catch (e) {
       print("no notes in the table");
     }
 
-      await contactDatabaseHelper.insertContact(response["contactid"],
-          response["first_name"],
-          response["middle_name"],
-          response["last_name"],
-          response["email"],
-          response["vipcount"],
-          response["vippluscount"],
-          response["sevenseascount"],
-          response["aacount"],
-          response["boutique_points"],
-          response["vip"],
-          response["vipPlus"],
-          response["sevenSeas"],
-          response["adventuresClub"],
-          response["memberSince"]);
+    await contactDatabaseHelper.insertContact(
+        response["contactid"],
+        response["first_name"],
+        response["middle_name"],
+        response["last_name"],
+        response["email"],
+        response["vipcount"],
+        response["vippluscount"],
+        response["sevenseascount"],
+        response["aacount"],
+        response["boutique_points"],
+        response["vip"],
+        response["vipPlus"],
+        response["sevenSeas"],
+        response["adventuresClub"],
+        response["memberSince"]);
+  }
+
+  Widget showLoading() {
+    //displays a loading bar if data is being downloaded
+    return loading
+        ? Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
+            child: LinearProgressIndicator(
+              backgroundColor: AggressorColors.primaryColor,
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ),
+          )
+        : Container();
+  }
+
+  void updateCallback() {
+    //update to show profile data should be reloaded
+    setState(() {
+      profileDataLoaded = false;
+    });
+  }
+
+  Widget showOffline() {
+    //displays offline when the application does not have internet connection
+    return online
+        ? Container()
+        : Container(
+            color: Colors.red,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+              child: Text(
+                "Application is offline",
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
   }
 
   @override

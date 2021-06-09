@@ -438,7 +438,9 @@ class MakePaymentState extends State<MakePayment> {
                       ),
                     ),
                     child: Text(
-                      double.parse(widget.trip.due) > 0 ? double.parse(widget.trip.due).toString() : "0.00" ,
+                      double.parse(widget.trip.due) > 0
+                          ? double.parse(widget.trip.due).toString()
+                          : "0.00",
                       style: TextStyle(
                           fontSize:
                               MediaQuery.of(context).size.height / 40 - 4),
@@ -680,13 +682,13 @@ class MakePaymentState extends State<MakePayment> {
 
     if (validateAndSave()) {
       try {
-        if (double.parse(widget.trip.due) < double.parse(paymentAmount)) {
-          throw Exception("You may not pay more than is due.");
-        }
-
-        if (double.parse(widget.trip.due) <= 0) {
-          throw Exception("You may not pay for a trip that has nothing due.");
-        }
+        // if (double.parse(widget.trip.due) < double.parse(paymentAmount)) {
+        //   throw Exception("You may not pay more than is due.");
+        // }
+        //
+        // if (double.parse(widget.trip.due) <= 0) {
+        //   throw Exception("You may not pay for a trip that has nothing due.");
+        // }
 
         cardNumber = cardNumber.replaceAll('  ', '');
         String paymentMonth = cardExpirationDate.substring(0, 2);
@@ -701,11 +703,10 @@ class MakePaymentState extends State<MakePayment> {
             cardNumber,
             cvv);
 
-        if(response["status"] == "success"){
+        if (response["status"] == "success") {
           showSuccessDialogue();
           widget.trip.updateTripValues();
-        }
-        else{
+        } else {
           setState(() {
             errorMessage = response["message"];
           });
@@ -728,25 +729,26 @@ class MakePaymentState extends State<MakePayment> {
 void showSuccessDialogue() {
   //shows a dialogue confirming the profile was registered and navigates to the home screen
   showDialog(
-      context: navigatorKey.currentContext,
-      builder: (_) => new AlertDialog(
-        title: new Text('Success'),
-        content: new Text(
-            "Your payment was successful"),
-        actions: <Widget>[
-          new TextButton(
-              onPressed: () {
-                int popCount = 0;
-                Navigator.popUntil(navigatorKey.currentContext, (route) {
-                  return popCount++ == 2;
-                });
-              },
-              child: new Text('Continue')),
-        ],
-      ));
+    context: navigatorKey.currentContext,
+    builder: (_) => new AlertDialog(
+      title: new Text('Success'),
+      content: new Text("Your payment was successful"),
+      actions: <Widget>[
+        new TextButton(
+            onPressed: () {
+              int popCount = 0;
+              Navigator.popUntil(navigatorKey.currentContext, (route) {
+                return popCount++ == 2;
+              });
+            },
+            child: new Text('Continue')),
+      ],
+    ),
+  );
 }
 
 class CardNumberInputFormatter extends TextInputFormatter {
+  //automatically updates the format to a credit card format
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
@@ -773,6 +775,7 @@ class CardNumberInputFormatter extends TextInputFormatter {
 }
 
 class CardDateInputFormatter extends TextInputFormatter {
+  //automatically updates the format to a credit date format
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {

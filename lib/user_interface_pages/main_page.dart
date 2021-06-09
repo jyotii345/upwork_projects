@@ -65,58 +65,59 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          elevation: 0,
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          leading: SizedBox(
-            height: AppBar().preferredSize.height,
-            child: IconButton(
-              icon: Container(
-                child: Image.asset("assets/callicon.png"),
-              ),
-              onPressed: makeCall,
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leading: SizedBox(
+          height: AppBar().preferredSize.height,
+          child: IconButton(
+            icon: Container(
+              child: Image.asset("assets/callicon.png"),
             ),
+            onPressed: makeCall,
           ),
-          title: Image.asset(
-            "assets/logo.png",
-            height: AppBar().preferredSize.height,
-            fit: BoxFit.fitHeight,
-          ),
-          actions: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-              child: SizedBox(
-                height: AppBar().preferredSize.height,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PopupMenuButton<String>(
-                      onSelected: handlePopupClick,
-                      child: Container(
-                        child: Image.asset(
-                          "assets/menuicon.png",
-                        ),
-                      ),
-                      itemBuilder: (BuildContext context) {
-                        return {"My Profile", "Sign Out"}.map((String option) {
-                          return PopupMenuItem<String>(
-                            value: option,
-                            child: Text(option),
-                          );
-                        }).toList();
-                      }),
-                ),
-              ),
-            ),
-          ],
         ),
-        body: Scaffold(
-          resizeToAvoidBottomInset: false,
-          bottomNavigationBar: getBottomNavigation(),
-          body: getIndexStack(),
-        ));
+        title: Image.asset(
+          "assets/logo.png",
+          height: AppBar().preferredSize.height,
+          fit: BoxFit.fitHeight,
+        ),
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+            child: SizedBox(
+              height: AppBar().preferredSize.height,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PopupMenuButton<String>(
+                    onSelected: handlePopupClick,
+                    child: Container(
+                      child: Image.asset(
+                        "assets/menuicon.png",
+                      ),
+                    ),
+                    itemBuilder: (BuildContext context) {
+                      return {"My Profile", "Sign Out"}.map((String option) {
+                        return PopupMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList();
+                    }),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Scaffold(
+        resizeToAvoidBottomInset: false,
+        bottomNavigationBar: getBottomNavigation(),
+        body: getIndexStack(),
+      ),
+    );
   }
 
 /*

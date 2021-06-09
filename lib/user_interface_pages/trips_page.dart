@@ -66,6 +66,7 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
     flutterMapWidget = FlutterMapWidget(context);
     return ListView(
       children: [
+        showOffline(),
         flutterMapWidget.getMap(),
         getPageTitle(),
         getSectionUpcomingTitle(),
@@ -357,6 +358,20 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
           width: double.infinity,
         ),
       ),
+    );
+  }
+
+  Widget showOffline() {
+    //displays offline when the application does not have internet connection
+    return online
+        ? Container()
+        : Container(
+      color: Colors.red,
+      child:  Text(
+          "Application is offline",
+          style: TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
     );
   }
 }

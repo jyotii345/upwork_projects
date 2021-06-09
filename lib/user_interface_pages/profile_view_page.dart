@@ -67,9 +67,27 @@ class MyProfileState extends State<MyProfile>
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 7,
             ),
+            showOffline(),
             getPageTitle(),
             getPageContents(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget showOffline() {
+    //displays offline when the application does not have internet connection
+    return online
+        ? Container()
+        : Container(
+      color: Colors.red,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+        child: Text(
+          "Application is offline",
+          style: TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -331,7 +349,7 @@ class MyProfileState extends State<MyProfile>
               child: IconButton(
                 iconSize: MediaQuery.of(context).size.height / 35,
                 icon: Icon(Icons.edit, ),
-                onPressed: () { Navigator.push(
+                onPressed: () {Navigator.push(
                     context, MaterialPageRoute(builder: (context) => EditMyProfile(widget.user, updateCallback,profileData)));},
                 color: Colors.white,
               ),

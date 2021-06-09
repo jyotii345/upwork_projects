@@ -106,6 +106,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 7,
             ),
+            showOffline(),
             showLoading(),
             getPageTitle(),
             getCreateNewGallery(),
@@ -301,68 +302,75 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       errorMessage = "";
     });
 
-    if (await Permission.photos.status.isDenied ||
-        await Permission.camera.status.isDenied) {
-      await Permission.photos.request();
-      await Permission.camera.request();
+    if(online) {
+      if (await Permission.photos.status.isDenied ||
+          await Permission.camera.status.isDenied) {
+        await Permission.photos.request();
+        await Permission.camera.request();
 
-      // We didn't ask for permission yet or the permission has been denied before but not permanently.
-    }
-
-    if (dropDownValue["name"] == " -- SELECT -- " ||
-        dateDropDownValue.charter == null ||
-        dateDropDownValue.charter.startDate == "") {
-      setState(() {
-        errorMessage = "You must select a trip to create a gallery for.";
-      });
-    } else {
-      //try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
-        enableCamera: true,
-        selectedAssets: images,
-        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-        materialOptions: MaterialOptions(
-          actionBarColor: "#ff428cc7",
-          actionBarTitle: "Adventure Of A Lifetime",
-          allViewTitle: "All Photos",
-          useDetailsView: false,
-          selectCircleStrokeColor: "#ff428cc7",
-        ),
-      );
-      setState(() {
-        loading = true;
-      });
-
-      for (var element in resultList) {
-        File file =
-            File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
-
-        String uploadDate = formatDate(
-            DateTime.parse(dateDropDownValue.charter.startDate),
-            [yyyy, '-', mm, '-', dd]);
-
-        var response = await AggressorApi().uploadAwsFile(
-            widget.user.userId.toString(),
-            "gallery",
-            dropDownValue["boatid"].toString(),
-            file.path,
-            uploadDate);
-
-        await Future.delayed(Duration(milliseconds: 1000));
-        if (response["status"] == "success") {
-          print("uploaded");
-        }
+        // We didn't ask for permission yet or the permission has been denied before but not permanently.
       }
 
-      setState(() {
-        photosLoaded = false;
-        loading = false;
-        images = resultList;
-        errorMessage = error;
-      });
+      if (dropDownValue["name"] == " -- SELECT -- " ||
+          dateDropDownValue.charter == null ||
+          dateDropDownValue.charter.startDate == "") {
+        setState(() {
+          errorMessage = "You must select a trip to create a gallery for.";
+        });
+      } else {
+        //try {
+        resultList = await MultiImagePicker.pickImages(
+          maxImages: 300,
+          enableCamera: true,
+          selectedAssets: images,
+          cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+          materialOptions: MaterialOptions(
+            actionBarColor: "#ff428cc7",
+            actionBarTitle: "Adventure Of A Lifetime",
+            allViewTitle: "All Photos",
+            useDetailsView: false,
+            selectCircleStrokeColor: "#ff428cc7",
+          ),
+        );
+        setState(() {
+          loading = true;
+        });
 
-      if (!mounted) return;
+        for (var element in resultList) {
+          File file =
+          File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+
+          String uploadDate = formatDate(
+              DateTime.parse(dateDropDownValue.charter.startDate),
+              [yyyy, '-', mm, '-', dd]);
+
+          var response = await AggressorApi().uploadAwsFile(
+              widget.user.userId.toString(),
+              "gallery",
+              dropDownValue["boatid"].toString(),
+              file.path,
+              uploadDate);
+
+          await Future.delayed(Duration(milliseconds: 1000));
+          if (response["status"] == "success") {
+            print("uploaded");
+          }
+        }
+
+        setState(() {
+          photosLoaded = false;
+          loading = false;
+          images = resultList;
+          errorMessage = error;
+        });
+
+        if (!mounted) return;
+      }
+    }else{
+      setState(() {
+        loading = false;
+        errorMessage = "Must be online to upload photos";
+      });
     }
   }
 
@@ -692,6 +700,23 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             ),
           )
         : Container();
+  }
+
+  Widget showOffline() {
+    //displays offline when the application does not have internet connection
+    return online
+        ? Container()
+        : Container(
+      color: Colors.red,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+        child: Text(
+          "Application is offline",
+          style: TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 
   @override
