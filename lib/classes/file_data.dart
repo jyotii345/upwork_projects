@@ -1,6 +1,7 @@
 /*
 file_data class to hold the contents of a file object generated from the aws s3 bucket
  */
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
@@ -18,6 +19,7 @@ class FileData {
   String fileName;
   String boatId;
   User user;
+  VoidCallback callback;
 
   FileData(String filePath, String date, String fileName, String boatId) {
     //default constructor
@@ -33,6 +35,7 @@ class FileData {
       'filePath': filePath,
       'date': date,
       'fileName': fileName,
+      'boatId' : boatId,
     };
   }
 
@@ -100,9 +103,12 @@ class FileData {
   }
 
   void deleteFile() async{
-    var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), filePath.toString());
-    await FileDatabaseHelper.instance.deleteFile(filePath);
-    print(json.decode(await res.stream.bytesToString()));
+    print(boatId);
+    var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), filePath.substring(filePath.lastIndexOf("/")).toString());
+    await FileDatabaseHelper.instance.deleteFile(fileName);
+    fileDataList.remove(this);
+    await Future.delayed(Duration(seconds: 1));
+    callback();
     filesLoaded = false;
   }
 
@@ -113,5 +119,8 @@ class FileData {
 
   void setUser(User user){
     this.user = user;
+  }
+  void setCallback(VoidCallback callback){
+    this.callback = callback;
   }
 }

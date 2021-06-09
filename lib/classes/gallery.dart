@@ -1,20 +1,28 @@
 /*
 gallery class that create a gallery object to hold objects of photos
  */
+import 'dart:convert';
 import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
+import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'aggressor_api.dart';
 
 class Gallery {
   User user;
   String boatId;
   List<Photo> photos;
   Trip trip;
+  VoidCallback deleteCallback = (){};
   List<VoidCallback> callBackList;
 
   Gallery(User user, String boatId, List<Photo> photos, Trip trip,) {
@@ -23,7 +31,7 @@ class Gallery {
     this.boatId = boatId;
     this.photos = photos;
     this.trip = trip;
-    this.callBackList =  callBackList;
+    this.callBackList = callBackList;
   }
 
   Map<String, dynamic> toMap() {
@@ -83,7 +91,7 @@ class Gallery {
                 child: IconButton(
                     icon: Image.asset("assets/trashcan.png",),
                     onPressed: () {
-                      print("pressed");
+                      deleteGallery();
                     }),
               ),
             ],
@@ -99,5 +107,36 @@ class Gallery {
         context,
         MaterialPageRoute(
             builder: (context) => GalleryView(user, boatId, photos, trip,)));
+  }
+
+  void deleteGallery() async{
+    if(online){
+      for (var value in photos) {
+        var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "gallery", trip.charter.boatId.toString(),formatDate(
+            DateTime.parse(trip.charter.startDate),
+            [yyyy, '-', mm, '-', dd]),value.imagePath.substring(value.imagePath.lastIndexOf("/")).toString() );
+        PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+      }
+
+      galleriesMap.remove(this);
+      await Future.delayed(Duration(seconds: 1));
+      deleteCallback();
+      filesLoaded = false;
+    }
+    else{
+      for (var value in photos) {
+        await OfflineDatabaseHelper.instance.insertOffline({'type' : 'image', "id": value.imagePath, "action" : "delete"});
+        await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+      }
+
+      galleriesMap.remove(this);
+      deleteCallback();
+      filesLoaded = false;
+    }
+
+  }
+
+  void setCallback(VoidCallback callback){
+    this.deleteCallback = callback;
   }
 }

@@ -60,14 +60,14 @@ class FileDatabaseHelper {
     return id;
   }
 
-  Future<void> deleteFile(String path) async {
+  Future<void> deleteFile(String name) async {
     // delete a file in the database
     final db = await database;
 
-    await db.delete(
+   await db.delete(
       'file',
-      where: "filepath = ?",
-      whereArgs: [path],
+      where: "fileName = ?",
+      whereArgs: [name],
     );
   }
 

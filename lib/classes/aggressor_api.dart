@@ -411,7 +411,9 @@ class AggressorApi {
 
   Future<dynamic> deleteAwsFile(String userId, String section, String boatId, String date, String filePath) async {
     //delete a file from the aws directories
-    String url = "https://secure.aggressor.com/api/app/s3/delete/" + userId + "/" + section + "/" + boatId + "/" + date + "/" + filePath ;
+    String url = "https://secure.aggressor.com/api/app/s3/delete/" + userId + "/" + section + "/" + boatId + "/" + date + filePath.replaceAll("\"", "") ;
+
+    print(url);
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});

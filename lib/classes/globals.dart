@@ -4,6 +4,7 @@ holds global variables for the application
 library globals;
 
 import 'package:aggressor_adventures/classes/contact.dart';
+import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:flutter/cupertino.dart';
 import 'gallery.dart';
@@ -31,9 +32,10 @@ Map<String, dynamic> profileData = <String, dynamic>{};
 List<Trip> notLoadedList = [];
 List<Trip> tripList = [];
 List<Trip> loadSize = [];
+List<Map<String, dynamic>> boatList = [];
+List<FileData> fileDataList = [];
 List<dynamic> statesList = [];
 List<dynamic> countriesList = [];
-List<Map<String, dynamic>> boatList = [];
 List<dynamic> sliderImageList = [];
 List<dynamic> notesList = [];
 List<dynamic> ironDiverList = [];

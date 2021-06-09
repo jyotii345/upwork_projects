@@ -348,7 +348,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           var response = await AggressorApi().uploadAwsFile(
               widget.user.userId.toString(),
               "gallery",
-              dropDownValue["boatid"].toString(),
+              dateDropDownValue.charter.boatId.toString(),
               file.path,
               uploadDate);
 
@@ -367,7 +367,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
         if (!mounted) return;
       } else {
-
         for (var element in resultList) {
           File file = File(
               await FlutterAbsolutePath.getAbsolutePath(element.identifier));
@@ -376,13 +375,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               DateTime.parse(dateDropDownValue.charter.startDate),
               [yyyy, '-', mm, '-', dd]);
 
-
           await PhotoDatabaseHelper.instance.insertPhoto(Photo(
               element.name,
               widget.user.userId,
               file.path,
               uploadDate,
-              dateDropDownValue.charterId,
+              dateDropDownValue.charter.boatId,
               null));
           await OfflineDatabaseHelper.instance.insertOffline(
               {'type': "image", 'action': "add", 'id': file.path});
@@ -540,6 +538,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     galleryMap.galleriesMap.forEach((key, value) {
       if (value.photos.length > 0) {
         galleriesList.add(value.getGalleryRow(context, index));
+        galleriesMap[key].setCallback(() {
+          setState(() {
+            photosLoaded = false;
+          });
+        });
       }
       index++;
     });
@@ -662,12 +665,13 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   File imageFile = File(filePath);
                   imageFile.writeAsBytes(bytes);
 
+                  await element.initCharterInformation();
                   Photo photo = Photo(
                       fileName,
                       widget.user.userId,
                       imageFile.path,
                       element.tripDate,
-                      element.charterId,
+                      element.boat.boatId,
                       elementJson["Key"]);
 
                   photoHelper.insertPhoto(photo);
@@ -682,10 +686,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
       List<Photo> photos = await photoHelper.queryPhoto();
       photos.forEach((element) {
+        print(element.boatId);
         if (!tempGalleries.containsKey(element.boatId)) {
           int tripIndex = 0;
           for (int i = 0; i < tripList.length - 1; i++) {
-            if (tripList[i].charterId == element.boatId) {
+            if (tripList[i].boat.boatId == element.boatId) {
               tripIndex = i;
             }
           }
@@ -700,7 +705,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         photosLoaded = true;
         loading = false;
       });
-    } else if(!photosLoaded && !online){
+    } else if (!photosLoaded && !online) {
       setState(() {
         loading = true;
       });
@@ -764,7 +769,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     Map<String, Gallery> tempGalleries = <String, Gallery>{};
     photos.forEach((element) {
-      print(element.toMap());
       if (!tempGalleries.containsKey(element.boatId)) {
         int tripIndex = 0;
         for (int i = 0; i < tripList.length - 1; i++) {

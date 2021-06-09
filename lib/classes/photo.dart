@@ -9,11 +9,8 @@ class Photo {
   String boatId;
   String key;
 
-  Photo(
-      String imageName,
-      String userId,
-      String imagePath, String date,String boatId, String key
-      ) {
+  Photo(String imageName, String userId, String imagePath, String date,
+      String boatId, String key) {
     //default constructor
     this.imageName = imageName;
     this.userId = userId;
@@ -29,9 +26,9 @@ class Photo {
       'imageName': imageName,
       'userId': userId,
       'imagePath': imagePath,
-      'date' : date,
-      'boatId' : boatId,
-      'key' : key,
+      'date': date,
+      'boatId': boatId,
+      'key': key,
     };
   }
 }
