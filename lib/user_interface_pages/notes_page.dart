@@ -310,7 +310,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           TextButton(
             onPressed: () {
               if (dateDropDownValue.charter != null) {
-                if(online) {
                   if (dateDropDownValue.charter.startDate != "") {
                     Navigator.push(
                       context,
@@ -324,10 +323,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                       ),
                     );
                   }
-                }
-                else{setState(() {
-                  errorMessage = "Must be online to add a note";
-                });}
               }
             },
             child: Text(
@@ -544,6 +539,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         notesLoaded = true;
       });
       updateNotesCache();
+    }
+    else{
+      notesList = await NotesDatabaseHelper.instance.queryNotes();
     }
     setState(() {
       loading = false;

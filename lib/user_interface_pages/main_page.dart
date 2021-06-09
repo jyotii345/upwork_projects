@@ -174,6 +174,7 @@ class _MyHomePageState extends State<MyHomePage>
     contactLoaded = false;
     profileDataLoaded = false;
     online = true;
+    filesLoaded = false;
 
     currentIndex = 0;
 

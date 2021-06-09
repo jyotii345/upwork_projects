@@ -6,7 +6,8 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:date_format/date_format.dart';
+import 'package:aggressor_adventures/databases/notes_database.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,9 +16,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class EditNote extends StatefulWidget {
   EditNote(
-      this.user,
-      this.note,
-      );
+    this.user,
+    this.note,
+  );
 
   final User user;
   final Note note;
@@ -49,7 +50,6 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     setText();
-
   }
 
   /*
@@ -255,7 +255,7 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
         style: TextStyle(color: Colors.white),
       ),
       style:
-      TextButton.styleFrom(backgroundColor: AggressorColors.secondaryColor),
+          TextButton.styleFrom(backgroundColor: AggressorColors.secondaryColor),
     );
   }
 
@@ -281,8 +281,11 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 3,
               child: HtmlEditor(
                 controller: preNotesController,
-                htmlEditorOptions: HtmlEditorOptions(hint: "Pre-Adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
+                htmlEditorOptions:
+                    HtmlEditorOptions(hint: "Pre-Adventure notes"),
+                htmlToolbarOptions: HtmlToolbarOptions(
+                  toolbarPosition: ToolbarPosition.custom,
+                ),
               ),
             ),
           ),
@@ -292,29 +295,71 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
   }
 
   void uploadNote() async {
+    if (online) {
+      setState(() {
+        loading = true;
+      });
 
-    setState(() {
-      loading = true;
-    });
+      var res = await AggressorApi().updateNote(
+        widget.note.startDate,
+        widget.note.endDate,
+        await preNotesController.getText(),
+        await postNotesController.getText(),
+        await miscNotesController.getText(),
+        widget.note.boatId,
+        widget.user.userId,
+        widget.note.id,
+      );
 
-    var res = await AggressorApi().updateNote(widget.note.startDate, widget.note.endDate, await preNotesController.getText(), await postNotesController.getText(), await miscNotesController.getText(), widget.note.boatId, widget.user.userId, widget.note.id,);
+      setState(() {
+        loading = false;
+        notesLoaded = false;
+      });
 
-    setState(() {
-      loading = false;
-      notesLoaded = false;
-    });
+      widget.note.callback();
 
-    widget.note.callback();
+      var count = 0;
+      Navigator.popUntil(context, (route) {
+        return count++ == 2;
+      });
+    } else {
+      setState(() {
+        loading = true;
+      });
 
+      OfflineDatabaseHelper.instance.insertOffline(
+          {'id': widget.note.id, 'type': 'note', 'action': 'edit'});
 
-    var count = 0;
-    Navigator.popUntil(context, (route) {
-      return count++ == 2;
-    });
+      await NotesDatabaseHelper.instance.deleteNotes(widget.note.id);
+      await NotesDatabaseHelper.instance.insertNotes(Note(
+          widget.note.id,
+          widget.note.boatId,
+          widget.note.destination,
+          widget.note.startDate,
+          widget.note.endDate,
+          await preNotesController.getText(),
+          await postNotesController.getText(),
+          await miscNotesController.getText(),
+          null,
+          null,
+          null));
+
+      setState(() {
+        loading = false;
+        notesLoaded = false;
+      });
+      widget.note.callback();
+      var count = 0;
+      Navigator.popUntil(context, (route) {
+        return count++ == 2;
+      });
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   Widget getPostTripNotes() {
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
@@ -336,8 +381,11 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 3,
               child: HtmlEditor(
                 controller: postNotesController,
-                htmlEditorOptions: HtmlEditorOptions(hint: "Post-Adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
+                htmlEditorOptions:
+                    HtmlEditorOptions(hint: "Post-Adventure notes"),
+                htmlToolbarOptions: HtmlToolbarOptions(
+                  toolbarPosition: ToolbarPosition.custom,
+                ),
               ),
             ),
           ),
@@ -368,8 +416,11 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
               height: MediaQuery.of(context).size.height / 3,
               child: HtmlEditor(
                 controller: miscNotesController,
-                htmlEditorOptions: HtmlEditorOptions(hint: "Miscellaneous adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(toolbarPosition: ToolbarPosition.custom,),
+                htmlEditorOptions:
+                    HtmlEditorOptions(hint: "Miscellaneous adventure notes"),
+                htmlToolbarOptions: HtmlToolbarOptions(
+                  toolbarPosition: ToolbarPosition.custom,
+                ),
               ),
             ),
           ),
@@ -484,7 +535,8 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
                 width: MediaQuery.of(context).size.width / 2 -
                     MediaQuery.of(context).size.height / 40 -
                     10,
-                child: Text(widget.note.endDate,
+                child: Text(
+                  widget.note.endDate,
                   style: TextStyle(
                       fontSize: MediaQuery.of(context).size.height / 45 - 4),
                   textAlign: TextAlign.center,
@@ -501,14 +553,14 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      child:
-      Container(
+      child: Container(
         height: double.infinity,
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
-              "assets/pagebackground.png",),
+              "assets/pagebackground.png",
+            ),
             fit: BoxFit.cover,
           ),
         ),
@@ -518,16 +570,16 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
             color: Colors.white.withOpacity(.6),
           ),
         ),
-      ),);
+      ),
+    );
   }
 
-  void setText() async{
+  void setText() async {
     await Future.delayed(Duration(milliseconds: 1000));
 
     preNotesController.insertHtml(widget.note.preTripNotes);
     postNotesController.insertHtml(widget.note.postTripNotes);
     miscNotesController.insertHtml(widget.note.miscNotes);
-
   }
 
   Widget getBannerImage() {
@@ -562,8 +614,8 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
   Widget getLoading() {
     return loading
         ? Center(
-      child: CircularProgressIndicator(),
-    )
+            child: CircularProgressIndicator(),
+          )
         : Container();
   }
 

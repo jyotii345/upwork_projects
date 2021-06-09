@@ -1,8 +1,13 @@
 /*
 file_data class to hold the contents of a file object generated from the aws s3 bucket
  */
+import 'dart:convert';
 import 'dart:ui';
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
@@ -11,12 +16,15 @@ class FileData {
   String filePath;
   String date;
   String fileName;
+  String boatId;
+  User user;
 
-  FileData(String filePath, String date, String fileName) {
+  FileData(String filePath, String date, String fileName, String boatId) {
     //default constructor
     this.filePath = filePath;
     this.date = date;
     this.fileName = fileName;
+    this.boatId = boatId;
   }
 
   Map<String, dynamic> toMap() {
@@ -81,7 +89,7 @@ class FileData {
                       width: iconSize,
                     ),
                     onPressed: () {
-                      print("pressed");
+                      deleteFile();
                     }),
               ),
             ],
@@ -91,9 +99,19 @@ class FileData {
     );
   }
 
+  void deleteFile() async{
+    var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), filePath.toString());
+    await FileDatabaseHelper.instance.deleteFile(filePath);
+    print(json.decode(await res.stream.bytesToString()));
+    filesLoaded = false;
+  }
 
   Future<void> openFile() async {
     //opens the contents of a file on the defualt application for the native device
     final _result = await OpenFile.open(filePath);
+  }
+
+  void setUser(User user){
+    this.user = user;
   }
 }

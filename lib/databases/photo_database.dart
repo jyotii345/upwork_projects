@@ -15,10 +15,8 @@ class PhotoDatabaseHelper {
   PhotoDatabaseHelper._privateConstructor();
 
   static final PhotoDatabaseHelper instance =
-  PhotoDatabaseHelper._privateConstructor();
+      PhotoDatabaseHelper._privateConstructor();
   static Database _database;
-
-
 
   Future<Database> get database async {
     //get the database object
@@ -34,8 +32,6 @@ class PhotoDatabaseHelper {
     return await openDatabase(path,
         version: _databaseVersion, onCreate: _onCreate);
   }
-
-
 
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
@@ -60,14 +56,14 @@ class PhotoDatabaseHelper {
     return id;
   }
 
-  Future<void> deletePhoto(int id) async {
+  Future<void> deletePhoto(String imagePath) async {
     // delete a photo in the database
     final db = await database;
 
     await db.delete(
       'photo',
-      where: "id = ?",
-      whereArgs: [id],
+      where: "imagePath = ?",
+      whereArgs: [imagePath],
     );
   }
 
@@ -80,8 +76,9 @@ class PhotoDatabaseHelper {
   Future<bool> photoExists(String image, String boatId) async {
     //check if a photo exists in the database by the image extension and the boat id
     final db = await database;
-    var result = await db
-        .rawQuery('SELECT EXISTS(SELECT 1 FROM photo WHERE imageName = ? AND boatId = ?)', [image, boatId]);
+    var result = await db.rawQuery(
+        'SELECT EXISTS(SELECT 1 FROM photo WHERE imageName = ? AND boatId = ?)',
+        [image, boatId]);
     int exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
@@ -95,22 +92,33 @@ class PhotoDatabaseHelper {
     return exists == 1;
   }
 
+  Future<Photo> getPhoto(String filePath) async {
+    final db = await database;
+    var result = await db
+        .rawQuery('SELECT * FROM photo WHERE imagePath = ?', [filePath]);
+    return Photo(
+        result[0]['imageName'],
+        result[0]['userId'],
+        result[0]['imagePath'],
+        result[0]['date'],
+        result[0]['boatId'],
+        result[0]['key']);
+  }
+
   Future<List<Photo>> queryPhoto() async {
     // Get a photo from the database
     final Database db = await database;
 
     final List<Map<String, dynamic>> maps = await db.query('photo');
 
-
     return List.generate(maps.length, (i) {
       return Photo(
-        maps[i]['imageName'],
-        maps[i]['userId'],
-        maps[i]['imagePath'],
-        maps[i]['date'],
-        maps[i]['boatId'],
-        maps[i]['key']
-      );
+          maps[i]['imageName'],
+          maps[i]['userId'],
+          maps[i]['imagePath'],
+          maps[i]['date'],
+          maps[i]['boatId'],
+          maps[i]['key']);
     });
   }
 }

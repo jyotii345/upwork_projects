@@ -38,7 +38,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   Trip dropDownValue, selectionTrip;
 
-  bool filesLoaded = false;
   bool loading = false;
 
   List<dynamic> filesList = [];
@@ -504,10 +503,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                     fileName,
                   )) {
                     FileData fileData = FileData(
-                      tempFile.path,
-                      date,
-                      fileName,
-                    );
+                        tempFile.path, date, fileName, element.charter.boatId);
 
                     fileHelper.insertFile(fileData);
                   }
@@ -547,11 +543,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               if (!await fileHelper.fileExists(
                 fileName,
               )) {
-                FileData fileData = FileData(
-                  tempFile.path,
-                  "General File",
-                  fileName,
-                );
+                FileData fileData =
+                    FileData(tempFile.path, "general", fileName, "general");
 
                 fileHelper.insertFile(fileData);
               }
@@ -583,6 +576,10 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     }
     setState(() {
       loading = false;
+    });
+
+    fileDataList.forEach((element) {
+      element.setUser(widget.user);
     });
     return "finished";
   }

@@ -9,6 +9,7 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:date_format/date_format.dart';
@@ -302,43 +303,43 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       errorMessage = "";
     });
 
-    if(online) {
-      if (await Permission.photos.status.isDenied ||
-          await Permission.camera.status.isDenied) {
-        await Permission.photos.request();
-        await Permission.camera.request();
+    if (await Permission.photos.status.isDenied ||
+        await Permission.camera.status.isDenied) {
+      await Permission.photos.request();
+      await Permission.camera.request();
 
-        // We didn't ask for permission yet or the permission has been denied before but not permanently.
-      }
+      // We didn't ask for permission yet or the permission has been denied before but not permanently.
+    }
 
-      if (dropDownValue["name"] == " -- SELECT -- " ||
-          dateDropDownValue.charter == null ||
-          dateDropDownValue.charter.startDate == "") {
-        setState(() {
-          errorMessage = "You must select a trip to create a gallery for.";
-        });
-      } else {
-        //try {
-        resultList = await MultiImagePicker.pickImages(
-          maxImages: 300,
-          enableCamera: true,
-          selectedAssets: images,
-          cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-          materialOptions: MaterialOptions(
-            actionBarColor: "#ff428cc7",
-            actionBarTitle: "Adventure Of A Lifetime",
-            allViewTitle: "All Photos",
-            useDetailsView: false,
-            selectCircleStrokeColor: "#ff428cc7",
-          ),
-        );
-        setState(() {
-          loading = true;
-        });
+    if (dropDownValue["name"] == " -- SELECT -- " ||
+        dateDropDownValue.charter == null ||
+        dateDropDownValue.charter.startDate == "") {
+      setState(() {
+        errorMessage = "You must select a trip to create a gallery for.";
+      });
+    } else {
+      //try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 300,
+        enableCamera: true,
+        selectedAssets: images,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#ff428cc7",
+          actionBarTitle: "Adventure Of A Lifetime",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#ff428cc7",
+        ),
+      );
+      setState(() {
+        loading = true;
+      });
 
+      if (online) {
         for (var element in resultList) {
-          File file =
-          File(await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+          File file = File(
+              await FlutterAbsolutePath.getAbsolutePath(element.identifier));
 
           String uploadDate = formatDate(
               DateTime.parse(dateDropDownValue.charter.startDate),
@@ -365,12 +366,41 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         });
 
         if (!mounted) return;
+      } else {
+
+        for (var element in resultList) {
+          File file = File(
+              await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+
+          String uploadDate = formatDate(
+              DateTime.parse(dateDropDownValue.charter.startDate),
+              [yyyy, '-', mm, '-', dd]);
+
+
+          await PhotoDatabaseHelper.instance.insertPhoto(Photo(
+              element.name,
+              widget.user.userId,
+              file.path,
+              uploadDate,
+              dateDropDownValue.charterId,
+              null));
+          await OfflineDatabaseHelper.instance.insertOffline(
+              {'type': "image", 'action': "add", 'id': file.path});
+        }
+
+        setState(() {
+          photosLoaded = false;
+          loading = false;
+          images = resultList;
+          errorMessage = error;
+        });
+
+        if (!mounted) return;
+
+        setState(() {
+          loading = false;
+        });
       }
-    }else{
-      setState(() {
-        loading = false;
-        errorMessage = "Must be online to upload photos";
-      });
     }
   }
 
@@ -571,10 +601,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
-    setState(() {
-      loading = true;
-    });
     if (!photosLoaded && online) {
+      setState(() {
+        loading = true;
+      });
+
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
       final AwsS3Client s3client = AwsS3Client(
@@ -667,11 +698,20 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       setState(() {
         galleryMap.galleriesMap = tempGalleries;
         photosLoaded = true;
+        loading = false;
+      });
+    } else if(!photosLoaded && !online){
+      setState(() {
+        loading = true;
+      });
+      var tempPhotosList = await PhotoDatabaseHelper.instance.queryPhoto();
+      var tempGalleriesMap = await getGalleriesOffline(tempPhotosList);
+      setState(() {
+        galleriesMap = tempGalleriesMap;
+        photosLoaded = true;
+        loading = false;
       });
     }
-    setState(() {
-      loading = false;
-    });
     return "finished";
   }
 
@@ -707,16 +747,37 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     return online
         ? Container()
         : Container(
-      color: Colors.red,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
-        child: Text(
-          "Application is offline",
-          style: TextStyle(color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
+            color: Colors.red,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+              child: Text(
+                "Application is offline",
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+  }
+
+  Future<dynamic> getGalleriesOffline(List<Photo> photos) async {
+    //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
+
+    Map<String, Gallery> tempGalleries = <String, Gallery>{};
+    photos.forEach((element) {
+      print(element.toMap());
+      if (!tempGalleries.containsKey(element.boatId)) {
+        int tripIndex = 0;
+        for (int i = 0; i < tripList.length - 1; i++) {
+          if (tripList[i].charterId == element.boatId) {
+            tripIndex = i;
+          }
+        }
+        tempGalleries[element.boatId] = Gallery(
+            widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
+      }
+      tempGalleries[element.boatId].addPhoto(element);
+    });
+    return tempGalleries;
   }
 
   @override

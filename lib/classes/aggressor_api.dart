@@ -8,7 +8,6 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
-import 'package:dio/dio.dart' as dio;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart';
@@ -410,6 +409,20 @@ class AggressorApi {
     return pageResponse;
   }
 
+  Future<dynamic> deleteAwsFile(String userId, String section, String boatId, String date, String filePath) async {
+    //delete a file from the aws directories
+    String url = "https://secure.aggressor.com/api/app/s3/delete/" + userId + "/" + section + "/" + boatId + "/" + date + "/" + filePath ;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    return pageResponse;
+  }
+
+
+
   Future<dynamic> sendForgotPassword(
     String email,
   ) async {
@@ -759,11 +772,6 @@ class AggressorApi {
       "credit_card_cvv": cvv,
     };
 
-    var dioObj = dio.Dio();
-    dio.FormData formData = dio.FormData.fromMap(paymentBody);
-    print(formData.fields.toString());
-    dioObj.options.headers = {'apikey': apiKey};
-
     String url = 'https://secure.aggressor.com/api/app/payments/credit/' +
         reservationId +
         '/' +
@@ -771,10 +779,14 @@ class AggressorApi {
         '/' +
         contactId;
     print(url);
-    var response = await dioObj.post(
-      url,
-      data: formData,
-    );
-    return response.data;
+
+    MultipartRequest request = http.MultipartRequest('POST', Uri.parse(url));
+    request.headers.addEntries([MapEntry('apikey', apiKey)]);
+    request.fields.addAll(paymentBody);
+    StreamedResponse response = await request.send();
+
+    var jsonResponse = await json.decode(await response.stream.bytesToString());
+
+    return jsonResponse;
   }
 }

@@ -1,11 +1,12 @@
 import 'dart:ui';
-
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
-import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/notes_database.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -296,34 +297,76 @@ class AddNotesState extends State<AddNotes> with AutomaticKeepAliveClientMixin {
   }
 
   void uploadNote() async {
-    setState(() {
-      loading = true;
-    });
+    if (online) {
+      setState(() {
+        loading = true;
+      });
+      String startDate = formatDate(
+          DateTime.parse(widget.noteTrip.charter.startDate),
+          [yyyy, '-', mm, '-', dd]);
 
-    String startDate = formatDate(
-        DateTime.parse(widget.noteTrip.charter.startDate),
-        [yyyy, '-', mm, '-', dd]);
+      String endDate = formatDate(
+          DateTime.parse(widget.noteTrip.charter.startDate)
+              .add(Duration(days: int.parse(widget.noteTrip.charter.nights))),
+          [yyyy, '-', mm, '-', dd]);
 
-    String endDate = formatDate(
-        DateTime.parse(widget.noteTrip.charter.startDate)
-            .add(Duration(days: int.parse(widget.noteTrip.charter.nights))),
-        [yyyy, '-', mm, '-', dd]);
+      var res = await AggressorApi().saveNote(
+          startDate,
+          endDate,
+          await preNotesController.getText(),
+          await postNotesController.getText(),
+          await miscNotesController.getText(),
+          widget.noteTrip.boat.boatId,
+          widget.user.userId);
 
-    var res = await AggressorApi().saveNote(
-        startDate,
-        endDate,
-        await preNotesController.getText(),
-        await postNotesController.getText(),
-        await miscNotesController.getText(),
-        widget.noteTrip.boat.boatId,
-        widget.user.userId);
+      setState(() {
+        loading = false;
+        notesLoaded = false;
+      });
+      widget.callback();
+      Navigator.pop(context);
+    } else {
+      setState(() {
+        loading = true;
+      });
+      String startDate = formatDate(
+          DateTime.parse(widget.noteTrip.charter.startDate),
+          [yyyy, '-', mm, '-', dd]);
 
-    setState(() {
-      loading = false;
-      notesLoaded = false;
-    });
-    widget.callback();
-    Navigator.pop(context);
+      String endDate = formatDate(
+          DateTime.parse(widget.noteTrip.charter.startDate)
+              .add(Duration(days: int.parse(widget.noteTrip.charter.nights))),
+          [yyyy, '-', mm, '-', dd]);
+
+      OfflineDatabaseHelper.instance.insertOffline({
+        'id': widget.noteTrip.boat.boatId + "_" + startDate.toString(),
+        'type': 'note',
+        'action' : 'add',
+      });
+
+      NotesDatabaseHelper.instance.insertNotes(Note(
+          widget.noteTrip.boat.boatId + "_" + startDate.toString(),
+          widget.noteTrip.boat.boatId,
+          widget.noteTrip.destination,
+          startDate,
+          endDate,
+          await preNotesController.getText(),
+          await postNotesController.getText(),
+          await miscNotesController.getText(),
+          null,
+          null,
+          null));
+      setState(() {
+        loading = false;
+        notesLoaded = false;
+      });
+      widget.callback();
+      Navigator.pop(context);
+
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   Widget getPostTripNotes() {

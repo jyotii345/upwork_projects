@@ -6,8 +6,10 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/databases/profile_database.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -268,6 +270,7 @@ class LoadingPageState extends State<LoadingPage> {
 
     online = await DataConnectionChecker().hasConnection;
     if (online == true) {
+      await updateOffline();
       await getOnlineLoad();
     } else {
       await getOfflineLoad();
@@ -343,6 +346,15 @@ class LoadingPageState extends State<LoadingPage> {
       loadedCount++;
     });
 
+    for (var trip in tripList) {
+      trip.user = widget.user;
+      await trip.initCharterInformation();
+      setState(() {
+        loadedCount++;
+        percent = (loadedCount / (loadingLength));
+      });
+    }
+
     var photosList = await PhotoDatabaseHelper.instance.queryPhoto();
     var tempGalleriesMap = await getGalleries(photosList);
     setState(() {
@@ -387,15 +399,6 @@ class LoadingPageState extends State<LoadingPage> {
 
     if (tripList == null) {
       tripList = [];
-    }
-
-    for (var trip in tripList) {
-      trip.user = widget.user;
-      await trip.initCharterInformation();
-      setState(() {
-        loadedCount++;
-        percent = (loadedCount / (loadingLength));
-      });
     }
 
     return "done";
@@ -682,7 +685,7 @@ class LoadingPageState extends State<LoadingPage> {
       if (!tempGalleries.containsKey(element.boatId)) {
         int tripIndex = 0;
         for (int i = 0; i < tripList.length - 1; i++) {
-          if (tripList[i].charterId == element.boatId) {
+          if (tripList[i].boat.boatId == element.boatId) {
             tripIndex = i;
           }
         }
@@ -692,5 +695,73 @@ class LoadingPageState extends State<LoadingPage> {
       tempGalleries[element.boatId].addPhoto(element);
     });
     return tempGalleries;
+  }
+
+
+  Future<dynamic> updateOffline() async{
+    try {
+      List<Map<String, dynamic>> offlineList = await OfflineDatabaseHelper
+          .instance.queryOffline();
+      for (var offlineItem in offlineList) {
+        if (offlineItem["type"] == "note") {
+          if (offlineItem["action"] == "add") {
+            Note uploadNote = await NotesDatabaseHelper.instance.getNotes(
+                offlineItem["id"]);
+            var response = await AggressorApi().saveNote(
+                uploadNote.startDate,
+                uploadNote.endDate,
+                uploadNote.preTripNotes,
+                uploadNote.postTripNotes,
+                uploadNote.miscNotes,
+                uploadNote.boatId,
+                widget.user.userId);
+            if (response["status"] == "success") {
+              NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
+              OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
+            }
+          }
+          else if (offlineItem["action"] == "delete") {
+            var response = await AggressorApi().deleteNote(
+                widget.user.userId, offlineItem["id"]);
+            if (response["status"] == "success") {
+              NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
+              OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
+            }
+          }
+          else {
+            Note uploadNote = await NotesDatabaseHelper.instance.getNotes(
+                offlineItem["id"]);
+            var response = await AggressorApi().updateNote(
+                uploadNote.startDate,
+                uploadNote.endDate,
+                uploadNote.preTripNotes,
+                uploadNote.postTripNotes,
+                uploadNote.miscNotes,
+                uploadNote.boatId,
+                widget.user.userId,
+                uploadNote.id);
+            if (response["status"] == "success") {
+              NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
+              OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
+            }
+          }
+        }
+        else if (offlineItem['type'] == 'image') {
+          if (offlineItem['action'] == 'add') {
+            Photo photo = await PhotoDatabaseHelper.instance.getPhoto(
+                offlineItem['id']);
+            var response = await AggressorApi().uploadAwsFile(
+                widget.user.userId, "gallery", photo.boatId, photo.imagePath,
+                photo.date);
+            if (response["status"] == "success") {
+              OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
+              PhotoDatabaseHelper.instance.deletePhoto(photo.imagePath);
+            }
+          }
+        }
+      }
+    }catch(e){
+      print("no offline additions");
+    }
   }
 }

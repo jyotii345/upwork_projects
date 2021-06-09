@@ -4,7 +4,10 @@ creates a note class to hold the contents of a note object
 import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/notes_database.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
@@ -135,8 +138,18 @@ class Note {
   void deleteNote() async {
 
     //deletes this note object and updates the notes page list
-   var delRes = await AggressorApi().deleteNote(user.userId, id);
-   callback();
+    if(online){
+      var delRes = await AggressorApi().deleteNote(user.userId, id);
+      callback();
+    }
+    else{
+      await NotesDatabaseHelper.instance.deleteNotes(id);
+      if(await OfflineDatabaseHelper.instance.offlineExists(id)){
+        OfflineDatabaseHelper.instance.deleteOffline(id);
+      }
+      await OfflineDatabaseHelper.instance.insertOffline({'type': 'note', 'id': id, 'action': 'delete'});
+      callback();
+    }
   }
 
   void openNote() {

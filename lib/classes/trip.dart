@@ -758,14 +758,14 @@ class Trip {
     //reloads the payment due for the boat
     var response = await AggressorApi()
         .getReservationDetails(reservationId, user.contactId);
-    this.reservationId = response['reservationId'];
-    this.charterId = response['charterId'];
-    this.total = response['total'];
-    this.discount = response['discount'];
-    this.payments = response['payments'];
-    this.due = response['due'];
-    this.dueDate = response['dueDate'];
-    this.passengers = response['passengers'];
+    this.reservationId = response['reservationId'].toString();
+    this.charterId = response['charterId'].toString();
+    this.total = response['total'].toString();
+    this.discount = response['discount'].toString();
+    this.payments = response['payments'].toString();
+    this.due = response['due'].toString();
+    this.dueDate = response['dueDate'].toString();
+    this.passengers = response['passengers'].toString();
     this.location = response['location'];
     this.embark = response['embark'];
     this.disembark = response['disembark'];

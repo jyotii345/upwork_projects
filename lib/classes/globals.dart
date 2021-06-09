@@ -21,6 +21,7 @@ bool ironDiversLoaded = false;
 bool contactLoaded = false;
 bool profileDataLoaded = false;
 bool online = true;
+bool filesLoaded = false;
 
 int currentIndex = 0;
 
