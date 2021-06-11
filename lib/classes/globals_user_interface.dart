@@ -34,12 +34,14 @@ double iconSize = MediaQuery.of(navigatorKey.currentContext).size.width / 10;
 
 int popDistance = 0;
 bool innerPage = false;
+bool portrait = true;
 
 VoidCallback mainPageCallback;
 
 Widget getBottomNavigationBar() {
   return OrientationBuilder(
     builder: (context, orientation) {
+      orientation == Orientation.portrait ? portrait = true : portrait = false;
       return BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,

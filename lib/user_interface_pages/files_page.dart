@@ -6,6 +6,7 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
@@ -72,18 +73,21 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
     getFiles();
 
-    return Stack(
-      children: [
-        getBackgroundImage(),
-        getPageForm(),
-        Container(
-          height: MediaQuery.of(context).size.height / 7 + 4,
-          width: double.infinity,
-          color: AggressorColors.secondaryColor,
-        ),
-        getBannerImage(),
-      ],
-    );
+    return OrientationBuilder(builder: (context, orientation) {
+      portrait = orientation == Orientation.portrait;
+      return Stack(
+        children: [
+          getBackgroundImage(),
+          getPageForm(),
+          Container(
+            height: MediaQuery.of(context).size.height / 7 + 4,
+            width: double.infinity,
+            color: AggressorColors.secondaryColor,
+          ),
+          getBannerImage(),
+        ],
+      );
+    });
   }
 
   /*
@@ -123,7 +127,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             "UPLOAD FILE",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
-                fontSize: MediaQuery.of(context).size.height / 35,
+                fontSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 fontWeight: FontWeight.bold),
           ),
           getFilePrompt(),
@@ -148,16 +154,22 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Destination:",
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 50
+                      : MediaQuery.of(context).size.width / 50),
             ),
           ),
           Expanded(
             child: Container(
-              height: MediaQuery.of(context).size.height / 35,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 35
+                  : MediaQuery.of(context).size.width / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -169,7 +181,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 value: dropDownValue,
                 elevation: 0,
                 isExpanded: true,
-                iconSize: MediaQuery.of(context).size.height / 35,
+                iconSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 onChanged: (Trip newValue) {
                   setState(() {
                     dropDownValue = newValue;
@@ -179,7 +193,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                   return DropdownMenuItem<Trip>(
                     value: value,
                     child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
+                      width: portrait
+                          ? MediaQuery.of(context).size.width / 2
+                          : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value.detailDestination == "General"
                             ? value.detailDestination
@@ -197,8 +213,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                                     .year
                                     .toString(),
                         style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height / 40 - 4),
+                            fontSize: portrait
+                                ? MediaQuery.of(context).size.height / 40 - 4
+                                : MediaQuery.of(context).size.width / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -227,18 +244,24 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "File Name:",
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 45),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45
+                      : MediaQuery.of(context).size.width / 45),
             ),
           ),
           Expanded(
             child: GestureDetector(
               onTap: pickFile,
               child: Container(
-                  height: MediaQuery.of(context).size.height / 35,
+                  height: portrait
+                      ? MediaQuery.of(context).size.height / 35
+                      : MediaQuery.of(context).size.width / 35,
                   decoration: ShapeDecoration(
                     shape: RoundedRectangleBorder(
                       side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -248,7 +271,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                   child: Text(
                     fileName,
                     style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height / 40 - 4),
+                        fontSize: portrait
+                            ? MediaQuery.of(context).size.height / 40 - 4
+                            : MediaQuery.of(context).size.width / 40 - 4),
                     textAlign: TextAlign.center,
                   )),
             ),
@@ -262,15 +287,17 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return Row(
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.height / 6,
+          width: portrait
+              ? MediaQuery.of(context).size.height / 6
+              : MediaQuery.of(context).size.width / 6,
         ),
         Expanded(
           child: TextButton(
             onPressed: uploadFile,
-            child:Text(
-                uploading ? "Uploading, please wait..." : "Upload File",
-                style: TextStyle(color: Colors.white),
-              ),
+            child: Text(
+              uploading ? "Uploading, please wait..." : "Upload File",
+              style: TextStyle(color: Colors.white),
+            ),
             style: TextButton.styleFrom(
                 backgroundColor: AggressorColors.secondaryColor),
           ),
@@ -317,7 +344,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           "My Files",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 25,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 25
+                  : MediaQuery.of(context).size.width / 25,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -333,7 +362,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           "Files must be uploaded as: PDF, TXT, DOC, JPG, PNG",
           style: TextStyle(
               color: Colors.grey[400],
-              fontSize: MediaQuery.of(context).size.height / 55,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 55
+                  : MediaQuery.of(context).size.width / 55,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -341,7 +372,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getFilesSection() {
-    double textBoxSize = MediaQuery.of(context).size.width / 4;
+    double textBoxSize = portrait
+        ? MediaQuery.of(context).size.width / 4
+        : MediaQuery.of(context).size.height / 4;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -392,7 +425,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Widget getFilesView() {
     //returns the list item containing fileData objects
 
-    double textBoxSize = MediaQuery.of(context).size.width / 4;
+    double textBoxSize = portrait
+        ? MediaQuery.of(context).size.width / 4
+        : MediaQuery.of(context).size.height / 4;
     filesList.clear();
     filesList.add(
       Container(
@@ -542,9 +577,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               String filePath = '$appDocumentsPath/$fileName';
               File tempFile = File(filePath);
               tempFile.writeAsBytes(bytes);
-
-              String date = downloadResponse.headers["date"]
-                  .substring(5, downloadResponse.headers["date"].length - 13);
 
               if (!await fileHelper.fileExists(
                 fileName,

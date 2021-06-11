@@ -2,6 +2,7 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -73,18 +74,22 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     getNotes();
 
     pageContext = context;
-    return Stack(
-      children: [
-        getBackgroundImage(),
-        getPageForm(),
-        Container(
-          height: MediaQuery.of(context).size.height / 7 + 4,
-          width: double.infinity,
-          color: AggressorColors.secondaryColor,
-        ),
-        getBannerImage(),
-      ],
-    );
+
+    return OrientationBuilder(builder: (context, orientation) {
+      portrait = orientation == Orientation.portrait;
+      return Stack(
+        children: [
+          getBackgroundImage(),
+          getPageForm(),
+          Container(
+            height: MediaQuery.of(context).size.height / 7 + 4,
+            width: double.infinity,
+            color: AggressorColors.secondaryColor,
+          ),
+          getBannerImage(),
+        ],
+      );
+    });
   }
 
   /*
@@ -125,7 +130,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             "ADD A NEW NOTE",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
-                fontSize: MediaQuery.of(context).size.height / 35,
+                fontSize: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35,
                 fontWeight: FontWeight.bold),
           ),
           getYachtDropDown(boatList),
@@ -144,16 +149,16 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Yacht:",
               style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+                  TextStyle(fontSize: portrait ? MediaQuery.of(context).size.height / 50 : MediaQuery.of(context).size.width / 50),
             ),
           ),
           Expanded(
             child: Container(
-              height: MediaQuery.of(context).size.height / 35,
+              height: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -165,7 +170,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 value: dropDownValue,
                 elevation: 0,
                 isExpanded: true,
-                iconSize: MediaQuery.of(context).size.height / 35,
+                iconSize: portrait ? MediaQuery.of(context).size.height / 35: MediaQuery.of(context).size.width / 35,
                 onChanged: (Map<String, dynamic> newValue) {
                   setState(() {
                     dropDownValue = newValue;
@@ -177,12 +182,12 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                   return DropdownMenuItem<Map<String, dynamic>>(
                     value: value,
                     child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
+                      width:portrait ?  MediaQuery.of(context).size.width / 2 : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value["name"],
                         style: TextStyle(
                             fontSize:
-                                MediaQuery.of(context).size.height / 40 - 4),
+                            portrait ? MediaQuery.of(context).size.height / 40 - 4 : MediaQuery.of(context).size.width / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -204,16 +209,16 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width:portrait ?  MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6,
             child: Text(
               "DepartureDate:",
               style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+                  TextStyle(fontSize: portrait ? MediaQuery.of(context).size.height / 50 : MediaQuery.of(context).size.width / 50),
             ),
           ),
           Expanded(
             child: Container(
-              height: MediaQuery.of(context).size.height / 35,
+              height: portrait ? MediaQuery.of(context).size.height / 35: MediaQuery.of(context).size.width / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -225,7 +230,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 value: dateDropDownValue,
                 elevation: 0,
                 isExpanded: true,
-                iconSize: MediaQuery.of(context).size.height / 35,
+                iconSize: portrait ? MediaQuery.of(context).size.height / 35: MediaQuery.of(context).size.width / 35,
                 onChanged: (Trip newValue) {
                   setState(() {
                     dateDropDownValue = newValue;
@@ -236,7 +241,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                   return DropdownMenuItem<Trip>(
                     value: value,
                     child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
+                      width: portrait ? MediaQuery.of(context).size.width / 2 : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value.charter == null
                             ? "You have adventures on this yacht."
@@ -254,7 +259,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                                     .toString(),
                         style: TextStyle(
                             fontSize:
-                                MediaQuery.of(context).size.height / 40 - 4),
+                            portrait ? MediaQuery.of(context).size.height / 40 - 4 : MediaQuery.of(context).size.width / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -300,40 +305,38 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   Widget getCreateNoteButton() {
     //returns the button to create the note as it is
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Row(
+    return Row(
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 4,
+            width: portrait ? MediaQuery.of(context).size.height / 6  : MediaQuery.of(context).size.width / 6,
           ),
-          TextButton(
-            onPressed: () {
-              if (dateDropDownValue.charter != null) {
+          Expanded(
+            child: TextButton(
+              onPressed: () {
+                if (dateDropDownValue.charter != null) {
                   if (dateDropDownValue.charter.startDate != "") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            AddNotes(
-                              widget.user,
-                              dateDropDownValue,
-                              notesCallBack,
-                            ),
+                        builder: (context) => AddNotes(
+                          widget.user,
+                          dateDropDownValue,
+                          notesCallBack,
+                        ),
                       ),
                     );
                   }
-              }
-            },
-            child: Text(
-              "Create note",
-              style: TextStyle(color: Colors.white),
+                }
+              },
+              child: Text(
+                "Create note",
+                style: TextStyle(color: Colors.white),
+              ),
+              style: TextButton.styleFrom(
+                  backgroundColor: AggressorColors.secondaryColor),
             ),
-            style: TextButton.styleFrom(
-                backgroundColor: AggressorColors.secondaryColor),
           ),
         ],
-      ),
     );
   }
 
@@ -376,7 +379,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           "My Notes",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 25,
+              fontSize: portrait ? MediaQuery.of(context).size.height / 25: MediaQuery.of(context).size.width / 25,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -385,7 +388,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   Widget getNotesSection() {
     //returns the section of the page that displays notes already made
-    double textBoxSize = MediaQuery.of(context).size.width / 4;
+    double textBoxSize = portrait ? MediaQuery.of(context).size.width / 4 : MediaQuery.of(context).size.height / 4;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -435,7 +438,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget getNotesView() {
     //returns the list item containing notes objects
 
-    double textBoxSize = MediaQuery.of(context).size.width / 4;
+    double textBoxSize = portrait ? MediaQuery.of(context).size.width / 4 : MediaQuery.of(context).size.height / 4;
     noteList.clear();
     noteList.add(
       Container(
@@ -539,8 +542,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         notesLoaded = true;
       });
       updateNotesCache();
-    }
-    else{
+    } else {
       notesList = await NotesDatabaseHelper.instance.queryNotes();
     }
     setState(() {

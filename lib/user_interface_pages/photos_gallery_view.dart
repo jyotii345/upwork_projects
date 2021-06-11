@@ -81,26 +81,6 @@ class GalleryViewState extends State<GalleryView> {
   Self implemented
    */
 
-  makeCall() async {
-    //calls the provided number when clicked
-    const url = 'tel:7069932531';
-    try {
-      await launch(url);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-
-  void handlePopupClick(String value) {
-    //handles the options in the menu bar
-    switch (value) {
-      case 'My Profile':
-        currentIndex = 5;
-        Navigator.pop(context);
-    }
-  }
-
   Widget getPageForm() {
     //returns the main contents of the page
     return Padding(

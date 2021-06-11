@@ -6,6 +6,7 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -79,18 +80,21 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     getGalleries();
 
-    return Stack(
-      children: [
-        getBackgroundImage(),
-        getPageForm(),
-        Container(
-          height: MediaQuery.of(context).size.height / 7 + 4,
-          width: double.infinity,
-          color: AggressorColors.secondaryColor,
-        ),
-        getBannerImage(),
-      ],
-    );
+    return OrientationBuilder(builder: (context, orientation) {
+      portrait = orientation == Orientation.portrait;
+      return Stack(
+        children: [
+          getBackgroundImage(),
+          getPageForm(),
+          Container(
+            height: MediaQuery.of(context).size.height / 7 + 4,
+            width: double.infinity,
+            color: AggressorColors.secondaryColor,
+          ),
+          getBannerImage(),
+        ],
+      );
+    });
   }
 
   /*
@@ -130,16 +134,22 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Yacht:",
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 50
+                      : MediaQuery.of(context).size.width / 50),
             ),
           ),
           Expanded(
             child: Container(
-              height: MediaQuery.of(context).size.height / 35,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 35
+                  : MediaQuery.of(context).size.width / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -151,7 +161,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 value: dropDownValue,
                 elevation: 0,
                 isExpanded: true,
-                iconSize: MediaQuery.of(context).size.height / 35,
+                iconSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 onChanged: (Map<String, dynamic> newValue) {
                   setState(() {
                     dropDownValue = newValue;
@@ -163,12 +175,15 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   return DropdownMenuItem<Map<String, dynamic>>(
                     value: value,
                     child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
+                      width: portrait
+                          ? MediaQuery.of(context).size.width / 2
+                          : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value["name"],
                         style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height / 40 - 4),
+                            fontSize: portrait
+                                ? MediaQuery.of(context).size.height / 40 - 4
+                                : MediaQuery.of(context).size.width / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -191,16 +206,22 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "DepartureDate:",
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 50
+                      : MediaQuery.of(context).size.width / 50),
             ),
           ),
           Expanded(
             child: Container(
-              height: MediaQuery.of(context).size.height / 35,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 35
+                  : MediaQuery.of(context).size.width / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -212,7 +233,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 value: dateDropDownValue,
                 elevation: 0,
                 isExpanded: true,
-                iconSize: MediaQuery.of(context).size.height / 35,
+                iconSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 onChanged: (Trip newValue) {
                   setState(() {
                     dateDropDownValue = newValue;
@@ -223,7 +246,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   return DropdownMenuItem<Trip>(
                     value: value,
                     child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
+                      width: portrait
+                          ? MediaQuery.of(context).size.width / 2
+                          : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value.charter == null
                             ? "You have adventures on this yacht."
@@ -240,8 +265,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                                     .year
                                     .toString(),
                         style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height / 40 - 4),
+                            fontSize: portrait
+                                ? MediaQuery.of(context).size.height / 40 - 4
+                                : MediaQuery.of(context).size.width / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -281,16 +307,20 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     return Row(
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.height / 4,
+          width: portrait
+              ? MediaQuery.of(context).size.height / 6
+              : MediaQuery.of(context).size.width / 6,
         ),
-        TextButton(
-          onPressed: loadAssets,
-          child: Text(
-            "Upload Photos",
-            style: TextStyle(color: Colors.white),
+        Expanded(
+          child: TextButton(
+            onPressed: loadAssets,
+            child: Text(
+              "Upload Photos",
+              style: TextStyle(color: Colors.white),
+            ),
+            style: TextButton.styleFrom(
+                backgroundColor: AggressorColors.secondaryColor),
           ),
-          style: TextButton.styleFrom(
-              backgroundColor: AggressorColors.secondaryColor),
         ),
       ],
     );
@@ -415,7 +445,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             "CREATE NEW GALLERY",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
-                fontSize: MediaQuery.of(context).size.height / 35,
+                fontSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 fontWeight: FontWeight.bold),
           ),
           getYachtDropDown(boatList),
@@ -437,7 +469,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             "MY GALLERIES",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
-                fontSize: MediaQuery.of(context).size.height / 35,
+                fontSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 fontWeight: FontWeight.bold),
           ),
           getGalleriesSection(),
@@ -448,7 +482,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Widget getGalleriesSection() {
     //returns the gallery section of the page
-    double textBoxSize = MediaQuery.of(context).size.width / 4;
+    double textBoxSize = portrait
+        ? MediaQuery.of(context).size.width / 4
+        : MediaQuery.of(context).size.height / 4;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
@@ -499,7 +535,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Widget getGalleriesListView() {
     //returns the list item containing gallery objects
 
-    double textBoxSize = MediaQuery.of(context).size.width / 4;
+    double textBoxSize = portrait
+        ? MediaQuery.of(context).size.width / 4
+        : MediaQuery.of(context).size.height / 4;
     galleriesList.clear();
     galleriesList.add(
       Container(
@@ -582,7 +620,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: portrait ? BoxFit.cover : BoxFit.fill,
       ),
     );
   }
@@ -597,7 +635,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           "My Photos",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 25,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 25
+                  : MediaQuery.of(context).size.width / 25,
               fontWeight: FontWeight.bold),
         ),
       ),

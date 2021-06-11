@@ -53,23 +53,6 @@ class ProfileLinkPageState extends State<ProfileLinkPage> {
   self implemented
    */
 
-  makeCall() async {
-    //method to open phone call from application
-    const url = 'tel:7069932531';
-    try {
-      await launch(url);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  void handlePopupClick(String value) {
-    //handles the menu bar options
-    switch (value) {
-      case 'My Profile':
-        print("loading");
-    }
-  }
 
   Widget getBottomNavigation() {
     /*
