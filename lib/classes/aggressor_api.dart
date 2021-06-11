@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
@@ -10,7 +11,9 @@ import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_archive/flutter_archive.dart';
 import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:http/http.dart' as http;
 
@@ -73,7 +76,7 @@ class AggressorApi {
           if (!await tripDatabaseHelper
               .tripExists(response[i.toString()]["reservationid"].toString())) {
             newTrip = Trip.fromJson(response[i.toString()]);
-            var detailsResponse =await newTrip.getTripDetails(contactId);
+            var detailsResponse = await newTrip.getTripDetails(contactId);
 
             await tripDatabaseHelper.insertTrip(newTrip);
           } else {
@@ -410,10 +413,18 @@ class AggressorApi {
     return pageResponse;
   }
 
-  Future<dynamic> deleteAwsFile(String userId, String section, String boatId, String date, String filePath) async {
+  Future<dynamic> deleteAwsFile(String userId, String section, String boatId,
+      String date, String filePath) async {
     //delete a file from the aws directories
-    String url = "https://secure.aggressor.com/api/app/s3/delete/" + userId + "/" + section + "/" + boatId + "/" + date + filePath.replaceAll("\"", "") ;
-
+    String url = "https://secure.aggressor.com/api/app/s3/delete/" +
+        userId +
+        "/" +
+        section +
+        "/" +
+        boatId +
+        "/" +
+        date +
+        filePath.replaceAll("\"", "");
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -422,8 +433,6 @@ class AggressorApi {
 
     return pageResponse;
   }
-
-
 
   Future<dynamic> sendForgotPassword(
     String email,
@@ -766,7 +775,6 @@ class AggressorApi {
       String cvv) async {
     //make a card payment
 
-
     var paymentBody = {
       "payment_amount": paymentAmount,
       "credit_card_month": creditCardMonth,
@@ -790,5 +798,27 @@ class AggressorApi {
     var jsonResponse = await json.decode(await response.stream.bytesToString());
 
     return jsonResponse;
+  }
+
+  Future<dynamic> saveDatabase(String userId, String databaseName) async {
+    final dataDir = await getApplicationDocumentsDirectory();
+    var databaseValue = dataDir.path + "/" + databaseName;
+      try {
+        final zipFile = File(databaseValue);
+        ZipFile.createFromDirectory(
+            sourceDir: dataDir, zipFile: zipFile, recurseSubDirs: true);
+        var key = await uploadAwsFile(
+          userId,
+          "config",
+          "databases",
+          zipFile.path,
+          databaseValue.substring(
+            databaseValue.lastIndexOf("/"),
+          ),
+        );
+        print(key);
+      } catch (e) {
+        print(e);
+      }
   }
 }

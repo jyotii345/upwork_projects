@@ -168,7 +168,7 @@ class AddIronDiverState extends State<AddIronDiver> {
           SizedBox(
             width: MediaQuery.of(context).size.height / 6,
             child: Text(
-              "Yacht:",
+              "Adventure:",
               style:
                   TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
             ),
@@ -262,7 +262,7 @@ class AddIronDiverState extends State<AddIronDiver> {
                       width: MediaQuery.of(context).size.width / 2,
                       child: Text(
                         value.charter == null
-                            ? "You have adventures on this yacht."
+                            ? "You have adventures here yet."
                             : DateTime.parse(
                                         value.charter.startDate)
                                     .month

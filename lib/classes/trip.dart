@@ -369,7 +369,7 @@ class Trip {
                             SizedBox(
                               width: textBoxSize,
                               child: Text(
-                                "Yacht",
+                                "Adventure",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(fontSize: screenFontSize),
                               ),

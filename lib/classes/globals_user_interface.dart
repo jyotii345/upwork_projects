@@ -63,8 +63,7 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset(
-                "assets/tripsactive.png",
+              child: Image.asset("assets/tripspassive.png",
               ),
             ),
             icon: Container(
@@ -74,7 +73,31 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset("assets/tripspassive.png"),
+              child: Image.asset(
+                  "assets/tripsactive.png",),
+            ),
+            label: '',
+          ),
+          new BottomNavigationBarItem(
+            activeIcon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset("assets/notespassive.png",
+
+              ),
+            ),
+            icon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset( "assets/notesactive.png",),
             ),
             label: '',
           ),
@@ -87,7 +110,7 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                "assets/notesactive.png",
+                "assets/photospassive.png",
               ),
             ),
             icon: Container(
@@ -97,7 +120,7 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset("assets/notespassive.png"),
+              child: Image.asset("assets/photosactive.png",),
             ),
             label: '',
           ),
@@ -110,7 +133,7 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                "assets/photosactive.png",
+                "assets/rewardspassive.png",
               ),
             ),
             icon: Container(
@@ -120,7 +143,7 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset("assets/photospassive.png"),
+              child: Image.asset("assets/rewardsactive.png",),
             ),
             label: '',
           ),
@@ -133,7 +156,7 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                "assets/rewardsactive.png",
+                  "assets/filespassive.png",
               ),
             ),
             icon: Container(
@@ -143,30 +166,7 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset("assets/rewardspassive.png"),
-            ),
-            label: '',
-          ),
-          new BottomNavigationBarItem(
-            activeIcon: Container(
-              width: orientation == Orientation.portrait
-                  ? iconSizePortrait
-                  : iconSizeLandscape,
-              height: orientation == Orientation.portrait
-                  ? iconSizePortrait
-                  : iconSizeLandscape,
-              child: Image.asset(
-                "assets/filesactive.png",
-              ),
-            ),
-            icon: Container(
-              width: orientation == Orientation.portrait
-                  ? iconSizePortrait
-                  : iconSizeLandscape,
-              height: orientation == Orientation.portrait
-                  ? iconSizePortrait
-                  : iconSizeLandscape,
-              child: Image.asset("assets/filespassive.png"),
+              child: Image.asset( "assets/filesactive.png",),
             ),
             label: '',
           ),

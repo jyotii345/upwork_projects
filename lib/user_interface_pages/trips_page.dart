@@ -125,7 +125,7 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
                           ),
                           SizedBox(
                             width: textBoxSize,
-                            child: Text("Yacht", textAlign: TextAlign.center),
+                            child: Text("Adventure", textAlign: TextAlign.center),
                           ),
                           Spacer(
                             flex: 10,
@@ -209,7 +209,7 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
                 ),
                 SizedBox(
                   width: textBoxSize,
-                  child: Text("Yacht", textAlign: TextAlign.center),
+                  child: Text("Adventure", textAlign: TextAlign.center),
                 ),
                 Spacer(
                   flex: 10,

@@ -151,7 +151,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           SizedBox(
             width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6,
             child: Text(
-              "Yacht:",
+              "Adventure:",
               style:
                   TextStyle(fontSize: portrait ? MediaQuery.of(context).size.height / 50 : MediaQuery.of(context).size.width / 50),
             ),
@@ -244,7 +244,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                       width: portrait ? MediaQuery.of(context).size.width / 2 : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value.charter == null
-                            ? "You have adventures on this yacht."
+                            ? "You have adventures here yet."
                             : DateTime.parse(
                                         value.charter.startDate)
                                     .month
@@ -411,7 +411,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                         Expanded(
                           child: SizedBox(
                             width: textBoxSize,
-                            child: Text("Yacht", textAlign: TextAlign.center),
+                            child: Text("Adventure", textAlign: TextAlign.center),
                           ),
                         ),
                         SizedBox(
@@ -457,7 +457,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 Expanded(
                   child: SizedBox(
                     width: textBoxSize,
-                    child: Text("Yacht", textAlign: TextAlign.left),
+                    child: Text("Adventure", textAlign: TextAlign.left),
                   ),
                 ),
                 SizedBox(
