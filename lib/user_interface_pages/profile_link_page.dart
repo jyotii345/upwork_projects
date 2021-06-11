@@ -1,4 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,57 +34,10 @@ class ProfileLinkPageState extends State<ProfileLinkPage> {
 
   @override
   Widget build(BuildContext context) {
+    homePage = false;
     return new Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: SizedBox(
-          height: AppBar().preferredSize.height,
-          child: IconButton(
-            icon: Container(
-              child: Image.asset("assets/callicon.png"),
-            ),
-            onPressed: makeCall,
-          ),
-        ),
-        title: Image.asset(
-          "assets/logo.png",
-          height: AppBar().preferredSize.height,
-          fit: BoxFit.fitHeight,
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-            child: SizedBox(
-              height: AppBar().preferredSize.height,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: PopupMenuButton<String>(
-                    onSelected: handlePopupClick,
-                    child: Container(
-                      child: Image.asset(
-                        "assets/menuicon.png",
-                      ),
-                    ),
-                    itemBuilder: (BuildContext context) {
-                      return {
-                        "My Profile",
-                        "Sign Out"
-                      }.map((String option) {
-                        return PopupMenuItem<String>(
-                          value: option,
-                          child: Text(option),
-                        );
-                      }).toList();
-                    }),
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: getAppBar(),
       body: Stack(
         children: <Widget>[
           Center(
@@ -121,7 +76,6 @@ class ProfileLinkPageState extends State<ProfileLinkPage> {
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.width / 10;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,

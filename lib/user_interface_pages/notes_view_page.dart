@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_edit_page.dart';
@@ -22,7 +23,7 @@ class ViewNote extends StatefulWidget {
   State<StatefulWidget> createState() => new ViewNoteState();
 }
 
-class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
+class ViewNoteState extends State<ViewNote>{
   /*
   instance vars
    */
@@ -43,31 +44,12 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
    */
   @override
   Widget build(BuildContext context) {
-    super.build(context);
 
+    popDistance = 1;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: SizedBox(
-          height: AppBar().preferredSize.height,
-          child: IconButton(
-            icon: Container(
-              child: Image.asset("assets/callicon.png"),
-            ),
-            onPressed: makeCall,
-          ),
-        ),
-        title: Image.asset(
-          "assets/logo.png",
-          height: AppBar().preferredSize.height,
-          fit: BoxFit.fitHeight,
-        ),
-      ),
-      bottomNavigationBar: getBottomNavigation(),
+      appBar:getAppBar(),
+      bottomNavigationBar: getBottomNavigationBar(),
       body: Stack(
         children: [
           getBackgroundImage(),
@@ -87,105 +69,6 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
   /*
   Self implemented
    */
-
-  Widget getBottomNavigation() {
-    /*
-    returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
-     */
-
-    double iconSize = MediaQuery.of(context).size.width / 10;
-    return BottomNavigationBar(
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      selectedFontSize: 0,
-      type: BottomNavigationBarType.fixed,
-      onTap: (int) {
-        handleBottomNavigation(int);
-      },
-      backgroundColor: AggressorColors.primaryColor,
-      // new
-      currentIndex: pageIndex,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white60,
-      items: [
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/tripsactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/tripspassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/notesactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/notespassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/photosactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/photospassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/rewardsactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/rewardspassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/filesactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/filespassive.png"),
-          ),
-          label: '',
-        ),
-      ],
-    );
-  } //TODO change bottom nav icon size
 
   makeCall() async {
     //calls the given number from the application
@@ -539,7 +422,4 @@ class ViewNoteState extends State<ViewNote> with AutomaticKeepAliveClientMixin {
           )
         : Container();
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

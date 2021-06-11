@@ -73,7 +73,8 @@ class AggressorApi {
           if (!await tripDatabaseHelper
               .tripExists(response[i.toString()]["reservationid"].toString())) {
             newTrip = Trip.fromJson(response[i.toString()]);
-            await newTrip.getTripDetails(contactId);
+            var detailsResponse =await newTrip.getTripDetails(contactId);
+
             await tripDatabaseHelper.insertTrip(newTrip);
           } else {
             newTrip = await tripDatabaseHelper
@@ -413,7 +414,6 @@ class AggressorApi {
     //delete a file from the aws directories
     String url = "https://secure.aggressor.com/api/app/s3/delete/" + userId + "/" + section + "/" + boatId + "/" + date + filePath.replaceAll("\"", "") ;
 
-    print(url);
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -766,6 +766,7 @@ class AggressorApi {
       String cvv) async {
     //make a card payment
 
+
     var paymentBody = {
       "payment_amount": paymentAmount,
       "credit_card_month": creditCardMonth,
@@ -780,7 +781,6 @@ class AggressorApi {
         charterId +
         '/' +
         contactId;
-    print(url);
 
     MultipartRequest request = http.MultipartRequest('POST', Uri.parse(url));
     request.headers.addEntries([MapEntry('apikey', apiKey)]);

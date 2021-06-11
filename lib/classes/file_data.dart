@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,7 +43,6 @@ class FileData {
   Widget getFileRow(BuildContext context, int index) {
     //create a file row widget to display on the files page
     double textBoxSize = MediaQuery.of(context).size.width / 4;
-    double iconSize = MediaQuery.of(context).size.width / 15;
 
     return Column(
       children: [
@@ -58,8 +58,8 @@ class FileData {
             children: [
               Image.asset(
                 "assets/filearrow.png",
-                height: iconSize,
-                width: iconSize,
+                height: iconImageSize,
+                width: iconImageSize,
               ),
               Expanded(
                 child: Padding(
@@ -88,8 +88,8 @@ class FileData {
                 child: IconButton(
                     icon: Image.asset(
                       "assets/trashcan.png",
-                      height: iconSize,
-                      width: iconSize,
+                      height: iconImageSize,
+                      width: iconImageSize,
                     ),
                     onPressed: () {
                       deleteFile();
@@ -103,7 +103,6 @@ class FileData {
   }
 
   void deleteFile() async{
-    print(boatId);
     var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), filePath.substring(filePath.lastIndexOf("/")).toString());
     await FileDatabaseHelper.instance.deleteFile(fileName);
     fileDataList.remove(this);

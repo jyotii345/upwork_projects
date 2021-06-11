@@ -39,6 +39,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Trip dropDownValue, selectionTrip;
 
   bool loading = false;
+  bool uploading = false;
 
   List<dynamic> filesList = [];
 
@@ -261,16 +262,18 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return Row(
       children: [
         SizedBox(
-          width: MediaQuery.of(context).size.height / 4,
+          width: MediaQuery.of(context).size.height / 6,
         ),
-        TextButton(
-          onPressed: uploadFile,
-          child: Text(
-            "Upload File",
-            style: TextStyle(color: Colors.white),
+        Expanded(
+          child: TextButton(
+            onPressed: uploadFile,
+            child:Text(
+                uploading ? "Uploading, please wait..." : "Upload File",
+                style: TextStyle(color: Colors.white),
+              ),
+            style: TextButton.styleFrom(
+                backgroundColor: AggressorColors.secondaryColor),
           ),
-          style: TextButton.styleFrom(
-              backgroundColor: AggressorColors.secondaryColor),
         ),
       ],
     );
@@ -607,6 +610,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     //uploads a file to the aws bucket
     setState(() {
       loading = true;
+      uploading = true;
     });
     if (online) {
       if (result != null) {
@@ -635,10 +639,13 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     } else {
       setState(() {
         errorMessage = "Must be online to upload a file";
+        loading = false;
+        uploading = false;
       });
     }
     setState(() {
       loading = false;
+      uploading = false;
     });
   }
 

@@ -6,6 +6,7 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
@@ -172,7 +173,6 @@ class LoadingPageState extends State<LoadingPage> {
     returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
      */
 
-    double iconSize = MediaQuery.of(context).size.width / 10;
     return BottomNavigationBar(
       showSelectedLabels: false,
       showUnselectedLabels: false,
@@ -450,7 +450,7 @@ class LoadingPageState extends State<LoadingPage> {
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
-        percent = (loadedCount / (loadingLength));
+        percent = (loadedCount / (loadingLength * 2));
       });
     }
 

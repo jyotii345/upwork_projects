@@ -37,7 +37,7 @@ class TripDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE trip(id INTEGER PRIMARY KEY,tripDate TEXT,title TEXT,latitude TEXT,longitude TEXT,destination TEXT,reservationDate TEXT,reservationId TEXT, charterId TEXT,total TEXT,discount TEXT,payments TEXT,due TEXT, dueDate TEXT,passengers TEXT,location TEXT,embark TEXT,disembark TEXT,detailDestination TEXT, loginKey TEXT, passengerId TEXT)",
+      "CREATE TABLE trip(tripDate TEXT,title TEXT,latitude TEXT,longitude TEXT,destination TEXT,reservationDate TEXT,reservationId TEXT, charterId TEXT,total TEXT,discount TEXT,payments TEXT,due TEXT, dueDate TEXT,passengers TEXT,location TEXT,embark TEXT,disembark TEXT,detailDestination TEXT, loginKey TEXT, passengerId TEXT)",
     );
   }
 
@@ -45,26 +45,25 @@ class TripDatabaseHelper {
    Database helper methods
    */
 
-  Future<int> insertTrip(Trip trip) async {
+  Future<void> insertTrip(Trip trip) async {
     //add a trip to the database
     final Database db = await database;
 
-    int id = await db.insert(
+    await db.insert(
       'trip',
       trip.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    return id;
   }
 
-  Future<void> deleteTrip(int id) async {
+  Future<void> deleteTrip(String reservationId) async {
     // delete a trip in the database
     final db = await database;
 
     await db.delete(
       'trip',
-      where: "id = ?",
-      whereArgs: [id],
+      where: "reservationId = ?",
+      whereArgs: [reservationId],
     );
   }
 
@@ -74,11 +73,11 @@ class TripDatabaseHelper {
     await db.delete('trip');
   }
 
-  Future<bool> tripExists(String id) async {
+  Future<bool> tripExists(String reservationId) async {
     //check if a trip exists in the database based on the trip id
     final db = await database;
     var result = await db
-        .rawQuery('SELECT EXISTS(SELECT 1 FROM trip WHERE id = ?)', [id]);
+        .rawQuery('SELECT EXISTS(SELECT 1 FROM trip WHERE reservationId = ?)', [reservationId]);
     int exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }

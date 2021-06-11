@@ -12,7 +12,9 @@ import 'package:aggressor_adventures/user_interface_pages/rewards_add_certificat
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
 import 'dart:io';
 
@@ -49,6 +51,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
+    homePage = true;
     return Stack(
       children: [
         getBackgroundImage(),
@@ -123,11 +126,12 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                   child: TextButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddCertification(
-                                    widget.user,
-                                  )));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AddCertification(widget.user, refreshState),
+                        ),
+                      );
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
@@ -196,11 +200,14 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                   child: TextButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AddIronDiver(
-                                    widget.user,
-                                  )));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddIronDiver(
+                            widget.user,
+                            refreshState,
+                          ),
+                        ),
+                      );
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
@@ -216,6 +223,10 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ],
       ),
     );
+  }
+
+  VoidCallback refreshState() {
+    setState(() {});
   }
 
   Widget getProgressSection() {
@@ -313,9 +324,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                 Flexible(
                   child: TextButton(
                     onPressed: () {
-                      online
-                          ? openEditProfile()
-                          : openProfileView();
+                      online ? openEditProfile() : openProfileView();
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
@@ -365,7 +374,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                   alignment: Alignment.bottomCenter,
                   child: TextButton(
                     onPressed: () {
-                      print("pressed");
+                      launchRedeem();
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
@@ -383,10 +392,14 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  void openProfileView(){
+  void openProfileView() {
     setState(() {
       currentIndex = 5;
     });
+  }
+
+  void launchRedeem() async {
+    await launch("https://www.aggressor.com/pages/aggressor-rewards");
   }
 
   Future<dynamic> openEditProfile() async {
@@ -511,7 +524,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             itemBuilder: (context, position) {
               return Padding(
                 padding: const EdgeInsets.all(2.0),
-                child: GestureDetector(
+                child: Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: .25,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -528,12 +543,29 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                       ))
                     ],
                   ),
-                  onLongPressStart: (LongPressStartDetails details) =>
-                      showOptionsMenuCertificate(
-                          details, certificationList[position]),
+                  secondaryActions: <Widget>[
+                    IconSlideAction(
+                      color: Colors.red,
+                      icon: Icons.delete,
+                      onTap: () {
+                        deleteCertificate(certificationList[position]);
+                      },
+                    ),
+                  ],
                 ),
               );
             });
+  }
+
+  void deleteCertificate(var certificate) async {
+    var response = await AggressorApi()
+        .deleteCertification(widget.user.userId, certificate["id"].toString());
+    if (response["status"].toString().toLowerCase() == "success") {
+      setState(() {
+        certificationList.remove(certificate);
+        getCertifications();
+      });
+    }
   }
 
   Widget getIronDiverListView() {
@@ -551,7 +583,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             itemBuilder: (context, position) {
               return Padding(
                 padding: const EdgeInsets.all(2.0),
-                child: GestureDetector(
+                child: Slidable(
+                  actionPane: SlidableDrawerActionPane(),
+                  actionExtentRatio: .25,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -563,79 +597,32 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                       Flexible(child: Text(ironDiverList[position]["name"]))
                     ],
                   ),
-                  onLongPressStart: (LongPressStartDetails details) =>
-                      showOptionsMenuIronDiver(
-                          details, ironDiverList[position]),
+                  secondaryActions: <Widget>[
+                    IconSlideAction(
+                      color: Colors.red,
+                      icon: Icons.delete,
+                      onTap: () {
+                        deleteIronDiver(ironDiverList[position]);
+                      },
+                    ),
+                  ],
                 ),
               );
             });
   }
 
-  void showOptionsMenuIronDiver(
-      LongPressStartDetails details, var ironDiver) async {
-    //display the delete option for an iron diver
-    RenderBox overlay = Overlay.of(context).context.findRenderObject();
-
-    int selection = await showMenu(
-      position: RelativeRect.fromRect(
-          details.globalPosition & Size(20, 20), // smaller rect, the touch area
-          Offset.zero & overlay.size // Bigger rect, the entire screen
-          ),
-      context: context,
-      items: <PopupMenuEntry<int>>[
-        PopupMenuItem(
-          value: 0,
-          child: Text('Delete'),
-        )
-      ],
-    );
-
-    if (selection == 0) {
-      var response = await AggressorApi()
-          .deleteIronDiver(widget.user.userId, ironDiver["id"].toString());
-      if (response["status"].toString().toLowerCase() == "success") {
-        setState(() {
-          getIronDivers();
-        });
-      } else {
-        setState(() {
-          //TODO show error message
-        });
-      }
-    }
-  }
-
-  void showOptionsMenuCertificate(
-      LongPressStartDetails details, var certificate) async {
-    //display the delete option for a certificate
-    RenderBox overlay = Overlay.of(context).context.findRenderObject();
-
-    int selection = await showMenu(
-      position: RelativeRect.fromRect(
-          details.globalPosition & Size(20, 20), // smaller rect, the touch area
-          Offset.zero & overlay.size // Bigger rect, the entire screen
-          ),
-      context: context,
-      items: <PopupMenuEntry<int>>[
-        PopupMenuItem(
-          value: 0,
-          child: Text('Delete'),
-        )
-      ],
-    );
-
-    if (selection == 0) {
-      var response = await AggressorApi().deleteCertification(
-          widget.user.userId, certificate["id"].toString());
-      if (response["status"].toString().toLowerCase() == "success") {
-        setState(() {
-          getCertifications();
-        });
-      } else {
-        setState(() {
-          //TODO show error message
-        });
-      }
+  void deleteIronDiver(var ironDiver) async {
+    var response = await AggressorApi()
+        .deleteIronDiver(widget.user.userId, ironDiver["id"].toString());
+    if (response["status"].toString().toLowerCase() == "success") {
+      setState(() {
+        ironDiverList.remove(ironDiver);
+        getIronDivers();
+      });
+    } else {
+      setState(() {
+        //TODO show error message
+      });
     }
   }
 

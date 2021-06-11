@@ -15,6 +15,8 @@ class MyTrips extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => new MyTripsState();
+
+
 }
 
 class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
@@ -45,7 +47,7 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
+    homePage = true;
     return Stack(
       children: [
         getBackGroundImage(),
@@ -60,6 +62,7 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
 /*
   self implemented
    */
+
 
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
@@ -161,7 +164,7 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
       element.controllerReset  = AnimationController(
         duration: const Duration(milliseconds: 400), vsync:this ,
       );
-      upcomingTripsList.add(element.getUpcomingTripCard(context));
+      upcomingTripsList.add(element.getUpcomingTripCard(context, refresh));
     });
 
     return ListView.builder(
@@ -171,6 +174,11 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
         itemBuilder: (context, position) {
           return upcomingTripsList[upcomingTripsList.length - 1 - position];
         });
+  }
+
+  VoidCallback refresh(){
+    setState(() {
+    });
   }
 
   Widget getPastTripListViews(List<Trip> pastTrips) {
@@ -374,4 +382,6 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
         ),
     );
   }
+
+
 }

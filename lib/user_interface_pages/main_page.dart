@@ -1,6 +1,6 @@
-import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
@@ -55,6 +55,8 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     helper = UserDatabaseHelper.instance;
+    mainPageCallback = refreshState;
+    innerPage = true;
   }
 
   /*
@@ -64,57 +66,15 @@ class _MyHomePageState extends State<MyHomePage>
    */
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
+    homePage = true;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: SizedBox(
-          height: AppBar().preferredSize.height,
-          child: IconButton(
-            icon: Container(
-              child: Image.asset("assets/callicon.png"),
-            ),
-            onPressed: makeCall,
-          ),
-        ),
-        title: Image.asset(
-          "assets/logo.png",
-          height: AppBar().preferredSize.height,
-          fit: BoxFit.fitHeight,
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-            child: SizedBox(
-              height: AppBar().preferredSize.height,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: PopupMenuButton<String>(
-                    onSelected: handlePopupClick,
-                    child: Container(
-                      child: Image.asset(
-                        "assets/menuicon.png",
-                      ),
-                    ),
-                    itemBuilder: (BuildContext context) {
-                      return {"My Profile", "Sign Out"}.map((String option) {
-                        return PopupMenuItem<String>(
-                          value: option,
-                          child: Text(option),
-                        );
-                      }).toList();
-                    }),
-              ),
-            ),
-          ),
-        ],
-      ),
+      appBar: getAppBar(),
       body: Scaffold(
         resizeToAvoidBottomInset: false,
-        bottomNavigationBar: getBottomNavigation(),
+        bottomNavigationBar: getBottomNavigationBar(),
         body: getIndexStack(),
       ),
     );
@@ -124,86 +84,9 @@ class _MyHomePageState extends State<MyHomePage>
   Self implemented
    */
 
-  makeCall() async {
-    const url = 'tel:7069932531';
-    try {
-      await launch(url);
-    } catch (e) {
-      print(e.toString());
-    }
-  }
 
-  void handlePopupClick(String value) {
-    switch (value) {
-      case 'My Profile':
-        setState(() {
-          currentIndex = 5;
-        });
-        break;
-      case 'Sign Out':
-        signOutUser();
-        break;
-    }
-  }
-
-  void signOutUser() async {
-    //sings user out and clears databases
-
-    await BoatDatabaseHelper.instance.deleteBoatTable();
-    await CertificateDatabaseHelper.instance.deleteCertificateTable();
-    await CharterDatabaseHelper.instance.deleteCharterTable();
-    await ContactDatabaseHelper.instance.deleteContactTable();
-    await CountriesDatabaseHelper.instance.deleteCountriesTable();
-    await FileDatabaseHelper.instance.deleteFileTable();
-    await IronDiverDatabaseHelper.instance.deleteIronDiverTable();
-    await NotesDatabaseHelper.instance.deleteNotesTable();
-    await PhotoDatabaseHelper.instance.deletePhotoTable();
-    await ProfileDatabaseHelper.instance.deleteProfileTable();
-    await SlidersDatabaseHelper.instance.deleteSlidersTable();
-    await StatesDatabaseHelper.instance.deleteStatesTable();
-    await TripDatabaseHelper.instance.deleteTripTable();
-    await UserDatabaseHelper.instance.deleteUser(100);
-
-    loadedCount = 0;
-    loadingLength = 0;
-
-    photosLoaded = false;
-    notesLoaded = false;
-    certificateLoaded = false;
-    ironDiversLoaded = false;
-    contactLoaded = false;
-    profileDataLoaded = false;
-    online = true;
-    filesLoaded = false;
-
-    currentIndex = 0;
-
-    galleriesMap = <String, Gallery>{};
-    profileData = <String, dynamic>{};
-
-    notLoadedList = [];
-    tripList = [];
-    loadSize = [];
-    statesList = [];
-    countriesList = [];
-    boatList = [];
-    sliderImageList = [];
-    notesList = [];
-    ironDiverList = [];
-    certificationList = [];
-
-    contact = null;
-
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
-  }
-
-  void onTabTapped(int index) {
-    /*
-    set the state of the navigation bar selection to index
-     */
+  VoidCallback refreshState(){
     setState(() {
-      currentIndex = index;
     });
   }
 
@@ -239,103 +122,7 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  Widget getBottomNavigation() {
-    /*
-    returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
-     */
 
-    double iconSize = MediaQuery.of(context).size.width / 10;
-
-    return BottomNavigationBar(
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      selectedFontSize: 0,
-      type: BottomNavigationBarType.fixed,
-      onTap: onTabTapped,
-      backgroundColor: AggressorColors.primaryColor,
-      // new
-      currentIndex: currentIndex > 4 ? 0 : currentIndex,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white60,
-      items: [
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/tripsactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/tripspassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/notesactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/notespassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/photosactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/photospassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/rewardsactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/rewardspassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/filesactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/filespassive.png"),
-          ),
-          label: '',
-        ),
-      ],
-    );
-  }
 
   @override
   bool get wantKeepAlive => true;

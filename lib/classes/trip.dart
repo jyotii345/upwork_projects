@@ -10,6 +10,7 @@ import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
+import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_add_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
@@ -30,19 +31,20 @@ class Trip {
   String reservationDate;
   String reservationId;
   String imageResource;
-  String charterId,
-      total,
-      discount,
-      payments,
-      due,
-      dueDate,
-      passengers,
-      location,
-      embark,
-      disembark,
-      detailDestination,
-      loginKey,
-      passengerId;
+  String charterId;
+  String total;
+  String discount;
+  String payments;
+  String due;
+  String dueDate;
+  String passengers;
+  String location;
+  String embark;
+  String disembark;
+  String detailDestination;
+  String loginKey;
+  String passengerId;
+  String errorMessage = "";
   List<VoidCallback> callBackList;
   VoidCallback newImageCallBack;
 
@@ -151,7 +153,6 @@ class Trip {
   Map<String, dynamic> toMap() {
     //create a map from a trip object
     return {
-      'id': int.parse(reservationId),
       'tripDate': tripDate,
       'title': title,
       'latitude': latitude,
@@ -234,7 +235,7 @@ class Trip {
     });
   }
 
-  Widget getUpcomingTripCard(BuildContext context) {
+  Widget getUpcomingTripCard(BuildContext context, VoidCallback refreshState) {
     //returns the tile view to be placed into the view for the previous trips this user has been engaged in
     double textBoxSize = MediaQuery.of(context).size.width / 6.3;
     double screenFontSize = MediaQuery.of(context).size.width / 50;
@@ -264,306 +265,322 @@ class Trip {
       onInteractionStart: _onInteractionStart,
       onInteractionEnd: _onInteractionEnd,
       child: Padding(
-          padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                    child: Container(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Container(
-                            color: Colors.grey[200],
-                            height: textBoxSize * 1.5,
-                            width: textBoxSize * 1.5,
-                            child: FutureBuilder(
-                              future: downloadBoatImage(),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData && snapshot.data != null) {
-                                  return snapshot.data != ""
-                                      ? GestureDetector(
-                                          onTap: () {
-                                            imageExpansionDialogue(
-                                              Image.file(
-                                                File(snapshot.data),
-                                                fit: BoxFit.fill,
-                                              ),
-                                            );
-                                          },
-                                          child: Image.file(
-                                            File(snapshot.data),
-                                            fit: BoxFit.fill,
-                                          ),
-                                        )
-                                      : Icon(Icons.directions_boat_sharp);
-                                } else {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text("Days Left: "),
-                              Text(
-                                DateTime.now()
-                                    .difference(
-                                        DateTime.parse(charter.startDate))
-                                    .inDays
-                                    .abs()
-                                    .toString(),
-                                style: TextStyle(color: Colors.red),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
+        padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  child: Container(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisSize: MainAxisSize.max,
                       children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height / 20,
-                          width: MediaQuery.of(context).size.height / 20,
-                          child: TextButton(
-                              style: TextButton.styleFrom(
-                                  padding: EdgeInsets.zero),
-                              child: Image.asset("assets/notesblue.png"),
-                              onPressed: () {
-                                viewTripNotes();
-                              }),
-                        ),
                         Container(
-                          decoration: BoxDecoration(
-                            color: Colors.yellow[200],
-                            border: Border(
-                              top: BorderSide(width: 1.0, color: Colors.grey),
-                              left: BorderSide(width: 1.0, color: Colors.grey),
-                              right: BorderSide(width: 1.0, color: Colors.grey),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  "conf#",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: screenFontSize),
-                                ),
-                              ),
-                              Spacer(
-                                flex: 3,
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  "Yacht",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: screenFontSize),
-                                ),
-                              ),
-                              Spacer(
-                                flex: 3,
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  "Embarkment Date",
-                                  style: TextStyle(fontSize: screenFontSize),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              Spacer(
-                                flex: 3,
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  "Nights",
-                                  style: TextStyle(fontSize: screenFontSize),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: 1,
-                          width: double.infinity,
-                          color: Colors.grey,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              left: BorderSide(width: 1.0, color: Colors.grey),
-                              right: BorderSide(width: 1.0, color: Colors.grey),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  reservationId,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: screenFontSize),
-                                ),
-                              ),
-                              Spacer(
-                                flex: 10,
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  boat.name,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: screenFontSize),
-                                ),
-                              ),
-                              Spacer(
-                                flex: 10,
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  months[DateTime.parse(charter.startDate)
-                                                  .month -
-                                              1]
-                                          .substring(0, 3) +
-                                      " " +
-                                      DateTime.parse(charter.startDate)
-                                          .day
-                                          .toString() +
-                                      ", " +
-                                      DateTime.parse(charter.startDate)
-                                          .year
-                                          .toString(),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: screenFontSize),
-                                ),
-                              ),
-                              SizedBox(
-                                width: textBoxSize,
-                                child: Text(
-                                  charter.nights,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: screenFontSize),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: 1,
-                          width: double.infinity,
-                          color: Colors.grey,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom:
-                                  BorderSide(width: 1.0, color: Colors.grey),
-                              left: BorderSide(width: 1.0, color: Colors.grey),
-                              right: BorderSide(width: 1.0, color: Colors.grey),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: 25,
-                                width: MediaQuery.of(context).size.width / 4.8,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      padding: EdgeInsets.all(0)),
-                                  onPressed: launchGIS,
-                                  child: Text("Guest Information System (GIS)",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.lightBlue,
-                                          fontSize: screenFontSizeSmall)),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 25,
-                                width: MediaQuery.of(context).size.width / 4.8,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      padding: EdgeInsets.all(0)),
-                                  onPressed: () {
-                                    launchKBYG();
-                                  },
-                                  child: Text(
-                                    "Know before you go",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.lightBlue,
-                                        fontSize: screenFontSizeSmall),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width / 4.8,
-                                height: 25,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      padding: EdgeInsets.all(0)),
-                                  onPressed: () {
-                                    navigatorKey.currentState.push(
-                                      MaterialPageRoute(
-                                        builder: (context) => MakePayment(
-                                          user,
-                                          this,
+                          color: Colors.grey[200],
+                          height: textBoxSize * 1.5,
+                          width: textBoxSize * 1.5,
+                          child: FutureBuilder(
+                            future: downloadBoatImage(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData && snapshot.data != null) {
+                                return snapshot.data != ""
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          imageExpansionDialogue(
+                                            Image.file(
+                                              File(snapshot.data),
+                                              fit: BoxFit.fill,
+                                            ),
+                                          );
+                                        },
+                                        child: Image.file(
+                                          File(snapshot.data),
+                                          fit: BoxFit.fill,
                                         ),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    "Make Payment",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.lightBlue,
-                                        fontSize: screenFontSizeSmall),
-                                  ),
-                                ),
-                              ),
-                            ],
+                                      )
+                                    : Icon(Icons.directions_boat_sharp);
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            },
                           ),
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Days Left: "),
+                            Text(
+                              DateTime.now()
+                                  .difference(DateTime.parse(charter.startDate))
+                                  .inDays
+                                  .abs()
+                                  .toString(),
+                              style: TextStyle(color: Colors.red),
+                            )
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                child: Container(
-                  height: 1,
-                  color: Colors.grey[300],
                 ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height / 20,
+                        width: MediaQuery.of(context).size.height / 20,
+                        child: TextButton(
+                            style:
+                                TextButton.styleFrom(padding: EdgeInsets.zero),
+                            child: Image.asset("assets/notesblue.png"),
+                            onPressed: () {
+                              viewTripNotes();
+                            }),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.yellow[200],
+                          border: Border(
+                            top: BorderSide(width: 1.0, color: Colors.grey),
+                            left: BorderSide(width: 1.0, color: Colors.grey),
+                            right: BorderSide(width: 1.0, color: Colors.grey),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "conf#",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 3,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "Yacht",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 3,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "Embarkment Date",
+                                style: TextStyle(fontSize: screenFontSize),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Spacer(
+                              flex: 3,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                "Nights",
+                                style: TextStyle(fontSize: screenFontSize),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: Colors.grey,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(width: 1.0, color: Colors.grey),
+                            right: BorderSide(width: 1.0, color: Colors.grey),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                reservationId,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 10,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                boat.name,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            Spacer(
+                              flex: 10,
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                months[DateTime.parse(charter.startDate).month -
+                                            1]
+                                        .substring(0, 3) +
+                                    " " +
+                                    DateTime.parse(charter.startDate)
+                                        .day
+                                        .toString() +
+                                    ", " +
+                                    DateTime.parse(charter.startDate)
+                                        .year
+                                        .toString(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                            SizedBox(
+                              width: textBoxSize,
+                              child: Text(
+                                charter.nights,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: screenFontSize),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        width: double.infinity,
+                        color: Colors.grey,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(width: 1.0, color: Colors.grey),
+                            left: BorderSide(width: 1.0, color: Colors.grey),
+                            right: BorderSide(width: 1.0, color: Colors.grey),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              height: 25,
+                              width: MediaQuery.of(context).size.width / 4.8,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
+                                onPressed: (){launchGIS(refreshState);},
+                                child: Text("Guest Information System (GIS)",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.lightBlue,
+                                        fontSize: screenFontSizeSmall)),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 25,
+                              width: MediaQuery.of(context).size.width / 4.8,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
+                                onPressed: () {
+                                  launchKBYG();
+                                },
+                                child: Text(
+                                  "Know before you go",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.lightBlue,
+                                      fontSize: screenFontSizeSmall),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width / 4.8,
+                              height: 25,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.all(0)),
+                                onPressed: () {
+                                  launchPayment(refreshState);
+                                },
+                                child: Text(
+                                  "Make Payment",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.lightBlue,
+                                      fontSize: screenFontSizeSmall),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            errorMessage == ""
+                ? Container()
+                : Text(
+                    errorMessage,
+                    style: TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+              child: Container(
+                height: 1,
+                color: Colors.grey[300],
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
+  void launchPayment(VoidCallback refreshState) async{
+    if(double.parse(due) > 0 ){
+      navigatorKey.currentState.push(
+        MaterialPageRoute(
+          builder: (context) => MakePayment(
+            user,
+            this,
+          ),
+        ),
+      );
+    }
+    else{
+      errorMessage = "No payment is due for this adventure";
+      refreshState();
+      await Future.delayed(Duration(seconds: 2));
+      errorMessage = "";
+      refreshState();
+    }
+  }
   void launchKBYG() async {
     await launch(this.boat.kbygLink);
   }
 
-  void launchGIS() async {
-    print(loginKey);
+  void launchGIS(VoidCallback refreshState) async {
     if (loginKey != null && loginKey != "null") {
       await launch("https://gis.liveaboardfleet.com/gis/index.php/" +
           passengerId.toString() +
@@ -573,6 +590,12 @@ class Trip {
           charterId.toString() +
           "/" +
           loginKey.toString());
+    } else {
+        errorMessage = "Contact your agent to have a GIS link sent.";
+        refreshState();
+        await Future.delayed(Duration(seconds: 2));
+        errorMessage = "";
+        refreshState();
     }
   }
 
@@ -754,21 +777,22 @@ class Trip {
     _animateResetInitialize();
   }
 
-  void updateTripValues() async {
+  Future<dynamic> updateTripValues() async {
     //reloads the payment due for the boat
     var response = await AggressorApi()
         .getReservationDetails(reservationId, user.contactId);
-    this.reservationId = response['reservationId'].toString();
-    this.charterId = response['charterId'].toString();
-    this.total = response['total'].toString();
-    this.discount = response['discount'].toString();
-    this.payments = response['payments'].toString();
-    this.due = response['due'].toString();
-    this.dueDate = response['dueDate'].toString();
-    this.passengers = response['passengers'].toString();
-    this.location = response['location'];
-    this.embark = response['embark'];
-    this.disembark = response['disembark'];
+    total = response['total'].toString();
+    discount = response['discount'].toString();
+    payments = response['payments'].toString();
+    due = response['due'].toString();
+    dueDate = response['dueDate'].toString();
+    passengers = response['passengers'].toString();
+    location = response['location'];
+    embark = response['embark'];
+    disembark = response['disembark'];
+    await TripDatabaseHelper.instance.deleteTrip(reservationId);
+    await TripDatabaseHelper.instance.insertTrip(this);
+    return "updated";
   }
 
   void imageExpansionDialogue(Widget content) {
@@ -778,4 +802,5 @@ class Trip {
       builder: (_) => new AlertDialog(title: Container(), content: content),
     );
   }
+
 }

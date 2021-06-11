@@ -23,6 +23,7 @@ bool contactLoaded = false;
 bool profileDataLoaded = false;
 bool online = true;
 bool filesLoaded = false;
+bool homePage = false;
 
 int currentIndex = 0;
 

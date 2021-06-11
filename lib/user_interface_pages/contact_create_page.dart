@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,29 +65,7 @@ class CreateContactState extends State<CreateContact>
     textDisplayWidth = MediaQuery.of(context).size.width / 2.6;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: SizedBox(
-          height: AppBar().preferredSize.height,
-          child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Color(0xff59a3c0),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-        ),
-        title: Image.asset(
-          "assets/logo.png",
-          height: AppBar().preferredSize.height,
-          fit: BoxFit.fitHeight,
-        ),
-        actions: <Widget>[],
-      ),
+      appBar: getAppBar(),
       body: Stack(
         children: [
           getBackgroundImage(),

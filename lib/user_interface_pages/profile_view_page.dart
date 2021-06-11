@@ -37,6 +37,8 @@ class MyProfileState extends State<MyProfile>
   Widget build(BuildContext context) {
     super.build(context);
 
+    homePage = true;
+
     return Stack(
       children: [
         getBackgroundImage(),

@@ -75,6 +75,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
+    homePage = true;
+
     getGalleries();
 
     return Stack(
@@ -686,7 +688,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
       List<Photo> photos = await photoHelper.queryPhoto();
       photos.forEach((element) {
-        print(element.boatId);
         if (!tempGalleries.containsKey(element.boatId)) {
           int tripIndex = 0;
           for (int i = 0; i < tripList.length - 1; i++) {

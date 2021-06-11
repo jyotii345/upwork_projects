@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -27,7 +28,7 @@ class EditNote extends StatefulWidget {
   State<StatefulWidget> createState() => new EditNoteState();
 }
 
-class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
+class EditNoteState extends State<EditNote> {
   /*
   instance vars
    */
@@ -57,31 +58,11 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
    */
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
+    popDistance = 2;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        leading: SizedBox(
-          height: AppBar().preferredSize.height,
-          child: IconButton(
-            icon: Container(
-              child: Image.asset("assets/callicon.png"),
-            ),
-            onPressed: makeCall,
-          ),
-        ),
-        title: Image.asset(
-          "assets/logo.png",
-          height: AppBar().preferredSize.height,
-          fit: BoxFit.fitHeight,
-        ),
-      ),
-      bottomNavigationBar: getBottomNavigation(),
+      appBar:getAppBar(),
+      bottomNavigationBar: getBottomNavigationBar(),
       body: Stack(
         children: [
           getBackgroundImage(),
@@ -102,105 +83,6 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
   Self implemented
    */
 
-  Widget getBottomNavigation() {
-    /*
-    returns a bottom navigation bar widget containing the pages desired and their icon types. This is only for the look of the bottom navigation bar
-     */
-
-    double iconSize = MediaQuery.of(context).size.width / 10;
-    return BottomNavigationBar(
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      selectedFontSize: 0,
-      type: BottomNavigationBarType.fixed,
-      onTap: (int) {
-        handleBottomNavigation(int);
-      },
-      backgroundColor: AggressorColors.primaryColor,
-      // new
-      currentIndex: pageIndex,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white60,
-      items: [
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/tripsactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/tripspassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/notesactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/notespassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/photosactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/photospassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/rewardsactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/rewardspassive.png"),
-          ),
-          label: '',
-        ),
-        new BottomNavigationBarItem(
-          activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset(
-              "assets/filesactive.png",
-            ),
-          ),
-          icon: Container(
-            width: iconSize,
-            height: iconSize,
-            child: Image.asset("assets/filespassive.png"),
-          ),
-          label: '',
-        ),
-      ],
-    );
-  } //TODO change bottom nav icon size
-
   makeCall() async {
     const url = 'tel:7069932531';
     try {
@@ -211,7 +93,6 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
   }
 
   void handleBottomNavigation(int index) {
-    print("called");
     currentIndex = index - 1;
     Navigator.pop(context);
   }
@@ -595,7 +476,6 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPageTitle() {
-    double iconSize = MediaQuery.of(context).size.width / 10;
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: Container(
@@ -618,7 +498,4 @@ class EditNoteState extends State<EditNote> with AutomaticKeepAliveClientMixin {
           )
         : Container();
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

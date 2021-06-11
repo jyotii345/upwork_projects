@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
@@ -68,7 +69,6 @@ class Note {
   Widget getNoteRow(BuildContext context, int index) {
     //creates a note row to be displayed on the notes page
     double textBoxSize = MediaQuery.of(context).size.width / 4;
-    double iconSize = MediaQuery.of(context).size.width / 15;
 
     List<String> months = [
       'January',
@@ -121,8 +121,8 @@ class Note {
                 child: IconButton(
                     icon: Image.asset(
                       "assets/trashcan.png",
-                      height: iconSize,
-                      width: iconSize,
+                      height: iconImageSize,
+                      width: iconImageSize,
                     ),
                     onPressed: () {
                       deleteNote();
