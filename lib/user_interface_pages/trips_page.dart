@@ -1,6 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/flutter_map.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,11 +16,10 @@ class MyTrips extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => new MyTripsState();
-
-
 }
 
-class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+class MyTripsState extends State<MyTrips>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   /*
   instance vars
    */
@@ -48,11 +48,13 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
   Widget build(BuildContext context) {
     super.build(context);
     homePage = true;
-    return Stack(
-      children: [
-        getBackGroundImage(),
-        getForegroundView(),
-      ],
+    return PinchToZoom( //TODO test this allows pinch to zoom
+      Stack(
+        children: [
+          getBackGroundImage(),
+          getForegroundView(),
+        ],
+      ),
     );
   }
 
@@ -62,7 +64,6 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
 /*
   self implemented
    */
-
 
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
@@ -88,7 +89,8 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
           color: Colors.white,
           child: upcomingTrips.length == 0
               ? Center(
-                  child: Text("You do not have any upcoming adventures booked yet."),
+                  child: Text(
+                      "You do not have any upcoming adventures booked yet."),
                 )
               : getUpcomingListViews(upcomingTrips)),
     );
@@ -125,7 +127,8 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
                           ),
                           SizedBox(
                             width: textBoxSize,
-                            child: Text("Adventure", textAlign: TextAlign.center),
+                            child:
+                                Text("Adventure", textAlign: TextAlign.center),
                           ),
                           Spacer(
                             flex: 10,
@@ -147,8 +150,8 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
                       ),
                     ),
                     Flexible(
-                      child:
-                          Text("You do not have any past adventures to view yet."),
+                      child: Text(
+                          "You do not have any past adventures to view yet."),
                     ),
                   ],
                 )
@@ -161,9 +164,6 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
 
     upcomingTripsList.clear();
     upcomingTrips.forEach((element) {
-      element.controllerReset  = AnimationController(
-        duration: const Duration(milliseconds: 400), vsync:this ,
-      );
       upcomingTripsList.add(element.getUpcomingTripCard(context, refresh));
     });
 
@@ -176,9 +176,8 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
         });
   }
 
-  VoidCallback refresh(){
-    setState(() {
-    });
+  VoidCallback refresh() {
+    setState(() {});
   }
 
   Widget getPastTripListViews(List<Trip> pastTrips) {
@@ -374,14 +373,12 @@ class MyTripsState extends State<MyTrips> with AutomaticKeepAliveClientMixin, Ti
     return online
         ? Container()
         : Container(
-      color: Colors.red,
-      child:  Text(
-          "Application is offline",
-          style: TextStyle(color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
-    );
+            color: Colors.red,
+            child: Text(
+              "Application is offline",
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+          );
   }
-
-
 }

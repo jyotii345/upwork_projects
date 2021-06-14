@@ -35,6 +35,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   bool loading = false;
 
+  bool timerStarted = false;
+
+
   /*
   initState
    */
@@ -445,6 +448,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   Widget getSliderImages() {
     //returns slider images on top of the page
+    sliderImageTimer();
     return Stack(
       children: [
         Container(
@@ -801,6 +805,26 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               ),
             ),
           );
+  }
+
+  void sliderImageTimer() async {
+    if(!timerStarted) {
+      setState(() {
+        timerStarted = true;
+      });
+      while (true) {
+        await Future.delayed(Duration(seconds: 5));
+        if (sliderIndex + 1 < sliderImageList.length) {
+          setState(() {
+            sliderIndex++;
+          });
+        } else {
+          setState(() {
+            sliderIndex = 0;
+          });
+        }
+      }
+    }
   }
 
   @override

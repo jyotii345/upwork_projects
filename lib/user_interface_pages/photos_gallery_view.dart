@@ -118,7 +118,7 @@ class GalleryViewState extends State<GalleryView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        TextButton(
+        indexMultiplier > 1 ? TextButton(
             child: Image(
                 image: AssetImage("assets/leftarrow.png"),
                 height: iconSize,
@@ -129,12 +129,12 @@ class GalleryViewState extends State<GalleryView> {
                   indexMultiplier--;
                 });
               }
-            }),
+            }) : Container(width: iconSize,),
         SizedBox(
           width: iconSize,
           height: iconSize,
         ),
-        TextButton(
+        widget.photos.length - (9 * (indexMultiplier - 1)) > 9 ? TextButton(
             child: Image(
                 image: AssetImage("assets/rightarrow.png"),
                 height: iconSize,
@@ -145,7 +145,7 @@ class GalleryViewState extends State<GalleryView> {
                   indexMultiplier++;
                 });
               }
-            }),
+            }) : Container(width: iconSize,),
       ],
     );
   }
@@ -191,7 +191,7 @@ class GalleryViewState extends State<GalleryView> {
                 .parse(widget.trip.tripDate)
                 .day
                 .toString() +
-            "," +
+            ", " +
             DateTime
                 .parse(widget.trip.tripDate)
                 .year

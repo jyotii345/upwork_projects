@@ -52,10 +52,6 @@ class Trip {
   Boat boat;
   Charter charter;
 
-  final TransformationController _transformationController =
-      TransformationController();
-  Animation<Matrix4> animationReset;
-  AnimationController controllerReset;
 
   Trip(
       String tripDate,
@@ -256,15 +252,7 @@ class Trip {
       'December'
     ];
 
-    return InteractiveViewer(
-      panEnabled: false,
-      boundaryMargin: EdgeInsets.all(13),
-      transformationController: _transformationController,
-      minScale: 1.0,
-      maxScale: 2.5,
-      onInteractionStart: _onInteractionStart,
-      onInteractionEnd: _onInteractionEnd,
-      child: Padding(
+    return  Padding(
         padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
         child: Column(
           children: [
@@ -553,7 +541,6 @@ class Trip {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -734,47 +721,6 @@ class Trip {
         ),
       ],
     );
-  }
-
-  void _animateResetInitialize() {
-    //animation reset for pnich to zoom
-    controllerReset.reset();
-    animationReset = Matrix4Tween(
-      begin: _transformationController.value,
-      end: Matrix4.identity(),
-    ).animate(controllerReset);
-    animationReset.addListener(_onAnimateReset);
-    controllerReset.forward();
-  }
-
-  void _onAnimateReset() {
-    //notifies when the animation is resetting on pinch to zoom
-    _transformationController.value = animationReset.value;
-    if (!controllerReset.isAnimating) {
-      animationReset?.removeListener(_onAnimateReset);
-      animationReset = null;
-      controllerReset.reset();
-    }
-  }
-
-  void _onInteractionStart(ScaleStartDetails details) {
-    //cancels the reset if a user clicks again
-    if (controllerReset.status == AnimationStatus.forward) {
-      _animateResetStop();
-    }
-  }
-
-  void _animateResetStop() {
-    //cancel the reset for the pinch to zoom
-    controllerReset.stop();
-    animationReset?.removeListener(_onAnimateReset);
-    animationReset = null;
-    controllerReset.reset();
-  }
-
-  void _onInteractionEnd(ScaleEndDetails details) {
-    //called when zoom ends for pinch to zoom
-    _animateResetInitialize();
   }
 
   Future<dynamic> updateTripValues() async {
