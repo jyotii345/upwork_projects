@@ -1,6 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,18 +67,25 @@ class CreateContactState extends State<CreateContact>
 
     return Scaffold(
       appBar: getAppBar(),
-      body: Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
-          getBannerImage(),
-          getLoadingWheel(),
-        ],
+      body: PinchToZoom(
+        OrientationBuilder(
+          builder: (context, orientation) {
+            portrait = orientation == Orientation.portrait;
+            return Stack(
+              children: [
+                getBackgroundImage(),
+                getPageForm(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 7 + 4,
+                  width: double.infinity,
+                  color: AggressorColors.secondaryColor,
+                ),
+                getBannerImage(),
+                getLoadingWheel(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -102,21 +110,31 @@ class CreateContactState extends State<CreateContact>
       isLoading = true;
     });
 
-
-
     if (validateAndSave()) {
       try {
-
-        if(countryDropDownSelection["country"] == "USA"){
+        if (countryDropDownSelection["country"] == "USA") {
           territory = stateDropDownSelection["stateAbbr"];
         }
 
         String birthday = formatDate(dateOfBirth, [yyyy, mm, dd]);
 
-        var jsonResponse = await AggressorApi().sendNewContact(widget.userId, address1, address2, city, countryDropDownSelection["country"] == "USA" ? territory : "", countryDropDownSelection["country"] != "USA" ? territory : "", countryDropDownSelection["countryid"].toString(), zip, email, homePhone, mobilePhone, birthday, genderDropDownOption.toLowerCase());
+        var jsonResponse = await AggressorApi().sendNewContact(
+            widget.userId,
+            address1,
+            address2,
+            city,
+            countryDropDownSelection["country"] == "USA" ? territory : "",
+            countryDropDownSelection["country"] != "USA" ? territory : "",
+            countryDropDownSelection["countryid"].toString(),
+            zip,
+            email,
+            homePhone,
+            mobilePhone,
+            birthday,
+            genderDropDownOption.toLowerCase());
 
         if (jsonResponse["status"] == "success") {
-            showSuccessDialogue();
+          showSuccessDialogue();
         } else {
           throw Exception("Error creating account, please try again.");
         }
@@ -138,18 +156,18 @@ class CreateContactState extends State<CreateContact>
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
-          title: new Text('Success'),
-          content: new Text(
-              "Contact successfully created. You can now log in with this information"),
-          actions: <Widget>[
-            new TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context, MaterialPageRoute(builder: (context) => LoginPage()));
-                },
-                child: new Text('Continue')),
-          ],
-        ));
+              title: new Text('Success'),
+              content: new Text(
+                  "Contact successfully created. You can now log in with this information"),
+              actions: <Widget>[
+                new TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
+                    },
+                    child: new Text('Continue')),
+              ],
+            ));
   }
 
   Widget getPageForm() {
@@ -209,7 +227,7 @@ class CreateContactState extends State<CreateContact>
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -223,7 +241,7 @@ class CreateContactState extends State<CreateContact>
           "Create new contact",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 25,
+              fontSize: portrait ? MediaQuery.of(context).size.height / 26 : MediaQuery.of(context).size.width / 26 ,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -587,7 +605,6 @@ class CreateContactState extends State<CreateContact>
   Widget getLoadingWheel() {
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
-
 
   @override
   bool get wantKeepAlive => true;

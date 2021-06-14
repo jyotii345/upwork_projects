@@ -349,7 +349,7 @@ class AggressorApi {
               'state': state,
               'province': province,
               'country': int.parse(country),
-              'zip': int.parse(zip),
+              'zip': zip,
               'username': username,
               'home_phone': homePhone,
               'work_phone': workPhone,
@@ -400,6 +400,25 @@ class AggressorApi {
 
     return Map<String, dynamic>.from(jsonResponse);
   }
+
+
+  Future<dynamic> uploadUserImage(String userId,String filePath) async {
+    //saves the updated profile image for the userId provided
+
+    String url = "https://secure.aggressor.com/api/app/profile/avatar/" + userId;
+
+    var uri = Uri.parse(url);
+    MultipartRequest request = http.MultipartRequest('POST', uri);
+    request.headers.addEntries([MapEntry('apikey', apiKey)]);
+    request.files.add(await http.MultipartFile.fromPath('file', filePath));
+    StreamedResponse response = await request.send();
+
+    var jsonResponse = await json.decode(await response.stream.bytesToString());
+
+    print(jsonResponse);
+    return Map<String, dynamic>.from(jsonResponse);
+  }
+
 
   Future<dynamic> downloadAwsFile(String key) async {
     //create and send a contact details request to the Aggressor Api and return json response

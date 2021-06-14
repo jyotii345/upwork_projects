@@ -2,6 +2,7 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_edit_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,7 +24,7 @@ class ViewNote extends StatefulWidget {
   State<StatefulWidget> createState() => new ViewNoteState();
 }
 
-class ViewNoteState extends State<ViewNote>{
+class ViewNoteState extends State<ViewNote> {
   /*
   instance vars
    */
@@ -44,24 +45,30 @@ class ViewNoteState extends State<ViewNote>{
    */
   @override
   Widget build(BuildContext context) {
-
     popDistance = 1;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar:getAppBar(),
-      bottomNavigationBar: getBottomNavigationBar(),
-      body: Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
-          getBannerImage(),
-          getLoading(),
-        ],
+    return PinchToZoom(
+      OrientationBuilder(
+        builder: (context, orientation) {
+          portrait = orientation == Orientation.portrait;
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: getAppBar(),
+            bottomNavigationBar: getBottomNavigationBar(),
+            body: Stack(
+              children: [
+                getBackgroundImage(),
+                getPageForm(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 7 + 4,
+                  width: double.infinity,
+                  color: AggressorColors.secondaryColor,
+                ),
+                getBannerImage(),
+                getLoading(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -123,19 +130,25 @@ class ViewNoteState extends State<ViewNote>{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Pre-Adventure Notes:",
                 style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
           Expanded(
             child: Container(
-              height: MediaQuery.of(context).size.height / 3,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 3
+                  : MediaQuery.of(context).size.width / 3,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -160,19 +173,25 @@ class ViewNoteState extends State<ViewNote>{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Post-Adventure Notes:",
                 style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
           Expanded(
             child: Container(
-                height: MediaQuery.of(context).size.height / 3,
+                height: portrait
+                    ? MediaQuery.of(context).size.height / 3
+                    : MediaQuery.of(context).size.width / 3,
                 decoration: ShapeDecoration(
                   shape: RoundedRectangleBorder(
                     side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -196,19 +215,25 @@ class ViewNoteState extends State<ViewNote>{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Miscellaneous Adventure Notes:",
                 style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
           Expanded(
             child: Container(
-                height: MediaQuery.of(context).size.height / 3,
+                height: portrait
+                    ? MediaQuery.of(context).size.height / 3
+                    : MediaQuery.of(context).size.width / 3,
                 decoration: ShapeDecoration(
                   shape: RoundedRectangleBorder(
                     side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -229,36 +254,51 @@ class ViewNoteState extends State<ViewNote>{
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Destination:",
               style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 45,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 45
+                : MediaQuery.of(context).size.width / 45,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 45,
-                width: MediaQuery.of(context).size.width / 2 -
-                    MediaQuery.of(context).size.height / 40 -
-                    10,
-                child: Text(
-                  widget.note.destination,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                  textAlign: TextAlign.center,
-                ),
+            ),
+            child: Container(
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 45
+                  : MediaQuery.of(context).size.width / 45,
+              width: portrait
+                  ? MediaQuery.of(context).size.width / 2 -
+                      MediaQuery.of(context).size.height / 40 -
+                      10
+                  : MediaQuery.of(context).size.height / 2 -
+                      MediaQuery.of(context).size.width / 40 -
+                      10,
+              child: Text(
+                widget.note.destination,
+                style: TextStyle(
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -272,31 +312,40 @@ class ViewNoteState extends State<ViewNote>{
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Departure Date:",
               style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 45,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 45
+                : MediaQuery.of(context).size.width / 45,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
-              child: Text(
-                widget.note.startDate,
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                textAlign: TextAlign.center,
-              ),
+            ),
+            child: Text(
+              widget.note.startDate,
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
+              textAlign: TextAlign.center,
             ),
           ),
         ],
@@ -309,36 +358,51 @@ class ViewNoteState extends State<ViewNote>{
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Return Date",
               style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 45,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 45
+                : MediaQuery.of(context).size.width / 45,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 45,
-                width: MediaQuery.of(context).size.width / 2 -
-                    MediaQuery.of(context).size.height / 40 -
-                    10,
-                child: Text(
-                  widget.note.startDate,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                  textAlign: TextAlign.center,
-                ),
+            ),
+            child: Container(
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 45
+                  : MediaQuery.of(context).size.width / 45,
+              width: portrait
+                  ? MediaQuery.of(context).size.width / 2 -
+                      MediaQuery.of(context).size.height / 40 -
+                      10
+                  : MediaQuery.of(context).size.height / 2 -
+                      MediaQuery.of(context).size.width / 40 -
+                      10,
+              child: Text(
+                widget.note.startDate,
+                style: TextStyle(
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -371,7 +435,7 @@ class ViewNoteState extends State<ViewNote>{
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -389,22 +453,32 @@ class ViewNoteState extends State<ViewNote>{
                   "View Note",
                   style: TextStyle(
                       color: AggressorColors.primaryColor,
-                      fontSize: MediaQuery.of(context).size.height / 26,
+                      fontSize: portrait
+                          ? MediaQuery.of(context).size.height / 26
+                          : MediaQuery.of(context).size.width / 26,
                       fontWeight: FontWeight.bold),
                 ),
               ),
               Container(
-                height: MediaQuery.of(context).size.height / 20,
+                height: portrait
+                    ? MediaQuery.of(context).size.height / 20
+                    : MediaQuery.of(context).size.width / 20,
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: AggressorColors.primaryColor),
                 child: IconButton(
-                  iconSize: MediaQuery.of(context).size.height / 35,
+                  iconSize: portrait
+                      ? MediaQuery.of(context).size.height / 35
+                      : MediaQuery.of(context).size.width / 35,
                   icon: Icon(
                     Icons.edit,
                   ),
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditNote(widget.user, widget.note)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                EditNote(widget.user, widget.note)));
                   },
                   color: Colors.white,
                 ),

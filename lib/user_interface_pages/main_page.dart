@@ -56,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
     helper = UserDatabaseHelper.instance;
     mainPageCallback = refreshState;
-    innerPage = true;
+    homePage = true;
   }
 
   /*

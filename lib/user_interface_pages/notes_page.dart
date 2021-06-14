@@ -4,6 +4,7 @@ import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
@@ -77,17 +78,19 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
     return OrientationBuilder(builder: (context, orientation) {
       portrait = orientation == Orientation.portrait;
-      return Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
-          getBannerImage(),
-        ],
+      return PinchToZoom(
+        Stack(
+          children: [
+            getBackgroundImage(),
+            getPageForm(),
+            Container(
+              height: MediaQuery.of(context).size.height / 7 + 4,
+              width: double.infinity,
+              color: AggressorColors.secondaryColor,
+            ),
+            getBannerImage(),
+          ],
+        ),
       );
     });
   }
@@ -130,7 +133,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             "ADD A NEW NOTE",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
-                fontSize: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35,
+                fontSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 fontWeight: FontWeight.bold),
           ),
           getYachtDropDown(boatList),
@@ -146,54 +151,66 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Adventure:",
-              style:
-                  TextStyle(fontSize: portrait ? MediaQuery.of(context).size.height / 50 : MediaQuery.of(context).size.width / 50),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 50
+                      : MediaQuery.of(context).size.width / 50),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 35
+                : MediaQuery.of(context).size.width / 35,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
-              child: DropdownButton<Map<String, dynamic>>(
-                underline: Container(),
-                value: dropDownValue,
-                elevation: 0,
-                isExpanded: true,
-                iconSize: portrait ? MediaQuery.of(context).size.height / 35: MediaQuery.of(context).size.width / 35,
-                onChanged: (Map<String, dynamic> newValue) {
-                  setState(() {
-                    dropDownValue = newValue;
-                    dateDropDownList = getDateDropDownList(newValue);
-                  });
-                },
-                items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
-                    (Map<String, dynamic> value) {
-                  return DropdownMenuItem<Map<String, dynamic>>(
-                    value: value,
-                    child: Container(
-                      width:portrait ?  MediaQuery.of(context).size.width / 2 : MediaQuery.of(context).size.height / 2,
-                      child: Text(
-                        value["name"],
-                        style: TextStyle(
-                            fontSize:
-                            portrait ? MediaQuery.of(context).size.height / 40 - 4 : MediaQuery.of(context).size.width / 40 - 4),
-                        textAlign: TextAlign.center,
-                      ),
+            ),
+            child: DropdownButton<Map<String, dynamic>>(
+              underline: Container(),
+              value: dropDownValue,
+              elevation: 0,
+              isExpanded: true,
+              iconSize: portrait
+                  ? MediaQuery.of(context).size.height / 35
+                  : MediaQuery.of(context).size.width / 35,
+              onChanged: (Map<String, dynamic> newValue) {
+                setState(() {
+                  dropDownValue = newValue;
+                  dateDropDownList = getDateDropDownList(newValue);
+                });
+              },
+              items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
+                  (Map<String, dynamic> value) {
+                return DropdownMenuItem<Map<String, dynamic>>(
+                  value: value,
+                  child: Container(
+                    width: portrait
+                        ? MediaQuery.of(context).size.width / 2
+                        : MediaQuery.of(context).size.height / 2,
+                    child: Text(
+                      value["name"],
+                      style: TextStyle(
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
+                      textAlign: TextAlign.center,
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
@@ -206,66 +223,77 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width:portrait ?  MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "DepartureDate:",
-              style:
-                  TextStyle(fontSize: portrait ? MediaQuery.of(context).size.height / 50 : MediaQuery.of(context).size.width / 50),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 50
+                      : MediaQuery.of(context).size.width / 50),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: portrait ? MediaQuery.of(context).size.height / 35: MediaQuery.of(context).size.width / 35,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 35
+                : MediaQuery.of(context).size.width / 35,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
-              child: DropdownButton<Trip>(
-                underline: Container(),
-                value: dateDropDownValue,
-                elevation: 0,
-                isExpanded: true,
-                iconSize: portrait ? MediaQuery.of(context).size.height / 35: MediaQuery.of(context).size.width / 35,
-                onChanged: (Trip newValue) {
-                  setState(() {
-                    dateDropDownValue = newValue;
-                  });
-                },
-                items:
-                    dateDropDownList.map<DropdownMenuItem<Trip>>((Trip value) {
-                  return DropdownMenuItem<Trip>(
-                    value: value,
-                    child: Container(
-                      width: portrait ? MediaQuery.of(context).size.width / 2 : MediaQuery.of(context).size.height / 2,
-                      child: Text(
-                        value.charter == null
-                            ? "You have adventures here yet."
-                            : DateTime.parse(
-                                        value.charter.startDate)
-                                    .month
-                                    .toString() +
-                                "/" +
-                                DateTime.parse(value.charter.startDate)
-                                    .day
-                                    .toString() +
-                                "/" +
-                                DateTime.parse(value.charter.startDate)
-                                    .year
-                                    .toString(),
-                        style: TextStyle(
-                            fontSize:
-                            portrait ? MediaQuery.of(context).size.height / 40 - 4 : MediaQuery.of(context).size.width / 40 - 4),
-                        textAlign: TextAlign.center,
-                      ),
+            ),
+            child: DropdownButton<Trip>(
+              underline: Container(),
+              value: dateDropDownValue,
+              elevation: 0,
+              isExpanded: true,
+              iconSize: portrait
+                  ? MediaQuery.of(context).size.height / 35
+                  : MediaQuery.of(context).size.width / 35,
+              onChanged: (Trip newValue) {
+                setState(() {
+                  dateDropDownValue = newValue;
+                });
+              },
+              items: dateDropDownList.map<DropdownMenuItem<Trip>>((Trip value) {
+                return DropdownMenuItem<Trip>(
+                  value: value,
+                  child: Container(
+                    width: portrait
+                        ? MediaQuery.of(context).size.width / 2
+                        : MediaQuery.of(context).size.height / 2,
+                    child: Text(
+                      value.charter == null
+                          ? "You have adventures here yet."
+                          : DateTime.parse(
+                                      value.charter.startDate)
+                                  .month
+                                  .toString() +
+                              "/" +
+                              DateTime.parse(value.charter.startDate)
+                                  .day
+                                  .toString() +
+                              "/" +
+                              DateTime.parse(value.charter.startDate)
+                                  .year
+                                  .toString(),
+                      style: TextStyle(
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
+                      textAlign: TextAlign.center,
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
@@ -306,37 +334,43 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget getCreateNoteButton() {
     //returns the button to create the note as it is
     return Row(
-        children: [
-          SizedBox(
-            width: portrait ? MediaQuery.of(context).size.height / 6  : MediaQuery.of(context).size.width / 6,
-          ),
-          Expanded(
-            child: TextButton(
-              onPressed: () {
-                if (dateDropDownValue.charter != null) {
-                  if (dateDropDownValue.charter.startDate != "") {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddNotes(
-                          widget.user,
-                          dateDropDownValue,
-                          notesCallBack,
-                        ),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: portrait
+              ? MediaQuery.of(context).size.height / 6
+              : MediaQuery.of(context).size.width / 6,
+        ),
+        Container(
+          width: portrait
+              ? MediaQuery.of(context).size.height / 4
+              : MediaQuery.of(context).size.width / 2.5,
+          child: TextButton(
+            onPressed: () {
+              if (dateDropDownValue.charter != null) {
+                if (dateDropDownValue.charter.startDate != "") {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddNotes(
+                        widget.user,
+                        dateDropDownValue,
+                        notesCallBack,
                       ),
-                    );
-                  }
+                    ),
+                  );
                 }
-              },
-              child: Text(
-                "Create note",
-                style: TextStyle(color: Colors.white),
-              ),
-              style: TextButton.styleFrom(
-                  backgroundColor: AggressorColors.secondaryColor),
+              }
+            },
+            child: Text(
+              "Create note",
+              style: TextStyle(color: Colors.white),
             ),
+            style: TextButton.styleFrom(
+                backgroundColor: AggressorColors.secondaryColor),
           ),
-        ],
+        ),
+      ],
     );
   }
 
@@ -364,7 +398,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -379,7 +413,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           "My Notes",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: portrait ? MediaQuery.of(context).size.height / 25: MediaQuery.of(context).size.width / 25,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 25
+                  : MediaQuery.of(context).size.width / 25,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -388,7 +424,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   Widget getNotesSection() {
     //returns the section of the page that displays notes already made
-    double textBoxSize = portrait ? MediaQuery.of(context).size.width / 4 : MediaQuery.of(context).size.height / 4;
+    double textBoxSize = portrait
+        ? MediaQuery.of(context).size.width / 4
+        : MediaQuery.of(context).size.height / 4;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -411,7 +449,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                         Expanded(
                           child: SizedBox(
                             width: textBoxSize,
-                            child: Text("Adventure", textAlign: TextAlign.center),
+                            child:
+                                Text("Adventure", textAlign: TextAlign.center),
                           ),
                         ),
                         SizedBox(
@@ -438,7 +477,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget getNotesView() {
     //returns the list item containing notes objects
 
-    double textBoxSize = portrait ? MediaQuery.of(context).size.width / 4 : MediaQuery.of(context).size.height / 4;
+    double textBoxSize = portrait
+        ? MediaQuery.of(context).size.width / 4
+        : MediaQuery.of(context).size.height / 4;
     noteList.clear();
     noteList.add(
       Container(

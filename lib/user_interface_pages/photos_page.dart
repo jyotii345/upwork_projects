@@ -8,6 +8,7 @@ import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
@@ -80,21 +81,23 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     getGalleries();
 
-    return OrientationBuilder(builder: (context, orientation) {
-      portrait = orientation == Orientation.portrait;
-      return Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
-          getBannerImage(),
-        ],
-      );
-    });
+    return PinchToZoom(
+      OrientationBuilder(builder: (context, orientation) {
+        portrait = orientation == Orientation.portrait;
+        return Stack(
+          children: [
+            getBackgroundImage(),
+            getPageForm(),
+            Container(
+              height: MediaQuery.of(context).size.height / 7 + 4,
+              width: double.infinity,
+              color: AggressorColors.secondaryColor,
+            ),
+            getBannerImage(),
+          ],
+        );
+      }),
+    );
   }
 
   /*
@@ -131,7 +134,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             width: portrait
@@ -145,51 +148,52 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                       : MediaQuery.of(context).size.width / 50),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: portrait
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 35
+                : MediaQuery.of(context).size.width / 35,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              ),
+            ),
+            child: DropdownButton<Map<String, dynamic>>(
+              underline: Container(),
+              value: dropDownValue,
+              elevation: 0,
+              isExpanded: true,
+              iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-              ),
-              child: DropdownButton<Map<String, dynamic>>(
-                underline: Container(),
-                value: dropDownValue,
-                elevation: 0,
-                isExpanded: true,
-                iconSize: portrait
-                    ? MediaQuery.of(context).size.height / 35
-                    : MediaQuery.of(context).size.width / 35,
-                onChanged: (Map<String, dynamic> newValue) {
-                  setState(() {
-                    dropDownValue = newValue;
-                    dateDropDownList = getDateDropDownList(newValue);
-                  });
-                },
-                items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
-                    (Map<String, dynamic> value) {
-                  return DropdownMenuItem<Map<String, dynamic>>(
-                    value: value,
-                    child: Container(
-                      width: portrait
-                          ? MediaQuery.of(context).size.width / 2
-                          : MediaQuery.of(context).size.height / 2,
-                      child: Text(
-                        value["name"],
-                        style: TextStyle(
-                            fontSize: portrait
-                                ? MediaQuery.of(context).size.height / 40 - 4
-                                : MediaQuery.of(context).size.width / 40 - 4),
-                        textAlign: TextAlign.center,
-                      ),
+              onChanged: (Map<String, dynamic> newValue) {
+                setState(() {
+                  dropDownValue = newValue;
+                  dateDropDownList = getDateDropDownList(newValue);
+                });
+              },
+              items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
+                  (Map<String, dynamic> value) {
+                return DropdownMenuItem<Map<String, dynamic>>(
+                  value: value,
+                  child: Container(
+                    width: portrait
+                        ? MediaQuery.of(context).size.width / 2
+                        : MediaQuery.of(context).size.height / 2,
+                    child: Text(
+                      value["name"],
+                      style: TextStyle(
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
+                      textAlign: TextAlign.center,
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
@@ -203,7 +207,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             width: portrait
@@ -217,63 +221,63 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                       : MediaQuery.of(context).size.width / 50),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: portrait
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 35
+                : MediaQuery.of(context).size.width / 35,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              ),
+            ),
+            child: DropdownButton<Trip>(
+              underline: Container(),
+              value: dateDropDownValue,
+              elevation: 0,
+              isExpanded: true,
+              iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-              ),
-              child: DropdownButton<Trip>(
-                underline: Container(),
-                value: dateDropDownValue,
-                elevation: 0,
-                isExpanded: true,
-                iconSize: portrait
-                    ? MediaQuery.of(context).size.height / 35
-                    : MediaQuery.of(context).size.width / 35,
-                onChanged: (Trip newValue) {
-                  setState(() {
-                    dateDropDownValue = newValue;
-                  });
-                },
-                items:
-                    dateDropDownList.map<DropdownMenuItem<Trip>>((Trip value) {
-                  return DropdownMenuItem<Trip>(
-                    value: value,
-                    child: Container(
-                      width: portrait
-                          ? MediaQuery.of(context).size.width / 2
-                          : MediaQuery.of(context).size.height / 2,
-                      child: Text(
-                        value.charter == null
-                            ? "You have adventures here yet."
-                            : DateTime.parse(
-                                        value.charter.startDate)
-                                    .month
-                                    .toString() +
-                                "/" +
-                                DateTime.parse(value.charter.startDate)
-                                    .day
-                                    .toString() +
-                                "/" +
-                                DateTime.parse(value.charter.startDate)
-                                    .year
-                                    .toString(),
-                        style: TextStyle(
-                            fontSize: portrait
-                                ? MediaQuery.of(context).size.height / 40 - 4
-                                : MediaQuery.of(context).size.width / 40 - 4),
-                        textAlign: TextAlign.center,
-                      ),
+              onChanged: (Trip newValue) {
+                setState(() {
+                  dateDropDownValue = newValue;
+                });
+              },
+              items: dateDropDownList.map<DropdownMenuItem<Trip>>((Trip value) {
+                return DropdownMenuItem<Trip>(
+                  value: value,
+                  child: Container(
+                    width: portrait
+                        ? MediaQuery.of(context).size.width / 2
+                        : MediaQuery.of(context).size.height / 2,
+                    child: Text(
+                      value.charter == null
+                          ? "You have adventures here yet."
+                          : DateTime.parse(
+                                      value.charter.startDate)
+                                  .month
+                                  .toString() +
+                              "/" +
+                              DateTime.parse(value.charter.startDate)
+                                  .day
+                                  .toString() +
+                              "/" +
+                              DateTime.parse(value.charter.startDate)
+                                  .year
+                                  .toString(),
+                      style: TextStyle(
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
+                      textAlign: TextAlign.center,
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
@@ -305,14 +309,18 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Widget getUploadPhotosButton() {
     //returns the button to create a new gallery
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
           width: portrait
               ? MediaQuery.of(context).size.height / 6
               : MediaQuery.of(context).size.width / 6,
         ),
-        Expanded(
-          child: TextButton(
+        Container(
+          width: portrait
+              ? MediaQuery.of(context).size.height / 4
+              : MediaQuery.of(context).size.width / 2.5,
+          child:  TextButton(
             onPressed: loadAssets,
             child: Text(
               "Upload Photos",
@@ -507,7 +515,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                         Flexible(
                           child: SizedBox(
                             width: textBoxSize,
-                            child: Text("Adventure", textAlign: TextAlign.center),
+                            child:
+                                Text("Adventure", textAlign: TextAlign.center),
                           ),
                         ),
                         SizedBox(

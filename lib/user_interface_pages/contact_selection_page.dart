@@ -1,6 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -48,17 +49,24 @@ class ContactSelectionState extends State<ContactSelection>
 
     return Scaffold(
       appBar: getAppBar(),
-      body: Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
-          getBannerImage(),
-        ],
+      body: PinchToZoom(
+        OrientationBuilder(
+          builder: (context, orientation) {
+            portrait = orientation == Orientation.portrait;
+            return Stack(
+              children: [
+                getBackgroundImage(),
+                getPageForm(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 7 + 4,
+                  width: double.infinity,
+                  color: AggressorColors.secondaryColor,
+                ),
+                getBannerImage(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -80,8 +88,8 @@ class ContactSelectionState extends State<ContactSelection>
               height: MediaQuery.of(context).size.height / 7,
             ),
             getPageTitle(),
-            getPagePrompt(),getContactList(),
-
+            getPagePrompt(),
+            getContactList(),
             contactList.length == 0 ? Container() : getChooseContactButton(),
             getCreateNewContactButton(),
             showErrorMessage(),
@@ -169,8 +177,11 @@ class ContactSelectionState extends State<ContactSelection>
             errorMessage = "";
           });
 
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CreateContact(widget.jsonResponse["userID"].toString())));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      CreateContact(widget.jsonResponse["userID"].toString())));
         },
         child: Text(
           "Create new contact",
@@ -186,8 +197,11 @@ class ContactSelectionState extends State<ContactSelection>
     contactList = populateContactList();
     if (contactList.length == 0) {
       return Expanded(
-        child: Text(
-            "No contacts were found with this information, please create a new contact."),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Text(
+              "No contacts were found with this information, please create a new contact.", textAlign: TextAlign.center,),
+        ),
       );
     } else {
       return Padding(
@@ -220,7 +234,8 @@ class ContactSelectionState extends State<ContactSelection>
     List<dynamic> contactList = [];
     print("creating contact list from: " + widget.jsonResponse.toString());
     if (widget.jsonResponse["status"] == "success") {
-      if(widget.jsonResponse["data"] != null) {
+      if (widget.jsonResponse["data"] != null &&
+          widget.jsonResponse["data"].length > 0) {
         int i = 1;
         while (widget.jsonResponse["data"][i.toString()] != null) {
           contactList.add(widget.jsonResponse["data"][i.toString()]);
@@ -268,7 +283,7 @@ class ContactSelectionState extends State<ContactSelection>
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -282,7 +297,9 @@ class ContactSelectionState extends State<ContactSelection>
           "Select Contact",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 25,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 26
+                  : MediaQuery.of(context).size.width / 26,
               fontWeight: FontWeight.bold),
         ),
       ),

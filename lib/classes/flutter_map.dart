@@ -24,7 +24,7 @@ class FlutterMapWidget {
     //returns the widget that contains the flutter map
     try {
       return SizedBox(
-        width: MediaQuery.of(context).size.width, // or use fixed size like 200
+        width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height / 5.5,
         child: FlutterMap(
           options: new MapOptions(

@@ -1,6 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/flutter_map.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -48,12 +49,17 @@ class MyTripsState extends State<MyTrips>
   Widget build(BuildContext context) {
     super.build(context);
     homePage = true;
-    return PinchToZoom( //TODO test this allows pinch to zoom
-      Stack(
-        children: [
-          getBackGroundImage(),
-          getForegroundView(),
-        ],
+    return PinchToZoom(
+      OrientationBuilder(
+        builder: (context, orientation) {
+          portrait = orientation == Orientation.portrait;
+          return Stack(
+            children: [
+              getBackGroundImage(),
+              getForegroundView(),
+            ],
+          );
+        },
       ),
     );
   }
@@ -164,7 +170,7 @@ class MyTripsState extends State<MyTrips>
 
     upcomingTripsList.clear();
     upcomingTrips.forEach((element) {
-      upcomingTripsList.add(element.getUpcomingTripCard(context, refresh));
+      upcomingTripsList.add(element.getUpcomingTripCard(context, refresh, portrait));
     });
 
     return ListView.builder(
@@ -261,7 +267,7 @@ class MyTripsState extends State<MyTrips>
               "Past Adventures",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: MediaQuery.of(context).size.height / 45,
+                fontSize: portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45,
               ),
             ),
           ),
@@ -293,7 +299,7 @@ class MyTripsState extends State<MyTrips>
         flutterMapWidget.addMarker(
             double.parse(element.latitude),
             double.parse(element.longitude),
-            MediaQuery.of(context).size.width / 30);
+            portrait ? MediaQuery.of(context).size.width / 30 : MediaQuery.of(context).size.height / 30);
       }
       if (DateTime.parse(element.tripDate).isBefore(DateTime.now())) {
         pastList.add(element);
@@ -317,7 +323,7 @@ class MyTripsState extends State<MyTrips>
               "Upcoming Adventures",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: MediaQuery.of(context).size.height / 45,
+                fontSize: portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45,
               ),
             ),
           ),
@@ -344,7 +350,7 @@ class MyTripsState extends State<MyTrips>
           "Manage My Adventures",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 30,
+              fontSize: portrait ? MediaQuery.of(context).size.height / 30 : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),

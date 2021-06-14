@@ -1,17 +1,23 @@
+import 'dart:io';
+
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+import 'package:heic_to_jpg/heic_to_jpg.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class EditMyProfile extends StatefulWidget {
-  EditMyProfile(
-      this.user, this.updateCallback, this.profileData);
+  EditMyProfile(this.user, this.updateCallback, this.profileData);
 
   final User user;
-  final VoidCallback  updateCallback;
+  final VoidCallback updateCallback;
   final Map<String, dynamic> profileData;
 
   @override
@@ -35,7 +41,6 @@ class EditMyProfileState extends State<EditMyProfile>
   Map<String, dynamic> countryDropDownSelection;
   Map<String, dynamic> stateDropDownSelection;
 
-
   bool stateAndCountryLoaded = false;
 
   String name,
@@ -54,6 +59,8 @@ class EditMyProfileState extends State<EditMyProfile>
       password,
       totalDives,
       accountType;
+  
+  File selectionFile;
 
   /*
   initState
@@ -70,23 +77,33 @@ class EditMyProfileState extends State<EditMyProfile>
   Widget build(BuildContext context) {
     super.build(context);
     popDistance = 1;
-    textDisplayWidth = MediaQuery.of(context).size.width / 2.5;
-    textSize = MediaQuery.of(context).size.width / 30;
+
     return Scaffold(
       appBar: getAppBar(),
       bottomNavigationBar: getBottomNavigationBar(),
-      body: Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
-          getBannerImage(),
-          getLoadingWheel(),
-        ],
+      body: PinchToZoom(
+        OrientationBuilder(builder: (context, orientation) {
+          portrait = orientation == Orientation.portrait;
+          textDisplayWidth = portrait
+              ? MediaQuery.of(context).size.width / 2.5
+              : MediaQuery.of(context).size.height / 2.5;
+          textSize = portrait
+              ? MediaQuery.of(context).size.width / 30
+              : MediaQuery.of(context).size.height / 30;
+          return Stack(
+            children: [
+              getBackgroundImage(),
+              getPageForm(),
+              Container(
+                height: MediaQuery.of(context).size.height / 7 + 4,
+                width: double.infinity,
+                color: AggressorColors.secondaryColor,
+              ),
+              getBannerImage(),
+              getLoadingWheel(),
+            ],
+          );
+        }),
       ),
     );
   }
@@ -126,10 +143,14 @@ class EditMyProfileState extends State<EditMyProfile>
           }
         }
 
-
         if (totalDives == "") {
           totalDives = null;
         }
+
+        if(selectionFile != null){
+          var response = await AggressorApi().uploadUserImage(widget.user.userId, selectionFile.path);
+        }
+
 
         var jsonResponse = await AggressorApi().saveProfileData(
             widget.user.userId,
@@ -196,6 +217,7 @@ class EditMyProfileState extends State<EditMyProfile>
                       Navigator.popUntil(context, (route) {
                         return popCount++ == 2;
                       });
+                      popDistance = 1;
                     },
                     child: new Text('Continue')),
               ],
@@ -307,7 +329,7 @@ class EditMyProfileState extends State<EditMyProfile>
                   ),
                 ),
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {loadAssets();},
                   child: Padding(
                     padding: EdgeInsets.all(3),
                     child: Text(
@@ -332,8 +354,8 @@ class EditMyProfileState extends State<EditMyProfile>
                       : Text(
                           profileImagePath,
                           textAlign: TextAlign.center,
-                          style:
-                              TextStyle(color: Colors.black, fontSize: textSize),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: textSize),
                         ),
                 ),
               ),
@@ -541,7 +563,7 @@ class EditMyProfileState extends State<EditMyProfile>
                     ),
                     validator: (value) =>
                         value.isEmpty ? 'Zip code can\'t be empty' : null,
-                    onSaved: (value) => zip = value.trim(),
+                    onSaved: (value) => zip = value.toString().trim(),
                   ),
                 ),
               ),
@@ -904,8 +926,6 @@ class EditMyProfileState extends State<EditMyProfile>
         ));
   }
 
-
-
   Widget getBackgroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
@@ -930,7 +950,7 @@ class EditMyProfileState extends State<EditMyProfile>
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -948,15 +968,21 @@ class EditMyProfileState extends State<EditMyProfile>
                 "My Profile",
                 style: TextStyle(
                     color: AggressorColors.primaryColor,
-                    fontSize: MediaQuery.of(context).size.height / 25,
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 26
+                        : MediaQuery.of(context).size.width / 26,
                     fontWeight: FontWeight.bold),
               ),
             ),
             TextButton(
                 child: Image(
                     image: AssetImage("assets/filesblue.png"),
-                    height: MediaQuery.of(context).size.width / 10,
-                    width: MediaQuery.of(context).size.width / 10),
+                    height: portrait
+                        ? MediaQuery.of(context).size.width / 10
+                        : MediaQuery.of(context).size.height / 10,
+                    width: portrait
+                        ? MediaQuery.of(context).size.width / 10
+                        : MediaQuery.of(context).size.height / 10),
                 onPressed: () {
                   //TODO implement button function
                 }),
@@ -980,7 +1006,6 @@ class EditMyProfileState extends State<EditMyProfile>
                 ),
                 child: DropdownButton<Map<String, dynamic>>(
                   isExpanded: true,
-                  isDense: true,
                   value: stateDropDownSelection,
                   underline: Container(),
                   onChanged: (Map<String, dynamic> newValue) {
@@ -996,8 +1021,10 @@ class EditMyProfileState extends State<EditMyProfile>
                     return DropdownMenuItem<Map<String, dynamic>>(
                       child: Padding(
                         padding: const EdgeInsets.all(3.0),
-                        child: Text(value["state"],
-                            style: TextStyle(fontSize: textSize)),
+                        child: Container(
+                          child: Text(value["state"],
+                              style: TextStyle(fontSize: textSize)),
+                        ),
                       ),
                       value: value,
                     );
@@ -1037,7 +1064,6 @@ class EditMyProfileState extends State<EditMyProfile>
 
   Widget getCountryDropDown() {
     //returns a dropdown of all countries
-    //TODO make the countries load in loading screen and save as a global
 
     return Expanded(
       child: Padding(
@@ -1051,7 +1077,6 @@ class EditMyProfileState extends State<EditMyProfile>
           ),
           child: DropdownButton<Map<String, dynamic>>(
             isExpanded: true,
-            isDense: true,
             value: countryDropDownSelection,
             onChanged: (Map<String, dynamic> newValue) {
               setState(() {
@@ -1109,17 +1134,21 @@ class EditMyProfileState extends State<EditMyProfile>
         }
       });
 
-      country == "2"
-          ? statesList.forEach((element) {
-              if (element["stateAbbr"].toString() == territory) {
-                stateDropDownSelection = element;
-              }
-            })
-          : () {};
+      if(country == "2") {
+        statesList.forEach((element) {
+          if (element["stateAbbr"].toString() == territory) {
+            stateDropDownSelection = element;
+          }
+        });
+      }
 
-      setState(() {
-        stateAndCountryLoaded = true;
-      });
+      try {
+        setState(() {
+          stateAndCountryLoaded = true;
+        });
+      }catch(e){
+        print(e.toString());
+      };
     }
     return "finished";
   }
@@ -1141,6 +1170,59 @@ class EditMyProfileState extends State<EditMyProfile>
   Widget getLoadingWheel() {
     //returns a loading wheel if data is loading or sending
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
+  }
+
+
+  Future<void> loadAssets() async {
+    //loads the asset objects from the image picker
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
+
+    if (await Permission.photos.status.isDenied ||
+        await Permission.camera.status.isDenied) {
+      await Permission.photos.request();
+      await Permission.camera.request();
+    }
+
+    //try {
+    resultList = await MultiImagePicker.pickImages(
+      maxImages: 300,
+      enableCamera: true,
+      selectedAssets: resultList,
+      cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+      materialOptions: MaterialOptions(
+        actionBarColor: "#ff428cc7",
+        actionBarTitle: "Aggressor Adventures",
+        allViewTitle: "All Photos",
+        useDetailsView: false,
+        selectCircleStrokeColor: "#ff428cc7",
+      ),
+    );
+
+    for (var result in resultList) {
+      String path = "";
+      if (result.name.toLowerCase().contains(".heic")) {
+        path = await HeicToJpg.convert(
+            await FlutterAbsolutePath.getAbsolutePath(result.identifier));
+      } else {
+        path = await FlutterAbsolutePath.getAbsolutePath(result.identifier);
+      }
+      selectionFile = File(path);
+      
+      setState(() {
+        profileImagePath = selectionFile.path.substring(selectionFile.path.lastIndexOf("/") + 1);
+      });
+    }
+
+    setState(() {
+      photosLoaded = false;
+    });
+
+    if (!mounted) return;
+
+    setState(() {
+      errorMessage = error;
+    });
   }
 
   @override

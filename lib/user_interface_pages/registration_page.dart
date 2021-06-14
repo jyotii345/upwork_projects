@@ -2,6 +2,7 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/user_interface_pages/contact_selection_page.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,18 +58,25 @@ class RegistrationPageState extends State<RegistrationPage>
 
     return Scaffold(
       appBar: getAppBar(),
-      body: Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
-          getBannerImage(),
-          getLoadingWheel(),
-        ],
+      body: PinchToZoom(
+        OrientationBuilder(
+          builder: (context, orientation) {
+            portrait = orientation == Orientation.portrait;
+            return Stack(
+              children: [
+                getBackgroundImage(),
+                getPageForm(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 7 + 4,
+                  width: double.infinity,
+                  color: AggressorColors.secondaryColor,
+                ),
+                getBannerImage(),
+                getLoadingWheel(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -305,26 +313,34 @@ class RegistrationPageState extends State<RegistrationPage>
             "• Password must be 8 characters long or larger",
             style: TextStyle(
               color: Colors.grey[400],
-              fontSize: MediaQuery.of(context).size.height / 60,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 60
+                  : MediaQuery.of(context).size.width / 60,
             ),
           ),
           Text(
             "• Password must contain at least one numerical digit",
             style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: MediaQuery.of(context).size.height / 60),
+              color: Colors.grey[400],
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 60
+                  : MediaQuery.of(context).size.width / 60,
+            ),
           ),
           Text(
             "• Password must contain at least one capital letter",
             style: TextStyle(
-                color: Colors.grey[400],
-                fontSize: MediaQuery.of(context).size.height / 60),
+              color: Colors.grey[400],
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 60
+                  : MediaQuery.of(context).size.width / 60,
+            ),
           ),
           Text(
             "• Password must contain one special character",
             style: TextStyle(
                 color: Colors.grey[400],
-                fontSize: MediaQuery.of(context).size.height / 60),
+              fontSize: portrait ? MediaQuery.of(context).size.height / 60 : MediaQuery.of(context).size.width / 60,),
           ),
         ],
       ),
@@ -366,7 +382,6 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   bool validateAndSave() {
-
     // Check if form is valid before perform login or signup
     final form = formKey.currentState;
     if (form.validate()) {
@@ -398,7 +413,6 @@ class RegistrationPageState extends State<RegistrationPage>
   }
 
   void validateAndSubmit() async {
-
     // Perform login or signup
     setState(() {
       errorMessage = "";
@@ -416,10 +430,10 @@ class RegistrationPageState extends State<RegistrationPage>
           var jsonResponse = await AggressorApi()
               .sendRegistration(firstName, lastName, email, password, birthday);
           if (jsonResponse["status"] == "success") {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ContactSelection(jsonResponse)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ContactSelection(jsonResponse)));
           } else {
             throw Exception("Error creating account, please try again.");
           }
@@ -452,7 +466,7 @@ class RegistrationPageState extends State<RegistrationPage>
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -470,7 +484,7 @@ class RegistrationPageState extends State<RegistrationPage>
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -485,7 +499,9 @@ class RegistrationPageState extends State<RegistrationPage>
           "Registration",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 25,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 26
+                  : MediaQuery.of(context).size.width / 26,
               fontWeight: FontWeight.bold),
         ),
       ),

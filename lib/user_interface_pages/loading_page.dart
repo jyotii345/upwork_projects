@@ -64,40 +64,45 @@ class LoadingPageState extends State<LoadingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: getAppBar(),
-      body: Stack(
-        children: <Widget>[
-          Center(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                CircularPercentIndicator(
-                  radius: MediaQuery.of(context).size.width / 3,
-                  percent: percent > 1 ? 1 : percent,
-                  animateFromLastPercent: true,
-                  backgroundColor: AggressorColors.secondaryColor,
-                  progressColor: AggressorColors.primaryColor,
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        portrait = orientation == Orientation.portrait;
+        return new Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: getAppBar(),
+          body: Stack(
+            children: <Widget>[
+              Center(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    CircularPercentIndicator(
+                      radius: portrait ? MediaQuery.of(context).size.width / 3 :  MediaQuery.of(context).size.height / 3,
+                      percent: percent > 1 ? 1 : percent,
+                      animateFromLastPercent: true,
+                      backgroundColor: AggressorColors.secondaryColor,
+                      progressColor: AggressorColors.primaryColor,
+                    ),
+                    percent > 1
+                        ? Text(
+                            "Downloading trip data: 100%",
+                            textAlign: TextAlign.center,
+                          )
+                        : Text(
+                            "Downloading trip data: " +
+                                int.parse((percent * 100).round().toString())
+                                    .toString() +
+                                "%",
+                            textAlign: TextAlign.center,
+                          ),
+                  ],
                 ),
-                percent > 1
-                    ? Text(
-                        "Downloading trip data: 100%",
-                        textAlign: TextAlign.center,
-                      )
-                    : Text(
-                        "Downloading trip data: " +
-                            int.parse((percent * 100).round().toString())
-                                .toString() +
-                            "%",
-                        textAlign: TextAlign.center,
-                      ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-      bottomNavigationBar: getBottomNavigationBar(),
+          bottomNavigationBar: getBottomNavigationBar(),
+        );
+      },
     );
   }
 
@@ -610,7 +615,7 @@ class LoadingPageState extends State<LoadingPage> {
             }
           } else if (offlineItem['action'] == 'delete') {
             Photo photo =
-            await PhotoDatabaseHelper.instance.getPhoto(offlineItem['id']);
+                await PhotoDatabaseHelper.instance.getPhoto(offlineItem['id']);
             var res = await AggressorApi().deleteAwsFile(
                 widget.user.userId.toString(),
                 "gallery",
@@ -619,8 +624,9 @@ class LoadingPageState extends State<LoadingPage> {
                 photo.imagePath
                     .substring(photo.imagePath.lastIndexOf("/"))
                     .toString());
-            if(res["status"] == "success"){
-              await OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
+            if (res["status"] == "success") {
+              await OfflineDatabaseHelper.instance
+                  .deleteOffline(offlineItem["id"]);
               await PhotoDatabaseHelper.instance.deletePhoto(photo.imagePath);
             }
           }

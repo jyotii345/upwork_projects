@@ -73,75 +73,75 @@ class ProfileLinkPageState extends State<ProfileLinkPage> {
       items: [
         new BottomNavigationBarItem(
           activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset(
               "assets/tripsactive.png",
             ),
           ),
           icon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset("assets/tripspassive.png"),
           ),
           label: '',
         ),
         new BottomNavigationBarItem(
           activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset(
               "assets/notesactive.png",
             ),
           ),
           icon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset("assets/notespassive.png"),
           ),
           label: '',
         ),
         new BottomNavigationBarItem(
           activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset(
               "assets/photosactive.png",
             ),
           ),
           icon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset("assets/photospassive.png"),
           ),
           label: '',
         ),
         new BottomNavigationBarItem(
           activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset(
               "assets/rewardsactive.png",
             ),
           ),
           icon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset("assets/rewardspassive.png"),
           ),
           label: '',
         ),
         new BottomNavigationBarItem(
           activeIcon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset(
               "assets/filesactive.png",
             ),
           ),
           icon: Container(
-            width: iconSize,
-            height: iconSize,
+            width: portrait ? iconSizePortrait : iconSizeLandscape,
+            height: portrait ? iconSizePortrait : iconSizeLandscape,
             child: Image.asset("assets/filespassive.png"),
           ),
           label: '',

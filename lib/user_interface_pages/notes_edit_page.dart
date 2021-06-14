@@ -61,7 +61,7 @@ class EditNoteState extends State<EditNote> {
     popDistance = 2;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar:getAppBar(),
+      appBar: getAppBar(),
       bottomNavigationBar: getBottomNavigationBar(),
       body: Stack(
         children: [
@@ -147,13 +147,19 @@ class EditNoteState extends State<EditNote> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Pre-Adventure Notes:",
                 style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                    fontSize: portrait
+                        ? portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
@@ -247,13 +253,19 @@ class EditNoteState extends State<EditNote> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Post-Adventure Notes:",
                 style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                    fontSize: portrait
+                        ? portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
@@ -282,13 +294,19 @@ class EditNoteState extends State<EditNote> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Miscellaneous Adventure Notes:",
                 style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                    fontSize: portrait
+                        ? portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
@@ -314,36 +332,55 @@ class EditNoteState extends State<EditNote> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Destination:",
               style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                  fontSize: portrait
+                      ? portrait
+                          ? MediaQuery.of(context).size.height / 45
+                          : MediaQuery.of(context).size.width / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 45,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 45
+                : MediaQuery.of(context).size.width / 45,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 45,
-                width: MediaQuery.of(context).size.width / 2 -
-                    MediaQuery.of(context).size.height / 40 -
-                    10,
-                child: Text(
-                  widget.note.destination,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                  textAlign: TextAlign.center,
-                ),
+            ),
+            child: Container(
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 45
+                  : MediaQuery.of(context).size.width / 45,
+              width: portrait
+                  ? MediaQuery.of(context).size.width / 2 -
+                      MediaQuery.of(context).size.height / 40 -
+                      10
+                  : MediaQuery.of(context).size.height / 2 -
+                      MediaQuery.of(context).size.width / 40 -
+                      10,
+              child: Text(
+                widget.note.destination,
+                style: TextStyle(
+                    fontSize: portrait
+                        ? portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -356,31 +393,44 @@ class EditNoteState extends State<EditNote> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Departure Date:",
               style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                  fontSize: portrait
+                      ? portrait
+                          ? MediaQuery.of(context).size.height / 45
+                          : MediaQuery.of(context).size.width / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 45,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 45
+                : MediaQuery.of(context).size.width / 45,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
-              child: Text(
-                widget.note.startDate,
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                textAlign: TextAlign.center,
-              ),
+            ),
+            child: Text(
+              widget.note.startDate,
+              style: TextStyle(
+                  fontSize: portrait
+                      ? portrait
+                          ? MediaQuery.of(context).size.height / 45
+                          : MediaQuery.of(context).size.width / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
+              textAlign: TextAlign.center,
             ),
           ),
         ],
@@ -392,36 +442,55 @@ class EditNoteState extends State<EditNote> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Return Date",
               style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height / 45 - 4),
+                  fontSize: portrait
+                      ? portrait
+                          ? MediaQuery.of(context).size.height / 45
+                          : MediaQuery.of(context).size.width / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 45,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 45
+                : MediaQuery.of(context).size.width / 45,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
-              child: Container(
-                height: MediaQuery.of(context).size.height / 45,
-                width: MediaQuery.of(context).size.width / 2 -
-                    MediaQuery.of(context).size.height / 40 -
-                    10,
-                child: Text(
-                  widget.note.endDate,
-                  style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height / 45 - 4),
-                  textAlign: TextAlign.center,
-                ),
+            ),
+            child: Container(
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 45
+                  : MediaQuery.of(context).size.width / 45,
+              width: portrait
+                  ? MediaQuery.of(context).size.width / 2 -
+                      MediaQuery.of(context).size.height / 40 -
+                      10
+                  : MediaQuery.of(context).size.height / 2 -
+                      MediaQuery.of(context).size.width / 40 -
+                      10,
+              child: Text(
+                widget.note.endDate,
+                style: TextStyle(
+                    fontSize: portrait
+                        ? portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -470,7 +539,7 @@ class EditNoteState extends State<EditNote> {
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -484,7 +553,9 @@ class EditNoteState extends State<EditNote> {
           "Edit Note",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 26,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 26
+                  : MediaQuery.of(context).size.width / 26,
               fontWeight: FontWeight.bold),
         ),
       ),

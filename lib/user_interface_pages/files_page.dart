@@ -7,6 +7,7 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
@@ -75,17 +76,19 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
     return OrientationBuilder(builder: (context, orientation) {
       portrait = orientation == Orientation.portrait;
-      return Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
-          getBannerImage(),
-        ],
+      return PinchToZoom(
+        Stack(
+          children: [
+            getBackgroundImage(),
+            getPageForm(),
+            Container(
+              height: MediaQuery.of(context).size.height / 7 + 4,
+              width: double.infinity,
+              color: AggressorColors.secondaryColor,
+            ),
+            getBannerImage(),
+          ],
+        ),
       );
     });
   }
@@ -121,16 +124,19 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            "UPLOAD FILE",
-            style: TextStyle(
-                color: AggressorColors.secondaryColor,
-                fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 35
-                    : MediaQuery.of(context).size.width / 35,
-                fontWeight: FontWeight.bold),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "UPLOAD FILE",
+              style: TextStyle(
+                  color: AggressorColors.secondaryColor,
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 35
+                      : MediaQuery.of(context).size.width / 35,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
           getFilePrompt(),
           getDestinationDropdown(tripList),
@@ -151,7 +157,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             width: portrait
@@ -165,63 +171,64 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                       : MediaQuery.of(context).size.width / 50),
             ),
           ),
-          Expanded(
-            child: Container(
-              height: portrait
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 35
+                : MediaQuery.of(context).size.width / 35,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              ),
+            ),
+            child: DropdownButton<Trip>(
+              underline: Container(),
+              value: dropDownValue,
+              elevation: 0,
+              isExpanded: true,
+              iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-              ),
-              child: DropdownButton<Trip>(
-                underline: Container(),
-                value: dropDownValue,
-                elevation: 0,
-                isExpanded: true,
-                iconSize: portrait
-                    ? MediaQuery.of(context).size.height / 35
-                    : MediaQuery.of(context).size.width / 35,
-                onChanged: (Trip newValue) {
-                  setState(() {
-                    dropDownValue = newValue;
-                  });
-                },
-                items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
-                  return DropdownMenuItem<Trip>(
-                    value: value,
-                    child: Container(
-                      width: portrait
-                          ? MediaQuery.of(context).size.width / 2
-                          : MediaQuery.of(context).size.height / 2,
-                      child: Text(
-                        value.detailDestination == "General"
-                            ? value.detailDestination
-                            : value.detailDestination +
-                                " - " +
-                                DateTime.parse(value.charter.startDate)
-                                    .month
-                                    .toString() +
-                                "/" +
-                                DateTime.parse(value.charter.startDate)
-                                    .day
-                                    .toString() +
-                                "/" +
-                                DateTime.parse(value.charter.startDate)
-                                    .year
-                                    .toString(),
-                        style: TextStyle(
-                            fontSize: portrait
-                                ? MediaQuery.of(context).size.height / 40 - 4
-                                : MediaQuery.of(context).size.width / 40 - 4),
-                        textAlign: TextAlign.center,
-                      ),
+              onChanged: (Trip newValue) {
+                setState(() {
+                  dropDownValue = newValue;
+                });
+              },
+              items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
+                return DropdownMenuItem<Trip>(
+                  value: value,
+                  child: Container(
+                    width: portrait
+                        ? MediaQuery.of(context).size.width / 2
+                        : MediaQuery.of(context).size.height / 2,
+                    child: Text(
+                      value.detailDestination == "General"
+                          ? value.detailDestination
+                          : value.detailDestination +
+                              " - " +
+                              DateTime.parse(value.charter.startDate)
+                                  .month
+                                  .toString() +
+                              "/" +
+                              DateTime.parse(value.charter.startDate)
+                                  .day
+                                  .toString() +
+                              "/" +
+                              DateTime.parse(value.charter.startDate)
+                                  .year
+                                  .toString(),
+                      style: TextStyle(
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
+                      textAlign: TextAlign.center,
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],
@@ -241,7 +248,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             width: portrait
@@ -255,7 +262,10 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                       : MediaQuery.of(context).size.width / 45),
             ),
           ),
-          Expanded(
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
             child: GestureDetector(
               onTap: pickFile,
               child: Container(
@@ -285,13 +295,17 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   Widget getUploadFileButton() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
           width: portrait
               ? MediaQuery.of(context).size.height / 6
               : MediaQuery.of(context).size.width / 6,
         ),
-        Expanded(
+        Container(
+          width: portrait
+              ? MediaQuery.of(context).size.height / 4
+              : MediaQuery.of(context).size.width / 2.5,
           child: TextButton(
             onPressed: uploadFile,
             child: Text(
@@ -330,7 +344,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }

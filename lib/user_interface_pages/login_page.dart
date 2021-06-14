@@ -1,16 +1,13 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
-import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
-import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/registration_page.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'loading_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -29,11 +26,14 @@ class _LoginSignUpPageState extends State<LoginPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  bool isLoading = false; // boolean to see if the page is currently loading a login
+  bool isLoading =
+      false; // boolean to see if the page is currently loading a login
 
   String errorText = ""; //string value of errors detected on login
 
   Database database; // instance variable for sql database
+
+  double sectionWidth, sectionHeight, textSize;
 
   //user variables to be received upon successful login
   String userId;
@@ -64,17 +64,24 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: getAppBar(),
-      body: Stack(
-        children: <Widget>[
-          getBackgroundImage(),
-          getLoginForm(),
-          getLoadingWheel(),
-        ],
+    return PinchToZoom(
+      OrientationBuilder(
+        builder: (context, orientation) {
+          portrait = orientation == Orientation.portrait;
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: getAppBar(),
+            body: Stack(
+              children: <Widget>[
+                getBackgroundImage(),
+                getLoginForm(),
+                getLoadingWheel(),
+              ],
+            ),
+            bottomNavigationBar: getBottomNavigationBar(),
+          );
+        },
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
     );
   }
 
@@ -82,13 +89,12 @@ class _LoginSignUpPageState extends State<LoginPage> {
   self implemented
    */
 
-
   Widget getBackgroundImage() {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: Image.asset(
-        "assets/loginbackground.png",
-        fit: BoxFit.fitHeight,
+        "assets/loginbackground.png", //TODO make background fit always
+        fit: portrait ? BoxFit.fitHeight : BoxFit.fill,
         height: double.infinity,
         width: double.infinity,
       ),
@@ -100,22 +106,37 @@ class _LoginSignUpPageState extends State<LoginPage> {
   }
 
   Widget getLoginForm() {
+    sectionWidth = portrait
+        ? MediaQuery.of(context).size.width / 1.20
+        : MediaQuery.of(context).size.height / 1.20;
+    sectionHeight = portrait
+        ? MediaQuery.of(context).size.height / 40
+        : MediaQuery.of(context).size.width / 50;
+    textSize = portrait
+        ? MediaQuery.of(context).size.width / 25
+        : MediaQuery.of(context).size.width / 60;
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(25, MediaQuery.of(context).size.height / 4, 25, 5),
+          padding: EdgeInsets.fromLTRB(
+              25,
+              portrait
+                  ? MediaQuery.of(context).size.height / 4
+                  : MediaQuery.of(context).size.width / 12,
+              25,
+              portrait ? 5 : 2.5),
           child: getUserTextField(),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
+          padding: EdgeInsets.fromLTRB(25, 0, 25, portrait ? 5 : 2.5),
           child: getPassTextField(),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(75, 5, 75, 0),
+          padding: EdgeInsets.fromLTRB(75, portrait ? 5 : 2.5, 75, 0),
           child: getLoginButton(),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+          padding: EdgeInsets.fromLTRB(25, portrait ? 5 : 2.5, 25, 0),
           child: getToolbar(),
         ),
         Padding(
@@ -141,6 +162,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
   Widget getUserTextField() {
     return new Container(
+      width: sectionWidth,
+      height: sectionHeight,
       decoration: new BoxDecoration(
         color: Colors.white,
         shape: BoxShape.rectangle,
@@ -152,9 +175,13 @@ class _LoginSignUpPageState extends State<LoginPage> {
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: TextField(
+          style: TextStyle(fontSize: textSize),
           controller: usernameController,
           maxLines: 1,
-          decoration: InputDecoration(hintText: "User Name", isDense: true, contentPadding: EdgeInsets.all(1)),
+          decoration: InputDecoration(
+              hintText: "User Name",
+              isDense: true,
+              contentPadding: EdgeInsets.all(1)),
         ),
       ),
     );
@@ -162,6 +189,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
   Widget getPassTextField() {
     return Container(
+      width: sectionWidth,
+      height: sectionHeight,
       decoration: new BoxDecoration(
         color: Colors.white,
         shape: BoxShape.rectangle,
@@ -173,10 +202,14 @@ class _LoginSignUpPageState extends State<LoginPage> {
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: TextField(
+          style: TextStyle(fontSize: textSize),
           controller: passwordController,
           obscureText: true,
           maxLines: 1,
-          decoration: InputDecoration(hintText: "Password", isDense: true, contentPadding: EdgeInsets.all(1)),
+          decoration: InputDecoration(
+              hintText: "Password",
+              isDense: true,
+              contentPadding: EdgeInsets.all(1)),
         ),
       ),
     );
@@ -184,27 +217,35 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
   Widget getLoginButton() {
     return Container(
-      width: double.infinity,
-      child: TextButton(
-        onPressed: () {
-          String username = usernameController.text.toString();
-          String password = passwordController.text.toString();
+      width: sectionWidth * 1.20,
+      height: portrait ? sectionHeight * 2 : sectionHeight,
+      child: Padding(
+        padding: const EdgeInsets.all(0.0),
+        child: TextButton(
+          onPressed: () {
+            String username = usernameController.text.toString();
+            String password = passwordController.text.toString();
 
-          FocusScopeNode currentFocus = FocusScope.of(context);
+            FocusScopeNode currentFocus = FocusScope.of(context);
 
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-          isLoading = true;
-          login(username, password);
-        },
-        child: Text(
-          "Log-In",
-          style: TextStyle(color: Colors.white),
-        ),
-        style: TextButton.styleFrom(
-          backgroundColor: Colors.green,
-          shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 1, style: BorderStyle.solid), borderRadius: BorderRadius.circular(0)),
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
+            isLoading = true;
+            login(username, password);
+          },
+          child: Text(
+            "Log-In",
+            style: TextStyle(color: Colors.white, fontSize: textSize),
+          ),
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.all(0),
+            backgroundColor: Colors.green,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(
+                    color: Colors.black, width: 1, style: BorderStyle.solid),
+                borderRadius: BorderRadius.circular(0)),
+          ),
         ),
       ),
     );
@@ -248,18 +289,19 @@ class _LoginSignUpPageState extends State<LoginPage> {
     } else {
       setState(() {
         isLoading = false;
-        errorText = "username or password do not match any items in our records";
+        errorText =
+            "username or password do not match any items in our records";
       });
     }
   }
 
-
   void checkLoginStatus() async {
     //check if the user is logged in and set the appropriate view if they are or are not
-      var userList = await helper.queryUser();
-      if (userList.length != 0) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoadingPage(userList[0])));
-      }
+    var userList = await helper.queryUser();
+    if (userList.length != 0) {
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => LoadingPage(userList[0])));
+    }
   }
 
   saveUserData() async {
@@ -304,7 +346,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
                         enabledBorder: InputBorder.none,
                         errorBorder: InputBorder.none,
                         disabledBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 0, bottom: 0, top: 11, right: 15),
+                        contentPadding: EdgeInsets.only(
+                            left: 0, bottom: 0, top: 11, right: 15),
                         hintText: "email"),
                   )
                 ],
@@ -312,7 +355,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
               actions: <Widget>[
                 new TextButton(
                     onPressed: () async {
-                      var response = await AggressorApi().sendForgotPassword(emailConfirmationController.value.text);
+                      var response = await AggressorApi().sendForgotPassword(
+                          emailConfirmationController.value.text);
                       Navigator.pop(context);
                       setState(() {
                         errorText = response["message"];
@@ -325,36 +369,49 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
   Widget getToolbar() {
     //returns widgets for create account and forgot password
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        TextButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => RegistrationPage()));
-          },
-          child: Text(
-            "Create Account",
-            style: TextStyle(color: Colors.white),
+    return Padding(
+      padding: const EdgeInsets.all(0.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: textSize + 2,
+            child: TextButton(
+              style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RegistrationPage()));
+              },
+              child: Text(
+                "Create Account",
+                style: TextStyle(color: Colors.white, fontSize: textSize),
+              ),
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-          child: Container(
-            height: 14,
-            width: 1,
-            color: Colors.white,
+          Padding(
+            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+            child: Container(
+              height: textSize,
+              width: 1,
+              color: Colors.white,
+            ),
           ),
-        ),
-        TextButton(
-          onPressed: () {
-            showConfirmationDialogue();
-          },
-          child: Text(
-            "Forgot Password",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ],
+          Container(
+            height: textSize + 2,
+            child: TextButton(
+              style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
+            onPressed: () {
+              showConfirmationDialogue();
+            },
+            child: Text(
+              "Forgot Password",
+              style: TextStyle(color: Colors.white, fontSize: textSize),
+            ),
+          ),),
+        ],
+      ),
     );
   }
 }

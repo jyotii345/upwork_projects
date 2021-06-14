@@ -1,15 +1,16 @@
-import 'dart:typed_data';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/certificate_database.dart';
 import 'package:aggressor_adventures/databases/contact_database.dart';
 import 'package:aggressor_adventures/databases/iron_diver_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_edit_page.dart';
-import 'package:aggressor_adventures/user_interface_pages/profile_view_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_certifications_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -37,13 +38,14 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   bool timerStarted = false;
 
-
   /*
   initState
    */
   @override
   void initState() {
     super.initState();
+
+    sliderImageTimer();
   }
 
   /*
@@ -55,12 +57,19 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     super.build(context);
 
     homePage = true;
-    return Stack(
-      children: [
-        getBackgroundImage(),
-        getPageForm(),
-        getSliderImages(),
-      ],
+    return PinchToZoom(
+      OrientationBuilder(
+        builder: (context, orientation) {
+          portrait = orientation == Orientation.portrait;
+          return Stack(
+            children: [
+              getBackgroundImage(),
+              getPageForm(),
+              getSliderImages(),
+            ],
+          );
+        },
+      ),
     );
   }
 
@@ -121,7 +130,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                 Text(
                   "My Certifications",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: AggressorColors.primaryColor),
+                  style: TextStyle(color: AggressorColors.primaryColor, fontSize: MediaQuery.of(context).size.width / 27),
                 ),
                 getCertificationListView(),
                 Padding(
@@ -154,7 +163,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               children: [
                 Text(
                   "Club Membership",
-                  style: TextStyle(color: AggressorColors.primaryColor),
+                  style: TextStyle(color: AggressorColors.primaryColor,  fontSize: MediaQuery.of(context).size.width / 27),
                 ),
                 contact.vip == null
                     ? Container()
@@ -195,7 +204,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                 Text(
                   "Iron Diver Awards",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: AggressorColors.primaryColor),
+                  style: TextStyle(color: AggressorColors.primaryColor, fontSize: MediaQuery.of(context).size.width / 27),
                 ),
                 getIronDiverListView(),
                 Padding(
@@ -234,54 +243,72 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   Widget getProgressSection() {
     //returns the section of tha page that holds the progress bars
+    double barHeight = portrait
+        ? MediaQuery.of(context).size.height / 40
+        : MediaQuery.of(context).size.width / 40;
+    double barTextSize = portrait
+        ? MediaQuery.of(context).size.height / 40
+        : MediaQuery.of(context).size.width / 40;
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Text("VIP Progress Bar"),
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+            child: Text(
+              "VIP Progress Bar",
+              style: TextStyle(fontSize: barTextSize),
+            ),
           ),
           LinearPercentIndicator(
             percent: contact.vipCount == null
                 ? 0
                 : (double.parse(contact.vipCount) * 6.67) / 100,
             progressColor: Colors.green,
-            lineHeight: 20,
-          ), //TODO dynamic height
+            lineHeight: barHeight,
+          ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Text("VIPplus Progress Bar"),
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+            child: Text(
+              "VIPplus Progress Bar",
+              style: TextStyle(fontSize: barTextSize),
+            ),
           ),
           LinearPercentIndicator(
             percent: contact.vipPlusCount == null
                 ? 0
                 : (double.parse(contact.vipPlusCount) * 4.0) / 100,
             progressColor: Colors.green,
-            lineHeight: 20,
+            lineHeight: barHeight,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Text("Seven Seas Progress Bar"),
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+            child: Text(
+              "Seven Seas Progress Bar",
+              style: TextStyle(fontSize: barTextSize),
+            ),
           ),
           LinearPercentIndicator(
             percent: contact.sevenSeasCount == null
                 ? 0
                 : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
             progressColor: Colors.green,
-            lineHeight: 20,
+            lineHeight: barHeight,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Text("Adventurer Progress Bar"),
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+            child: Text(
+              "Adventurer Progress Bar",
+              style: TextStyle(fontSize: barTextSize),
+            ),
           ),
           LinearPercentIndicator(
             percent: contact.aaCount == null
                 ? 0
                 : (double.parse(contact.aaCount) * 33.34) / 100,
             progressColor: Colors.green,
-            lineHeight: 20,
+            lineHeight: barHeight,
           ),
         ],
       ),
@@ -290,6 +317,12 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   Widget getUserRow() {
     //returns the row widget containing the user information and boutique points
+    double sectionWidth = portrait
+        ? (MediaQuery.of(context).size.width / 3) - 16
+        : (MediaQuery.of(context).size.width / 3.5);
+    double sectionHeight = portrait
+        ? MediaQuery.of(context).size.width / 4
+        : MediaQuery.of(context).size.width / 5;
     return Padding(
       padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
       child: Row(
@@ -297,7 +330,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            height: MediaQuery.of(context).size.width / 4,
+            height: sectionHeight,
+            width: sectionWidth,
             child: Padding(
               padding: const EdgeInsets.all(0.0),
               child: Image.asset(
@@ -306,7 +340,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.width / 4,
+            height: sectionHeight,
+            width: sectionWidth,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -323,6 +358,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                       "\nTotal Adventures - " +
                       tripList.length.toString(),
                   textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: sectionHeight / 8.5),
                 ),
                 Flexible(
                   child: TextButton(
@@ -331,8 +367,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
-                    child: Text(
+                    child: AutoSizeText(
                       "Update My Profile",
+                      maxLines: 1,
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -341,7 +378,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.width / 4,
+            height: sectionHeight,
+            width: sectionWidth,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -350,18 +388,19 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                   children: [
                     Text(
                       "Boutique Points",
-                      style: TextStyle(color: AggressorColors.primaryColor),
+                      maxLines: 1,
+                      style: TextStyle(color: AggressorColors.primaryColor, fontSize: sectionHeight / 8),
                     ),
                     Container(
-                      height: 15,
-                      width: 15,
+                      height: sectionHeight / 6,
+                      width: sectionHeight / 6,
                       child: TextButton(
                         onPressed: () {
                           print("pressed");
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
-                          minimumSize: Size(10, 10),
+                          minimumSize: Size(sectionHeight / 6, sectionHeight / 6),
                         ),
                         child: Image.asset(
                           "assets/redquestion.png",
@@ -372,7 +411,11 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     ),
                   ],
                 ),
-                Text(contact.boutiquePoints),
+                Text(
+                  contact.boutiquePoints,
+                  maxLines: 1,
+                  style: TextStyle(fontSize: sectionHeight / 5),
+                ),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: TextButton(
@@ -381,8 +424,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
-                    child: Text(
+                    child: AutoSizeText(
                       "REDEEM NOW >",
+                      maxLines: 1,
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -448,7 +492,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   Widget getSliderImages() {
     //returns slider images on top of the page
-    sliderImageTimer();
     return Stack(
       children: [
         Container(
@@ -461,7 +504,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ),
         Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height / 6,
+          height: MediaQuery.of(context).size.height / 6 ,
           child: Align(
             alignment: Alignment.centerRight,
             child: TextButton(
@@ -479,7 +522,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               child: Icon(
                 Icons.chevron_right,
                 color: Colors.white70,
-                size: MediaQuery.of(context).size.width / 7.5,
+                size: portrait?  MediaQuery.of(context).size.width / 7.5 :  MediaQuery.of(context).size.height / 7.5,
               ),
             ),
           ),
@@ -504,7 +547,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               child: Icon(
                 Icons.chevron_left,
                 color: Colors.white70,
-                size: MediaQuery.of(context).size.width / 7.5,
+                size: portrait?  MediaQuery.of(context).size.width / 7.5 :  MediaQuery.of(context).size.height / 7.5,
               ),
             ),
           ),
@@ -536,14 +579,15 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     children: [
                       Image.asset(
                         "assets/certification.png",
-                        height: 25, //TODO replace with a dynamic value
-                        width: 25,
+
+                        height:MediaQuery.of(context).size.width / 15 ,
+                        width: MediaQuery.of(context).size.width / 15 ,
                       ),
                       Flexible(
                           child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child:
-                            Text(certificationList[position]["certification"]),
+                            Text(certificationList[position]["certification"], style: TextStyle(fontSize: MediaQuery.of(context).size.width / 25),),
                       ))
                     ],
                   ),
@@ -595,10 +639,10 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     children: [
                       Image.asset(
                         "assets/irondiver.png",
-                        height: 25,
-                        width: 25,
+                        height:MediaQuery.of(context).size.width / 15 ,
+                        width: MediaQuery.of(context).size.width / 15 ,
                       ),
-                      Flexible(child: Text(ironDiverList[position]["name"]))
+                      Flexible(child: Text(ironDiverList[position]["name"], style: TextStyle(fontSize: MediaQuery.of(context).size.width / 25),))
                     ],
                   ),
                   secondaryActions: <Widget>[
@@ -640,7 +684,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
           "My Rewards",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: MediaQuery.of(context).size.height / 25,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 25
+                  : MediaQuery.of(context).size.width / 25,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -649,9 +695,12 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   void getCertifications() async {
     //this widget updates the certifications in the list
-    setState(() {
-      loading = true;
-    });
+    try {
+      setState(() {
+        loading = true;
+      });
+    } catch (e) {
+    }
 
     if (!certificateLoaded && online) {
       List<dynamic> tempList =
@@ -661,9 +710,12 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         certificateLoaded = true;
       });
     }
-    setState(() {
-      loading = false;
-    });
+    try {
+      setState(() {
+        loading = false;
+      });
+    } catch (e) {
+    }
   }
 
   void updateCertificationCache() async {
@@ -673,7 +725,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     try {
       await certificateDatabaseHelper.deleteCertificateTable();
     } catch (e) {
-      print("no notes in the table");
     }
 
     for (var certification in certificationList) {
@@ -684,9 +735,12 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   void getIronDivers() async {
     //this widget updates the Iron Divers in the list
-    setState(() {
-      loading = true;
-    });
+    try {
+      setState(() {
+        loading = true;
+      });
+    } catch (e) {
+    }
     if (!ironDiversLoaded && online) {
       List<dynamic> tempList =
           await AggressorApi().getIronDiverList(widget.user.userId);
@@ -695,9 +749,12 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ironDiversLoaded = true;
       });
     }
-    setState(() {
-      loading = false;
-    });
+    try {
+      setState(() {
+        loading = false;
+      });
+    } catch (e) {
+    }
   }
 
   void updateIronDiversCache() async {
@@ -707,7 +764,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     try {
       await ironDiverDatabaseHelper.deleteIronDiverTable();
     } catch (e) {
-      print("no notes in the table");
     }
 
     for (var ironDiver in ironDiverList) {
@@ -749,7 +805,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     try {
       await contactDatabaseHelper.deleteContactTable();
     } catch (e) {
-      print("no notes in the table");
     }
 
     await contactDatabaseHelper.insertContact(
@@ -808,22 +863,25 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   }
 
   void sliderImageTimer() async {
-    if(!timerStarted) {
-      setState(() {
-        timerStarted = true;
-      });
-      while (true) {
-        await Future.delayed(Duration(seconds: 5));
-        if (sliderIndex + 1 < sliderImageList.length) {
-          setState(() {
-            sliderIndex++;
-          });
-        } else {
-          setState(() {
-            sliderIndex = 0;
-          });
+    try {
+      if (!timerStarted) {
+        setState(() {
+          timerStarted = true;
+        });
+        while (true) {
+          await Future.delayed(Duration(seconds: 5));
+          if (sliderIndex + 1 < sliderImageList.length) {
+            setState(() {
+              sliderIndex++;
+            });
+          } else {
+            setState(() {
+              sliderIndex = 0;
+            });
+          }
         }
       }
+    } catch (e) {
     }
   }
 

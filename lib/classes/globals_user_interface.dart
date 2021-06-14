@@ -30,10 +30,8 @@ double iconSizeLandscape =
     MediaQuery.of(navigatorKey.currentContext).size.height / 10;
 double iconImageSize =
     MediaQuery.of(navigatorKey.currentContext).size.width / 15;
-double iconSize = MediaQuery.of(navigatorKey.currentContext).size.width / 10;
 
 int popDistance = 0;
-bool innerPage = false;
 bool portrait = true;
 
 VoidCallback mainPageCallback;
@@ -183,7 +181,7 @@ void onTabTapped(
     set the state of the navigation bar selection to index
      */
 
-  if (innerPage) {
+  if (homePage) {
     currentIndex = index;
     mainPageCallback();
     int popCount = 0;
@@ -299,7 +297,7 @@ void signOutUser() async {
   profileDataLoaded = false;
   online = true;
   filesLoaded = false;
-  innerPage = false;
+  homePage = false;
 
   currentIndex = 0;
 

@@ -11,16 +11,19 @@ class PinchToZoom extends StatefulWidget {
 
 class PinchToZoomState extends State<PinchToZoom>
     with TickerProviderStateMixin {
-
-
   final TransformationController _transformationController =
-  TransformationController();
+      TransformationController();
   Animation<Matrix4> animationReset;
   AnimationController controllerReset;
 
   @override
   void initState() {
     super.initState();
+
+    controllerReset = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
   }
 
   @override
@@ -28,11 +31,9 @@ class PinchToZoomState extends State<PinchToZoom>
     return getPinchToZoom(widget.childObject);
   }
 
-
-
   Widget getPinchToZoom(Widget childWidget) {
     return InteractiveViewer(
-      constrained: true,
+        constrained: true,
         panEnabled: false,
         alignPanAxis: false,
         boundaryMargin: EdgeInsets.all(13),

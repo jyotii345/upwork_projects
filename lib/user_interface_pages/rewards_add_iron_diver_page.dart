@@ -60,31 +60,35 @@ class AddIronDiverState extends State<AddIronDiver> {
 
   @override
   Widget build(BuildContext context) {
-    homePage = false;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar:getAppBar(),
-      bottomNavigationBar: getBottomNavigationBar(),
-      body: Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          showLoading(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
+    popDistance = 1;
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        portrait = orientation == Orientation.portrait;
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: getAppBar(),
+          bottomNavigationBar: getBottomNavigationBar(),
+          body: Stack(
+            children: [
+              getBackgroundImage(),
+              getPageForm(),
+              showLoading(),
+              Container(
+                height: MediaQuery.of(context).size.height / 7 + 4,
+                width: double.infinity,
+                color: AggressorColors.secondaryColor,
+              ),
+              getBannerImage(),
+            ],
           ),
-          getBannerImage(),
-        ],
-      ),
+        );
+      },
     );
   }
 
   /*
   Self implemented
    */
-
 
   Widget getPageForm() {
     //returns the main contents of the page
@@ -112,16 +116,27 @@ class AddIronDiverState extends State<AddIronDiver> {
 
   Widget getAddButton() {
     //returns the add button to upload an iron diver award
-    return Center(
-      child: TextButton(
-        onPressed: addIronDiver,
-        child: Text(
-          "Add Iron Diver Award",
-          style: TextStyle(color: Colors.white),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(width:portrait
+            ? MediaQuery.of(context).size.height / 6
+            : MediaQuery.of(context).size.width / 6,),
+        Container(
+          width: portrait
+              ? MediaQuery.of(context).size.height / 4
+              : MediaQuery.of(context).size.width / 2.5,
+          child: TextButton(
+            onPressed: addIronDiver,
+            child: Text(
+              "Add Iron Diver Award",
+              style: TextStyle(color: Colors.white),
+            ),
+            style: TextButton.styleFrom(
+                backgroundColor: AggressorColors.secondaryColor),
+          ),
         ),
-        style: TextButton.styleFrom(
-            backgroundColor: AggressorColors.secondaryColor),
-      ),
+      ],
     );
   }
 
@@ -163,19 +178,28 @@ class AddIronDiverState extends State<AddIronDiver> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Adventure:",
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 50
+                      : MediaQuery.of(context).size.width / 50),
             ),
           ),
-          Expanded(
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
             child: Container(
-              height: MediaQuery.of(context).size.height / 35,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 35
+                  : MediaQuery.of(context).size.width / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -187,7 +211,9 @@ class AddIronDiverState extends State<AddIronDiver> {
                 value: dropDownValue,
                 elevation: 0,
                 isExpanded: true,
-                iconSize: MediaQuery.of(context).size.height / 35,
+                iconSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 onChanged: (Map<String, dynamic> newValue) {
                   setState(() {
                     dropDownValue = newValue;
@@ -199,12 +225,15 @@ class AddIronDiverState extends State<AddIronDiver> {
                   return DropdownMenuItem<Map<String, dynamic>>(
                     value: value,
                     child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
+                      width: portrait
+                          ? MediaQuery.of(context).size.width / 2
+                          : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value["name"],
                         style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height / 40 - 4),
+                            fontSize: portrait
+                                ? MediaQuery.of(context).size.height / 40 - 4
+                                : MediaQuery.of(context).size.width / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -224,19 +253,28 @@ class AddIronDiverState extends State<AddIronDiver> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: MediaQuery.of(context).size.height / 6,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "DepartureDate:",
-              style:
-                  TextStyle(fontSize: MediaQuery.of(context).size.height / 50),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 50
+                      : MediaQuery.of(context).size.width / 50),
             ),
           ),
-          Expanded(
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
             child: Container(
-              height: MediaQuery.of(context).size.height / 35,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 35
+                  : MediaQuery.of(context).size.width / 35,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -248,7 +286,9 @@ class AddIronDiverState extends State<AddIronDiver> {
                 value: dateDropDownValue,
                 elevation: 0,
                 isExpanded: true,
-                iconSize: MediaQuery.of(context).size.height / 35,
+                iconSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 onChanged: (Trip newValue) {
                   setState(() {
                     dateDropDownValue = newValue;
@@ -259,7 +299,9 @@ class AddIronDiverState extends State<AddIronDiver> {
                   return DropdownMenuItem<Trip>(
                     value: value,
                     child: Container(
-                      width: MediaQuery.of(context).size.width / 2,
+                      width: portrait
+                          ? MediaQuery.of(context).size.width / 2
+                          : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value.charter == null
                             ? "You have adventures here yet."
@@ -276,8 +318,9 @@ class AddIronDiverState extends State<AddIronDiver> {
                                     .year
                                     .toString(),
                         style: TextStyle(
-                            fontSize:
-                                MediaQuery.of(context).size.height / 40 - 4),
+                            fontSize: portrait
+                                ? MediaQuery.of(context).size.height / 40 - 4
+                                : MediaQuery.of(context).size.width / 40 - 4),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -335,7 +378,7 @@ class AddIronDiverState extends State<AddIronDiver> {
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.cover,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -372,7 +415,9 @@ class AddIronDiverState extends State<AddIronDiver> {
         "Add Iron Diver Award",
         style: TextStyle(
             color: AggressorColors.primaryColor,
-            fontSize: MediaQuery.of(context).size.height / 26,
+            fontSize: portrait
+                ? MediaQuery.of(context).size.height / 26
+                : MediaQuery.of(context).size.width / 26,
             fontWeight: FontWeight.bold),
       ),
     );
