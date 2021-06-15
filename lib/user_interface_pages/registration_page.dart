@@ -16,8 +16,7 @@ class RegistrationPage extends StatefulWidget {
   State<StatefulWidget> createState() => new RegistrationPageState();
 }
 
-class RegistrationPageState extends State<RegistrationPage>
-    with AutomaticKeepAliveClientMixin {
+class RegistrationPageState extends State<RegistrationPage>{
   /*
   instance vars
    */
@@ -50,7 +49,6 @@ class RegistrationPageState extends State<RegistrationPage>
    */
   @override
   Widget build(BuildContext context) {
-    super.build(context);
 
     textSize = MediaQuery.of(context).size.width / 25;
 
@@ -513,6 +511,4 @@ class RegistrationPageState extends State<RegistrationPage>
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 
-  @override
-  bool get wantKeepAlive => true;
 }

@@ -182,6 +182,7 @@ void onTabTapped(
      */
 
   if (homePage) {
+    print(popDistance);
     currentIndex = index;
     mainPageCallback();
     int popCount = 0;

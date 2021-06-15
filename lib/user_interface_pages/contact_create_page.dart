@@ -18,8 +18,7 @@ class CreateContact extends StatefulWidget {
   State<StatefulWidget> createState() => new CreateContactState();
 }
 
-class CreateContactState extends State<CreateContact>
-    with AutomaticKeepAliveClientMixin {
+class CreateContactState extends State<CreateContact> {
   /*
   instance vars
    */
@@ -59,7 +58,6 @@ class CreateContactState extends State<CreateContact>
    */
   @override
   Widget build(BuildContext context) {
-    super.build(context);
 
     textSize = MediaQuery.of(context).size.width / 25;
 
@@ -606,6 +604,4 @@ class CreateContactState extends State<CreateContact>
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 
-  @override
-  bool get wantKeepAlive => true;
 }

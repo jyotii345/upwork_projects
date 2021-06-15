@@ -6,6 +6,7 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/profile_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
@@ -24,8 +25,7 @@ class EditMyProfile extends StatefulWidget {
   State<StatefulWidget> createState() => new EditMyProfileState();
 }
 
-class EditMyProfileState extends State<EditMyProfile>
-    with AutomaticKeepAliveClientMixin {
+class EditMyProfileState extends State<EditMyProfile> {
   /*
   instance vars
    */
@@ -59,7 +59,7 @@ class EditMyProfileState extends State<EditMyProfile>
       password,
       totalDives,
       accountType;
-  
+
   File selectionFile;
 
   /*
@@ -68,6 +68,8 @@ class EditMyProfileState extends State<EditMyProfile>
   @override
   void initState() {
     super.initState();
+
+    popDistance = 1;
   }
 
   /*
@@ -75,36 +77,39 @@ class EditMyProfileState extends State<EditMyProfile>
    */
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    popDistance = 1;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: getAppBar(),
-      bottomNavigationBar: getBottomNavigationBar(),
-      body: PinchToZoom(
-        OrientationBuilder(builder: (context, orientation) {
-          portrait = orientation == Orientation.portrait;
-          textDisplayWidth = portrait
-              ? MediaQuery.of(context).size.width / 2.5
-              : MediaQuery.of(context).size.height / 2.5;
-          textSize = portrait
-              ? MediaQuery.of(context).size.width / 30
-              : MediaQuery.of(context).size.height / 30;
-          return Stack(
-            children: [
-              getBackgroundImage(),
-              getPageForm(),
-              Container(
-                height: MediaQuery.of(context).size.height / 7 + 4,
-                width: double.infinity,
-                color: AggressorColors.secondaryColor,
-              ),
-              getBannerImage(),
-              getLoadingWheel(),
-            ],
-          );
-        }),
+    return WillPopScope(
+      onWillPop: poppingPage,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: getAppBar(),
+        bottomNavigationBar: getBottomNavigationBar(),
+        body: PinchToZoom(
+          OrientationBuilder(
+            builder: (context, orientation) {
+              portrait = orientation == Orientation.portrait;
+              textDisplayWidth = portrait
+                  ? MediaQuery.of(context).size.width / 2.5
+                  : MediaQuery.of(context).size.height / 2.5;
+              textSize = portrait
+                  ? MediaQuery.of(context).size.width / 30
+                  : MediaQuery.of(context).size.height / 30;
+              return Stack(
+                children: [
+                  getBackgroundImage(),
+                  getPageForm(),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 7 + 4,
+                    width: double.infinity,
+                    color: AggressorColors.secondaryColor,
+                  ),
+                  getBannerImage(),
+                  getLoadingWheel(),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -148,10 +153,12 @@ class EditMyProfileState extends State<EditMyProfile>
           totalDives = null;
         }
 
-        if(selectionFile != null){
-          var response = await AggressorApi().uploadUserImage(widget.user.userId, selectionFile.path);
+        if (selectionFile != null) {
+          var response = await AggressorApi()
+              .uploadUserImage(widget.user.userId, selectionFile.path);
         }
 
+        print(mobilePhone);
 
         var jsonResponse = await AggressorApi().saveProfileData(
             widget.user.userId,
@@ -170,9 +177,11 @@ class EditMyProfileState extends State<EditMyProfile>
             homePhone,
             workPhone,
             mobilePhone);
+        print(jsonResponse);
 
         if (jsonResponse["status"] == "success") {
           stateAndCountryLoaded = false;
+          await loadProfileDetails();
           widget.updateCallback();
           showSuccessDialogue();
         } else {
@@ -204,6 +213,53 @@ class EditMyProfileState extends State<EditMyProfile>
     return regExp.hasMatch(password);
   }
 
+  Future<dynamic> loadProfileDetails() async {
+    //loads the initial value of the users profile data
+    var jsonResponse = await AggressorApi().getProfileData(widget.user.userId);
+    print(jsonResponse);
+    if (jsonResponse["status"] == "success") {
+      setState(() {
+        profileData = jsonResponse;
+        profileDataLoaded = true;
+      });
+    }
+    await updateProfileDetailsCache(jsonResponse);
+
+    return "loaded";
+  }
+
+  Future<dynamic> updateProfileDetailsCache(var response) async {
+    //cleans and saves the profile to the database
+    ProfileDatabaseHelper profileDatabaseHelper =
+        ProfileDatabaseHelper.instance;
+    try {
+      await profileDatabaseHelper.deleteProfileTable();
+    } catch (e) {
+      print("no profile in the table");
+    }
+
+    await profileDatabaseHelper.insertProfile(
+      response['userId'],
+      response['first'],
+      response['last'],
+      response['email'],
+      response['address1'],
+      response['address2'],
+      response['address2'],
+      response['state'],
+      response['province'],
+      response['country'].toString(),
+      response['zip'],
+      response['username'],
+      response['password'],
+      response['homePhone'],
+      response['workPhone'],
+      response['mobilePhone'],
+    );
+
+    return "updated";
+  }
+
   void showSuccessDialogue() {
     //shows a success message when the profile is updated successfully
     showDialog(
@@ -218,7 +274,7 @@ class EditMyProfileState extends State<EditMyProfile>
                       Navigator.popUntil(context, (route) {
                         return popCount++ == 2;
                       });
-                      popDistance = 1;
+                      popDistance = 0;
                     },
                     child: new Text('Continue')),
               ],
@@ -330,7 +386,9 @@ class EditMyProfileState extends State<EditMyProfile>
                   ),
                 ),
                 child: TextButton(
-                  onPressed: () {loadAssets();},
+                  onPressed: () {
+                    loadAssets();
+                  },
                   child: Padding(
                     padding: EdgeInsets.all(3),
                     child: Text(
@@ -1135,7 +1193,7 @@ class EditMyProfileState extends State<EditMyProfile>
         }
       });
 
-      if(country == "2") {
+      if (country == "2") {
         statesList.forEach((element) {
           if (element["stateAbbr"].toString() == territory) {
             stateDropDownSelection = element;
@@ -1147,9 +1205,10 @@ class EditMyProfileState extends State<EditMyProfile>
         setState(() {
           stateAndCountryLoaded = true;
         });
-      }catch(e){
+      } catch (e) {
         print(e.toString());
-      };
+      }
+      ;
     }
     return "finished";
   }
@@ -1172,7 +1231,6 @@ class EditMyProfileState extends State<EditMyProfile>
     //returns a loading wheel if data is loading or sending
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
-
 
   Future<void> loadAssets() async {
     //loads the asset objects from the image picker
@@ -1209,9 +1267,10 @@ class EditMyProfileState extends State<EditMyProfile>
         path = await FlutterAbsolutePath.getAbsolutePath(result.identifier);
       }
       selectionFile = File(path);
-      
+
       setState(() {
-        profileImagePath = selectionFile.path.substring(selectionFile.path.lastIndexOf("/") + 1);
+        profileImagePath = selectionFile.path
+            .substring(selectionFile.path.lastIndexOf("/") + 1);
       });
     }
 
@@ -1226,6 +1285,11 @@ class EditMyProfileState extends State<EditMyProfile>
     });
   }
 
-  @override
-  bool get wantKeepAlive => true;
+
+  Future<bool> poppingPage() {
+    setState(() {
+      popDistance = 0;
+    });
+    return new Future.value(true);
+  }
 }

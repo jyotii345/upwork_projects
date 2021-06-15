@@ -51,6 +51,8 @@ class EditNoteState extends State<EditNote> {
   void initState() {
     super.initState();
     setText();
+
+    popDistance = 2;
   }
 
   /*
@@ -58,8 +60,9 @@ class EditNoteState extends State<EditNote> {
    */
   @override
   Widget build(BuildContext context) {
-    popDistance = 2;
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: poppingPage,
+        child: Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: getAppBar(),
       bottomNavigationBar: getBottomNavigationBar(),
@@ -75,7 +78,7 @@ class EditNoteState extends State<EditNote> {
           getBannerImage(),
           getLoading(),
         ],
-      ),
+      ),),
     );
   }
 
@@ -568,5 +571,12 @@ class EditNoteState extends State<EditNote> {
             child: CircularProgressIndicator(),
           )
         : Container();
+  }
+
+  Future<bool> poppingPage() {
+    setState(() {
+      popDistance = 1;
+    });
+    return new Future.value(true);
   }
 }

@@ -48,6 +48,8 @@ class MakePaymentState extends State<MakePayment> {
   @override
   void initState() {
     super.initState();
+    popDistance = 1;
+
   }
 
   /*
@@ -56,31 +58,33 @@ class MakePaymentState extends State<MakePayment> {
 
   @override
   Widget build(BuildContext context) {
-    popDistance = 1;
 
-    return PinchToZoom(
-      OrientationBuilder(
-        builder: (context, orientation) {
-          portrait = orientation == Orientation.portrait;
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: getAppBar(),
-            bottomNavigationBar: getBottomNavigationBar(),
-            body: Stack(
-              children: [
-                getBackgroundImage(),
-                getPageForm(),
-                showLoading(),
-                Container(
-                  height: MediaQuery.of(context).size.height / 7 + 4,
-                  width: double.infinity,
-                  color: AggressorColors.secondaryColor,
-                ),
-                getBannerImage(),
-              ],
-            ),
-          );
-        },
+    return WillPopScope(
+      onWillPop: poppingPage,
+      child: PinchToZoom(
+        OrientationBuilder(
+          builder: (context, orientation) {
+            portrait = orientation == Orientation.portrait;
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: getAppBar(),
+              bottomNavigationBar: getBottomNavigationBar(),
+              body: Stack(
+                children: [
+                  getBackgroundImage(),
+                  getPageForm(),
+                  showLoading(),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 7 + 4,
+                    width: double.infinity,
+                    color: AggressorColors.secondaryColor,
+                  ),
+                  getBannerImage(),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -141,16 +145,22 @@ class MakePaymentState extends State<MakePayment> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: portrait ? MediaQuery.of(context).size.height / 6 :  MediaQuery.of(context).size.width / 6,
+                  width: portrait
+                      ? MediaQuery.of(context).size.height / 6
+                      : MediaQuery.of(context).size.width / 6,
                   child: Text(
                     "Trip Destination:",
                     style: TextStyle(
-                        fontSize: portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45),
+                        fontSize: portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    height: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35 ,
+                    height: portrait
+                        ? MediaQuery.of(context).size.height / 35
+                        : MediaQuery.of(context).size.width / 35,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(
                         side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -160,8 +170,9 @@ class MakePaymentState extends State<MakePayment> {
                     child: Text(
                       widget.trip.charter.destination,
                       style: TextStyle(
-                          fontSize:
-                          portrait ? MediaQuery.of(context).size.height / 40 - 4 : MediaQuery.of(context).size.width / 40 - 4),
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -175,16 +186,22 @@ class MakePaymentState extends State<MakePayment> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: portrait ? MediaQuery.of(context).size.height / 6 :  MediaQuery.of(context).size.width / 6,
+                  width: portrait
+                      ? MediaQuery.of(context).size.height / 6
+                      : MediaQuery.of(context).size.width / 6,
                   child: Text(
                     "Trip Date:",
                     style: TextStyle(
-                        fontSize: portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45),
+                        fontSize: portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    height: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35 ,
+                    height: portrait
+                        ? MediaQuery.of(context).size.height / 35
+                        : MediaQuery.of(context).size.width / 35,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(
                         side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -205,8 +222,9 @@ class MakePaymentState extends State<MakePayment> {
                               .year
                               .toString(),
                       style: TextStyle(
-                          fontSize:
-                          portrait ? MediaQuery.of(context).size.height / 40 - 4 : MediaQuery.of(context).size.width / 40 - 4),
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -220,16 +238,22 @@ class MakePaymentState extends State<MakePayment> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: portrait ? MediaQuery.of(context).size.height / 6 :  MediaQuery.of(context).size.width / 6,
+                  width: portrait
+                      ? MediaQuery.of(context).size.height / 6
+                      : MediaQuery.of(context).size.width / 6,
                   child: Text(
                     "Payment due date:",
                     style: TextStyle(
-                        fontSize: portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45),
+                        fontSize: portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    height: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35 ,
+                    height: portrait
+                        ? MediaQuery.of(context).size.height / 35
+                        : MediaQuery.of(context).size.width / 35,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(
                         side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -244,8 +268,9 @@ class MakePaymentState extends State<MakePayment> {
                           ", " +
                           DateTime.parse(widget.trip.dueDate).year.toString(),
                       style: TextStyle(
-                          fontSize:
-                          portrait ? MediaQuery.of(context).size.height / 40 - 4 : MediaQuery.of(context).size.width / 40 - 4),
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -259,16 +284,22 @@ class MakePaymentState extends State<MakePayment> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
-                  width: portrait ? MediaQuery.of(context).size.height / 6 :  MediaQuery.of(context).size.width / 6,
+                  width: portrait
+                      ? MediaQuery.of(context).size.height / 6
+                      : MediaQuery.of(context).size.width / 6,
                   child: Text(
                     "Total due:",
                     style: TextStyle(
-                        fontSize: portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45),
+                        fontSize: portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    height: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35 ,
+                    height: portrait
+                        ? MediaQuery.of(context).size.height / 35
+                        : MediaQuery.of(context).size.width / 35,
                     decoration: ShapeDecoration(
                       shape: RoundedRectangleBorder(
                         side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -280,8 +311,9 @@ class MakePaymentState extends State<MakePayment> {
                           ? double.parse(widget.trip.due).toString()
                           : "0.00",
                       style: TextStyle(
-                          fontSize:
-                          portrait ? MediaQuery.of(context).size.height / 40 - 4 : MediaQuery.of(context).size.width / 40 - 4),
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -310,7 +342,9 @@ class MakePaymentState extends State<MakePayment> {
                   "• Please note, we only accept Visa and Mastercard",
                   style: TextStyle(
                     color: Colors.grey[400],
-                    fontSize: portrait ? MediaQuery.of(context).size.height / 60 : MediaQuery.of(context).size.width / 60,
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 60
+                        : MediaQuery.of(context).size.width / 60,
                   ),
                 ),
               ],
@@ -494,7 +528,9 @@ class MakePaymentState extends State<MakePayment> {
         "Make Payment",
         style: TextStyle(
             color: AggressorColors.primaryColor,
-            fontSize: portrait ? MediaQuery.of(context).size.height / 26 : MediaQuery.of(context).size.width / 26,
+            fontSize: portrait
+                ? MediaQuery.of(context).size.height / 26
+                : MediaQuery.of(context).size.width / 26,
             fontWeight: FontWeight.bold),
       ),
     );
@@ -553,6 +589,13 @@ class MakePaymentState extends State<MakePayment> {
       }
     }
   }
+
+  Future<bool> poppingPage() {
+    setState(() {
+      popDistance = 0;
+    });
+    return new Future.value(true);
+  }
 }
 
 void showSuccessDialogue() {
@@ -575,6 +618,7 @@ void showSuccessDialogue() {
     ),
   );
 }
+
 
 class CardNumberInputFormatter extends TextInputFormatter {
   //automatically updates the format to a credit card format
@@ -601,6 +645,7 @@ class CardNumberInputFormatter extends TextInputFormatter {
         text: string,
         selection: new TextSelection.collapsed(offset: string.length));
   }
+
 }
 
 class CardDateInputFormatter extends TextInputFormatter {

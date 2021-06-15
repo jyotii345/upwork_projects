@@ -6,6 +6,8 @@ import 'package:aggressor_adventures/classes/photo.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
+import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,6 @@ import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
 
 class GalleryView extends StatefulWidget {
@@ -50,6 +51,7 @@ class GalleryViewState extends State<GalleryView> {
   @override
   void initState() {
     super.initState();
+    popDistance = 1;
   }
 
   /*
@@ -58,28 +60,30 @@ class GalleryViewState extends State<GalleryView> {
 
   @override
   Widget build(BuildContext context) {
-    popDistance = 1;
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: getAppBar(),
-      bottomNavigationBar: getBottomNavigationBar(),
-      body: PinchToZoom(
-        OrientationBuilder(
-          builder: (context, orientation) {
-            portrait = orientation == Orientation.portrait;
-            return Stack(
-              children: [
-                getBackgroundImage(),
-                getPageForm(),
-                Container(
-                  height: MediaQuery.of(context).size.height / 7 + 4,
-                  width: double.infinity,
-                  color: AggressorColors.secondaryColor,
-                ),
-                getBannerImage(),
-              ],
-            );
-          },
+    return WillPopScope(
+      onWillPop: poppingPage,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: getAppBar(),
+        bottomNavigationBar: getBottomNavigationBar(),
+        body: PinchToZoom(
+          OrientationBuilder(
+            builder: (context, orientation) {
+              portrait = orientation == Orientation.portrait;
+              return Stack(
+                children: [
+                  getBackgroundImage(),
+                  getPageForm(),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 7 + 4,
+                    width: double.infinity,
+                    color: AggressorColors.secondaryColor,
+                  ),
+                  getBannerImage(),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -166,9 +170,10 @@ class GalleryViewState extends State<GalleryView> {
       child: Text(
         "Destination: " + widget.trip.detailDestination,
         textAlign: TextAlign.left,
-        style: TextStyle(fontSize: portrait
-            ? MediaQuery.of(context).size.height / 50
-            : MediaQuery.of(context).size.width / 50),
+        style: TextStyle(
+            fontSize: portrait
+                ? MediaQuery.of(context).size.height / 50
+                : MediaQuery.of(context).size.width / 50),
       ),
     );
   }
@@ -201,9 +206,10 @@ class GalleryViewState extends State<GalleryView> {
             ", " +
             DateTime.parse(widget.trip.tripDate).year.toString(),
         textAlign: TextAlign.left,
-        style: TextStyle(fontSize: portrait
-            ? MediaQuery.of(context).size.height / 50
-            : MediaQuery.of(context).size.width / 50),
+        style: TextStyle(
+            fontSize: portrait
+                ? MediaQuery.of(context).size.height / 50
+                : MediaQuery.of(context).size.width / 50),
       ),
     );
   }
@@ -344,23 +350,25 @@ class GalleryViewState extends State<GalleryView> {
           DateTime.parse(widget.trip.charter.startDate),
           [yyyy, '-', mm, '-', dd]);
 
-      var response = await AggressorApi().uploadAwsFile(widget.user.userId,
-          "gallery", widget.trip.charterId, file.path, uploadDate);
-      await Future.delayed(Duration(milliseconds: 1000));
-      if (response["status"] == "success") {
-        widget.photos.add(Photo("", "", file.path, "", "", ""));
+      if (online) {
+        var response = await AggressorApi().uploadAwsFile(widget.user.userId,
+            "gallery", widget.trip.charterId, file.path, uploadDate);
+        await Future.delayed(Duration(milliseconds: 1000));
+        if (response["status"] == "success") {
+          widget.photos.add(Photo("", "", file.path, "", "", ""));
+        }
+      } else {
+        await PhotoDatabaseHelper.instance.insertPhoto(Photo(
+            result.name,
+            widget.user.userId,
+            file.path,
+            uploadDate,
+            widget.trip.charter.boatId,
+            null));
+        await OfflineDatabaseHelper.instance
+            .insertOffline({'type': "image", 'action': "add", 'id': file.path});
       }
     }
-
-    setState(() {
-      photosLoaded = false;
-    });
-
-    if (!mounted) return;
-
-    setState(() {
-      errorMessage = error;
-    });
   }
 
   Widget getPageTitle() {
@@ -378,7 +386,9 @@ class GalleryViewState extends State<GalleryView> {
                 "My Photos",
                 style: TextStyle(
                     color: AggressorColors.primaryColor,
-                    fontSize: portrait ? MediaQuery.of(context).size.height / 26 : MediaQuery.of(context).size.width / 26,
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 26
+                        : MediaQuery.of(context).size.width / 26,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -402,5 +412,12 @@ class GalleryViewState extends State<GalleryView> {
         ),
       ),
     );
+  }
+
+  Future<bool> poppingPage() {
+    setState(() {
+      popDistance = 0;
+    });
+    return new Future.value(true);
   }
 }

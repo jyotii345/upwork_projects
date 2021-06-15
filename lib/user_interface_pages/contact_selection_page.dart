@@ -17,8 +17,7 @@ class ContactSelection extends StatefulWidget {
   State<StatefulWidget> createState() => new ContactSelectionState();
 }
 
-class ContactSelectionState extends State<ContactSelection>
-    with AutomaticKeepAliveClientMixin {
+class ContactSelectionState extends State<ContactSelection>{
   /*
   instance vars
    */
@@ -43,7 +42,6 @@ class ContactSelectionState extends State<ContactSelection>
    */
   @override
   Widget build(BuildContext context) {
-    super.build(context);
 
     textSize = MediaQuery.of(context).size.width / 25;
 
@@ -306,6 +304,4 @@ class ContactSelectionState extends State<ContactSelection>
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
 }

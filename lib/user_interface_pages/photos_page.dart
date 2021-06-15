@@ -19,6 +19,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
+import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:http/http.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -320,7 +321,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           width: portrait
               ? MediaQuery.of(context).size.height / 4
               : MediaQuery.of(context).size.width / 2.5,
-          child:  TextButton(
+          child: TextButton(
             onPressed: loadAssets,
             child: Text(
               "Upload Photos",
@@ -378,8 +379,15 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
       if (online) {
         for (var element in resultList) {
-          File file = File(
-              await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+          String path = "";
+          if (element.name.toLowerCase().contains(".heic")) {
+            path = await HeicToJpg.convert(
+                await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+          } else {
+            path =
+                await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+          }
+          File file = File(path);
 
           String uploadDate = formatDate(
               DateTime.parse(dateDropDownValue.charter.startDate),
@@ -408,8 +416,15 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         if (!mounted) return;
       } else {
         for (var element in resultList) {
-          File file = File(
-              await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+          String path = "";
+          if (element.name.toLowerCase().contains(".heic")) {
+            path = await HeicToJpg.convert(
+                await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+          } else {
+            path =
+                await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+          }
+          File file = File(path);
 
           String uploadDate = formatDate(
               DateTime.parse(dateDropDownValue.charter.startDate),

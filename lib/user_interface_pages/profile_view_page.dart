@@ -19,8 +19,7 @@ class MyProfile extends StatefulWidget {
   State<StatefulWidget> createState() => new MyProfileState();
 }
 
-class MyProfileState extends State<MyProfile>
-    with AutomaticKeepAliveClientMixin {
+class MyProfileState extends State<MyProfile> {
   /*
   instance vars
    */
@@ -38,26 +37,27 @@ class MyProfileState extends State<MyProfile>
    */
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     homePage = true;
-    return PinchToZoom(
-      OrientationBuilder(
-        builder: (context, orientation) {
-          portrait = orientation == Orientation.portrait;
-          return Stack(
-            children: [
-              getBackgroundImage(),
-              getPageForm(),
-              Container(
-                height: MediaQuery.of(context).size.height / 7 + 4,
-                width: double.infinity,
-                color: AggressorColors.secondaryColor,
-              ),
-              getBannerImage(),
-            ],
-          );
-        },
+    return WillPopScope(
+      onWillPop: poppingPage,
+      child: PinchToZoom(
+        OrientationBuilder(
+          builder: (context, orientation) {
+            portrait = orientation == Orientation.portrait;
+            return Stack(
+              children: [
+                getBackgroundImage(),
+                getPageForm(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 7 + 4,
+                  width: double.infinity,
+                  color: AggressorColors.secondaryColor,
+                ),
+                getBannerImage(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -125,7 +125,9 @@ class MyProfileState extends State<MyProfile>
                       "Account information: ",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: portrait ? MediaQuery.of(context).size.width / 25 : MediaQuery.of(context).size.height / 25),
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.width / 25
+                              : MediaQuery.of(context).size.height / 25),
                     ),
                   ),
                   getAccountInformation(),
@@ -135,7 +137,9 @@ class MyProfileState extends State<MyProfile>
                       "Address: ",
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: portrait ? MediaQuery.of(context).size.width / 25 : MediaQuery.of(context).size.height / 25),
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.width / 25
+                              : MediaQuery.of(context).size.height / 25),
                     ),
                   ),
                   getAddress(),
@@ -260,17 +264,25 @@ class MyProfileState extends State<MyProfile>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          height: portrait ? MediaQuery.of(context).size.width / 4 : MediaQuery.of(context).size.height / 4,
-          width: portrait ? MediaQuery.of(context).size.width / 4 : MediaQuery.of(context).size.height / 4,
+          height: portrait
+              ? MediaQuery.of(context).size.width / 4
+              : MediaQuery.of(context).size.height / 4,
+          width: portrait
+              ? MediaQuery.of(context).size.width / 4
+              : MediaQuery.of(context).size.height / 4,
           child: Icon(
             //TODO find a way to get user images
             Icons.person,
-            size: portrait ? MediaQuery.of(context).size.height / 8 : MediaQuery.of(context).size.width / 8,
+            size: portrait
+                ? MediaQuery.of(context).size.height / 8
+                : MediaQuery.of(context).size.width / 8,
           ),
           color: Colors.grey,
         ),
         Container(
-          height: portrait ? MediaQuery.of(context).size.width / 4 : MediaQuery.of(context).size.height / 4,
+          height: portrait
+              ? MediaQuery.of(context).size.width / 4
+              : MediaQuery.of(context).size.height / 4,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -349,18 +361,24 @@ class MyProfileState extends State<MyProfile>
               "My Profile",
               style: TextStyle(
                   color: AggressorColors.primaryColor,
-                  fontSize: portrait ? MediaQuery.of(context).size.height / 26 : MediaQuery.of(context).size.width / 26,
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 26
+                      : MediaQuery.of(context).size.width / 26,
                   fontWeight: FontWeight.bold),
             ),
           ),
           Align(
             alignment: Alignment.topRight,
             child: Container(
-              height: portrait ? MediaQuery.of(context).size.height / 20 : MediaQuery.of(context).size.width / 20,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 20
+                  : MediaQuery.of(context).size.width / 20,
               decoration: BoxDecoration(
                   shape: BoxShape.circle, color: AggressorColors.primaryColor),
               child: IconButton(
-                iconSize: portrait ? MediaQuery.of(context).size.height / 35 : MediaQuery.of(context).size.width / 35,
+                iconSize: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
                 icon: Icon(
                   Icons.edit,
                 ),
@@ -387,6 +405,8 @@ class MyProfileState extends State<MyProfile>
     });
   }
 
-  @override
-  bool get wantKeepAlive => true;
+  Future<bool> poppingPage() {
+    onTabTapped(0);
+    return new Future.value(false);
+  }
 }

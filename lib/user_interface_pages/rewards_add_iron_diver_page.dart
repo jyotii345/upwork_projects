@@ -52,6 +52,8 @@ class AddIronDiverState extends State<AddIronDiver> {
       "",
     );
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
+
+    popDistance = 1;
   }
 
   /*
@@ -60,29 +62,31 @@ class AddIronDiverState extends State<AddIronDiver> {
 
   @override
   Widget build(BuildContext context) {
-    popDistance = 1;
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        portrait = orientation == Orientation.portrait;
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: getAppBar(),
-          bottomNavigationBar: getBottomNavigationBar(),
-          body: Stack(
-            children: [
-              getBackgroundImage(),
-              getPageForm(),
-              showLoading(),
-              Container(
-                height: MediaQuery.of(context).size.height / 7 + 4,
-                width: double.infinity,
-                color: AggressorColors.secondaryColor,
-              ),
-              getBannerImage(),
-            ],
-          ),
-        );
-      },
+    return  WillPopScope(
+      onWillPop: poppingPage,
+      child: OrientationBuilder(
+        builder: (context, orientation) {
+          portrait = orientation == Orientation.portrait;
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: getAppBar(),
+            bottomNavigationBar: getBottomNavigationBar(),
+            body: Stack(
+              children: [
+                getBackgroundImage(),
+                getPageForm(),
+                showLoading(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 7 + 4,
+                  width: double.infinity,
+                  color: AggressorColors.secondaryColor,
+                ),
+                getBannerImage(),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -421,5 +425,12 @@ class AddIronDiverState extends State<AddIronDiver> {
             fontWeight: FontWeight.bold),
       ),
     );
+  }
+
+  Future<bool> poppingPage() {
+    setState(() {
+      popDistance = 0;
+    });
+    return new Future.value(true);
   }
 }

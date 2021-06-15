@@ -1,12 +1,10 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
-import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
 
 class AddCertification extends StatefulWidget {
@@ -42,6 +40,7 @@ class AddCertificationState extends State<AddCertification> {
   void initState() {
     super.initState();
     dropDownValue = certificationOptionList[0];
+    popDistance = 1;
   }
 
   /*
@@ -50,29 +49,31 @@ class AddCertificationState extends State<AddCertification> {
 
   @override
   Widget build(BuildContext context) {
-    popDistance = 1;
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        portrait = orientation == Orientation.portrait;
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: getAppBar(),
-          bottomNavigationBar: getBottomNavigationBar(),
-          body: Stack(
-            children: [
-              getBackgroundImage(),
-              getPageForm(),
-              showLoading(),
-              Container(
-                height: MediaQuery.of(context).size.height / 7 + 4,
-                width: double.infinity,
-                color: AggressorColors.secondaryColor,
-              ),
-              getBannerImage(),
-            ],
-          ),
-        );
-      },
+    return WillPopScope(
+      onWillPop: poppingPage,
+      child: OrientationBuilder(
+        builder: (context, orientation) {
+          portrait = orientation == Orientation.portrait;
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: getAppBar(),
+            bottomNavigationBar: getBottomNavigationBar(),
+            body: Stack(
+              children: [
+                getBackgroundImage(),
+                getPageForm(),
+                showLoading(),
+                Container(
+                  height: MediaQuery.of(context).size.height / 7 + 4,
+                  width: double.infinity,
+                  color: AggressorColors.secondaryColor,
+                ),
+                getBannerImage(),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -117,7 +118,7 @@ class AddCertificationState extends State<AddCertification> {
           width: portrait
               ? MediaQuery.of(context).size.height / 4
               : MediaQuery.of(context).size.width / 2.5,
-          child:  TextButton(
+          child: TextButton(
             onPressed: addCertificate,
             child: Text(
               "Add Certificate",
@@ -294,4 +295,12 @@ class AddCertificationState extends State<AddCertification> {
       ),
     );
   }
+
+  Future<bool> poppingPage() {
+    setState(() {
+      popDistance = 0;
+    });
+    return new Future.value(true);
+  }
 }
+

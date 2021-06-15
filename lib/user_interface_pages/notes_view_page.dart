@@ -38,6 +38,7 @@ class ViewNoteState extends State<ViewNote> {
   @override
   void initState() {
     super.initState();
+    popDistance = 1;
   }
 
   /*
@@ -45,30 +46,32 @@ class ViewNoteState extends State<ViewNote> {
    */
   @override
   Widget build(BuildContext context) {
-    popDistance = 1;
-    return PinchToZoom(
-      OrientationBuilder(
-        builder: (context, orientation) {
-          portrait = orientation == Orientation.portrait;
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: getAppBar(),
-            bottomNavigationBar: getBottomNavigationBar(),
-            body: Stack(
-              children: [
-                getBackgroundImage(),
-                getPageForm(),
-                Container(
-                  height: MediaQuery.of(context).size.height / 7 + 4,
-                  width: double.infinity,
-                  color: AggressorColors.secondaryColor,
-                ),
-                getBannerImage(),
-                getLoading(),
-              ],
-            ),
-          );
-        },
+    return WillPopScope(
+      onWillPop: poppingPage,
+      child: PinchToZoom(
+        OrientationBuilder(
+          builder: (context, orientation) {
+            portrait = orientation == Orientation.portrait;
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: getAppBar(),
+              bottomNavigationBar: getBottomNavigationBar(),
+              body: Stack(
+                children: [
+                  getBackgroundImage(),
+                  getPageForm(),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 7 + 4,
+                    width: double.infinity,
+                    color: AggressorColors.secondaryColor,
+                  ),
+                  getBannerImage(),
+                  getLoading(),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -495,5 +498,12 @@ class ViewNoteState extends State<ViewNote> {
             child: CircularProgressIndicator(),
           )
         : Container();
+  }
+
+  Future<bool> poppingPage() {
+    setState(() {
+      popDistance = 0;
+    });
+    return new Future.value(true);
   }
 }

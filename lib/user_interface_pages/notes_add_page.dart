@@ -53,6 +53,7 @@ class AddNotesState extends State<AddNotes> {
   @override
   void initState() {
     super.initState();
+    popDistance = 1;
   }
 
   /*
@@ -60,31 +61,32 @@ class AddNotesState extends State<AddNotes> {
    */
   @override
   Widget build(BuildContext context) {
-    popDistance = 1;
-
-    return PinchToZoom(
-      OrientationBuilder(
-        builder: (context, orientation) {
-          portrait = orientation == Orientation.portrait;
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            appBar: getAppBar(),
-            bottomNavigationBar: getBottomNavigationBar(),
-            body: Stack(
-              children: [
-                getBackgroundImage(),
-                getPageForm(),
-                Container(
-                  height: MediaQuery.of(context).size.height / 7 + 4,
-                  width: double.infinity,
-                  color: AggressorColors.secondaryColor,
-                ),
-                getBannerImage(),
-                getLoading(),
-              ],
-            ),
-          );
-        },
+    return WillPopScope(
+      onWillPop: poppingPage,
+      child: PinchToZoom(
+        OrientationBuilder(
+          builder: (context, orientation) {
+            portrait = orientation == Orientation.portrait;
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              appBar: getAppBar(),
+              bottomNavigationBar: getBottomNavigationBar(),
+              body: Stack(
+                children: [
+                  getBackgroundImage(),
+                  getPageForm(),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 7 + 4,
+                    width: double.infinity,
+                    color: AggressorColors.secondaryColor,
+                  ),
+                  getBannerImage(),
+                  getLoading(),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -152,19 +154,25 @@ class AddNotesState extends State<AddNotes> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6 ,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Pre-Adventure Notes:",
                 style: TextStyle(
-                    fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
           Expanded(
             child: Container(
-              height:portrait ?MediaQuery.of(context).size.height / 3 : MediaQuery.of(context).size.width / 3,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 3
+                  : MediaQuery.of(context).size.width / 3,
               child: HtmlEditor(
                 controller: preNotesController,
                 htmlEditorOptions:
@@ -260,19 +268,25 @@ class AddNotesState extends State<AddNotes> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6 ,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Post-Adventure Notes:",
                 style: TextStyle(
-                    fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
           Expanded(
             child: Container(
-              height: portrait ?MediaQuery.of(context).size.height / 3 : MediaQuery.of(context).size.width / 3 ,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 3
+                  : MediaQuery.of(context).size.width / 3,
               child: HtmlEditor(
                 controller: postNotesController,
                 htmlEditorOptions:
@@ -295,19 +309,25 @@ class AddNotesState extends State<AddNotes> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6 ,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
               child: Text(
                 "Miscellaneous Adventure Notes:",
                 style: TextStyle(
-                    fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
               ),
             ),
           ),
           Expanded(
             child: Container(
-              height:portrait ? MediaQuery.of(context).size.height / 3: MediaQuery.of(context).size.width / 3,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 3
+                  : MediaQuery.of(context).size.width / 3,
               child: HtmlEditor(
                 controller: miscNotesController,
                 htmlEditorOptions:
@@ -330,39 +350,51 @@ class AddNotesState extends State<AddNotes> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6 ,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Destination:",
               style: TextStyle(
-                  fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
-    Container(
-    width: portrait
-    ? MediaQuery.of(context).size.height / 4
-        : MediaQuery.of(context).size.width / 2.5,
-    height: portrait ?MediaQuery.of(context).size.height / 45:MediaQuery.of(context).size.width / 45,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-              ),
-              child: Container(
-                height: portrait ?MediaQuery.of(context).size.height / 45:MediaQuery.of(context).size.width / 45,
-                width: portrait ?MediaQuery.of(context).size.width / 2 -
-                    MediaQuery.of(context).size.height / 40 -
-                    10: MediaQuery.of(context).size.height / 2 -
-                    MediaQuery.of(context).size.width / 40 -
-                    10,
-                child: Text(
-                  widget.noteTrip.boat.name,
-                  style: TextStyle(
-                      fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
-                  textAlign: TextAlign.center,
-                ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 45
+                : MediaQuery.of(context).size.width / 45,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
             ),
+            child: Container(
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 45
+                  : MediaQuery.of(context).size.width / 45,
+              width: portrait
+                  ? MediaQuery.of(context).size.width / 2 -
+                      MediaQuery.of(context).size.height / 40 -
+                      10
+                  : MediaQuery.of(context).size.height / 2 -
+                      MediaQuery.of(context).size.width / 40 -
+                      10,
+              child: Text(
+                widget.noteTrip.boat.name,
+                style: TextStyle(
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 45 - 4
+                        : MediaQuery.of(context).size.width / 45 - 4),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -375,41 +407,49 @@ class AddNotesState extends State<AddNotes> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6 ,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Departure Date:",
               style: TextStyle(
-                  fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
-    Container(
-    width: portrait
-    ? MediaQuery.of(context).size.height / 4
-        : MediaQuery.of(context).size.width / 2.5,
-    height: portrait ?MediaQuery.of(context).size.height / 45:MediaQuery.of(context).size.width / 45,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-              ),
-              child: Text(
-                DateTime.parse(widget.noteTrip.charter.startDate)
-                        .month
-                        .toString() +
-                    "/" +
-                    DateTime.parse(widget.noteTrip.charter.startDate)
-                        .day
-                        .toString() +
-                    "/" +
-                    DateTime.parse(widget.noteTrip.charter.startDate)
-                        .year
-                        .toString(),
-                style: TextStyle(
-                    fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
-                textAlign: TextAlign.center,
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            height: portrait
+                ? MediaQuery.of(context).size.height / 45
+                : MediaQuery.of(context).size.width / 45,
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
             ),
+            child: Text(
+              DateTime.parse(widget.noteTrip.charter.startDate)
+                      .month
+                      .toString() +
+                  "/" +
+                  DateTime.parse(widget.noteTrip.charter.startDate)
+                      .day
+                      .toString() +
+                  "/" +
+                  DateTime.parse(widget.noteTrip.charter.startDate)
+                      .year
+                      .toString(),
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
     );
@@ -422,11 +462,15 @@ class AddNotesState extends State<AddNotes> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: portrait ? MediaQuery.of(context).size.height / 6 : MediaQuery.of(context).size.width / 6 ,
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
             child: Text(
               "Return Date:",
               style: TextStyle(
-                  fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45 - 4
+                      : MediaQuery.of(context).size.width / 45 - 4),
             ),
           ),
           Container(
@@ -434,7 +478,9 @@ class AddNotesState extends State<AddNotes> {
                 ? MediaQuery.of(context).size.height / 4
                 : MediaQuery.of(context).size.width / 2.5,
             child: Container(
-              height:portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45,
+              height: portrait
+                  ? MediaQuery.of(context).size.height / 45
+                  : MediaQuery.of(context).size.width / 45,
               decoration: ShapeDecoration(
                 shape: RoundedRectangleBorder(
                   side: BorderSide(width: 1.0, style: BorderStyle.solid),
@@ -442,12 +488,16 @@ class AddNotesState extends State<AddNotes> {
                 ),
               ),
               child: Container(
-                height: portrait ?MediaQuery.of(context).size.height / 45 :MediaQuery.of(context).size.width / 45 ,
-                width: portrait ?MediaQuery.of(context).size.width / 2 -
-                    MediaQuery.of(context).size.height / 40 -
-                    10 : MediaQuery.of(context).size.height / 2 -
-                    MediaQuery.of(context).size.width / 40 -
-                    10,
+                height: portrait
+                    ? MediaQuery.of(context).size.height / 45
+                    : MediaQuery.of(context).size.width / 45,
+                width: portrait
+                    ? MediaQuery.of(context).size.width / 2 -
+                        MediaQuery.of(context).size.height / 40 -
+                        10
+                    : MediaQuery.of(context).size.height / 2 -
+                        MediaQuery.of(context).size.width / 40 -
+                        10,
                 child: Text(
                   DateTime.parse(widget.noteTrip.charter.startDate)
                           .add(Duration(
@@ -467,7 +517,9 @@ class AddNotesState extends State<AddNotes> {
                           .year
                           .toString(),
                   style: TextStyle(
-                      fontSize: portrait ?MediaQuery.of(context).size.height / 45 - 4 : MediaQuery.of(context).size.width / 45 - 4),
+                      fontSize: portrait
+                          ? MediaQuery.of(context).size.height / 45 - 4
+                          : MediaQuery.of(context).size.width / 45 - 4),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -524,7 +576,9 @@ class AddNotesState extends State<AddNotes> {
           "Add Note",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: portrait ?MediaQuery.of(context).size.height / 26 : MediaQuery.of(context).size.width / 26,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 26
+                  : MediaQuery.of(context).size.width / 26,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -537,5 +591,12 @@ class AddNotesState extends State<AddNotes> {
             child: CircularProgressIndicator(),
           )
         : Container();
+  }
+
+  Future<bool> poppingPage() {
+    setState(() {
+      popDistance = 0;
+    });
+    return new Future.value(true);
   }
 }
