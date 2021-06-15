@@ -113,8 +113,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
         ? MediaQuery.of(context).size.height / 40
         : MediaQuery.of(context).size.width / 50;
     textSize = portrait
-        ? MediaQuery.of(context).size.width / 25
-        : MediaQuery.of(context).size.width / 60;
+        ? MediaQuery.of(context).size.width / 27
+        : MediaQuery.of(context).size.height / 60;
     return Column(
       children: [
         Padding(
@@ -122,7 +122,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
               25,
               portrait
                   ? MediaQuery.of(context).size.height / 4
-                  : MediaQuery.of(context).size.width / 12,
+                  : MediaQuery.of(context).size.height / 4.25,
               25,
               portrait ? 5 : 2.5),
           child: getUserTextField(),
@@ -163,7 +163,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
   Widget getUserTextField() {
     return new Container(
       width: sectionWidth,
-      height: sectionHeight,
+      height: sectionHeight * 1.2,
       decoration: new BoxDecoration(
         color: Colors.white,
         shape: BoxShape.rectangle,
@@ -179,6 +179,11 @@ class _LoginSignUpPageState extends State<LoginPage> {
           controller: usernameController,
           maxLines: 1,
           decoration: InputDecoration(
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
               hintText: "User Name",
               isDense: true,
               contentPadding: EdgeInsets.all(1)),
@@ -190,7 +195,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
   Widget getPassTextField() {
     return Container(
       width: sectionWidth,
-      height: sectionHeight,
+      height: sectionHeight * 1.2,
       decoration: new BoxDecoration(
         color: Colors.white,
         shape: BoxShape.rectangle,
@@ -207,6 +212,12 @@ class _LoginSignUpPageState extends State<LoginPage> {
           obscureText: true,
           maxLines: 1,
           decoration: InputDecoration(
+
+              border: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
               hintText: "Password",
               isDense: true,
               contentPadding: EdgeInsets.all(1)),
@@ -223,8 +234,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
         padding: const EdgeInsets.all(0.0),
         child: TextButton(
           onPressed: () {
-            String username = usernameController.text.toString();
-            String password = passwordController.text.toString();
+            String username = usernameController.text.toString().trim();
+            String password = passwordController.text.toString().trim();
 
             FocusScopeNode currentFocus = FocusScope.of(context);
 
@@ -402,14 +413,15 @@ class _LoginSignUpPageState extends State<LoginPage> {
             height: textSize + 2,
             child: TextButton(
               style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
-            onPressed: () {
-              showConfirmationDialogue();
-            },
-            child: Text(
-              "Forgot Password",
-              style: TextStyle(color: Colors.white, fontSize: textSize),
+              onPressed: () {
+                showConfirmationDialogue();
+              },
+              child: Text(
+                "Forgot Password",
+                style: TextStyle(color: Colors.white, fontSize: textSize),
+              ),
             ),
-          ),),
+          ),
         ],
       ),
     );

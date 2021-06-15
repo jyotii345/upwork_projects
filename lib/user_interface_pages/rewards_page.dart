@@ -250,7 +250,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ? MediaQuery.of(context).size.height / 40
         : MediaQuery.of(context).size.width / 40;
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
