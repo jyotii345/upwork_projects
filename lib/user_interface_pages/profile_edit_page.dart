@@ -79,6 +79,7 @@ class EditMyProfileState extends State<EditMyProfile>
     popDistance = 1;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: getAppBar(),
       bottomNavigationBar: getBottomNavigationBar(),
       body: PinchToZoom(

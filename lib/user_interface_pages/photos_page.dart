@@ -629,7 +629,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       height: MediaQuery.of(context).size.height / 7,
       child: Image.asset(
         "assets/bannerimage.png",
-        fit: portrait ? BoxFit.cover : BoxFit.fill,
+        fit: BoxFit.fill,
       ),
     );
   }

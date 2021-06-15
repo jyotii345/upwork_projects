@@ -372,10 +372,12 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 height: rowSectionHeight,
-                                child: Text(
-                                  "conf#",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: screenFontSize),
+                                child: Center(
+                                  child: Text(
+                                    "conf#",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: screenFontSize),
+                                  ),
                                 ),
                               ),
                               Spacer(
@@ -431,11 +433,11 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 height: rowSectionHeight,
-                                child: Text(
+                                child: Center(child:Text(
                                   reservationId,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: screenFontSize),
-                                ),
+                                ),),
                               ),
                               Spacer(
                                 flex: 10,
