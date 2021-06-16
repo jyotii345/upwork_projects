@@ -29,6 +29,7 @@ int currentIndex = 0;
 
 Map<String, Gallery> galleriesMap = <String, Gallery>{};
 Map<String, dynamic> profileData = <String, dynamic>{};
+Map<String, String> fileDisplayNames = <String, String>{};
 
 List<Trip> notLoadedList = [];
 List<Trip> tripList = [];

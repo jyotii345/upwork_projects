@@ -310,6 +310,15 @@ class LoadingPageState extends State<LoadingPage> {
       fileDataList = tempFiles;
       galleriesMap = tempGalleryMap;
     });
+
+    fileDataList.forEach((element) {
+      element.setUser(widget.user);
+      element.setCallback(() {
+        setState(() {
+          filesLoaded = false;
+        });
+      });
+    });
     return "done";
   }
 

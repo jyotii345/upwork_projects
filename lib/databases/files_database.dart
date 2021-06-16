@@ -40,7 +40,7 @@ class FileDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE file(id INTEGER PRIMARY KEY,filePath TEXT,date TEXT,fileName TEXT, boatId TEXT)",
+      "CREATE TABLE file(id INTEGER PRIMARY KEY,filePath TEXT,date TEXT,fileName TEXT,displayName TEXT,boatId TEXT)",
     );
   }
 
@@ -98,6 +98,7 @@ class FileDatabaseHelper {
         maps[i]['filePath'],
         maps[i]['date'],
         maps[i]['fileName'],
+        maps[i]['displayName'],
         maps[i]['boatId'],
       );
     });

@@ -74,6 +74,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
+   // clearFiles();
     getFiles();
 
     return OrientationBuilder(builder: (context, orientation) {
@@ -319,27 +320,30 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 ? MediaQuery.of(context).size.height / 4
                 : MediaQuery.of(context).size.width / 2.5,
             child: Container(
-                  height: portrait
-                      ? MediaQuery.of(context).size.height / 35
-                      : MediaQuery.of(context).size.width / 35,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    ),
+                height: portrait
+                    ? MediaQuery.of(context).size.height / 35
+                    : MediaQuery.of(context).size.width / 35,
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
-                  child: Center(
-                    child: TextFormField(
-                      controller: fileNameController,
-                      decoration: InputDecoration(hintText: "File Name", contentPadding: EdgeInsets.all(7.5),),
-                      style: TextStyle(
-                          fontSize: portrait
-                              ? MediaQuery.of(context).size.height / 40 - 4
-                              : MediaQuery.of(context).size.width / 40 - 4),
-                      textAlign: TextAlign.center,
+                ),
+                child: Center(
+                  child: TextFormField(
+                    controller: fileNameController,
+                    decoration: InputDecoration(
+                      hintText: "File Name",
+                      contentPadding: EdgeInsets.all(7.5),
                     ),
-                  )),
-            ),
+                    style: TextStyle(
+                        fontSize: portrait
+                            ? MediaQuery.of(context).size.height / 40 - 4
+                            : MediaQuery.of(context).size.width / 40 - 4),
+                    textAlign: TextAlign.center,
+                  ),
+                )),
+          ),
         ],
       ),
     );
@@ -469,8 +473,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                           ),
                           SizedBox(
                             width: textBoxSize,
-                            child: Text("Date",
-                                textAlign: TextAlign.center),
+                            child: Text("Date", textAlign: TextAlign.center),
                           ),
                           SizedBox(
                             width: textBoxSize / 2,
@@ -564,6 +567,50 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       FileDatabaseHelper fileHelper = FileDatabaseHelper.instance;
       List<FileData> tempFiles = [];
 
+      var mapsList = await s3client.listObjects(
+          prefix: widget.user.userId + "/config/files/nameMaps/",
+          delimiter: "/");
+      for (var value in mapsList.contents) {
+        try {
+          if (double.parse(value.size) > 0) {
+            var mapResult = await AggressorApi().downloadAwsFile(value.key);
+            var bytes = await readByteStream(mapResult.stream);
+            var dirData = await getApplicationDocumentsDirectory();
+            String path = dirData
+                    .toString()
+                    .replaceAll("'", "")
+                    .replaceAll("Directory: ", "") +
+                "/FileDisplayNames.txt";
+            File mapsFile = File(path);
+            await mapsFile.writeAsBytes(bytes);
+            var mapRaw = mapsFile
+                .readAsStringSync()
+                .replaceAll("{", "")
+                .replaceAll("}", "")
+                .split(",");
+            mapRaw.forEach((element) {
+              if (element
+                          .split(':')[0]
+                          .toString()
+                          .replaceAll("\"", "")
+                          .trim() !=
+                      "status" &&
+                  element
+                          .split(':')[0]
+                          .toString()
+                          .replaceAll("\"", "")
+                          .trim() !=
+                      "message") {
+                fileDisplayNames[element.split(':')[0].toString().trim()] =
+                    element.split(':')[1].toString().trim();
+              }
+            });
+          }
+        } catch (e) {
+          print("no map found or map error ");
+        }
+      }
+
       try {
         for (var element in tripList) {
           var response;
@@ -581,34 +628,36 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               response.contents.forEach((content) async {
                 var elementJson = await jsonDecode(content.toJson());
                 if (elementJson["Size"] != "0") {
-                  StreamedResponse downloadResponse = await AggressorApi()
-                      .downloadAwsFile(elementJson["Key"].toString());
+                  if (!await FileDatabaseHelper.instance.fileExists(
+                      elementJson["Key"].toString().substring(
+                          elementJson["Key"].toString().lastIndexOf("/") +
+                              1))) {
+                    StreamedResponse downloadResponse = await AggressorApi()
+                        .downloadAwsFile(elementJson["Key"].toString());
 
-                  Uint8List bytes =
-                      await readByteStream(downloadResponse.stream);
+                    Uint8List bytes =
+                        await readByteStream(downloadResponse.stream);
 
-                  String fileName = elementJson["Key"];
-                  int whereIndex = fileName.lastIndexOf("/");
-                  fileName = fileName.substring(whereIndex + 1);
+                    String fileName = elementJson["Key"];
+                    int whereIndex = fileName.lastIndexOf("/");
+                    fileName = fileName.substring(whereIndex + 1);
 
-                  Directory appDocumentsDirectory =
-                      await getApplicationDocumentsDirectory(); // 1
-                  String appDocumentsPath = appDocumentsDirectory.path; // 2
-                  String filePath = '$appDocumentsPath/$fileName';
-                  File tempFile = File(filePath);
-                  tempFile.writeAsBytes(bytes);
+                    Directory appDocumentsDirectory =
+                        await getApplicationDocumentsDirectory(); // 1
+                    String appDocumentsPath = appDocumentsDirectory.path; // 2
+                    String filePath = '$appDocumentsPath/$fileName';
+                    File tempFile = File(filePath);
+                    tempFile.writeAsBytes(bytes);
 
-                  String date = elementJson["Key"].toString().substring(
-                      elementJson["Key"].toString().lastIndexOf('/') - 10,
-                      elementJson["Key"].toString().lastIndexOf('/'));
+                    String date = elementJson["Key"].toString().substring(
+                        elementJson["Key"].toString().lastIndexOf('/') - 10,
+                        elementJson["Key"].toString().lastIndexOf('/'));
 
-                  if (!await fileHelper.fileExists(
-                    fileName,
-                  )) {
                     FileData fileData = FileData(
                         tempFile.path,
                         date,
                         fileName,
+                        "",
                         element.charter == null
                             ? "general"
                             : element.charter.charterId);
@@ -628,29 +677,34 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           for (var content in response.contents) {
             var elementJson = await jsonDecode(content.toJson());
             if (elementJson["Size"] != "0") {
-              StreamedResponse downloadResponse = await AggressorApi()
-                  .downloadAwsFile(elementJson["Key"].toString());
+              if (!await FileDatabaseHelper.instance.fileExists(
+                  elementJson["Key"].toString().substring(
+                      elementJson["Key"].toString().lastIndexOf("/") + 1))) {
+                StreamedResponse downloadResponse = await AggressorApi()
+                    .downloadAwsFile(elementJson["Key"].toString());
 
-              Uint8List bytes = await readByteStream(downloadResponse.stream);
+                Uint8List bytes = await readByteStream(downloadResponse.stream);
 
-              String fileName = elementJson["Key"];
-              int whereIndex = fileName.lastIndexOf("/");
-              fileName = fileName.substring(whereIndex + 1);
+                String fileName = elementJson["Key"];
+                int whereIndex = fileName.lastIndexOf("/");
+                fileName = fileName.substring(whereIndex + 1);
 
-              Directory appDocumentsDirectory =
-                  await getApplicationDocumentsDirectory(); // 1
-              String appDocumentsPath = appDocumentsDirectory.path; // 2
-              String filePath = '$appDocumentsPath/$fileName';
-              File tempFile = File(filePath);
-              tempFile.writeAsBytes(bytes);
+                Directory appDocumentsDirectory =
+                    await getApplicationDocumentsDirectory(); // 1
+                String appDocumentsPath = appDocumentsDirectory.path; // 2
+                String filePath = '$appDocumentsPath/$fileName';
+                File tempFile = File(filePath);
+                tempFile.writeAsBytes(bytes);
 
-              if (!await fileHelper.fileExists(
-                fileName,
-              )) {
-                FileData fileData =
-                    FileData(tempFile.path, "general", fileName, "general");
+                fileDataList.forEach((element) {});
+                if (!await fileHelper.fileExists(
+                  fileName,
+                )) {
+                  FileData fileData = FileData(
+                      tempFile.path, "general", fileName, "", "general");
 
-                fileHelper.insertFile(fileData);
+                  fileHelper.insertFile(fileData);
+                }
               }
             }
           }
@@ -661,11 +715,33 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
       tempFiles = await fileHelper.queryFile();
 
+      for (var element in tempFiles) {
+        print(element.toMap());
+        print(element.displayName == "");
+        print(fileDisplayNames.containsKey(element.fileName));
+        if ((element.displayName == "" || element.displayName == null) &&
+            fileDisplayNames.containsKey(element.fileName)) {
+          print("setting display for: " + element.toString());
+          element.setDisplayName(fileDisplayNames[element.fileName]);
+          await FileDatabaseHelper.instance.deleteFile(element.fileName);
+          await FileDatabaseHelper.instance.insertFile(element);
+        }
+        element.setUser(widget.user);
+        element.setCallback(() {
+          setState(() {
+            filesLoaded = false;
+          });
+        });
+      }
+
+
       setState(() {
+        loading = false;
         fileDataList = tempFiles;
         filesLoaded = true;
       });
     } else {
+      //TODO test offline mode names
       if (!filesLoaded) {
         setState(() {
           loading = true;
@@ -676,20 +752,23 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           filesLoaded = true;
           loading = false;
         });
+
+        for (var element in fileDataList) {
+          if (element.displayName == "" &&
+              fileDisplayNames.containsKey(element.fileName)) {
+            element.setDisplayName(fileDisplayNames[element.fileName]);
+            await FileDatabaseHelper.instance.deleteFile(element.fileName);
+            await FileDatabaseHelper.instance.insertFile(element);
+          }
+          element.setUser(widget.user);
+          element.setCallback(() {
+            setState(() {
+              filesLoaded = false;
+            });
+          });
+        }
       }
     }
-    setState(() {
-      loading = false;
-    });
-
-    fileDataList.forEach((element) {
-      element.setUser(widget.user);
-      element.setCallback(() {
-        setState(() {
-          filesLoaded = false;
-        });
-      });
-    });
     return "finished";
   }
 
@@ -702,6 +781,31 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     setState(() {
       fileName = result.names[0];
     });
+  }
+
+  void clearFiles() async {
+    //TODO remove this after files uploads are fixed
+    String region = "us-east-1";
+    String bucketId = "aggressor.app.user.images";
+    final AwsS3Client s3client = AwsS3Client(
+        region: region,
+        host: "s3.$region.amazonaws.com",
+        bucketId: bucketId,
+        accessKey: "AKIA43MMI6CI2KP4CUUY",
+        secretKey: "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");
+
+    var path = widget.user.userId + "/files/general/general/";
+    var resList = await s3client.listObjects(prefix: path, delimiter: "/");
+    for (var value in resList.contents) {
+      if (double.parse(value.size) > 0) {
+        var res = await AggressorApi().deleteAwsFile(
+            widget.user.userId,
+            "files",
+            "general",
+            "general",
+            value.key.substring(value.key.lastIndexOf("/") + 1));
+      }
+    }
   }
 
   void uploadFile() async {
@@ -723,7 +827,16 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             result.files.single.path,
             uploadDate);
         if (uploadResult["status"] == "success") {
+          FileDatabaseHelper.instance.insertFile(FileData(
+              result.files.single.path,
+              uploadDate,
+              uploadResult["filename"],
+              fileNameController.text,
+              dropDownValue.charterId));
+
           setState(() {
+            fileDisplayNames[uploadResult["filename"].toString()] =
+                fileNameController.text.toString();
             filesLoaded = false;
             fileName = "";
             result = null;
@@ -741,10 +854,47 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         uploading = false;
       });
     }
+
+    updateDisplayNameStorage();
     setState(() {
+      fileNameController.clear();
       loading = false;
       uploading = false;
     });
+  }
+
+  void updateDisplayNameStorage() async {
+    String region = "us-east-1";
+    String bucketId = "aggressor.app.user.images";
+    final AwsS3Client s3client = AwsS3Client(
+        region: region,
+        host: "s3.$region.amazonaws.com",
+        bucketId: bucketId,
+        accessKey: "AKIA43MMI6CI2KP4CUUY",
+        secretKey: "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");
+
+    String dataDir = (await getApplicationDocumentsDirectory()).path;
+    File displayNameFile = File(dataDir + "/FileDisplayNames.txt");
+    await displayNameFile.writeAsString(fileDisplayNames.toString());
+
+    var mapsList = await s3client.listObjects(
+        prefix: widget.user.userId + "/config/files/nameMaps/", delimiter: "/");
+    try {
+      for (var value in mapsList.contents) {
+        if (double.parse(value.size) > 0) {
+          var deleting = await AggressorApi().deleteAwsFile(
+              widget.user.userId,
+              "config",
+              "files",
+              "nameMaps",
+              value.key.substring(value.key.lastIndexOf("/") + 1));
+        }
+      }
+    } catch (e) {
+      print("no config files yet");
+    }
+    var uploading = await AggressorApi().uploadAwsFile(widget.user.userId,
+        "config", "files", displayNameFile.path, "nameMaps");
   }
 
   Widget showErrorMessage() {

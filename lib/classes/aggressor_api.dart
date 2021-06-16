@@ -12,6 +12,7 @@ import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_archive/flutter_archive.dart';
+import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -443,7 +444,7 @@ class AggressorApi {
         boatId +
         "/" +
         date + "/" + fileName.replaceAll("\"", "");
-
+    print(fileName);
     print(url);
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -822,20 +823,42 @@ class AggressorApi {
   }
 
   Future<dynamic> saveDatabase(String userId, String databaseName) async {
+
+    String region = "us-east-1";
+    String bucketId = "aggressor.app.user.images";
+    final AwsS3Client s3client = AwsS3Client(
+        region: region,
+        host: "s3.$region.amazonaws.com",
+        bucketId: bucketId,
+        accessKey: "AKIA43MMI6CI2KP4CUUY",
+        secretKey: "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");
+
     final dataDir = await getApplicationDocumentsDirectory();
     var databaseValue = dataDir.path + "/" + databaseName;
       try {
         final zipFile = File(databaseValue);
-        ZipFile.createFromDirectory(
-            sourceDir: dataDir, zipFile: zipFile, recurseSubDirs: true);
+
+        String databasePath =
+            userId + "/config/databases/filesDatabase/";
+        var resList =
+        await s3client.listObjects(prefix: databasePath, delimiter: "/");
+        try {
+          for (var value in resList.contents) {
+            if(double.parse(value.size) > 0) {
+              var res = await deleteAwsFile(
+                  userId, "config", "databases", "filesDatabase",
+                  value.key.substring(value.key.lastIndexOf("/") + 1));
+            }
+          }
+        }catch(e){
+          print("empty data file");
+        }
         var key = await uploadAwsFile(
           userId,
           "config",
           "databases",
           zipFile.path,
-          databaseValue.substring(
-            databaseValue.lastIndexOf("/"),
-          ),
+            "filesDatabase",
         );
         print(key);
       } catch (e) {

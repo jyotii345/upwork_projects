@@ -18,15 +18,17 @@ class FileData {
   String filePath;
   String date;
   String fileName;
+  String displayName;
   String boatId;
   User user;
   VoidCallback callback;
 
-  FileData(String filePath, String date, String fileName, String boatId) {
+  FileData(String filePath, String date, String fileName,String displayName, String boatId) {
     //default constructor
     this.filePath = filePath;
     this.date = date;
     this.fileName = fileName;
+    this.displayName = displayName;
     this.boatId = boatId;
   }
 
@@ -37,6 +39,7 @@ class FileData {
       'date': date,
       'fileName': fileName,
       'boatId' : boatId,
+      'displayName' : displayName,
     };
   }
 
@@ -69,7 +72,7 @@ class FileData {
                     child: SizedBox(
                       width: textBoxSize,
                       child: Text(
-                        fileName,
+                        displayName == "" ? fileName : displayName,
                         textAlign: TextAlign.left,
                         style: TextStyle(color: AggressorColors.secondaryColor),
                       ),
@@ -103,7 +106,7 @@ class FileData {
   }
 
   void deleteFile() async{
-    var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), filePath.substring(filePath.lastIndexOf("/")).toString());
+    var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), filePath.substring(filePath.lastIndexOf("/") + 1).toString());
     await FileDatabaseHelper.instance.deleteFile(fileName);
     fileDataList.remove(this);
     await Future.delayed(Duration(seconds: 1));
@@ -121,5 +124,8 @@ class FileData {
   }
   void setCallback(VoidCallback callback){
     this.callback = callback;
+  }
+  void setDisplayName(String displayName){
+    this.displayName = displayName;
   }
 }

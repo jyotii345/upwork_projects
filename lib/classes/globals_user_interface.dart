@@ -8,6 +8,7 @@ import 'package:aggressor_adventures/databases/countries_database.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:aggressor_adventures/databases/iron_diver_database.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/databases/profile_database.dart';
 import 'package:aggressor_adventures/databases/slider_database.dart';
@@ -61,7 +62,8 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset("assets/tripspassive.png",
+              child: Image.asset(
+                "assets/tripspassive.png",
               ),
             ),
             icon: Container(
@@ -72,7 +74,8 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                  "assets/tripsactive.png",),
+                "assets/tripsactive.png",
+              ),
             ),
             label: '',
           ),
@@ -84,8 +87,8 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset("assets/notespassive.png",
-
+              child: Image.asset(
+                "assets/notespassive.png",
               ),
             ),
             icon: Container(
@@ -95,7 +98,9 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset( "assets/notesactive.png",),
+              child: Image.asset(
+                "assets/notesactive.png",
+              ),
             ),
             label: '',
           ),
@@ -118,7 +123,9 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset("assets/photosactive.png",),
+              child: Image.asset(
+                "assets/photosactive.png",
+              ),
             ),
             label: '',
           ),
@@ -141,7 +148,9 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset("assets/rewardsactive.png",),
+              child: Image.asset(
+                "assets/rewardsactive.png",
+              ),
             ),
             label: '',
           ),
@@ -154,7 +163,7 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                  "assets/filespassive.png",
+                "assets/filespassive.png",
               ),
             ),
             icon: Container(
@@ -164,7 +173,9 @@ Widget getBottomNavigationBar() {
               height: orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape,
-              child: Image.asset( "assets/filesactive.png",),
+              child: Image.asset(
+                "assets/filesactive.png",
+              ),
             ),
             label: '',
           ),
@@ -272,20 +283,21 @@ void handlePopupClick(String value) {
 void signOutUser() async {
   //sings user out and clears databases
 
-  await BoatDatabaseHelper.instance.deleteBoatTable();
-  await CertificateDatabaseHelper.instance.deleteCertificateTable();
-  await CharterDatabaseHelper.instance.deleteCharterTable();
-  await ContactDatabaseHelper.instance.deleteContactTable();
-  await CountriesDatabaseHelper.instance.deleteCountriesTable();
-  await FileDatabaseHelper.instance.deleteFileTable();
-  await IronDiverDatabaseHelper.instance.deleteIronDiverTable();
-  await NotesDatabaseHelper.instance.deleteNotesTable();
-  await PhotoDatabaseHelper.instance.deletePhotoTable();
-  await ProfileDatabaseHelper.instance.deleteProfileTable();
-  await SlidersDatabaseHelper.instance.deleteSlidersTable();
-  await StatesDatabaseHelper.instance.deleteStatesTable();
-  await TripDatabaseHelper.instance.deleteTripTable();
-  await UserDatabaseHelper.instance.deleteUser(100);
+  BoatDatabaseHelper.instance.deleteBoatTable();
+  CertificateDatabaseHelper.instance.deleteCertificateTable();
+  CharterDatabaseHelper.instance.deleteCharterTable();
+  ContactDatabaseHelper.instance.deleteContactTable();
+  CountriesDatabaseHelper.instance.deleteCountriesTable();
+  FileDatabaseHelper.instance.deleteFileTable();
+  IronDiverDatabaseHelper.instance.deleteIronDiverTable();
+  NotesDatabaseHelper.instance.deleteNotesTable();
+  OfflineDatabaseHelper.instance.deleteOfflineTable();
+  PhotoDatabaseHelper.instance.deletePhotoTable();
+  ProfileDatabaseHelper.instance.deleteProfileTable();
+  SlidersDatabaseHelper.instance.deleteSlidersTable();
+  StatesDatabaseHelper.instance.deleteStatesTable();
+  TripDatabaseHelper.instance.deleteTripTable();
+  UserDatabaseHelper.instance.deleteUser(100);
 
   loadedCount = 0;
   loadingLength = 0;
@@ -304,19 +316,35 @@ void signOutUser() async {
 
   galleriesMap = <String, Gallery>{};
   profileData = <String, dynamic>{};
+  fileDisplayNames = <String, String>{};
 
   notLoadedList = [];
   tripList = [];
   loadSize = [];
+  boatList = [];
+  fileDataList = [];
   statesList = [];
   countriesList = [];
-  boatList = [];
   sliderImageList = [];
   notesList = [];
   ironDiverList = [];
   certificationList = [];
 
   contact = null;
+
+  List<String> certificationOptionList = [
+    'Non-Diver',
+    'Junior Open Water',
+    'Open Water',
+    'Advanced Open Water',
+    'Rescue Diver',
+    'Master Scuba Diver',
+    'Dive Master',
+    'Assistant Instructor',
+    'Instructor',
+    'Instructor Trainer',
+    'Nitrox',
+  ];
 
   navigatorKey.currentState
       .pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
