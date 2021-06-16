@@ -60,6 +60,8 @@ PODS:
     - Flutter
   - image_downloader (0.0.1):
     - Flutter
+  - image_gallery_saver (1.5.0):
+    - Flutter
   - multi_image_picker (4.8.00):
     - BSImagePicker (~> 2.10.3)
     - Flutter
@@ -96,6 +98,7 @@ DEPENDENCIES:
   - flutter_keyboard_visibility (from `.symlinks/plugins/flutter_keyboard_visibility/ios`)
   - heic_to_jpg (from `.symlinks/plugins/heic_to_jpg/ios`)
   - image_downloader (from `.symlinks/plugins/image_downloader/ios`)
+  - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - multi_image_picker (from `.symlinks/plugins/multi_image_picker/ios`)
   - open_file (from `.symlinks/plugins/open_file/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
@@ -136,6 +139,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/heic_to_jpg/ios"
   image_downloader:
     :path: ".symlinks/plugins/image_downloader/ios"
+  image_gallery_saver:
+    :path: ".symlinks/plugins/image_gallery_saver/ios"
   multi_image_picker:
     :path: ".symlinks/plugins/multi_image_picker/ios"
   open_file:
@@ -170,6 +175,7 @@ SPEC CHECKSUMS:
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   heic_to_jpg: cce9d6463ab11852a7393daa61be23f98a951c64
   image_downloader: 73e190d6c9f286f2649554051348d9cb319cd4b3
+  image_gallery_saver: 259eab68fb271cfd57d599904f7acdc7832e7ef2
   multi_image_picker: 443e776a762d7901641854043b60abf88a85d5ef
   open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
@@ -180,8 +186,8 @@ SPEC CHECKSUMS:
   SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   video_player: 9cc823b1d9da7e8427ee591e8438bfbcde500e6e
-  wakelock: bfc7955c418d0db797614075aabbc58a39ab5107
-  webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
+  wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
+  webview_flutter: 9f491a9b5a66f2573946a389b2677987b0ff8c0b
   ZIPFoundation: b1f0de4eed33e74a676f76e12559ab6b75990197
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
