@@ -15,7 +15,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:heic_to_jpg/heic_to_jpg.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../classes/aggressor_colors.dart';
 
@@ -45,7 +47,7 @@ class GalleryViewState extends State<GalleryView> {
   int indexMultiplier = 1;
   String errorMessage = "";
   List<Asset> images = <Asset>[];
-  List<dynamic> selectedList = [];
+  List<Photo> selectedList = [];
   bool loading = false;
 
   /*
@@ -112,6 +114,7 @@ class GalleryViewState extends State<GalleryView> {
             getPageTitle(),
             getDestination(),
             getDate(),
+            selectedList.length > 0 ? getSelectionOptions() : Container(),
             getImageGrid(),
             getScrollButtons(),
           ],
@@ -120,9 +123,125 @@ class GalleryViewState extends State<GalleryView> {
     );
   }
 
+  Widget getSelectionOptions() {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        color: AggressorColors.secondaryColor,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  "Selection options",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: portrait
+                          ? MediaQuery.of(context).size.height / 30
+                          : MediaQuery.of(context).size.width / 30),
+                ),
+              ),
+              IconButton(
+                  icon: Icon(
+                    Icons.share,
+                    color: Colors.white,
+                    size: portrait
+                        ? iconSizePortrait - 10
+                        : iconSizeLandscape - 10,
+                  ),
+                  onPressed: exportSelection),
+              IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                  size:
+                      portrait ? iconSizePortrait - 10 : iconSizeLandscape - 10,
+                ),
+                onPressed: showDeleteConfirmationDialogue,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void exportSelection() async {
+    print(await Permission.storage.status);
+    if (
+        !await Permission.storage.status.isGranted) {
+      await Permission.storage.request();
+    }
+
+    for (var value in selectedList) {
+      var res = await ImageGallerySaver.saveImage(File(value.imagePath).readAsBytesSync());
+      print(res.toString());
+    }
+    setState(() {
+      selectedList = [];
+    });
+    showExportSuccessDialogue();
+  }
+
+  void showExportSuccessDialogue() {
+    //shows a success message when the profile is updated successfully
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: new Text('Success'),
+          content: new Text("The images have been exported to your camera roll"),
+          actions: <Widget>[
+            new TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: new Text('Continue')),
+          ],
+        ));
+  }
+
+  void showDeleteConfirmationDialogue() {
+    //shows a success message when the profile is updated successfully
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+          title: new Text('Confirm'),
+          content: new Text("Are you sure you would like to delete " + selectedList.length.toString() + " images?"),
+          actions: <Widget>[
+            TextButton(onPressed: (){Navigator.pop(context);},
+                child: new Text('Cancel')),
+            TextButton(
+                onPressed: (){Navigator.pop(context);
+                deleteSelection();},
+                child: new Text('Continue')),
+          ],
+        ));
+  }
+
+  void deleteSelection() async {
+    //deletes the images that are currently selected
+    for (var value in selectedList) {
+      String uploadDate =
+          formatDate(DateTime.parse(value.date), [yyyy, '-', mm, '-', dd]);
+      await AggressorApi().deleteAwsFile(
+          widget.user.userId,
+          "gallery",
+          widget.trip.boat.boatId,
+          uploadDate,
+          value.imageName);
+      await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+      setState(() {
+        widget.photos.remove(value);
+      });
+    }
+    setState(() {
+      selectedList = [];
+    });
+  }
+
   Widget getScrollButtons() {
     //returns arrow images to scroll pages on the bottom of the page
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -236,33 +355,53 @@ class GalleryViewState extends State<GalleryView> {
                   return Stack(
                     children: [
                       Positioned.fill(
-                        child: GestureDetector( //TODO fit this to the size of the image
+                        child: GestureDetector(
                           onTap: () {
                             imageExpansionDialogue(
-                              Stack(
-                                children: [
-                                  Image.file(
-                                    File(
-                                      widget
-                                          .photos[(index +
-                                              (9 * (indexMultiplier - 1)))]
-                                          .imagePath,
-                                    ),
-                                    fit: BoxFit.fill,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(0.0),
-                                      child: GestureDetector(
-                                        child: Icon(Icons.close_rounded),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
+                              Container(
+                                height: (MediaQuery.of(context).size.width) -
+                                    (MediaQuery.of(context).size.width * .4),
+                                width: (MediaQuery.of(context).size.width *
+                                        1.2) -
+                                    (MediaQuery.of(context).size.width * .4),
+                                child: Stack(
+                                  children: [
+                                    Positioned.fill(
+                                      child: Image.file(
+                                        File(
+                                          widget
+                                              .photos[(index +
+                                                  (9 * (indexMultiplier - 1)))]
+                                              .imagePath,
+                                        ),
+                                        fit: BoxFit.fill,
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: GestureDetector(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(5.0),
+                                            child: Icon(
+                                              Icons.close_rounded,
+                                              color:
+                                                  AggressorColors.primaryColor,
+                                              size: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  15,
+                                            ),
+                                          ),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },
@@ -325,9 +464,9 @@ class GalleryViewState extends State<GalleryView> {
     showDialog(
       context: context,
       builder: (_) => new AlertDialog(
-        title: Container(),
         content: content,
         contentPadding: EdgeInsets.zero,
+        insetPadding: EdgeInsets.zero,
       ),
     );
   }

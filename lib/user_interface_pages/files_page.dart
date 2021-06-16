@@ -51,6 +51,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   FilePickerResult result;
 
+  TextEditingController fileNameController = TextEditingController();
+
   /*
   initState
    */
@@ -141,6 +143,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           getFilePrompt(),
           getDestinationDropdown(tripList),
           getFileInformation(),
+          getFileName(),
           getUploadFileButton(),
         ],
       ),
@@ -255,7 +258,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
             child: Text(
-              "File Name:",
+              "Select File:",
               style: TextStyle(
                   fontSize: portrait
                       ? MediaQuery.of(context).size.height / 45
@@ -288,6 +291,55 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                   )),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget getFileName() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
+            child: Text(
+              "File Name:",
+              style: TextStyle(
+                  fontSize: portrait
+                      ? MediaQuery.of(context).size.height / 45
+                      : MediaQuery.of(context).size.width / 45),
+            ),
+          ),
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            child: Container(
+                  height: portrait
+                      ? MediaQuery.of(context).size.height / 35
+                      : MediaQuery.of(context).size.width / 35,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                  ),
+                  child: Center(
+                    child: TextFormField(
+                      controller: fileNameController,
+                      decoration: InputDecoration(hintText: "File Name", contentPadding: EdgeInsets.all(7.5),),
+                      style: TextStyle(
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
+                      textAlign: TextAlign.center,
+                    ),
+                  )),
+            ),
         ],
       ),
     );
@@ -417,7 +469,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                           ),
                           SizedBox(
                             width: textBoxSize,
-                            child: Text("Adventure Date",
+                            child: Text("Date",
                                 textAlign: TextAlign.center),
                           ),
                           SizedBox(

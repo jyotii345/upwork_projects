@@ -90,9 +90,22 @@ class Gallery {
                 width: textBoxSize / 2,
                 child: IconButton(
                     icon: Image.asset("assets/trashcan.png",),
-                    onPressed: () {
-                      deleteGallery();
-                    }),
+                    onPressed:(){
+                      //shows a success message when the profile is updated successfully
+                      showDialog(
+                          context: context,
+                          builder: (_) => new AlertDialog(
+                            title: new Text('Confirm'),
+                            content: new Text("Are you sure you would like to delete this photo gallery?"),
+                            actions: <Widget>[
+                              TextButton(onPressed: (){Navigator.pop(context);},
+                                  child: new Text('Cancel')),
+                              TextButton(
+                                  onPressed: (){Navigator.pop(context);deleteGallery();},
+                                  child: new Text('Continue')),
+                            ],
+                          ));
+                    } ),
               ),
             ],
           ),
@@ -114,7 +127,8 @@ class Gallery {
       for (var value in photos) {
         var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "gallery", trip.charter.boatId.toString(),formatDate(
             DateTime.parse(trip.charter.startDate),
-            [yyyy, '-', mm, '-', dd]),value.imagePath.substring(value.imagePath.lastIndexOf("/")).toString() );
+            [yyyy, '-', mm, '-', dd]),value.imageName.toString());
+
         PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
       }
 

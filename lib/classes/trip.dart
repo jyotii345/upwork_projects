@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'aggressor_api.dart';
+import 'aggressor_colors.dart';
 import 'globals_user_interface.dart';
 
 class Trip {
@@ -291,9 +292,63 @@ class Trip {
                                       ? GestureDetector(
                                           onTap: () {
                                             imageExpansionDialogue(
-                                              Image.file(
-                                                File(snapshot.data),
-                                                fit: BoxFit.fill,
+                                              Container(
+                                                height: (MediaQuery.of(context)
+                                                        .size
+                                                        .width) -
+                                                    (MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .4),
+                                                width: (MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        1.2) -
+                                                    (MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .4),
+                                                child: Stack(
+                                                  children: [
+                                                    Positioned.fill(
+                                                      child: Image.file(
+                                                        File(snapshot.data),
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topRight,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(0.0),
+                                                        child: GestureDetector(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(5.0),
+                                                            child: Icon(
+                                                              Icons
+                                                                  .close_rounded,
+                                                              color: AggressorColors
+                                                                  .primaryColor,
+                                                              size: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  15,
+                                                            ),
+                                                          ),
+                                                          onTap: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             );
                                           },
@@ -318,7 +373,8 @@ class Trip {
                               children: [
                                 Text(
                                   "Days Left: ",
-                                  style: TextStyle(fontSize: screenFontSize * 1.5),
+                                  style:
+                                      TextStyle(fontSize: screenFontSize * 1.5),
                                 ),
                                 Text(
                                   DateTime.now()
@@ -329,7 +385,7 @@ class Trip {
                                       .toString(),
                                   style: TextStyle(
                                       color: Colors.red,
-                                      fontSize: screenFontSize  * 1.5),
+                                      fontSize: screenFontSize * 1.5),
                                 )
                               ],
                             ),
@@ -433,11 +489,13 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 height: rowSectionHeight,
-                                child: Center(child:Text(
-                                  reservationId,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: screenFontSize),
-                                ),),
+                                child: Center(
+                                  child: Text(
+                                    reservationId,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: screenFontSize),
+                                  ),
+                                ),
                               ),
                               Spacer(
                                 flex: 10,
@@ -782,7 +840,11 @@ class Trip {
     //shows the image in a larger view
     showDialog(
       context: navigatorKey.currentContext,
-      builder: (_) => new AlertDialog(title: Container(), content: content),
+      builder: (_) => new AlertDialog(
+        content: content,
+        contentPadding: EdgeInsets.zero,
+        insetPadding: EdgeInsets.zero,
+      ),
     );
   }
 }

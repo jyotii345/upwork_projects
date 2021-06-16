@@ -8,6 +8,8 @@
    <application
         android:label="Adventure Of A Lifetime"
         android:icon="@mipmap/launcher_icon">
+
+       android:requestLegacyExternalStorage="true"
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

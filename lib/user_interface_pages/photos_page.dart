@@ -752,17 +752,22 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
       List<Photo> photos = await photoHelper.queryPhoto();
       photos.forEach((element) {
-        if (!tempGalleries.containsKey(element.boatId)) {
-          int tripIndex = 0;
-          for (int i = 0; i < tripList.length - 1; i++) {
-            if (tripList[i].boat.boatId == element.boatId) {
-              tripIndex = i;
-            }
+        int tripIndex = 0;
+        for (int i = 0; i < tripList.length - 1; i++) {
+          if (tripList[i].boat.boatId == element.boatId &&
+              formatDate(DateTime.parse(tripList[i].charter.startDate),
+                      [yyyy, '-', mm, '-', dd]) ==
+                  element.date) {
+            tripIndex = i;
           }
-          tempGalleries[element.boatId] = Gallery(
-              widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
         }
-        tempGalleries[element.boatId].addPhoto(element);
+
+        if (!tempGalleries.containsKey(tripList[tripIndex].reservationId)) {
+          tempGalleries[tripList[tripIndex].reservationId] = Gallery(
+              widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
+        } else {
+          tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+        }
       });
 
       setState(() {
@@ -834,17 +839,19 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     Map<String, Gallery> tempGalleries = <String, Gallery>{};
     photos.forEach((element) {
-      if (!tempGalleries.containsKey(element.boatId)) {
-        int tripIndex = 0;
-        for (int i = 0; i < tripList.length - 1; i++) {
-          if (tripList[i].charterId == element.boatId) {
-            tripIndex = i;
-          }
+      int tripIndex = 0;
+      for (int i = 0; i < tripList.length - 1; i++) {
+        if (tripList[i].boat.boatId == element.boatId && formatDate(DateTime.parse(tripList[i].charter.startDate), [yyyy,'-',mm,'-',dd]) == element.date) {
+          tripIndex = i;
         }
-        tempGalleries[element.boatId] = Gallery(
-            widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
       }
-      tempGalleries[element.boatId].addPhoto(element);
+
+      if (!tempGalleries.containsKey(tripList[tripIndex].reservationId)) {
+        tempGalleries[tripList[tripIndex].reservationId] = Gallery(
+            widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
+      } else {
+        tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+      }
     });
     return tempGalleries;
   }

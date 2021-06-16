@@ -34,12 +34,13 @@ dependencies:
   open_file: ^3.2.1
   flutter_launcher_icons: ^0.8.0
   flutter_html: ^1.0.0
-  html_editor_enhanced: ^2.1.1
+  html_editor_enhanced: ^2.2.0+1
   flutter_masked_text: ^0.8.0
   data_connection_checker: ^0.3.4
   flutter_slidable: ^0.6.0
   flutter_archive: ^4.0.1
   auto_size_text: ^2.1.0
+  image_gallery_saver: ^1.6.9
 
 flutter_icons:
   android: "launcher_icon"
