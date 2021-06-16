@@ -77,7 +77,9 @@ class LoadingPageState extends State<LoadingPage> {
                   shrinkWrap: true,
                   children: [
                     CircularPercentIndicator(
-                      radius: portrait ? MediaQuery.of(context).size.width / 3 :  MediaQuery.of(context).size.height / 3,
+                      radius: portrait
+                          ? MediaQuery.of(context).size.width / 3
+                          : MediaQuery.of(context).size.height / 3,
                       percent: percent > 1 ? 1 : percent,
                       animateFromLastPercent: true,
                       backgroundColor: AggressorColors.secondaryColor,

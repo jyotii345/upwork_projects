@@ -139,4 +139,5 @@ class Gallery {
   void setCallback(VoidCallback callback){
     this.deleteCallback = callback;
   }
+
 }

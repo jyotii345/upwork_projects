@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
@@ -44,6 +45,8 @@ class GalleryViewState extends State<GalleryView> {
   int indexMultiplier = 1;
   String errorMessage = "";
   List<Asset> images = <Asset>[];
+  List<dynamic> selectedList = [];
+  bool loading = false;
 
   /*
   initState
@@ -105,11 +108,11 @@ class GalleryViewState extends State<GalleryView> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 7,
             ),
+            showLoading(),
             getPageTitle(),
             getDestination(),
             getDate(),
             getImageGrid(),
-            Spacer(),
             getScrollButtons(),
           ],
         ),
@@ -219,36 +222,94 @@ class GalleryViewState extends State<GalleryView> {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: widget.photos.length > 0
-          ? GridView.builder(
-              shrinkWrap: true,
-              itemCount: widget.photos.length - (9 * (indexMultiplier - 1)) < 9
-                  ? widget.photos.length - (9 * (indexMultiplier - 1))
-                  : 9,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    imageExpansionDialogue(Image.file(
-                      File(
-                        widget.photos[(index + (9 * (indexMultiplier - 1)))]
-                            .imagePath,
+          ? Container(
+              height: portrait
+                  ? MediaQuery.of(context).size.width / 6 * 4
+                  : MediaQuery.of(context).size.height / 6 * 4,
+              child: GridView.builder(
+                shrinkWrap: true,
+                itemCount:
+                    widget.photos.length - (9 * (indexMultiplier - 1)) < 9
+                        ? widget.photos.length - (9 * (indexMultiplier - 1))
+                        : 9,
+                itemBuilder: (context, index) {
+                  return Stack(
+                    children: [
+                      Positioned.fill(
+                        child: GestureDetector( //TODO fit this to the size of the image
+                          onTap: () {
+                            imageExpansionDialogue(
+                              Stack(
+                                children: [
+                                  Image.file(
+                                    File(
+                                      widget
+                                          .photos[(index +
+                                              (9 * (indexMultiplier - 1)))]
+                                          .imagePath,
+                                    ),
+                                    fit: BoxFit.fill,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: GestureDetector(
+                                        child: Icon(Icons.close_rounded),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          child: Image.file(
+                            File(
+                              widget.photos[index].imagePath,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
-                      fit: BoxFit.cover,
-                    ));
-                  },
-                  child: Image.file(
-                    File(
-                      widget.photos[index].imagePath,
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                );
-              },
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  mainAxisExtent: MediaQuery.of(context).size.width / 6,
-                  maxCrossAxisExtent: MediaQuery.of(context).size.width / 4,
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: GestureDetector(
+                          child: Icon(
+                            selectedList.contains(widget.photos[index])
+                                ? Icons.radio_button_on
+                                : Icons.radio_button_off,
+                            color: AggressorColors.primaryColor,
+                            size: MediaQuery.of(context).size.width / 20,
+                          ),
+                          onTap: () {
+                            if (selectedList.contains(widget.photos[index])) {
+                              setState(() {
+                                selectedList.remove(widget.photos[index]);
+                              });
+                            } else {
+                              setState(() {
+                                selectedList.add(widget.photos[index]);
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  mainAxisExtent: portrait
+                      ? MediaQuery.of(context).size.width / 6
+                      : MediaQuery.of(context).size.height / 6,
+                  crossAxisCount: 3,
                   childAspectRatio: 1.2 / 1,
                   crossAxisSpacing: 20,
-                  mainAxisSpacing: 20),
+                  mainAxisSpacing: 20,
+                ),
+              ),
             )
           : Center(
               child: Text(
@@ -263,7 +324,11 @@ class GalleryViewState extends State<GalleryView> {
     //shows the image in a larger view
     showDialog(
       context: context,
-      builder: (_) => new AlertDialog(title: Container(), content: content),
+      builder: (_) => new AlertDialog(
+        title: Container(),
+        content: content,
+        contentPadding: EdgeInsets.zero,
+      ),
     );
   }
 
@@ -312,8 +377,13 @@ class GalleryViewState extends State<GalleryView> {
 
   Future<void> loadAssets() async {
     //loads the asset objects from the image picker
+
+    setState(() {
+      loading = true;
+      errorMessage = '';
+    });
     List<Asset> resultList = <Asset>[];
-    String error = 'No Error Detected';
+    String error = '';
 
     if (await Permission.photos.status.isDenied ||
         await Permission.camera.status.isDenied) {
@@ -336,30 +406,59 @@ class GalleryViewState extends State<GalleryView> {
       ),
     );
 
-    for (var result in resultList) {
-      String path = "";
-      if (result.name.toLowerCase().contains(".heic")) {
-        path = await HeicToJpg.convert(
-            await FlutterAbsolutePath.getAbsolutePath(result.identifier));
-      } else {
-        path = await FlutterAbsolutePath.getAbsolutePath(result.identifier);
-      }
-      File file = File(path);
+    if (online) {
+      for (var element in resultList) {
+        String path = "";
+        if (element.name.toLowerCase().contains(".heic")) {
+          path = await HeicToJpg.convert(
+              await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+        } else {
+          path = await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+        }
+        File file = File(path);
 
-      String uploadDate = formatDate(
-          DateTime.parse(widget.trip.charter.startDate),
-          [yyyy, '-', mm, '-', dd]);
+        String uploadDate = formatDate(
+            DateTime.parse(widget.trip.charter.startDate),
+            [yyyy, '-', mm, '-', dd]);
 
-      if (online) {
-        var response = await AggressorApi().uploadAwsFile(widget.user.userId,
-            "gallery", widget.trip.charterId, file.path, uploadDate);
+        var response = await AggressorApi().uploadAwsFile(
+            widget.user.userId.toString(),
+            "gallery",
+            widget.trip.charter.boatId.toString(),
+            file.path,
+            uploadDate);
+
         await Future.delayed(Duration(milliseconds: 1000));
         if (response["status"] == "success") {
           widget.photos.add(Photo("", "", file.path, "", "", ""));
         }
-      } else {
+      }
+
+      setState(() {
+        photosLoaded = false;
+        loading = false;
+        images = resultList;
+        errorMessage = error;
+      });
+
+      if (!mounted) return;
+    } else {
+      for (var element in resultList) {
+        String path = "";
+        if (element.name.toLowerCase().contains(".heic")) {
+          path = await HeicToJpg.convert(
+              await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+        } else {
+          path = await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+        }
+        File file = File(path);
+
+        String uploadDate = formatDate(
+            DateTime.parse(widget.trip.charter.startDate),
+            [yyyy, '-', mm, '-', dd]);
+
         await PhotoDatabaseHelper.instance.insertPhoto(Photo(
-            result.name,
+            element.name,
             widget.user.userId,
             file.path,
             uploadDate,
@@ -367,7 +466,13 @@ class GalleryViewState extends State<GalleryView> {
             null));
         await OfflineDatabaseHelper.instance
             .insertOffline({'type': "image", 'action': "add", 'id': file.path});
+        widget.photos.add(Photo("", "", file.path, "", "", ""));
       }
+      setState(() {
+        photosLoaded = false;
+        loading = false;
+        errorMessage = error;
+      });
     }
   }
 
@@ -412,6 +517,19 @@ class GalleryViewState extends State<GalleryView> {
         ),
       ),
     );
+  }
+
+  Widget showLoading() {
+    //displays a loading bar if data is being downloaded
+    return loading
+        ? Padding(
+            padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
+            child: LinearProgressIndicator(
+              backgroundColor: AggressorColors.primaryColor,
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ),
+          )
+        : Container();
   }
 
   Future<bool> poppingPage() {

@@ -707,9 +707,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             for (var content in response.contents) {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
-                if (!tempGalleries.containsKey(element.charterId)) {
-                  tempGalleries[element.charterId] = Gallery(
-                      widget.user, element.charterId, <Photo>[], element);
+                if (!tempGalleries.containsKey(element.reservationId)) {
+                  tempGalleries[element.reservationId] = Gallery(
+                      widget.user, element.reservationId, <Photo>[], element);
                 }
                 if (!await photoHelper.keyExists(elementJson["Key"])) {
                   StreamedResponse downloadResponse = await AggressorApi()
