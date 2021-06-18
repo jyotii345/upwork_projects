@@ -64,8 +64,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
           return Stack(
             children: [
               getBackgroundImage(),
+              getWhiteOverlay(),
               getPageForm(),
-              getSliderImages(),
             ],
           );
         },
@@ -77,39 +77,42 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   Self implemented
    */
 
-  Widget getPageForm() {
-    //returns the listview containing the content of the page
+  Widget getWhiteOverlay() {
+    //returns a white background on the application
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: ListView(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 6,
+      ),
+    );
+  }
+
+  Widget getPageForm() {
+    //returns the listview containing the content of the page
+    return Container(
+      child: ListView(
+        children: [
+          getSliderImages(),
+          showOffline(),
+          getPageTitle(),
+          getUserRow(),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Divider(
+              height: 2,
+              color: Colors.grey[400],
             ),
-            showOffline(),
-            getPageTitle(),
-            getUserRow(),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Divider(
-                height: 2,
-                color: Colors.grey[400],
-              ),
+          ),
+          getProgressSection(),
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Divider(
+              height: 2,
+              color: Colors.grey[400],
             ),
-            getProgressSection(),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Divider(
-                height: 2,
-                color: Colors.grey[400],
-              ),
-            ),
-            getBadgeSection(),
-          ],
-        ),
+          ),
+          getBadgeSection(),
+        ],
       ),
     );
   }
@@ -130,7 +133,10 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                 Text(
                   "My Certifications",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: AggressorColors.primaryColor, fontSize: MediaQuery.of(context).size.width / 27),
+                  style: TextStyle(
+                      color: AggressorColors.primaryColor,
+                      fontSize: MediaQuery.of(context).size.width / 27,
+                      fontWeight: FontWeight.bold),
                 ),
                 getCertificationListView(),
                 Padding(
@@ -163,35 +169,38 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               children: [
                 Text(
                   "Club Membership",
-                  style: TextStyle(color: AggressorColors.primaryColor,  fontSize: MediaQuery.of(context).size.width / 27),
+                  style: TextStyle(
+                      color: AggressorColors.primaryColor,
+                      fontSize: MediaQuery.of(context).size.width / 27,
+                      fontWeight: FontWeight.bold),
                 ),
                 contact.vip == null
                     ? Container()
                     : Image.asset(
                         "assets/vipclub.png",
-                        height: MediaQuery.of(context).size.width / 5,
-                        width: MediaQuery.of(context).size.width / 4,
+                        height: MediaQuery.of(context).size.width / 10,
+                        width: MediaQuery.of(context).size.width / 9,
                       ),
                 contact.vipPlus == null
                     ? Container()
                     : Image.asset(
                         "assets/vipplusclub.png",
-                        height: MediaQuery.of(context).size.width / 5,
-                        width: MediaQuery.of(context).size.width / 4,
+                        height: MediaQuery.of(context).size.width / 10,
+                        width: MediaQuery.of(context).size.width / 9,
                       ),
                 contact.sevenSeas == null
                     ? Container()
                     : Image.asset(
                         "assets/sevenseasclub.png",
-                        height: MediaQuery.of(context).size.width / 5,
-                        width: MediaQuery.of(context).size.width / 4,
-                      ), //TODO replace with seven seas logo
+                        height: MediaQuery.of(context).size.width / 10,
+                        width: MediaQuery.of(context).size.width / 9,
+                      ),
                 contact.adventuresClub == null
                     ? Container()
                     : Image.asset(
                         "assets/adventureclub.png",
-                        height: MediaQuery.of(context).size.width / 5,
-                        width: MediaQuery.of(context).size.width / 4,
+                        height: MediaQuery.of(context).size.width / 10,
+                        width: MediaQuery.of(context).size.width / 9,
                       ),
               ],
             ),
@@ -204,7 +213,10 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                 Text(
                   "Iron Diver Awards",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: AggressorColors.primaryColor, fontSize: MediaQuery.of(context).size.width / 27),
+                  style: TextStyle(
+                      color: AggressorColors.primaryColor,
+                      fontSize: MediaQuery.of(context).size.width / 27,
+                      fontWeight: FontWeight.bold),
                 ),
                 getIronDiverListView(),
                 Padding(
@@ -239,6 +251,91 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   VoidCallback refreshState() {
     setState(() {});
+  }
+
+  void showBoutiqueDialogue() {
+    //shows a dialogue showing what the boutique points are fod
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+              contentPadding: EdgeInsets.all(5),
+              title: new Text(
+                'Aggressor Boutique Points',
+                style: TextStyle(color: AggressorColors.secondaryColor,),
+                textAlign: TextAlign.center,
+              ),
+              content: Container(
+                width: double.maxFinite,
+                child: ListView(shrinkWrap: true,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 30, 5, 5),
+                      child:RichText(
+                      text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: const <TextSpan>[
+                          TextSpan(
+                              text: 'Ways to earn boutique points: ',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          TextSpan(
+                            text:
+                            ' You earn 400 points for making a Reservation & Deposit, 100 for completing Guest Surveys after each adventure, and 100 as a Birthday gift.One point is equivalent to \$.05. Example: 100 points equal \$5. Points do not expire, however, redeemed points do.\n',
+                          ),
+                        ],
+                      ),),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 5, 5, 5),
+                      child: RichText(
+                        text: TextSpan(
+                          style: DefaultTextStyle.of(context).style,
+                          children: const <TextSpan>[
+                            TextSpan(
+                                text: 'FAQ’s\n\n',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text: 'Do redeemed points expire? - ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                              text:
+                                  'Yes, when you redeem points a coupon code is created for use in the Aggressor Boutique. That coupon code will expire 2 years from the day it is created. You can see unused coupon codes by clicking the “View Past Coupons” button the “Redeem Points” page.\n\n',
+                            ),
+                            TextSpan(
+                                text: 'Can I combine my coupons? - ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                              text:
+                                  'Yes, you can type in multiple coupon codes at check out.\n\n',
+                            ),
+                            TextSpan(
+                                text:
+                                    'Can I use my coupon on sale items and/or with other discounts & specials? - ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                              text: 'Yes\n\n',
+                            ),
+                            TextSpan(
+                                text: 'Are there any restrictions? - ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                              text:
+                                  'Yes, coupons can only be redeemed on items from the Aggressor Boutique. They can not be used for Aggressor Adventure trips, travel or merchandise at our destination stores.',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                new TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: new Text('Continue')),
+              ],
+            ));
   }
 
   Widget getProgressSection() {
@@ -324,117 +421,134 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ? MediaQuery.of(context).size.width / 4
         : MediaQuery.of(context).size.width / 5;
     return Padding(
-      padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            height: sectionHeight,
-            width: sectionWidth,
-            child: Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Image.asset(
-                "assets/noprofile.png",
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              height: sectionHeight,
+              width: sectionWidth,
+              child: Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: Image.asset(
+                  "assets/noprofile.png",
+                ),
               ),
             ),
-          ),
-          Container(
-            height: sectionHeight,
-            width: sectionWidth,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  contact.nameF +
-                      " " +
-                      contact.nameM +
-                      " " +
-                      contact.nameL +
-                      ", " +
-                      profileData["state"] +
-                      "\nGuest since " +
-                      contact.memberSince +
-                      "\nTotal Adventures - " +
-                      tripList.length.toString(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: sectionHeight / 8.5),
-                ),
-                Flexible(
-                  child: TextButton(
-                    onPressed: () {
-                      online ? openEditProfile() : openProfileView();
-                    },
-                    style: TextButton.styleFrom(
-                        backgroundColor: AggressorColors.secondaryColor),
-                    child: AutoSizeText(
-                      "Update My Profile",
-                      maxLines: 1,
-                      style: TextStyle(color: Colors.white),
-                    ),
+            Container(
+              height: sectionHeight,
+              width: sectionWidth,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    contact.nameF +
+                        " " +
+                        contact.nameM +
+                        " " +
+                        contact.nameL +
+                        ", " +
+                        profileData["state"] +
+                        "\nGuest since " +
+                        contact.memberSince +
+                        "\nTotal Adventures - " +
+                        tripList.length.toString(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: sectionHeight / 8.5,
+                        fontWeight: FontWeight.bold),
                   ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            height: sectionHeight,
-            width: sectionWidth,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      "Boutique Points",
-                      maxLines: 1,
-                      style: TextStyle(color: AggressorColors.primaryColor, fontSize: sectionHeight / 8),
-                    ),
-                    Container(
-                      height: sectionHeight / 6,
-                      width: sectionHeight / 6,
+                  Flexible(
+                    child: Container(
+                      width: double.infinity,
                       child: TextButton(
                         onPressed: () {
-                          print("pressed");
+                          online ? openEditProfile() : openProfileView();
                         },
                         style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size(sectionHeight / 6, sectionHeight / 6),
-                        ),
-                        child: Image.asset(
-                          "assets/redquestion.png",
-                          height: 10,
-                          width: 10,
+                            backgroundColor: AggressorColors.secondaryColor),
+                        child: AutoSizeText(
+                          "Update My Profile",
+                          maxLines: 1,
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ),
-                  ],
-                ),
-                Text(
-                  contact.boutiquePoints,
-                  maxLines: 1,
-                  style: TextStyle(fontSize: sectionHeight / 5),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: TextButton(
-                    onPressed: () {
-                      launchRedeem();
-                    },
-                    style: TextButton.styleFrom(
-                        backgroundColor: AggressorColors.secondaryColor),
-                    child: AutoSizeText(
-                      "REDEEM NOW >",
-                      maxLines: 1,
-                      style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: sectionHeight,
+              width: sectionWidth,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Text(
+                        "Boutique Points",
+                        maxLines: 1,
+                        style: TextStyle(
+                            color: AggressorColors.primaryColor,
+                            fontSize: sectionHeight / 8,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Container(
+                        height: sectionHeight / 6,
+                        width: sectionHeight / 6,
+                        child: TextButton(
+                          onPressed: () {
+                            showBoutiqueDialogue();
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize:
+                                Size(sectionHeight / 6, sectionHeight / 6),
+                          ),
+                          child: Image.asset(
+                            "assets/redquestion.png",
+                            height: 10,
+                            width: 10,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    contact.boutiquePoints,
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontSize: sectionHeight / 5,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () {
+                          launchRedeem();
+                        },
+                        style: TextButton.styleFrom(
+                            backgroundColor: AggressorColors.secondaryColor),
+                        child: AutoSizeText(
+                          "REDEEM NOW >",
+                          maxLines: 1,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -496,7 +610,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
       children: [
         Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height / 6,
+          height: portrait
+              ? MediaQuery.of(context).size.height / 6
+              : MediaQuery.of(context).size.width / 5,
           child: Image.file(
             File(sliderImageList[sliderIndex]["filePath"]),
             fit: BoxFit.fill,
@@ -504,7 +620,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ),
         Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height / 6 ,
+          height: portrait
+              ? MediaQuery.of(context).size.height / 6
+              : MediaQuery.of(context).size.width / 5,
           child: Align(
             alignment: Alignment.centerRight,
             child: TextButton(
@@ -522,14 +640,18 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               child: Icon(
                 Icons.chevron_right,
                 color: Colors.white70,
-                size: portrait?  MediaQuery.of(context).size.width / 7.5 :  MediaQuery.of(context).size.height / 7.5,
+                size: portrait
+                    ? MediaQuery.of(context).size.width / 7.5
+                    : MediaQuery.of(context).size.height / 7.5,
               ),
             ),
           ),
         ),
         Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height / 6,
+          height: portrait
+              ? MediaQuery.of(context).size.height / 6
+              : MediaQuery.of(context).size.width / 5,
           child: Align(
             alignment: Alignment.centerLeft,
             child: TextButton(
@@ -547,7 +669,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               child: Icon(
                 Icons.chevron_left,
                 color: Colors.white70,
-                size: portrait?  MediaQuery.of(context).size.width / 7.5 :  MediaQuery.of(context).size.height / 7.5,
+                size: portrait
+                    ? MediaQuery.of(context).size.width / 7.5
+                    : MediaQuery.of(context).size.height / 7.5,
               ),
             ),
           ),
@@ -579,15 +703,17 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     children: [
                       Image.asset(
                         "assets/certification.png",
-
-                        height:MediaQuery.of(context).size.width / 15 ,
-                        width: MediaQuery.of(context).size.width / 15 ,
+                        height: MediaQuery.of(context).size.width / 15,
+                        width: MediaQuery.of(context).size.width / 15,
                       ),
                       Flexible(
                           child: Padding(
                         padding: const EdgeInsets.all(2.0),
-                        child:
-                            Text(certificationList[position]["certification"], style: TextStyle(fontSize: MediaQuery.of(context).size.width / 25),),
+                        child: Text(
+                          certificationList[position]["certification"],
+                          style: TextStyle(
+                              fontSize: MediaQuery.of(context).size.width / 25),
+                        ),
                       ))
                     ],
                   ),
@@ -639,10 +765,15 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                     children: [
                       Image.asset(
                         "assets/irondiver.png",
-                        height:MediaQuery.of(context).size.width / 15 ,
-                        width: MediaQuery.of(context).size.width / 15 ,
+                        height: MediaQuery.of(context).size.width / 15,
+                        width: MediaQuery.of(context).size.width / 15,
                       ),
-                      Flexible(child: Text(ironDiverList[position]["name"], style: TextStyle(fontSize: MediaQuery.of(context).size.width / 25),))
+                      Flexible(
+                          child: Text(
+                        ironDiverList[position]["name"],
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.width / 25),
+                      ))
                     ],
                   ),
                   secondaryActions: <Widget>[
@@ -677,17 +808,20 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   Widget getPageTitle() {
     //returns the title of the page
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: Text(
-          "My Rewards",
-          style: TextStyle(
-              color: AggressorColors.primaryColor,
-              fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 25
-                  : MediaQuery.of(context).size.width / 25,
-              fontWeight: FontWeight.bold),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+            "My Rewards",
+            style: TextStyle(
+                color: AggressorColors.primaryColor,
+                fontSize: portrait
+                    ? MediaQuery.of(context).size.height / 25
+                    : MediaQuery.of(context).size.width / 25,
+                fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
@@ -699,8 +833,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
       setState(() {
         loading = true;
       });
-    } catch (e) {
-    }
+    } catch (e) {}
 
     if (!certificateLoaded && online) {
       List<dynamic> tempList =
@@ -714,8 +847,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
       setState(() {
         loading = false;
       });
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   void updateCertificationCache() async {
@@ -724,8 +856,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         CertificateDatabaseHelper.instance;
     try {
       await certificateDatabaseHelper.deleteCertificateTable();
-    } catch (e) {
-    }
+    } catch (e) {}
 
     for (var certification in certificationList) {
       await certificateDatabaseHelper.insertCertificate(
@@ -739,8 +870,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
       setState(() {
         loading = true;
       });
-    } catch (e) {
-    }
+    } catch (e) {}
     if (!ironDiversLoaded && online) {
       List<dynamic> tempList =
           await AggressorApi().getIronDiverList(widget.user.userId);
@@ -753,8 +883,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
       setState(() {
         loading = false;
       });
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   void updateIronDiversCache() async {
@@ -763,8 +892,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         IronDiverDatabaseHelper.instance;
     try {
       await ironDiverDatabaseHelper.deleteIronDiverTable();
-    } catch (e) {
-    }
+    } catch (e) {}
 
     for (var ironDiver in ironDiverList) {
       await ironDiverDatabaseHelper.insertIronDiver(
@@ -804,8 +932,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ContactDatabaseHelper.instance;
     try {
       await contactDatabaseHelper.deleteContactTable();
-    } catch (e) {
-    }
+    } catch (e) {}
 
     await contactDatabaseHelper.insertContact(
         response["contactid"],
@@ -849,14 +976,17 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
     //displays offline when the application does not have internet connection
     return online
         ? Container()
-        : Container(
-            color: Colors.red,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
-              child: Text(
-                "Application is offline",
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.center,
+        : Padding(
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+            child: Container(
+              color: Colors.red,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+                child: Text(
+                  "Application is offline",
+                  style: TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
           );
@@ -881,8 +1011,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
           }
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   @override

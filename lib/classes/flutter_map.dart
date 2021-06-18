@@ -8,6 +8,8 @@ import 'package:flutter_map/flutter_map.dart';
 import "package:latlong2/latlong.dart";
 import 'package:cached_network_image/cached_network_image.dart';
 
+import 'globals_user_interface.dart';
+
 class FlutterMapWidget {
   BuildContext context;
 
@@ -24,7 +26,7 @@ class FlutterMapWidget {
     try {
       return SizedBox(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height / 5.5,
+        height: portrait ? MediaQuery.of(context).size.height / 5.5 : MediaQuery.of(context).size.width / 4.5,
         child: FlutterMap(
           options: new MapOptions(
             interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,

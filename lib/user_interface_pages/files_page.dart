@@ -571,6 +571,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           prefix: widget.user.userId + "/config/files/nameMaps/",
           delimiter: "/");
       for (var value in mapsList.contents) {
+        print(value);
         try {
           if (double.parse(value.size) > 0) {
             var mapResult = await AggressorApi().downloadAwsFile(value.key);

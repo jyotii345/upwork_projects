@@ -70,7 +70,6 @@ class MyTripsState extends State<MyTrips>
 /*
   self implemented
    */
-
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
     flutterMapWidget = FlutterMapWidget(context);
