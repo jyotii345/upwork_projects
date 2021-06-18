@@ -298,7 +298,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             TextSpan(
                               text:
-                                  'Yes, when you redeem points a coupon code is created for use in the Aggressor Boutique. That coupon code will expire 2 years from the day it is created. You can see unused coupon codes by clicking the “View Past Coupons” button the “Redeem Points” page.\n\n',
+                                  'Yes, when you redeem points a coupon code is created for use in the Aggressor Boutique. That coupon code will expire 2 years from the day it is created. You can see unused coupon codes by clicking the “View Past Coupons” button on the “Redeem Points” page.\n\n',
                             ),
                             TextSpan(
                                 text: 'Can I combine my coupons? - ',
