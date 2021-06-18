@@ -590,6 +590,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 .replaceAll("}", "")
                 .split(",");
             mapRaw.forEach((element) {
+              print(element);
               if (element
                           .split(':')[0]
                           .toString()
@@ -717,12 +718,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       tempFiles = await fileHelper.queryFile();
 
       for (var element in tempFiles) {
-        print(element.toMap());
-        print(element.displayName == "");
-        print(fileDisplayNames.containsKey(element.fileName));
+
         if ((element.displayName == "" || element.displayName == null) &&
             fileDisplayNames.containsKey(element.fileName)) {
-          print("setting display for: " + element.toString());
           element.setDisplayName(fileDisplayNames[element.fileName]);
           await FileDatabaseHelper.instance.deleteFile(element.fileName);
           await FileDatabaseHelper.instance.insertFile(element);
