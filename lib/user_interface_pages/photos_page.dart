@@ -133,7 +133,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     //returns a drop down of all yachts that an adventure is associated with
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -206,7 +206,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     //returns a drop down of all dates when a trip is on a particular yacht
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -309,29 +309,32 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Widget getUploadPhotosButton() {
     //returns the button to create a new gallery
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: portrait
-              ? MediaQuery.of(context).size.height / 6
-              : MediaQuery.of(context).size.width / 6,
-        ),
-        Container(
-          width: portrait
-              ? MediaQuery.of(context).size.height / 4
-              : MediaQuery.of(context).size.width / 2.5,
-          child: TextButton(
-            onPressed: loadAssets,
-            child: Text(
-              "Upload Photos",
-              style: TextStyle(color: Colors.white),
-            ),
-            style: TextButton.styleFrom(
-                backgroundColor: AggressorColors.secondaryColor),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0,15,0,0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
           ),
-        ),
-      ],
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            child: TextButton(
+              onPressed: loadAssets,
+              child: Text(
+                "Upload Photos",
+                style: TextStyle(color: Colors.white),
+              ),
+              style: TextButton.styleFrom(
+                  backgroundColor: AggressorColors.secondaryColor),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -465,12 +468,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "CREATE NEW GALLERY",
+            "Create new gallery",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
                 fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 35
-                    : MediaQuery.of(context).size.width / 35,
+                    ? MediaQuery.of(context).size.height / 40
+                    : MediaQuery.of(context).size.width / 40,
                 fontWeight: FontWeight.bold),
           ),
           getYachtDropDown(boatList),
@@ -489,12 +492,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "MY GALLERIES",
+            "My galleries",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
                 fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 35
-                    : MediaQuery.of(context).size.width / 35,
+                    ? MediaQuery.of(context).size.height / 40
+                    : MediaQuery.of(context).size.width / 40,
                 fontWeight: FontWeight.bold),
           ),
           getGalleriesSection(),
@@ -522,7 +525,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                     color: Colors.grey,
                   ),
                   Container(
-                    color: Colors.grey[300],
+                    color: AggressorColors.accentYellow,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
@@ -566,7 +569,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     galleriesList.add(
       Container(
         width: double.infinity,
-        color: Colors.grey[100],
+        color: AggressorColors.accentYellow,
         child: Column(
           children: [
             Container(
@@ -580,7 +583,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 Expanded(
                   child: SizedBox(
                     width: textBoxSize,
-                    child: Text("Adventure:", textAlign: TextAlign.left),
+                    child: Text("Adventure", textAlign: TextAlign.left),
                   ),
                 ),
                 SizedBox(

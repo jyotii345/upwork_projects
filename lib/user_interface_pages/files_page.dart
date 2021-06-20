@@ -132,12 +132,12 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              "UPLOAD FILE",
+              "Upload file",
               style: TextStyle(
                   color: AggressorColors.secondaryColor,
                   fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 35
-                      : MediaQuery.of(context).size.width / 35,
+                      ? MediaQuery.of(context).size.height / 40
+                      : MediaQuery.of(context).size.width / 40,
                   fontWeight: FontWeight.bold),
             ),
           ),
@@ -159,7 +159,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     });
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -250,7 +250,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   Widget getFileInformation() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -299,7 +299,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   Widget getFileName() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -350,29 +350,32 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getUploadFileButton() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: portrait
-              ? MediaQuery.of(context).size.height / 6
-              : MediaQuery.of(context).size.width / 6,
-        ),
-        Container(
-          width: portrait
-              ? MediaQuery.of(context).size.height / 4
-              : MediaQuery.of(context).size.width / 2.5,
-          child: TextButton(
-            onPressed: uploadFile,
-            child: Text(
-              uploading ? "Uploading, please wait..." : "Upload File",
-              style: TextStyle(color: Colors.white),
-            ),
-            style: TextButton.styleFrom(
-                backgroundColor: AggressorColors.secondaryColor),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0,15,0,0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
           ),
-        ),
-      ],
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            child: TextButton(
+              onPressed: uploadFile,
+              child: Text(
+                uploading ? "Uploading, please wait..." : "Upload File",
+                style: TextStyle(color: Colors.white),
+              ),
+              style: TextButton.styleFrom(
+                  backgroundColor: AggressorColors.secondaryColor),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -459,7 +462,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                       color: Colors.grey,
                     ),
                     Container(
-                      color: Colors.grey[300],
+                      color: AggressorColors.accentYellow,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         mainAxisSize: MainAxisSize.max,
@@ -467,7 +470,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                           Expanded(
                             child: SizedBox(
                               width: textBoxSize,
-                              child: Text("File Name ",
+                              child: Text("File Name",
                                   textAlign: TextAlign.center),
                             ),
                           ),
@@ -501,7 +504,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     filesList.add(
       Container(
         width: double.infinity,
-        color: Colors.grey[100],
+        color: AggressorColors.accentYellow,
         child: Column(
           children: [
             Container(
@@ -570,8 +573,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       var mapsList = await s3client.listObjects(
           prefix: widget.user.userId + "/config/files/nameMaps/",
           delimiter: "/");
-      for (var value in mapsList.contents) {
-        print(value);
+      for (var value in mapsList.contents){
         try {
           if (double.parse(value.size) > 0) {
             var mapResult = await AggressorApi().downloadAwsFile(value.key);

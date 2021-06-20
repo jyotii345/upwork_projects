@@ -90,29 +90,32 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   Widget getPageForm() {
     //returns the listview containing the content of the page
     return Container(
-      child: ListView(
-        children: [
-          getSliderImages(),
-          showOffline(),
-          getPageTitle(),
-          getUserRow(),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Divider(
-              height: 2,
-              color: Colors.grey[400],
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0.0, 0, 0, 10),
+        child: ListView(
+          children: [
+            getSliderImages(),
+            showOffline(),
+            getPageTitle(),
+            getUserRow(),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Divider(
+                height: 2,
+                color: Colors.grey[400],
+              ),
             ),
-          ),
-          getProgressSection(),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Divider(
-              height: 2,
-              color: Colors.grey[400],
+            getProgressSection(),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Divider(
+                height: 2,
+                color: Colors.grey[400],
+              ),
             ),
-          ),
-          getBadgeSection(),
-        ],
+            getBadgeSection(),
+          ],
+        ),
       ),
     );
   }
@@ -120,7 +123,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   Widget getBadgeSection() {
     //returns the bottom section containing the lists of badges and awards the user has earned
     return Padding(
-      padding: const EdgeInsets.all(5.0),
+      padding: const EdgeInsets.fromLTRB(15.0, 5, 15.0, 0.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,6 +172,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               children: [
                 Text(
                   "Club Membership",
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                       color: AggressorColors.primaryColor,
                       fontSize: MediaQuery.of(context).size.width / 27,
@@ -352,60 +356,72 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+            padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
             child: Text(
               "VIP Progress Bar",
               style: TextStyle(fontSize: barTextSize),
             ),
           ),
-          LinearPercentIndicator(
-            percent: contact.vipCount == null
-                ? 0
-                : (double.parse(contact.vipCount) * 6.67) / 100,
-            progressColor: Colors.green,
-            lineHeight: barHeight,
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: LinearPercentIndicator(
+              percent: contact.vipCount == null
+                  ? 0
+                  : (double.parse(contact.vipCount) * 6.67) / 100,
+              progressColor: Colors.green,
+              lineHeight: barHeight,
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+            padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
             child: Text(
               "VIPplus Progress Bar",
               style: TextStyle(fontSize: barTextSize),
             ),
           ),
-          LinearPercentIndicator(
-            percent: contact.vipPlusCount == null
-                ? 0
-                : (double.parse(contact.vipPlusCount) * 4.0) / 100,
-            progressColor: Colors.green,
-            lineHeight: barHeight,
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: LinearPercentIndicator(
+              percent: contact.vipPlusCount == null
+                  ? 0
+                  : (double.parse(contact.vipPlusCount) * 4.0) / 100,
+              progressColor: Colors.green,
+              lineHeight: barHeight,
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+            padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
             child: Text(
               "Seven Seas Progress Bar",
               style: TextStyle(fontSize: barTextSize),
             ),
           ),
-          LinearPercentIndicator(
-            percent: contact.sevenSeasCount == null
-                ? 0
-                : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
-            progressColor: Colors.green,
-            lineHeight: barHeight,
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: LinearPercentIndicator(
+              percent: contact.sevenSeasCount == null
+                  ? 0
+                  : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
+              progressColor: Colors.green,
+              lineHeight: barHeight,
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+            padding: const EdgeInsets.fromLTRB(5, 10, 5, 5),
             child: Text(
               "Adventurer Progress Bar",
               style: TextStyle(fontSize: barTextSize),
             ),
           ),
-          LinearPercentIndicator(
-            percent: contact.aaCount == null
-                ? 0
-                : (double.parse(contact.aaCount) * 33.34) / 100,
-            progressColor: Colors.green,
-            lineHeight: barHeight,
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: LinearPercentIndicator(
+              percent: contact.aaCount == null
+                  ? 0
+                  : (double.parse(contact.aaCount) * 33.34) / 100,
+              progressColor: Colors.green,
+              lineHeight: barHeight,
+            ),
           ),
         ],
       ),
@@ -421,9 +437,9 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         ? MediaQuery.of(context).size.width / 4
         : MediaQuery.of(context).size.width / 5;
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

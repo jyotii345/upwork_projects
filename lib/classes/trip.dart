@@ -416,7 +416,7 @@ class Trip {
                         ),
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.yellow[200],
+                            color: AggressorColors.accentYellow,
                             border: Border(
                               top: BorderSide(width: 1.0, color: Colors.grey),
                               left: BorderSide(width: 1.0, color: Colors.grey),

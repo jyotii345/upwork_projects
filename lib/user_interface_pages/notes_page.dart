@@ -130,12 +130,12 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "ADD A NEW NOTE",
+            "Add a new note",
             style: TextStyle(
                 color: AggressorColors.secondaryColor,
                 fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 35
-                    : MediaQuery.of(context).size.width / 35,
+                    ? MediaQuery.of(context).size.height / 40
+                    : MediaQuery.of(context).size.width / 40,
                 fontWeight: FontWeight.bold),
           ),
           getYachtDropDown(boatList),
@@ -149,7 +149,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget getYachtDropDown(List<Map<String, dynamic>> boatList) {
     //returns the drop down of yachts associated with the users trips
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -221,7 +221,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget getDateDropDown() {
     //returns the drop down of the dates associated with a specific yachts trips with the user
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -333,44 +333,47 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
   Widget getCreateNoteButton() {
     //returns the button to create the note as it is
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: portrait
-              ? MediaQuery.of(context).size.height / 6
-              : MediaQuery.of(context).size.width / 6,
-        ),
-        Container(
-          width: portrait
-              ? MediaQuery.of(context).size.height / 4
-              : MediaQuery.of(context).size.width / 2.5,
-          child: TextButton(
-            onPressed: () {
-              if (dateDropDownValue.charter != null) {
-                if (dateDropDownValue.charter.startDate != "") {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddNotes(
-                        widget.user,
-                        dateDropDownValue,
-                        notesCallBack,
-                      ),
-                    ),
-                  );
-                }
-              }
-            },
-            child: Text(
-              "Create note",
-              style: TextStyle(color: Colors.white),
-            ),
-            style: TextButton.styleFrom(
-                backgroundColor: AggressorColors.secondaryColor),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0,15,0,0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 6
+                : MediaQuery.of(context).size.width / 6,
           ),
-        ),
-      ],
+          Container(
+            width: portrait
+                ? MediaQuery.of(context).size.height / 4
+                : MediaQuery.of(context).size.width / 2.5,
+            child: TextButton(
+              onPressed: () {
+                if (dateDropDownValue.charter != null) {
+                  if (dateDropDownValue.charter.startDate != "") {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddNotes(
+                          widget.user,
+                          dateDropDownValue,
+                          notesCallBack,
+                        ),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: Text(
+                "Create Note",
+                style: TextStyle(color: Colors.white),
+              ),
+              style: TextButton.styleFrom(
+                  backgroundColor: AggressorColors.secondaryColor),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -441,7 +444,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                     color: Colors.grey,
                   ),
                   Container(
-                    color: Colors.grey[300],
+                    color: AggressorColors.accentYellow,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.max,
@@ -484,7 +487,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     noteList.add(
       Container(
         width: double.infinity,
-        color: Colors.grey[100],
+        color: AggressorColors.accentYellow,
         child: Column(
           children: [
             Container(

@@ -118,7 +118,7 @@ class MyTripsState extends State<MyTrips>
                       color: Colors.grey,
                     ),
                     Container(
-                      color: Colors.grey[300],
+                      color: AggressorColors.accentYellow,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
@@ -193,7 +193,7 @@ class MyTripsState extends State<MyTrips>
     pastTripsList.add(
       Container(
         width: double.infinity,
-        color: Colors.grey[100],
+        color: AggressorColors.accentYellow,
         child: Column(
           children: [
             Container(
