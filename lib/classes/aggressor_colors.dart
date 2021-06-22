@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class AggressorColors{
   static MaterialColor primaryColor = MaterialColor(0xFFc78f26  , primaryColorMap);
   static MaterialColor secondaryColor = MaterialColor(0xff428cc7 , secondaryColorMap);
-  static MaterialColor accentYellow = MaterialColor(0xfcf6e7  , accentYellowMap);
+  static MaterialColor accentYellow = MaterialColor(0xFFfcf6e7  , accentYellowMap);
 
   static Map<int, Color> primaryColorMap = {
     50: Color.fromRGBO(199, 143, 38, .1),
