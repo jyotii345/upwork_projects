@@ -576,14 +576,17 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       for (var value in mapsList.contents){
         try {
           if (double.parse(value.size) > 0) {
+            print("generating names map");
             var mapResult = await AggressorApi().downloadAwsFile(value.key);
             var bytes = await readByteStream(mapResult.stream);
             var dirData = await getApplicationDocumentsDirectory();
+            print(dirData);
             String path = dirData
                     .toString()
                     .replaceAll("'", "")
                     .replaceAll("Directory: ", "") +
                 "/FileDisplayNames.txt";
+            print(path);
             File mapsFile = File(path);
             await mapsFile.writeAsBytes(bytes);
             var mapRaw = mapsFile
@@ -714,7 +717,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           }
         }
       } catch (e) {
-        print(e.toString());
       }
 
       tempFiles = await fileHelper.queryFile();
@@ -856,6 +858,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       });
     }
 
+
     updateDisplayNameStorage();
     setState(() {
       fileNameController.clear();
@@ -874,9 +877,13 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         accessKey: "AKIA43MMI6CI2KP4CUUY",
         secretKey: "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");
 
-    String dataDir = (await getApplicationDocumentsDirectory()).path;
+    String dataDir = (
+        await getApplicationDocumentsDirectory()).path;
     File displayNameFile = File(dataDir + "/FileDisplayNames.txt");
-    await displayNameFile.writeAsString(fileDisplayNames.toString());
+    print("Writing: " + fileDisplayNames.toString());
+    print("To: $dataDir");
+    displayNameFile = await displayNameFile.writeAsString(fileDisplayNames.toString());
+
 
     var mapsList = await s3client.listObjects(
         prefix: widget.user.userId + "/config/files/nameMaps/", delimiter: "/");
@@ -894,6 +901,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     } catch (e) {
       print("no config files yet");
     }
+    print(displayNameFile.path);
+    print(displayNameFile.readAsStringSync());
     var uploading = await AggressorApi().uploadAwsFile(widget.user.userId,
         "config", "files", displayNameFile.path, "nameMaps");
   }
