@@ -30,7 +30,6 @@ class FlutterMapWidget {
         child: FlutterMap(
           options: new MapOptions(
             interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
-            //TODO follow offline guide to cache world tiles
             minZoom: 0,
             zoom: 1.0,
             bounds: LatLngBounds(LatLng(-80.0, -180.0), LatLng(80.0, 180.0)),

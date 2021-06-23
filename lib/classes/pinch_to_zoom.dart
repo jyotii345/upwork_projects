@@ -69,8 +69,6 @@ class PinchToZoomState extends State<PinchToZoom>
 
   void _onInteractionStart(ScaleStartDetails details) {
     //cancels the reset if a user clicks again
-    print("user trying to zoom");
-    print("controller value:" + controllerReset.status.toString());
     if (controllerReset.status == AnimationStatus.forward) {
       _animateResetStop();
     }

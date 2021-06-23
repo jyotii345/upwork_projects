@@ -22,10 +22,15 @@ class Gallery {
   String boatId;
   List<Photo> photos;
   Trip trip;
-  VoidCallback deleteCallback = (){};
+  VoidCallback deleteCallback = () {};
   List<VoidCallback> callBackList;
 
-  Gallery(User user, String boatId, List<Photo> photos, Trip trip,) {
+  Gallery(
+    User user,
+    String boatId,
+    List<Photo> photos,
+    Trip trip,
+  ) {
     //default constructor
     this.user = user;
     this.boatId = boatId;
@@ -52,7 +57,20 @@ class Gallery {
     //creates a gallery row to be displayed on the photos page
     double textBoxSize = MediaQuery.of(context).size.width / 4;
 
-    List<String> months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    List<String> months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
 
     return Column(
       children: [
@@ -70,7 +88,9 @@ class Gallery {
                 child: SizedBox(
                   width: textBoxSize,
                   child: GestureDetector(
-                    onTap : (){openGalleryView(context);},
+                    onTap: () {
+                      openGalleryView(context);
+                    },
                     child: Text(
                       trip.boat.name,
                       textAlign: TextAlign.left,
@@ -82,30 +102,44 @@ class Gallery {
               SizedBox(
                 width: textBoxSize,
                 child: Text(
-                  months[DateTime.parse(trip.tripDate).month - 1].substring(0, 3) + " " + DateTime.parse(trip.tripDate).day.toString() + ", " + DateTime.parse(trip.tripDate).year.toString(),
+                  months[DateTime.parse(trip.tripDate).month - 1]
+                          .substring(0, 3) +
+                      " " +
+                      DateTime.parse(trip.tripDate).day.toString() +
+                      ", " +
+                      DateTime.parse(trip.tripDate).year.toString(),
                   textAlign: TextAlign.left,
                 ),
               ),
               SizedBox(
                 width: textBoxSize / 2,
                 child: IconButton(
-                    icon: Image.asset("assets/trashcan.png",),
-                    onPressed:(){
+                    icon: Image.asset(
+                      "assets/trashcan.png",
+                    ),
+                    onPressed: () {
                       //shows a success message when the profile is updated successfully
                       showDialog(
                           context: context,
                           builder: (_) => new AlertDialog(
-                            title: new Text('Confirm'),
-                            content: new Text("Are you sure you would like to delete this photo gallery?"),
-                            actions: <Widget>[
-                              TextButton(onPressed: (){Navigator.pop(context);},
-                                  child: new Text('Cancel')),
-                              TextButton(
-                                  onPressed: (){Navigator.pop(context);deleteGallery();},
-                                  child: new Text('Continue')),
-                            ],
-                          ));
-                    } ),
+                                title: new Text('Confirm'),
+                                content: new Text(
+                                    "Are you sure you would like to delete this photo gallery?"),
+                                actions: <Widget>[
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: new Text('Cancel')),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        deleteGallery();
+                                      },
+                                      child: new Text('Continue')),
+                                ],
+                              ));
+                    }),
               ),
             ],
           ),
@@ -114,44 +148,52 @@ class Gallery {
     );
   }
 
-  void openGalleryView(BuildContext context){
+  void openGalleryView(BuildContext context) {
     //open a gallery to view its contents on the gallery view page
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => GalleryView(user, boatId, photos, trip,)));
+            builder: (context) => GalleryView(
+                  user,
+                  boatId,
+                  photos,
+                  trip,
+                ))).then((value) => deleteCallback());
   }
 
-  void deleteGallery() async{
-    if(online){
+  void deleteGallery() async {
+    galleriesMap.remove(trip.reservationId);
+    deleteCallback();
+
+    if (online) {
       for (var value in photos) {
-        var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "gallery", trip.charter.boatId.toString(),formatDate(
-            DateTime.parse(trip.charter.startDate),
-            [yyyy, '-', mm, '-', dd]),value.imageName.toString());
+        var res = await AggressorApi().deleteAwsFile(
+            user.userId.toString(),
+            "gallery",
+            trip.charter.boatId.toString(),
+            formatDate(DateTime.parse(trip.charter.startDate),
+                [yyyy, '-', mm, '-', dd]),
+            value.imageName.toString());
 
         PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
       }
 
-      galleriesMap.remove(this);
       await Future.delayed(Duration(seconds: 1));
       deleteCallback();
       filesLoaded = false;
-    }
-    else{
+    } else {
       for (var value in photos) {
-        await OfflineDatabaseHelper.instance.insertOffline({'type' : 'image', "id": value.imagePath, "action" : "delete"});
+        await OfflineDatabaseHelper.instance.insertOffline(
+            {'type': 'image', "id": value.imagePath, "action": "delete"});
         await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
       }
 
-      galleriesMap.remove(this);
       deleteCallback();
       filesLoaded = false;
     }
-
   }
 
-  void setCallback(VoidCallback callback){
+  void setCallback(VoidCallback callback) {
     this.deleteCallback = callback;
   }
-
 }

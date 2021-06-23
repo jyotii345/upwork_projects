@@ -65,7 +65,6 @@ class PhotoDatabaseHelper {
       where: "imagePath = ?",
       whereArgs: [imagePath],
     );
-    print(res);
   }
 
   Future<void> deletePhotoTable() async {

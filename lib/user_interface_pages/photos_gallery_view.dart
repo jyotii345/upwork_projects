@@ -168,7 +168,6 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   void exportSelection() async {
-    print(await Permission.storage.status);
     if (
         !await Permission.storage.status.isGranted) {
       await Permission.storage.request();
@@ -176,7 +175,6 @@ class GalleryViewState extends State<GalleryView> {
 
     for (var value in selectedList) {
       var res = await ImageGallerySaver.saveImage(File(value.imagePath).readAsBytesSync());
-      print(res.toString());
     }
     setState(() {
       selectedList = [];
@@ -650,13 +648,65 @@ class GalleryViewState extends State<GalleryView> {
                     height: portrait ? iconSizePortrait : iconSizeLandscape,
                     width: portrait ? iconSizePortrait : iconSizeLandscape),
                 onPressed: () {
-                  //TODO implement button function
+                  showDialog(
+                      context: context,
+                      builder: (_) => new AlertDialog(
+                        title: new Text('Confirm'),
+                        content: new Text(
+                            "Are you sure you would like to delete this photo gallery?"),
+                        actions: <Widget>[
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: new Text('Cancel')),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                deleteGallery();
+                              },
+                              child: new Text('Continue')),
+                        ],
+                      ));
                 }),
           ],
         ),
       ),
     );
   }
+
+  void deleteGallery() async {
+    setState(() {
+      galleriesMap.remove(widget.trip.reservationId);
+    });
+    if (online) {
+      for (var value in widget.photos) {
+        var res = await AggressorApi().deleteAwsFile(
+            widget.user.userId.toString(),
+            "gallery",
+            widget.trip.charter.boatId.toString(),
+            formatDate(DateTime.parse(widget.trip.charter.startDate),
+                [yyyy, '-', mm, '-', dd]),
+            value.imageName.toString());
+
+        PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+      }
+      await Future.delayed(Duration(seconds: 1));
+    } else {
+      for (var value in widget.photos) {
+        await OfflineDatabaseHelper.instance.insertOffline(
+            {'type': 'image', "id": value.imagePath, "action": "delete"});
+        await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+      }
+    }
+
+    setState(() {
+      photosLoaded = false;
+    });
+    Navigator.pop(context);
+  }
+
+
 
   Widget showLoading() {
     //displays a loading bar if data is being downloaded

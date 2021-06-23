@@ -106,9 +106,9 @@ class FileData {
   }
 
   void deleteFile() async{
+    fileDataList.remove(this);
     var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), filePath.substring(filePath.lastIndexOf("/") + 1).toString());
     await FileDatabaseHelper.instance.deleteFile(fileName);
-    fileDataList.remove(this);
     await Future.delayed(Duration(seconds: 1));
     callback();
     filesLoaded = false;

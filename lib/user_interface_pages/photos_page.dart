@@ -605,11 +605,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     galleryMap.galleriesMap.forEach((key, value) {
       if (value.photos.length > 0) {
         galleriesList.add(value.getGalleryRow(context, index));
-        galleriesMap[key].setCallback(() {
-          setState(() {
-            photosLoaded = false;
-          });
-        });
+        galleriesMap[key].setCallback(pageCallback);
       }
       index++;
     });
@@ -621,6 +617,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         itemBuilder: (context, position) {
           return galleriesList[position];
         });
+  }
+
+  VoidCallback pageCallback(){
+    setState(() {
+      photosLoaded  =false;
+    });
   }
 
   Widget getBackgroundImage() {
@@ -703,7 +705,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                     "/",
                 delimiter: "/");
           } catch (e) {
-            print(e);
+            print(e.toString());
           }
 
           if (response.contents != null) {

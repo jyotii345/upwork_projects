@@ -158,7 +158,6 @@ class EditMyProfileState extends State<EditMyProfile> {
               .uploadUserImage(widget.user.userId, selectionFile.path);
         }
 
-        print(mobilePhone);
 
         var jsonResponse = await AggressorApi().saveProfileData(
             widget.user.userId,
@@ -177,7 +176,6 @@ class EditMyProfileState extends State<EditMyProfile> {
             homePhone,
             workPhone,
             mobilePhone);
-        print(jsonResponse);
 
         if (jsonResponse["status"] == "success") {
           stateAndCountryLoaded = false;
@@ -216,7 +214,6 @@ class EditMyProfileState extends State<EditMyProfile> {
   Future<dynamic> loadProfileDetails() async {
     //loads the initial value of the users profile data
     var jsonResponse = await AggressorApi().getProfileData(widget.user.userId);
-    print(jsonResponse);
     if (jsonResponse["status"] == "success") {
       setState(() {
         profileData = jsonResponse;

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.aggressor_adventures">
+    package="io.adventure.aggressor_adventures">
 
 
 
@@ -11,7 +11,7 @@
 
        android:requestLegacyExternalStorage="true"
         <activity
-            android:name=".MainActivity"
+            android:name="io.adventure.aggressor_adventures.MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -45,7 +45,7 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-       <meta-data android:name="com.google.android.geo.API_KEY"
+       <meta-data android:name="io.google.android.geo.API_KEY"
            android:value="AIzaSyBQz48190hGCjbVC6iI5yxMjtyUiifG-gI"/>
     </application>
 </manifest>

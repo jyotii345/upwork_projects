@@ -416,7 +416,6 @@ class AggressorApi {
 
     var jsonResponse = await json.decode(await response.stream.bytesToString());
 
-    print(jsonResponse);
     return Map<String, dynamic>.from(jsonResponse);
   }
 
@@ -444,15 +443,12 @@ class AggressorApi {
         boatId +
         "/" +
         date + "/" + fileName.replaceAll("\"", "");
-    print(fileName);
-    print(url);
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
     StreamedResponse pageResponse = await request.send();
 
     var resultJson = json.decode(await pageResponse.stream.bytesToString());
-    print(resultJson);
     return pageResponse;
   }
 
@@ -860,7 +856,6 @@ class AggressorApi {
           zipFile.path,
             "filesDatabase",
         );
-        print(key);
       } catch (e) {
         print(e);
       }
