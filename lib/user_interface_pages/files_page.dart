@@ -365,7 +365,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 ? MediaQuery.of(context).size.height / 4
                 : MediaQuery.of(context).size.width / 2.5,
             child: TextButton(
-              onPressed: uploadFile,
+              onPressed: uploading || !photosLoaded ? (){} :  uploadFile,
               child: Text(
                 uploading ? "Uploading, please wait..." : "Upload File",
                 style: TextStyle(color: Colors.white),

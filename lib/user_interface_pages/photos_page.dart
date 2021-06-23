@@ -49,6 +49,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   bool loading = false;
   List<Trip> dateDropDownList = [];
   Trip dateDropDownValue;
+  bool uploading = false;
 
   /*
   initState
@@ -324,9 +325,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 ? MediaQuery.of(context).size.height / 4
                 : MediaQuery.of(context).size.width / 2.5,
             child: TextButton(
-              onPressed: loadAssets,
+              onPressed: uploading ? (){} : loadAssets,
               child: Text(
-                "Upload Photos",
+                uploading? "Uploading, please wait...": "Upload Photos",
                 style: TextStyle(color: Colors.white),
               ),
               style: TextButton.styleFrom(
@@ -344,6 +345,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     String error = '';
 
     setState(() {
+      uploading = true;
       errorMessage = "";
     });
 
@@ -411,6 +413,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
         setState(() {
           photosLoaded = false;
+          uploading = false;
           loading = false;
           images = resultList;
           errorMessage = error;
@@ -455,6 +458,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
         setState(() {
           loading = false;
+          uploading = false;
         });
       }
     }
@@ -516,7 +520,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
       child: Container(
         color: Colors.white,
-        child: galleryMap.galleriesMap.length == 0
+        child: galleriesMap.length == 0
             ? Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -602,7 +606,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
 
     int index = 0;
-    galleryMap.galleriesMap.forEach((key, value) {
+    galleriesMap.forEach((key, value) {
       if (value.photos.length > 0) {
         galleriesList.add(value.getGalleryRow(context, index));
         galleriesMap[key].setCallback(pageCallback);
@@ -776,7 +780,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       });
 
       setState(() {
-        galleryMap.galleriesMap = tempGalleries;
+        galleriesMap = tempGalleries;
         photosLoaded = true;
         loading = false;
       });

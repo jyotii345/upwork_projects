@@ -149,6 +149,47 @@ class MakePaymentState extends State<MakePayment> {
                       ? MediaQuery.of(context).size.height / 6
                       : MediaQuery.of(context).size.width / 6,
                   child: Text(
+                    "Conf #:",
+                    style: TextStyle(
+                        fontSize: portrait
+                            ? MediaQuery.of(context).size.height / 45
+                            : MediaQuery.of(context).size.width / 45),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    height: portrait
+                        ? MediaQuery.of(context).size.height / 35
+                        : MediaQuery.of(context).size.width / 35,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      ),
+                    ),
+                    child: Text(
+                      widget.trip.reservationId,
+                      style: TextStyle(
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40 - 4
+                              : MediaQuery.of(context).size.width / 40 - 4),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: portrait
+                      ? MediaQuery.of(context).size.height / 6
+                      : MediaQuery.of(context).size.width / 6,
+                  child: Text(
                     "Trip Destination:",
                     style: TextStyle(
                         fontSize: portrait
@@ -242,7 +283,7 @@ class MakePaymentState extends State<MakePayment> {
                       ? MediaQuery.of(context).size.height / 6
                       : MediaQuery.of(context).size.width / 6,
                   child: Text(
-                    "Payment due date:",
+                    "Payment Due Date:",
                     style: TextStyle(
                         fontSize: portrait
                             ? MediaQuery.of(context).size.height / 45
@@ -288,7 +329,7 @@ class MakePaymentState extends State<MakePayment> {
                       ? MediaQuery.of(context).size.height / 6
                       : MediaQuery.of(context).size.width / 6,
                   child: Text(
-                    "Total due:",
+                    "Total Due:",
                     style: TextStyle(
                         fontSize: portrait
                             ? MediaQuery.of(context).size.height / 45
@@ -404,7 +445,7 @@ class MakePaymentState extends State<MakePayment> {
                 labelText: "Expiration Date",
               ),
               validator: (value) =>
-                  value.isEmpty ? 'Card Expiration Date can\'t be empty' : null,
+                  value.isEmpty ? 'Exp Date can\'t be empty' : value.trim().length !=7 ? 'Exp date format incorrect' : null,
               onSaved: (value) => cardExpirationDate = value.trim(),
             ),
           ),
