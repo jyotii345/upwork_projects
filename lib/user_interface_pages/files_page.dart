@@ -573,8 +573,10 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       var mapsList = await s3client.listObjects(
           prefix: widget.user.userId + "/config/files/nameMaps/",
           delimiter: "/");
+      print("potential maps: " + mapsList.contents.length.toString());
       for (var value in mapsList.contents){
         try {
+          print(value.key);
           if (double.parse(value.size) > 0) {
             print("generating names map");
             var mapResult = await AggressorApi().downloadAwsFile(value.key);
@@ -817,49 +819,55 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       loading = true;
       uploading = true;
     });
-    if (online) {
-      if (result != null) {
-        String uploadDate = dropDownValue.charter == null
-            ? "general"
-            : formatDate(DateTime.parse(dropDownValue.charter.startDate),
-                [yyyy, '-', mm, '-', dd]);
-        var uploadResult = await AggressorApi().uploadAwsFile(
-            widget.user.userId,
-            "files",
-            dropDownValue.charterId,
-            result.files.single.path,
-            uploadDate);
-        if (uploadResult["status"] == "success") {
-          FileDatabaseHelper.instance.insertFile(FileData(
+    try {
+      if (online) {
+        if (result != null) {
+          String uploadDate = dropDownValue.charter == null
+              ? "general"
+              : formatDate(DateTime.parse(dropDownValue.charter.startDate),
+              [yyyy, '-', mm, '-', dd]);
+          var uploadResult = await AggressorApi().uploadAwsFile(
+              widget.user.userId,
+              "files",
+              dropDownValue.charterId,
               result.files.single.path,
-              uploadDate,
-              uploadResult["filename"],
-              fileNameController.text,
-              dropDownValue.charterId));
+              uploadDate);
+          if (uploadResult["status"] == "success") {
+            FileDatabaseHelper.instance.insertFile(FileData(
+                result.files.single.path,
+                uploadDate,
+                uploadResult["filename"],
+                fileNameController.text,
+                dropDownValue.charterId));
 
-          setState(() {
-            fileDisplayNames[uploadResult["filename"].toString()] =
-                fileNameController.text.toString();
-            filesLoaded = false;
-            fileName = "";
-            result = null;
-          });
-        } else {
-          setState(() {
-            errorMessage = "File failed to upload, please try again.";
-          });
+            setState(() {
+              fileDisplayNames[uploadResult["filename"].toString()] =
+                  fileNameController.text.toString();
+              filesLoaded = false;
+              fileName = "";
+              result = null;
+            });
+          } else {
+            setState(() {
+              errorMessage = "File failed to upload, please try again.";
+            });
+          }
         }
+      } else {
+        setState(() {
+          errorMessage = "Must be online to upload a file";
+          loading = false;
+          uploading = false;
+        });
       }
-    } else {
-      setState(() {
-        errorMessage = "Must be online to upload a file";
-        loading = false;
-        uploading = false;
-      });
+    }catch(e){
+      print("error updloading file");
     }
 
-
-    updateDisplayNameStorage();
+    bool namesUpdated = false;
+    while (!namesUpdated){
+    namesUpdated = await updateDisplayNameStorage();
+    }
     setState(() {
       fileNameController.clear();
       loading = false;
@@ -867,7 +875,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  void updateDisplayNameStorage() async {
+  Future<bool> updateDisplayNameStorage() async {
+    print("update called");
     String region = "us-east-1";
     String bucketId = "aggressor.app.user.images";
     final AwsS3Client s3client = AwsS3Client(
@@ -903,8 +912,17 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     }
     print(displayNameFile.path);
     print(displayNameFile.readAsStringSync());
-    var uploading = await AggressorApi().uploadAwsFile(widget.user.userId,
-        "config", "files", displayNameFile.path, "nameMaps");
+    try {
+      var uploading = await AggressorApi().uploadAwsFile(widget.user.userId,
+          "config", "files", displayNameFile.path, "nameMaps");
+
+      print(uploading.toString());
+      return true;
+    }catch(e){
+      print("error");
+      return false;
+    }
+
   }
 
   Widget showErrorMessage() {
