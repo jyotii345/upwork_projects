@@ -576,43 +576,45 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
       fileNameList.clear();
       for (var value in mapsList.contents) {
-        print(value.toJson());
         try {
-          print(value.key);
           if (double.parse(value.size) > 0) {
-            fileNameList.add(jsonDecode(value.toJson()));
+            fileNameList.add(await jsonDecode(value.toJson()));
           }
         } catch (e) {
           print("no map found or map error ");
         }
       }
 
-      fileNameList.sort((a, b) => DateTime.parse(b["LastModified"])
-          .compareTo((DateTime.parse(a["LastModified"]))));
+      if (fileNameList.length > 0) {
+        fileNameList.sort((a, b) => DateTime.parse(b["LastModified"])
+            .compareTo((DateTime.parse(a["LastModified"]))));
 
-      var mapResult =
-          await AggressorApi().downloadAwsFile(fileNameList[0]["Key"]);
-      var bytes = await readByteStream(mapResult.stream);
-      var dirData = await getApplicationDocumentsDirectory();
-      String path =
-          dirData.toString().replaceAll("'", "").replaceAll("Directory: ", "") +
-              "/FileDisplayNames.txt";
-      File mapsFile = File(path);
-      await mapsFile.writeAsBytes(bytes);
-      var mapRaw = mapsFile
-          .readAsStringSync()
-          .replaceAll("{", "")
-          .replaceAll("}", "")
-          .split(",");
-      mapRaw.forEach((element) {
-        if (element.split(':')[0].toString().replaceAll("\"", "").trim() !=
-                "status" &&
-            element.split(':')[0].toString().replaceAll("\"", "").trim() !=
-                "message") {
-          fileDisplayNames[element.split(':')[0].toString().trim()] =
-              element.split(':')[1].toString().trim();
-        }
-      });
+        var mapResult =
+            await AggressorApi().downloadAwsFile(fileNameList[0]["Key"]);
+        var bytes = await readByteStream(mapResult.stream);
+        var dirData = await getApplicationDocumentsDirectory();
+        String path = dirData
+                .toString()
+                .replaceAll("'", "")
+                .replaceAll("Directory: ", "") +
+            "/FileDisplayNames.txt";
+        File mapsFile = File(path);
+        await mapsFile.writeAsBytes(bytes);
+        var mapRaw = mapsFile
+            .readAsStringSync()
+            .replaceAll("{", "")
+            .replaceAll("}", "")
+            .split(",");
+        mapRaw.forEach((element) {
+          if (element.split(':')[0].toString().replaceAll("\"", "").trim() !=
+                  "status" &&
+              element.split(':')[0].toString().replaceAll("\"", "").trim() !=
+                  "message") {
+            fileDisplayNames[element.split(':')[0].toString().trim()] =
+                element.split(':')[1].toString().trim();
+          }
+        });
+      }
 
       try {
         for (var element in tripList) {
@@ -867,28 +869,41 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   Future<bool> updateDisplayNameStorage() async {
-    print("update called");
     String region = "us-east-1";
     String bucketId = "aggressor.app.user.images";
 
-    final AwsS3Client s3client = AwsS3Client(
-        region: region,
-        host: "s3.$region.amazonaws.com",
-        bucketId: bucketId,
-        accessKey: "AKIA43MMI6CI2KP4CUUY",
-        secretKey: "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");
+    fileDataList.forEach((element) {
+      //ensures all values are in the new map even if they are loaded from offline
+      if (!fileDisplayNames.containsKey(element.fileName)) {
+        fileDisplayNames[element.fileName] = element.displayName;
+      }
+    });
 
     String dataDir = (await getApplicationDocumentsDirectory()).path;
     File displayNameFile = File(dataDir + "/FileDisplayNames.txt");
-    print("Writing: " + fileDisplayNames.toString());
-    print("To: $dataDir");
     displayNameFile =
         await displayNameFile.writeAsString(fileDisplayNames.toString());
+
+    int count = 0;
+    for(var element in fileNameList){
+      if (count > 3) {
+        count++;
+      }
+      else{
+        try {
+          await AggressorApi().deleteAwsFile(
+              widget.user.userId, "config", "files", "nameMaps",
+              element["Key"].toString().substring(
+                  element["Key"].toString().lastIndexOf("/") + 1));
+        }catch(e){
+          print("delete failed, continuing");
+        }
+        }
+    }
 
     try {
       var uploading = await AggressorApi().uploadAwsFile(widget.user.userId,
           "config", "files", displayNameFile.path, "nameMaps");
-      print(uploading.toString());
       return true;
     } catch (e) {
       print("error");
