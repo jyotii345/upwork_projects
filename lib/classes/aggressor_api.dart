@@ -26,7 +26,7 @@ class AggressorApi {
   Future<dynamic> getUserLogin(String username, String password) async {
     //create and send a login request to the Aggressor Api and return the current user
     Response response = await post(
-      Uri.https('secure.aggressor.com', 'api/app/authentication/login'),
+      Uri.https('crshome.customphpdesign.com', 'api/app/authentication/login'),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -50,7 +50,7 @@ class AggressorApi {
     BoatDatabaseHelper boatDatabaseHelper = BoatDatabaseHelper.instance;
 
     String url =
-        "https://secure.aggressor.com/api/app/reservations/list/" + contactId;
+        "https://crshome.customphpdesign.com/api/app/reservations/list/" + contactId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -145,7 +145,7 @@ class AggressorApi {
   Future<dynamic> getReservationDetails(
       String reservationId, String contactId) async {
     //create and send a reservation view request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/reservations/view/" +
+    String url = "https://crshome.customphpdesign.com/api/app/reservations/view/" +
         reservationId +
         "/" +
         contactId;
@@ -162,7 +162,7 @@ class AggressorApi {
   ) async {
     //create and send a inventory view request to the Aggressor Api and return json response
     String url =
-        "https://secure.aggressor.com/api/app/reservations/inventory/" +
+        "https://crshome.customphpdesign.com/api/app/reservations/inventory/" +
             reservationId;
 
     Request request = Request("GET", Uri.parse(url))
@@ -175,7 +175,7 @@ class AggressorApi {
   Future<dynamic> getContact(String contactId) async {
     //create and send a contact details request to the Aggressor Api and return json response
     String url =
-        "https://secure.aggressor.com/api/app/contacts/view/" + contactId;
+        "https://crshome.customphpdesign.com/api/app/contacts/view/" + contactId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -188,7 +188,7 @@ class AggressorApi {
       String billingContact, String creditType) async {
     //create and send a payment to be recorded request to the Aggressor Api and return json response
     String url =
-        "https://secure.aggressor.com/api/app/payments/record/" + reservationId;
+        "https://crshome.customphpdesign.com/api/app/payments/record/" + reservationId;
 
     final requestParams = {
       "amount": amount,
@@ -208,7 +208,7 @@ class AggressorApi {
       String email, String password, String dateOfBirth) async {
     //sends collected information to the API and sees if there are matching users, returns a userID for future queries
     Response response = await post(
-      Uri.https('secure.aggressor.com', 'api/app/registration/register'),
+      Uri.https('crshome.customphpdesign.com', 'api/app/registration/register'),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -227,7 +227,7 @@ class AggressorApi {
 
   Future<dynamic> linkContact(String contactId, String userId) async {
     //allows a user to link user to a contact
-    String url = "https://secure.aggressor.com/api/app/registration/select/" +
+    String url = "https://crshome.customphpdesign.com/api/app/registration/select/" +
         contactId +
         "/" +
         userId;
@@ -241,7 +241,7 @@ class AggressorApi {
 
   Future<dynamic> getCountries() async {
     //returns a list of all countries and their country codes
-    String url = "https://secure.aggressor.com/api/app/registration/countries";
+    String url = "https://crshome.customphpdesign.com/api/app/registration/countries";
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -252,7 +252,7 @@ class AggressorApi {
 
   Future<dynamic> getStates() async {
     //returns a list of all states and their country codes
-    String url = "https://secure.aggressor.com/api/app/registration/states";
+    String url = "https://crshome.customphpdesign.com/api/app/registration/states";
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -278,7 +278,7 @@ class AggressorApi {
     //creates a new contact and returns success on completion
     Response response = await post(
       Uri.https(
-          'secure.aggressor.com', "api/app/registration/newcontact/" + userId),
+          'crshome.customphpdesign.com', "api/app/registration/newcontact/" + userId),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -304,7 +304,7 @@ class AggressorApi {
 
   Future<dynamic> getProfileData(String userId) async {
     //returns the profile data for the userId provided
-    String url = "https://secure.aggressor.com/api/app/profile/view/" + userId;
+    String url = "https://crshome.customphpdesign.com/api/app/profile/view/" + userId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -334,7 +334,7 @@ class AggressorApi {
     //saves the updated profile data for the userId provided
 
     Response response = await post(
-      Uri.https('secure.aggressor.com', "api/app/profile/save/" + userId),
+      Uri.https('crshome.customphpdesign.com', "api/app/profile/save/" + userId),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -382,7 +382,7 @@ class AggressorApi {
       String filePath, String datePath) async {
     //saves the updated profile data for the userId provided
 
-    String url = "https://secure.aggressor.com/api/app/s3/upload/" +
+    String url = "https://crshome.customphpdesign.com/api/app/s3/upload/" +
         userId.toString() +
         "/" +
         gallery +
@@ -406,7 +406,7 @@ class AggressorApi {
   Future<dynamic> uploadUserImage(String userId,String filePath) async {
     //saves the updated profile image for the userId provided
 
-    String url = "https://secure.aggressor.com/api/app/profile/avatar/" + userId;
+    String url = "https://crshome.customphpdesign.com/api/app/profile/avatar/" + userId;
 
     var uri = Uri.parse(url);
     MultipartRequest request = http.MultipartRequest('POST', uri);
@@ -422,7 +422,7 @@ class AggressorApi {
 
   Future<dynamic> downloadAwsFile(String key) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/s3/download/" + key;
+    String url = "https://crshome.customphpdesign.com/api/app/s3/download/" + key;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -435,7 +435,7 @@ class AggressorApi {
   Future<dynamic> deleteAwsFile(String userId, String section, String boatId,
       String date, String fileName) async {
     //delete a file from the aws directories
-    String url = "https://secure.aggressor.com/api/app/s3/delete/" +
+    String url = "https://crshome.customphpdesign.com/api/app/s3/delete/" +
         userId +
         "/" +
         section +
@@ -459,7 +459,7 @@ class AggressorApi {
 
     Response response = await post(
         Uri.https(
-            'secure.aggressor.com', "api/app/authentication/forgotpassword"),
+            'crshome.customphpdesign.com', "api/app/authentication/forgotpassword"),
         headers: <String, String>{
           'apikey': apiKey,
           'Content-Type': 'application/json; charset=UTF-8',
@@ -474,7 +474,7 @@ class AggressorApi {
   Future<dynamic> getCharter(String charterId) async {
     //create and send a contact details request to the Aggressor Api and return json response
     String url =
-        "https://secure.aggressor.com/api/app/charters/view/" + charterId;
+        "https://crshome.customphpdesign.com/api/app/charters/view/" + charterId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -487,7 +487,7 @@ class AggressorApi {
 
   Future<dynamic> getBoat(String boatId) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String url = "https://secure.aggressor.com/api/app/boats/view/" + boatId;
+    String url = "https://crshome.customphpdesign.com/api/app/boats/view/" + boatId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -516,7 +516,7 @@ class AggressorApi {
   Future<dynamic> checkProfileLink(String userId) async {
     //create and send a contact details request to the Aggressor Api and return json response
     String url =
-        "https://secure.aggressor.com/api/app/profile/checklinked/" + userId;
+        "https://crshome.customphpdesign.com/api/app/profile/checklinked/" + userId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -529,7 +529,7 @@ class AggressorApi {
 
   Future<dynamic> getBoatList() async {
     //gets the list of boats from the API and adds the maps to the boat list
-    String url = "https://secure.aggressor.com/api/app/boats/list";
+    String url = "https://crshome.customphpdesign.com/api/app/boats/list";
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -554,7 +554,7 @@ class AggressorApi {
 
   Future<dynamic> getRewardsSliderList() async {
     //gets the list of the slider imgaes and downloads the items from the API
-    String url = "https://secure.aggressor.com/api/app/s3/slider/list";
+    String url = "https://crshome.customphpdesign.com/api/app/s3/slider/list";
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -575,7 +575,7 @@ class AggressorApi {
   Future<dynamic> getRewardsSliderImage(String imageName) async {
     //Downloads the image from the database for a slider image
     String url =
-        "https://secure.aggressor.com/api/app/s3/slider/download/" + imageName;
+        "https://crshome.customphpdesign.com/api/app/s3/slider/download/" + imageName;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -589,7 +589,7 @@ class AggressorApi {
     //gets a list of all the ntoes to be displayed in the app
     notesList.clear();
     String url =
-        "https://secure.aggressor.com/api/app/tripnotes/list/" + userId;
+        "https://crshome.customphpdesign.com/api/app/tripnotes/list/" + userId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -613,7 +613,7 @@ class AggressorApi {
     //create and send a login request to the Aggressor Api and return the current user
 
     Response response = await post(
-      Uri.https('secure.aggressor.com', 'api/app/tripnotes/save/' + userId),
+      Uri.https('crshome.customphpdesign.com', 'api/app/tripnotes/save/' + userId),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -642,7 +642,7 @@ class AggressorApi {
       String id) async {
     //create and send a login request to the Aggressor Api and return the current user
     Response response = await post(
-      Uri.https('secure.aggressor.com',
+      Uri.https('crshome.customphpdesign.com',
           'api/app/tripnotes/update/' + userId + '/' + id),
       headers: <String, String>{
         'apikey': apiKey,
@@ -664,7 +664,7 @@ class AggressorApi {
   Future<dynamic> deleteNote(String userId, String id) async {
     //create and send a login request to the Aggressor Api and return the current user
     Response response = await post(
-      Uri.https('secure.aggressor.com',
+      Uri.https('crshome.customphpdesign.com',
           'api/app/tripnotes/delete/' + userId + '/' + id),
       headers: <String, String>{
         'apikey': apiKey,
@@ -679,7 +679,7 @@ class AggressorApi {
     //gets the list of iron diver awards for the given user from the API
     notesList.clear();
     String url =
-        "https://secure.aggressor.com/api/app/club/irondiver/list/" + userId;
+        "https://crshome.customphpdesign.com/api/app/club/irondiver/list/" + userId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -696,7 +696,7 @@ class AggressorApi {
     //Save a new iron diver award to a specific boat
     Response response = await post(
       Uri.https(
-          'secure.aggressor.com', '/api/app/club/irondiver/save/' + userId),
+          'crshome.customphpdesign.com', '/api/app/club/irondiver/save/' + userId),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -712,7 +712,7 @@ class AggressorApi {
   Future<dynamic> deleteIronDiver(String userId, String id) async {
     //delete an iron diver award by a certain id
     notesList.clear();
-    String url = "https://secure.aggressor.com/api/app/club/irondiver/delete/" +
+    String url = "https://crshome.customphpdesign.com/api/app/club/irondiver/delete/" +
         userId +
         "/" +
         id;
@@ -731,7 +731,7 @@ class AggressorApi {
     //gets the certificates for a particular user from the API
     notesList.clear();
     String url =
-        "https://secure.aggressor.com/api/app/club/certifications/list/" +
+        "https://crshome.customphpdesign.com/api/app/club/certifications/list/" +
             userId;
 
     Request request = Request("GET", Uri.parse(url))
@@ -749,7 +749,7 @@ class AggressorApi {
       String userId, String certificationType) async {
     //save a new certification with a certain certification type to the user
     Response response = await post(
-      Uri.https('secure.aggressor.com',
+      Uri.https('crshome.customphpdesign.com',
           '/api/app/club/certifications/save/' + userId),
       headers: <String, String>{
         'apikey': apiKey,
@@ -767,7 +767,7 @@ class AggressorApi {
     //delete a certification by a certain id
     notesList.clear();
     String url =
-        "https://secure.aggressor.com/api/app/club/certifications/delete/" +
+        "https://crshome.customphpdesign.com/api/app/club/certifications/delete/" +
             userId +
             "/" +
             id;
@@ -801,7 +801,7 @@ class AggressorApi {
       "credit_card_cvv": cvv,
     };
 
-    String url = 'https://secure.aggressor.com/api/app/payments/credit/' +
+    String url = 'https://crshome.customphpdesign.com/api/app/payments/credit/' +
         reservationId +
         '/' +
         charterId +
