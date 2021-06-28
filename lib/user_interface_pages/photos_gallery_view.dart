@@ -9,6 +9,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
+import 'package:async/async.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +50,9 @@ class GalleryViewState extends State<GalleryView> {
   List<Asset> images = <Asset>[];
   List<Photo> selectedList = [];
   bool loading = false;
+  bool editing = false;
+  bool deleting = false;
+  bool saving = false;
 
   /*
   initState
@@ -114,7 +118,7 @@ class GalleryViewState extends State<GalleryView> {
             getPageTitle(),
             getDestination(),
             getDate(),
-            selectedList.length > 0 ? getSelectionOptions() : Container(),
+            editing ? getSelectionOptions() : Container(),
             getImageGrid(),
             getScrollButtons(),
           ],
@@ -133,33 +137,36 @@ class GalleryViewState extends State<GalleryView> {
           child: Row(
             children: [
               Expanded(
-                child: Text(
-                  "Selection options",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: portrait
-                          ? MediaQuery.of(context).size.height / 30
-                          : MediaQuery.of(context).size.width / 30),
-                ),
+                child: deleting
+                    ? Text(
+                        "Delete selected photos?",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: portrait
+                                ? MediaQuery.of(context).size.height / 35
+                                : MediaQuery.of(context).size.width / 35),
+                      )
+                    : Text(
+                        "Save selected photos?",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: portrait
+                                ? MediaQuery.of(context).size.height / 35
+                                : MediaQuery.of(context).size.width / 35),
+                      ),
               ),
-              IconButton(
-                  icon: Icon(
-                    Icons.share,
-                    color: Colors.white,
-                    size: portrait
-                        ? iconSizePortrait - 10
-                        : iconSizeLandscape - 10,
+              TextButton(
+                  child: Text(
+                    "Continue",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: portrait
+                            ? MediaQuery.of(context).size.height / 35
+                            : MediaQuery.of(context).size.width / 35),
                   ),
-                  onPressed: exportSelection),
-              IconButton(
-                icon: Icon(
-                  Icons.delete,
-                  color: Colors.white,
-                  size:
-                      portrait ? iconSizePortrait - 10 : iconSizeLandscape - 10,
-                ),
-                onPressed: showDeleteConfirmationDialogue,
-              ),
+                  onPressed: deleting
+                      ? showDeleteConfirmationDialogue
+                      : exportSelection),
             ],
           ),
         ),
@@ -168,15 +175,17 @@ class GalleryViewState extends State<GalleryView> {
   }
 
   void exportSelection() async {
-    if (
-        !await Permission.storage.status.isGranted) {
+    if (!await Permission.storage.status.isGranted) {
       await Permission.storage.request();
     }
 
     for (var value in selectedList) {
-      var res = await ImageGallerySaver.saveImage(File(value.imagePath).readAsBytesSync());
+      var res = await ImageGallerySaver.saveImage(
+          File(value.imagePath).readAsBytesSync());
     }
     setState(() {
+      editing = false;
+      saving = false;
       selectedList = [];
     });
     showExportSuccessDialogue();
@@ -187,16 +196,17 @@ class GalleryViewState extends State<GalleryView> {
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
-          title: new Text('Success'),
-          content: new Text("The images have been exported to your camera roll"),
-          actions: <Widget>[
-            new TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: new Text('Continue')),
-          ],
-        ));
+              title: new Text('Success'),
+              content:
+                  new Text("The images have been exported to your camera roll"),
+              actions: <Widget>[
+                new TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: new Text('Continue')),
+              ],
+            ));
   }
 
   void showDeleteConfirmationDialogue() {
@@ -204,36 +214,51 @@ class GalleryViewState extends State<GalleryView> {
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
-          title: new Text('Confirm'),
-          content: new Text("Are you sure you would like to delete " + selectedList.length.toString() + " images?"),
-          actions: <Widget>[
-            TextButton(onPressed: (){Navigator.pop(context);},
-                child: new Text('Cancel')),
-            TextButton(
-                onPressed: (){Navigator.pop(context);
-                deleteSelection();},
-                child: new Text('Continue')),
-          ],
-        ));
+              title: new Text('Confirm'),
+              content: new Text("Are you sure you would like to delete " +
+                  selectedList.length.toString() +
+                  " images?"),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: new Text('Cancel')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      deleteSelection();
+                    },
+                    child: new Text('Continue')),
+              ],
+            ));
   }
 
   void deleteSelection() async {
     //deletes the images that are currently selected
+    selectedList.forEach((element) {
+      setState(() {
+        widget.photos.remove(element);
+      });
+    });
+
+    setState(() {
+      editing = false;
+      deleting = false;
+    });
+
     for (var value in selectedList) {
       String uploadDate =
           formatDate(DateTime.parse(value.date), [yyyy, '-', mm, '-', dd]);
-      await AggressorApi().deleteAwsFile(
-          widget.user.userId,
-          "gallery",
-          widget.trip.boat.boatId,
-          uploadDate,
-          value.imageName);
+
+      await AggressorApi().deleteAwsFile(widget.user.userId, "gallery",
+          widget.trip.boat.boatId, uploadDate, value.imageName);
+
       await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
-      setState(() {
-        widget.photos.remove(value);
-      });
     }
     setState(() {
+      editing = false;
+      deleting = false;
       selectedList = [];
     });
   }
@@ -350,10 +375,105 @@ class GalleryViewState extends State<GalleryView> {
                         ? widget.photos.length - (9 * (indexMultiplier - 1))
                         : 9,
                 itemBuilder: (context, index) {
-                  return Stack(
-                    children: [
-                      Positioned.fill(
-                        child: GestureDetector(
+                  return editing
+                      ? Stack(
+                          children: [
+                            Positioned.fill(
+                              child: GestureDetector(
+                                onTap: () {
+                                  imageExpansionDialogue(
+                                    Container(
+                                      height: (MediaQuery.of(context)
+                                              .size
+                                              .width) -
+                                          (MediaQuery.of(context).size.width *
+                                              .4),
+                                      width: (MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              1.2) -
+                                          (MediaQuery.of(context).size.width *
+                                              .4),
+                                      child: Stack(
+                                        children: [
+                                          Positioned.fill(
+                                            child: Image.file(
+                                              File(
+                                                widget
+                                                    .photos[(index +
+                                                        (9 *
+                                                            (indexMultiplier -
+                                                                1)))]
+                                                    .imagePath,
+                                              ),
+                                              fit: BoxFit.fill,
+                                            ),
+                                          ),
+                                          Align(
+                                            alignment: Alignment.topRight,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(0.0),
+                                              child: GestureDetector(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Icon(
+                                                    Icons.close_rounded,
+                                                    color: AggressorColors
+                                                        .primaryColor,
+                                                    size: MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        15,
+                                                  ),
+                                                ),
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Image.file(
+                                  File(
+                                    widget.photos[index].imagePath,
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: GestureDetector(
+                                child: Icon(
+                                  selectedList.contains(widget.photos[index])
+                                      ? Icons.radio_button_on
+                                      : Icons.radio_button_off,
+                                  color: AggressorColors.primaryColor,
+                                  size: MediaQuery.of(context).size.width / 20,
+                                ),
+                                onTap: () {
+                                  if (selectedList
+                                      .contains(widget.photos[index])) {
+                                    setState(() {
+                                      selectedList.remove(widget.photos[index]);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      selectedList.add(widget.photos[index]);
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        )
+                      : GestureDetector(
                           onTap: () {
                             imageExpansionDialogue(
                               Container(
@@ -409,33 +529,7 @@ class GalleryViewState extends State<GalleryView> {
                             ),
                             fit: BoxFit.cover,
                           ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: GestureDetector(
-                          child: Icon(
-                            selectedList.contains(widget.photos[index])
-                                ? Icons.radio_button_on
-                                : Icons.radio_button_off,
-                            color: AggressorColors.primaryColor,
-                            size: MediaQuery.of(context).size.width / 20,
-                          ),
-                          onTap: () {
-                            if (selectedList.contains(widget.photos[index])) {
-                              setState(() {
-                                selectedList.remove(widget.photos[index]);
-                              });
-                            } else {
-                              setState(() {
-                                selectedList.add(widget.photos[index]);
-                              });
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  );
+                        );
                 },
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: portrait
@@ -544,20 +638,21 @@ class GalleryViewState extends State<GalleryView> {
     );
 
     if (online) {
-      for (var element in resultList) {
+      for (Asset element in resultList) {
         String path = "";
+
         if (element.name.toLowerCase().contains(".heic")) {
           path = await HeicToJpg.convert(
               await FlutterAbsolutePath.getAbsolutePath(element.identifier));
         } else {
           path = await FlutterAbsolutePath.getAbsolutePath(element.identifier);
         }
+
         File file = File(path);
 
         String uploadDate = formatDate(
             DateTime.parse(widget.trip.charter.startDate),
             [yyyy, '-', mm, '-', dd]);
-
         var response = await AggressorApi().uploadAwsFile(
             widget.user.userId.toString(),
             "gallery",
@@ -565,16 +660,18 @@ class GalleryViewState extends State<GalleryView> {
             file.path,
             uploadDate);
 
-        await Future.delayed(Duration(milliseconds: 1000));
         if (response["status"] == "success") {
-          widget.photos.add(Photo("", "", file.path, "", "", ""));
+          widget.photos.add(Photo(element.name, widget.user.userId, file.path,
+              uploadDate, widget.trip.charter.boatId, null));
         }
+
+        await Future.delayed(Duration(milliseconds: 500));
       }
 
       setState(() {
+        resultList.clear();
         photosLoaded = false;
         loading = false;
-        images = resultList;
         errorMessage = error;
       });
 
@@ -603,7 +700,8 @@ class GalleryViewState extends State<GalleryView> {
             null));
         await OfflineDatabaseHelper.instance
             .insertOffline({'type': "image", 'action': "add", 'id': file.path});
-        widget.photos.add(Photo("", "", file.path, "", "", ""));
+        widget.photos.add(Photo(element.name, widget.user.userId, file.path,
+            uploadDate, widget.trip.charter.boatId, null));
       }
       setState(() {
         photosLoaded = false;
@@ -643,31 +741,30 @@ class GalleryViewState extends State<GalleryView> {
               onPressed: loadAssets,
             ),
             TextButton(
+              child: Icon(
+                Icons.save,
+                color: AggressorColors.secondaryColor,
+                size: portrait ? iconSizePortrait : iconSizeLandscape,
+              ),
+              onPressed: () {
+                setState(() {
+                  deleting = false;
+                  editing = true;
+                  saving = true;
+                });
+              },
+            ),
+            TextButton(
                 child: Image(
                     image: AssetImage("assets/trashcan.png"),
                     height: portrait ? iconSizePortrait : iconSizeLandscape,
                     width: portrait ? iconSizePortrait : iconSizeLandscape),
                 onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (_) => new AlertDialog(
-                        title: new Text('Confirm'),
-                        content: new Text(
-                            "Are you sure you would like to delete this photo gallery?"),
-                        actions: <Widget>[
-                          TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: new Text('Cancel')),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                deleteGallery();
-                              },
-                              child: new Text('Continue')),
-                        ],
-                      ));
+                  setState(() {
+                    deleting = true;
+                    editing = true;
+                    saving = false;
+                  });
                 }),
           ],
         ),
@@ -705,8 +802,6 @@ class GalleryViewState extends State<GalleryView> {
     });
     Navigator.pop(context);
   }
-
-
 
   Widget showLoading() {
     //displays a loading bar if data is being downloaded

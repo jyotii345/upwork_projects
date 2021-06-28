@@ -760,6 +760,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       }
 
       List<Photo> photos = await photoHelper.queryPhoto();
+
       photos.forEach((element) {
         int tripIndex = 0;
         for (int i = 0; i < tripList.length - 1; i++) {
@@ -775,7 +776,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           tempGalleries[tripList[tripIndex].reservationId] = Gallery(
               widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
         } else {
-          tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+          if(!tempGalleries[tripList[tripIndex].reservationId].photos.contains(element)){
+            tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+          }
         }
       });
 

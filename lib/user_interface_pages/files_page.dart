@@ -854,7 +854,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         });
       }
     } catch (e) {
-      print("error updloading file");
+      print("error uploading file");
     }
 
     bool namesUpdated = false;

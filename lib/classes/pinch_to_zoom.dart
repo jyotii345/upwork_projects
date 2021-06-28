@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 
 class PinchToZoom extends StatefulWidget {
@@ -15,11 +17,11 @@ class PinchToZoomState extends State<PinchToZoom>
       TransformationController();
   Animation<Matrix4> animationReset;
   AnimationController controllerReset;
+  Timer timer;
 
   @override
   void initState() {
     super.initState();
-
     controllerReset = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
@@ -34,9 +36,8 @@ class PinchToZoomState extends State<PinchToZoom>
   Widget getPinchToZoom(Widget childWidget) {
     return InteractiveViewer(
         constrained: true,
-        panEnabled: false,
         alignPanAxis: false,
-        boundaryMargin: EdgeInsets.all(13),
+        boundaryMargin: EdgeInsets.all(20),
         transformationController: _transformationController,
         scaleEnabled: true,
         minScale: 1.0,
@@ -46,29 +47,44 @@ class PinchToZoomState extends State<PinchToZoom>
         child: childWidget);
   }
 
-  void _animateResetInitialize() {
+  void _animateResetInitialize() async {
     //animation reset for pnich to zoom
-    controllerReset.reset();
-    animationReset = Matrix4Tween(
-      begin: _transformationController.value,
-      end: Matrix4.identity(),
-    ).animate(controllerReset);
-    animationReset.addListener(_onAnimateReset);
-    controllerReset.forward();
+
+    timer = Timer(Duration(seconds: 5), () {
+      controllerReset.reset();
+      animationReset = Matrix4Tween(
+        begin: _transformationController.value,
+        end: Matrix4.identity(),
+      ).animate(controllerReset);
+      animationReset.addListener(_onAnimateReset);
+      controllerReset.forward();
+    });
+
   }
 
   void _onAnimateReset() {
     //notifies when the animation is resetting on pinch to zoom
-    _transformationController.value = animationReset.value;
-    if (!controllerReset.isAnimating) {
-      animationReset?.removeListener(_onAnimateReset);
-      animationReset = null;
-      controllerReset.reset();
+    try {
+      _transformationController.value = animationReset.value;
+      if (!controllerReset.isAnimating) {
+        animationReset?.removeListener(_onAnimateReset);
+        animationReset = null;
+        controllerReset.reset();
+      }
+    } catch (e) {
     }
   }
 
   void _onInteractionStart(ScaleStartDetails details) {
     //cancels the reset if a user clicks again
+
+    if(timer != null ){
+      if(timer.isActive){
+        timer.cancel();
+        timer = null;
+      }
+    }
+
     if (controllerReset.status == AnimationStatus.forward) {
       _animateResetStop();
     }

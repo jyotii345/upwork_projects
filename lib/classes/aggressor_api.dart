@@ -11,7 +11,6 @@ import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_archive/flutter_archive.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
@@ -382,7 +381,7 @@ class AggressorApi {
       String filePath, String datePath) async {
     //saves the updated profile data for the userId provided
 
-    String url = "https://crshome.customphpdesign.com/api/app/s3/upload/" +
+    String url = "https://crshome.customphpdesign.com/api/app/s3/upload/" + //TODO had to revert to old endpoint to fix the photo upload error
         userId.toString() +
         "/" +
         gallery +
@@ -390,6 +389,8 @@ class AggressorApi {
         boatId.toString() +
         "/" +
         datePath;
+
+    File file = File(filePath);
 
     var uri = Uri.parse(url);
     MultipartRequest request = http.MultipartRequest('POST', uri);
