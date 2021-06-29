@@ -117,6 +117,9 @@ class FileData {
 
   Future<void> openFile() async {
     //opens the contents of a file on the defualt application for the native device
+    print("opening");
+    print(filePath);
+    print(fileName);
     final _result = await OpenFile.open(filePath);
     print(filePath);
     print(_result.message.toString());
