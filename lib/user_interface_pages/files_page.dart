@@ -836,7 +836,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             Directory appDocumentsDirectory =
                 await getApplicationDocumentsDirectory(); // 1
             String appDocumentsPath = appDocumentsDirectory.path; // 2
-            String filePath = '$appDocumentsPath/' + fileNameController.text;
+            String filePath = '$appDocumentsPath/' + uploadResult["filename"];
             File tempFile = File(filePath);
             tempFile.writeAsBytes(bytes);
 
