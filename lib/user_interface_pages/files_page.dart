@@ -74,7 +74,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
-    // clearFiles();
+     //clearFiles();
     getFiles();
 
     return OrientationBuilder(builder: (context, orientation) {
@@ -830,6 +830,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               dropDownValue.charterId,
               result.files.single.path,
               uploadDate);
+
           if (uploadResult["status"] == "success") {
             Uint8List bytes = File(result.files.single.path).readAsBytesSync();
             Directory appDocumentsDirectory =
@@ -839,17 +840,11 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             File tempFile = File(filePath);
             tempFile.writeAsBytes(bytes);
 
-            // fileDataList.add(FileData(
-            //     tempFile.path,
-            //     uploadDate,
-            //     uploadResult["fileName"],
-            //     fileNameController.text,
-            //     dropDownValue.charterId));
-
+            print(uploadResult["filename"]);
             FileDatabaseHelper.instance.insertFile(FileData(
                 tempFile.path,
                 uploadDate,
-                uploadResult["fileName"],
+                uploadResult["filename"],
                 fileNameController.text,
                 dropDownValue.charterId));
 
