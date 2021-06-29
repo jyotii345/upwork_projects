@@ -801,9 +801,9 @@ class Trip {
                         MaterialPageRoute(
                           builder: (pageContext) => GalleryView(
                             user,
-                            charterId,
-                            galleriesMap.containsKey(charterId)
-                                ? galleriesMap[charterId].photos
+                            reservationId,
+                            galleriesMap.containsKey(reservationId)
+                                ? galleriesMap[reservationId].photos
                                 : [],
                             this,
                           ),
