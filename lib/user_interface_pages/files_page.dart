@@ -539,8 +539,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     int index = 0;
 
     fileDataList.forEach((value) {
-      filesList.add(value.getFileRow(context, index));
-      index++;
+        filesList.add(value.getFileRow(context, index));
+        index++;
     });
 
     return ListView.builder(
@@ -593,11 +593,15 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             await AggressorApi().downloadAwsFile(fileNameList[0]["Key"]);
         var bytes = await readByteStream(mapResult.stream);
         var dirData = await getApplicationDocumentsDirectory();
-        String path = dirData
-                .toString()
-                .replaceAll("'", "")
-                .replaceAll("Directory: ", "") +
-            "/FileDisplayNames.txt";
+        String path = dirData.toString();
+        if (path.contains("'")) {
+          path = path.replaceAll("'", "");
+        }
+        if (path.contains("Directory: ")) {
+          path = path.replaceAll("Directory: ", "");
+        }
+        path += "/FileDisplayNames.txt";
+
         File mapsFile = File(path);
         await mapsFile.writeAsBytes(bytes);
         var mapRaw = mapsFile
@@ -819,6 +823,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               ? "general"
               : formatDate(DateTime.parse(dropDownValue.charter.startDate),
                   [yyyy, '-', mm, '-', dd]);
+
           var uploadResult = await AggressorApi().uploadAwsFile(
               widget.user.userId,
               "files",
@@ -826,10 +831,25 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               result.files.single.path,
               uploadDate);
           if (uploadResult["status"] == "success") {
+            Uint8List bytes = File(result.files.single.path).readAsBytesSync();
+            Directory appDocumentsDirectory =
+                await getApplicationDocumentsDirectory(); // 1
+            String appDocumentsPath = appDocumentsDirectory.path; // 2
+            String filePath = '$appDocumentsPath/' + fileNameController.text;
+            File tempFile = File(filePath);
+            tempFile.writeAsBytes(bytes);
+
+            // fileDataList.add(FileData(
+            //     tempFile.path,
+            //     uploadDate,
+            //     uploadResult["fileName"],
+            //     fileNameController.text,
+            //     dropDownValue.charterId));
+
             FileDatabaseHelper.instance.insertFile(FileData(
-                result.files.single.path,
+                tempFile.path,
                 uploadDate,
-                uploadResult["filename"],
+                uploadResult["fileName"],
                 fileNameController.text,
                 dropDownValue.charterId));
 
@@ -885,20 +905,23 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         await displayNameFile.writeAsString(fileDisplayNames.toString());
 
     int count = 0;
-    for(var element in fileNameList){
+    for (var element in fileNameList) {
       if (count > 3) {
         count++;
-      }
-      else{
+      } else {
         try {
           await AggressorApi().deleteAwsFile(
-              widget.user.userId, "config", "files", "nameMaps",
-              element["Key"].toString().substring(
-                  element["Key"].toString().lastIndexOf("/") + 1));
-        }catch(e){
+              widget.user.userId,
+              "config",
+              "files",
+              "nameMaps",
+              element["Key"]
+                  .toString()
+                  .substring(element["Key"].toString().lastIndexOf("/") + 1));
+        } catch (e) {
           print("delete failed, continuing");
         }
-        }
+      }
     }
 
     try {
