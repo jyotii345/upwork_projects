@@ -375,6 +375,13 @@ class AggressorApi {
     return jsonDecode(response.body);
   }
 
+  Future<dynamic> downloadUserImage(String userId, userImageName) async {
+    print("downloading user image");
+    print(userId + "/profile/crs/app/" + userImageName);
+    var res = await downloadAwsFile(userId + "/profile/crs/app/" + userImageName);
+    return res;
+  }
+
   Future<dynamic> uploadAwsFile(String userId, String gallery, String boatId,
       String filePath, String datePath) async {
     //saves the updated profile data for the userId provided

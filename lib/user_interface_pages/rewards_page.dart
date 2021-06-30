@@ -11,9 +11,11 @@ import 'package:aggressor_adventures/user_interface_pages/profile_edit_page.dart
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_certifications_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
@@ -265,28 +267,32 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               contentPadding: EdgeInsets.all(5),
               title: new Text(
                 'Aggressor Boutique Points',
-                style: TextStyle(color: AggressorColors.secondaryColor,),
+                style: TextStyle(
+                  color: AggressorColors.secondaryColor,
+                ),
                 textAlign: TextAlign.center,
               ),
               content: Container(
                 width: double.maxFinite,
-                child: ListView(shrinkWrap: true,
+                child: ListView(
+                  shrinkWrap: true,
                   children: [
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 30, 5, 5),
-                      child:RichText(
-                      text: TextSpan(
-                        style: DefaultTextStyle.of(context).style,
-                        children: const <TextSpan>[
-                          TextSpan(
-                              text: 'Ways to earn boutique points: ',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          TextSpan(
-                            text:
-                            ' You earn 400 points for making a Reservation & Deposit, 100 for completing Guest Surveys after each adventure, and 100 as a Birthday gift.One point is equivalent to \$.05. Example: 100 points equal \$5. Points do not expire, however, redeemed points do.\n',
-                          ),
-                        ],
-                      ),),
+                      child: RichText(
+                        text: TextSpan(
+                          style: DefaultTextStyle.of(context).style,
+                          children: const <TextSpan>[
+                            TextSpan(
+                                text: 'Ways to earn boutique points: ',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(
+                              text:
+                                  ' You earn 400 points for making a Reservation & Deposit, 100 for completing Guest Surveys after each adventure, and 100 as a Birthday gift.One point is equivalent to \$.05. Example: 100 points equal \$5. Points do not expire, however, redeemed points do.\n',
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(30, 5, 5, 5),
@@ -449,9 +455,23 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
               width: sectionWidth,
               child: Padding(
                 padding: const EdgeInsets.all(0.0),
-                child: Image.asset(
-                  "assets/noprofile.png",
-                ),
+                child: FutureBuilder(
+                    future: getUserProfileImageData(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        try {
+                          return Image.file(snapshot.data, fit: BoxFit.fill,);
+                        } catch (e) {
+                          return Image.asset(
+                            "assets/noprofile.png",fit: BoxFit.fill,
+                          );
+                        }
+                      } else {
+                        return Image.asset(
+                          "assets/noprofile.png",fit: BoxFit.fill,
+                        );
+                      }
+                    }),
               ),
             ),
             Container(
@@ -1028,6 +1048,28 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
         }
       }
     } catch (e) {}
+  }
+
+  Future<dynamic> getUserProfileImageData() async {
+    if (!userImageDownloaded) {
+      var userImageRes = await AggressorApi()
+          .downloadUserImage(widget.user.userId, profileData["avatar"]);
+
+      var bytes = await readByteStream(userImageRes.stream);
+      var dirData = (await getApplicationDocumentsDirectory()).path;
+      print(dirData + "/" + profileData["avatar"]);
+      File temp = File(dirData + "/" + profileData["avatar"]);
+      await temp.writeAsBytes(bytes);
+
+      setState(() {
+        userImageDownloaded = true;
+      });
+      return temp;
+    } else {
+      var dirData = (await getApplicationDocumentsDirectory()).path;
+
+      return File(dirData + "/" + profileData["avatar"]);
+    }
   }
 
   @override

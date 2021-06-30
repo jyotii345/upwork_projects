@@ -541,6 +541,7 @@ class LoadingPageState extends State<LoadingPage> {
           profileDataLoaded = true;
         });
       }
+
       updateProfileDetailsCache(jsonResponse);
     }
   }

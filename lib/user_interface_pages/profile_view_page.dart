@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
@@ -5,8 +7,10 @@ import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_edit_page.dart';
+import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class MyProfile extends StatefulWidget {
   MyProfile(
@@ -270,14 +274,23 @@ class MyProfileState extends State<MyProfile> {
           width: portrait
               ? MediaQuery.of(context).size.width / 4
               : MediaQuery.of(context).size.height / 4,
-          child: Icon(
-            //TODO find a way to get user images
-            Icons.person,
-            size: portrait
-                ? MediaQuery.of(context).size.height / 8
-                : MediaQuery.of(context).size.width / 8,
-          ),
-          color: Colors.grey,
+          child: FutureBuilder(
+              future: getUserProfileImageData(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != null) {
+                  try {
+                    return Image.file(snapshot.data, fit: BoxFit.fill,);
+                  } catch (e) {
+                    return Image.asset(
+                      "assets/noprofile.png",fit: BoxFit.fill,
+                    );
+                  }
+                } else {
+                  return Image.asset(
+                    "assets/noprofile.png",fit: BoxFit.fill,
+                  );
+                }
+              }),
         ),
         Container(
           height: portrait
@@ -408,5 +421,27 @@ class MyProfileState extends State<MyProfile> {
   Future<bool> poppingPage() {
     onTabTapped(0);
     return new Future.value(false);
+  }
+
+  Future<dynamic> getUserProfileImageData() async {
+    if (!userImageDownloaded) {
+      var userImageRes = await AggressorApi()
+          .downloadUserImage(widget.user.userId, profileData["avatar"]);
+
+      var bytes = await readByteStream(userImageRes.stream);
+      var dirData = (await getApplicationDocumentsDirectory()).path;
+      print(dirData + "/" + profileData["avatar"]);
+      File temp = File(dirData + "/" + profileData["avatar"]);
+      await temp.writeAsBytes(bytes);
+
+      setState(() {
+        userImageDownloaded = true;
+      });
+      return temp;
+    } else {
+      var dirData = (await getApplicationDocumentsDirectory()).path;
+
+      return File(dirData + "/" + profileData["avatar"]);
+    }
   }
 }
