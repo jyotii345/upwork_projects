@@ -156,6 +156,9 @@ class EditMyProfileState extends State<EditMyProfile> {
         if (selectionFile != null) {
           var response = await AggressorApi()
               .uploadUserImage(widget.user.userId, selectionFile.path);
+          setState(() {
+            userImageDownloaded = false;
+          });
         }
 
 
@@ -1232,7 +1235,7 @@ class EditMyProfileState extends State<EditMyProfile> {
   Future<void> loadAssets() async {
     //loads the asset objects from the image picker
     List<Asset> resultList = <Asset>[];
-    String error = 'No Error Detected';
+    String error = '';
 
     if (await Permission.photos.status.isDenied ||
         await Permission.camera.status.isDenied) {

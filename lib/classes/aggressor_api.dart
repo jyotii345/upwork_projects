@@ -376,8 +376,6 @@ class AggressorApi {
   }
 
   Future<dynamic> downloadUserImage(String userId, userImageName) async {
-    print("downloading user image");
-    print(userId + "/profile/crs/app/" + userImageName);
     var res = await downloadAwsFile(userId + "/profile/crs/app/" + userImageName);
     return res;
   }
