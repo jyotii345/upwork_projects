@@ -24,7 +24,6 @@ bool profileDataLoaded = false;
 bool online = true;
 bool filesLoaded = false;
 bool homePage = false;
-bool userImageDownloaded = false;
 
 int currentIndex = 0;
 

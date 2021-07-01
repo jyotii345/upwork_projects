@@ -679,6 +679,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
+
     if (!photosLoaded && online) {
       setState(() {
         loading = true;
@@ -712,6 +713,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             print(e.toString());
           }
 
+
           if (response.contents != null) {
             for (var content in response.contents) {
               var elementJson = await jsonDecode(content.toJson());
@@ -739,6 +741,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   String filePath = '$appDocumentsPath/$fileName';
                   File imageFile = File(filePath);
                   imageFile.writeAsBytes(bytes);
+
 
                   await element.initCharterInformation();
                   Photo photo = Photo(

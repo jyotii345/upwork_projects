@@ -107,7 +107,6 @@ class FileData {
 
   void deleteFile() async{
     fileDataList.remove(this);
-    print(filePath);
     var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), fileName);
     await FileDatabaseHelper.instance.deleteFile(fileName);
     await Future.delayed(Duration(seconds: 1));
@@ -117,9 +116,6 @@ class FileData {
 
   Future<void> openFile() async {
     //opens the contents of a file on the defualt application for the native device
-    print("opening");
-    print(filePath);
-    print(fileName);
     final _result = await OpenFile.open(filePath);
     print(filePath);
     print(_result.message.toString());

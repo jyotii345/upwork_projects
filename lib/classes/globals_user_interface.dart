@@ -37,6 +37,8 @@ bool portrait = true;
 
 VoidCallback mainPageCallback;
 
+VoidCallback mainPageSignOutCallback;
+
 Widget getBottomNavigationBar() {
   return OrientationBuilder(
     builder: (context, orientation) {
@@ -268,8 +270,7 @@ void handlePopupClick(String value) {
       mainPageCallback();
       break;
     case 'Sign Out':
-      signOutUser();
-      mainPageCallback();
+      mainPageSignOutCallback();
       break;
   }
   int popCount = 0;
@@ -279,72 +280,3 @@ void handlePopupClick(String value) {
   popDistance = 0;
 }
 
-void signOutUser() async {
-  //sings user out and clears databases
-
-  BoatDatabaseHelper.instance.deleteBoatTable();
-  CertificateDatabaseHelper.instance.deleteCertificateTable();
-  CharterDatabaseHelper.instance.deleteCharterTable();
-  ContactDatabaseHelper.instance.deleteContactTable();
-  CountriesDatabaseHelper.instance.deleteCountriesTable();
-  FileDatabaseHelper.instance.deleteFileTable();
-  IronDiverDatabaseHelper.instance.deleteIronDiverTable();
-  NotesDatabaseHelper.instance.deleteNotesTable();
-  OfflineDatabaseHelper.instance.deleteOfflineTable();
-  PhotoDatabaseHelper.instance.deletePhotoTable();
-  ProfileDatabaseHelper.instance.deleteProfileTable();
-  SlidersDatabaseHelper.instance.deleteSlidersTable();
-  StatesDatabaseHelper.instance.deleteStatesTable();
-  TripDatabaseHelper.instance.deleteTripTable();
-  UserDatabaseHelper.instance.deleteUser(100);
-
-  loadedCount = 0;
-  loadingLength = 0;
-
-  photosLoaded = false;
-  notesLoaded = false;
-  certificateLoaded = false;
-  ironDiversLoaded = false;
-  contactLoaded = false;
-  profileDataLoaded = false;
-  online = true;
-  filesLoaded = false;
-  homePage = false;
-
-  currentIndex = 0;
-
-  galleriesMap = <String, Gallery>{};
-  profileData = <String, dynamic>{};
-  fileDisplayNames = <String, String>{};
-
-  notLoadedList = [];
-  tripList = [];
-  loadSize = [];
-  boatList = [];
-  fileDataList = [];
-  statesList = [];
-  countriesList = [];
-  sliderImageList = [];
-  notesList = [];
-  ironDiverList = [];
-  certificationList = [];
-
-  contact = null;
-
-  List<String> certificationOptionList = [
-    'Non-Diver',
-    'Junior Open Water',
-    'Open Water',
-    'Advanced Open Water',
-    'Rescue Diver',
-    'Master Scuba Diver',
-    'Dive Master',
-    'Assistant Instructor',
-    'Instructor',
-    'Instructor Trainer',
-    'Nitrox',
-  ];
-
-  navigatorKey.currentState
-      .pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
-}

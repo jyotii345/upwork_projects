@@ -553,7 +553,10 @@ class LoadingPageState extends State<LoadingPage> {
     photos.forEach((element) {
       int tripIndex = 0;
       for (int i = 0; i < tripList.length - 1; i++) {
-        if (tripList[i].boat.boatId == element.boatId && formatDate(DateTime.parse(tripList[i].charter.startDate), [yyyy,'-',mm,'-',dd]) == element.date) {
+        if (tripList[i].boat.boatId == element.boatId &&
+            formatDate(DateTime.parse(tripList[i].charter.startDate),
+                    [yyyy, '-', mm, '-', dd]) ==
+                element.date) {
           tripIndex = i;
         }
       }
@@ -562,7 +565,7 @@ class LoadingPageState extends State<LoadingPage> {
         tempGalleries[tripList[tripIndex].reservationId] = Gallery(
             widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
       } else {
-        tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+          tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
       }
     });
     return tempGalleries;

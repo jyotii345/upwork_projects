@@ -11,6 +11,7 @@ import 'package:aggressor_adventures/databases/countries_database.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:aggressor_adventures/databases/iron_diver_database.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
+import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/databases/profile_database.dart';
 import 'package:aggressor_adventures/databases/slider_database.dart';
@@ -21,7 +22,6 @@ import 'package:aggressor_adventures/user_interface_pages/photos_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'login_page.dart';
 import 'files_page.dart';
 import 'profile_view_page.dart';
@@ -56,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
     helper = UserDatabaseHelper.instance;
     mainPageCallback = refreshState;
+    mainPageSignOutCallback = signOutUser;
     homePage = true;
   }
 
@@ -87,6 +88,77 @@ class _MyHomePageState extends State<MyHomePage>
 
   VoidCallback refreshState(){
     setState(() {
+    });
+  }
+
+  void signOutUser() async {
+    //sings user out and clears databases
+
+    setState(() {
+      BoatDatabaseHelper.instance.deleteBoatTable();
+      CertificateDatabaseHelper.instance.deleteCertificateTable();
+      CharterDatabaseHelper.instance.deleteCharterTable();
+      ContactDatabaseHelper.instance.deleteContactTable();
+      CountriesDatabaseHelper.instance.deleteCountriesTable();
+      FileDatabaseHelper.instance.deleteFileTable();
+      IronDiverDatabaseHelper.instance.deleteIronDiverTable();
+      NotesDatabaseHelper.instance.deleteNotesTable();
+      OfflineDatabaseHelper.instance.deleteOfflineTable();
+      PhotoDatabaseHelper.instance.deletePhotoTable();
+      ProfileDatabaseHelper.instance.deleteProfileTable();
+      SlidersDatabaseHelper.instance.deleteSlidersTable();
+      StatesDatabaseHelper.instance.deleteStatesTable();
+      TripDatabaseHelper.instance.deleteTripTable();
+      UserDatabaseHelper.instance.deleteUser(100);
+
+      loadedCount = 0;
+      loadingLength = 0;
+      photosLoaded = false;
+      notesLoaded = false;
+      certificateLoaded = false;
+      ironDiversLoaded = false;
+      contactLoaded = false;
+      profileDataLoaded = false;
+      online = true;
+      filesLoaded = false;
+      homePage = false;
+
+      currentIndex = 0;
+
+      galleriesMap = <String, Gallery>{};
+      profileData = <String, dynamic>{};
+      fileDisplayNames = <String, String>{};
+
+      notLoadedList = [];
+      tripList = [];
+      loadSize = [];
+      boatList = [];
+      fileDataList = [];
+      statesList = [];
+      countriesList = [];
+      sliderImageList = [];
+      notesList = [];
+      ironDiverList = [];
+      certificationList = [];
+
+      contact = null;
+
+      List<String> certificationOptionList = [
+        'Non-Diver',
+        'Junior Open Water',
+        'Open Water',
+        'Advanced Open Water',
+        'Rescue Diver',
+        'Master Scuba Diver',
+        'Dive Master',
+        'Assistant Instructor',
+        'Instructor',
+        'Instructor Trainer',
+        'Nitrox',
+      ];
+
+      navigatorKey.currentState
+          .pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
     });
   }
 

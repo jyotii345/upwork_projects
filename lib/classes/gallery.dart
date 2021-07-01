@@ -50,7 +50,15 @@ class Gallery {
 
   addPhoto(Photo photo) {
     //adds a photo to the photos list
-    photos.add(photo);
+    bool exists  = false;
+
+
+    photos.forEach((element) {
+      if(element.imageName == photo.imageName)exists = true;
+    });
+    if(!exists){
+      photos.add(photo);
+    }
   }
 
   Widget getGalleryRow(BuildContext context, int index) {

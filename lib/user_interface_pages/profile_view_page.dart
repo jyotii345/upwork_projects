@@ -27,6 +27,7 @@ class MyProfileState extends State<MyProfile> {
   /*
   instance vars
    */
+  bool userImageRetreived = false;
 
   /*
   initState
@@ -279,15 +280,20 @@ class MyProfileState extends State<MyProfile> {
               builder: (context, snapshot) {
                 if (snapshot.hasData && snapshot.data != null) {
                   try {
-                    return Image.file(snapshot.data, fit: BoxFit.fill,);
+                    return Image.file(
+                      snapshot.data,
+                      fit: BoxFit.fill,
+                    );
                   } catch (e) {
                     return Image.asset(
-                      "assets/noprofile.png",fit: BoxFit.fill,
+                      "assets/noprofile.png",
+                      fit: BoxFit.fill,
                     );
                   }
                 } else {
                   return Image.asset(
-                    "assets/noprofile.png",fit: BoxFit.fill,
+                    "assets/noprofile.png",
+                    fit: BoxFit.fill,
                   );
                 }
               }),
@@ -301,7 +307,7 @@ class MyProfileState extends State<MyProfile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                profileData["first"] + " " + profileData["last"],
+                profileData["first"] == null ? "" : profileData["first"] + " " + profileData["last"],
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(profileData["email"]),
@@ -424,23 +430,29 @@ class MyProfileState extends State<MyProfile> {
   }
 
   Future<dynamic> getUserProfileImageData() async {
-    if (!userImageDownloaded) {
-      var userImageRes = await AggressorApi()
-          .downloadUserImage(widget.user.userId, profileData["avatar"]);
+    if(!userImageRetreived) {
+      try {
+        var userImageRes = await AggressorApi()
+            .downloadUserImage(widget.user.userId, profileData["avatar"]);
 
-      var bytes = await readByteStream(userImageRes.stream);
+        var bytes = await readByteStream(userImageRes.stream);
+        var dirData = (await getApplicationDocumentsDirectory()).path;
+        File temp = File(dirData + "/" + profileData["avatar"]);
+        await temp.writeAsBytes(bytes);
+
+        print("settings state v");
+        setState(() {userImageRetreived = true;});
+        return temp;
+      } catch (e) {
+        var dirData = (await getApplicationDocumentsDirectory()).path;
+
+        print("settings state v");
+        setState(() {userImageRetreived = true;});
+        return File(dirData + "/" + profileData["avatar"]);
+      }
+    }
+    else{
       var dirData = (await getApplicationDocumentsDirectory()).path;
-      print(dirData + "/" + profileData["avatar"]);
-      File temp = File(dirData + "/" + profileData["avatar"]);
-      await temp.writeAsBytes(bytes);
-
-      setState(() {
-        userImageDownloaded = true;
-      });
-      return temp;
-    } else {
-      var dirData = (await getApplicationDocumentsDirectory()).path;
-
       return File(dirData + "/" + profileData["avatar"]);
     }
   }

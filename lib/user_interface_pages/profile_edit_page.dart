@@ -156,9 +156,6 @@ class EditMyProfileState extends State<EditMyProfile> {
         if (selectionFile != null) {
           var response = await AggressorApi()
               .uploadUserImage(widget.user.userId, selectionFile.path);
-          setState(() {
-            userImageDownloaded = false;
-          });
         }
 
 

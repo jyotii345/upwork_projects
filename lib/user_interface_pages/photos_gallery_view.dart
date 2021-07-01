@@ -69,6 +69,7 @@ class GalleryViewState extends State<GalleryView> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.photos.length);
     return WillPopScope(
       onWillPop: poppingPage,
       child: Scaffold(
@@ -297,7 +298,10 @@ class GalleryViewState extends State<GalleryView> {
                 onPressed: () {
                   if (widget.photos.length - (9 * (indexMultiplier - 1)) > 9) {
                     setState(() {
+                      print("adding to index");
+                      print(indexMultiplier);
                       indexMultiplier++;
+                      print(indexMultiplier);
                     });
                   }
                 })
@@ -441,9 +445,12 @@ class GalleryViewState extends State<GalleryView> {
                                 },
                                 child: Image.file(
                                   File(
-                                    widget.photos[index].imagePath,
+                                    widget
+                                        .photos[(index +
+                                        (9 * (indexMultiplier - 1)))]
+                                        .imagePath,
                                   ),
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
                             ),
@@ -484,17 +491,6 @@ class GalleryViewState extends State<GalleryView> {
                                     (MediaQuery.of(context).size.width * .4),
                                 child: Stack(
                                   children: [
-                                    Positioned.fill(
-                                      child: Image.file(
-                                        File(
-                                          widget
-                                              .photos[(index +
-                                                  (9 * (indexMultiplier - 1)))]
-                                              .imagePath,
-                                        ),
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
                                     Align(
                                       alignment: Alignment.topRight,
                                       child: Padding(
@@ -523,11 +519,14 @@ class GalleryViewState extends State<GalleryView> {
                               ),
                             );
                           },
-                          child: Image.file(
+                          child:Image.file(
                             File(
-                              widget.photos[index].imagePath,
+                              widget
+                                  .photos[(index +
+                                  (9 * (indexMultiplier - 1)))]
+                                  .imagePath,
                             ),
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                           ),
                         );
                 },
@@ -663,6 +662,8 @@ class GalleryViewState extends State<GalleryView> {
         if (response["status"] == "success") {
           widget.photos.add(Photo(element.name, widget.user.userId, file.path,
               uploadDate, widget.trip.charter.boatId, null));
+          galleriesMap[widget.trip.reservationId].addPhoto(Photo(element.name, widget.user.userId, file.path,
+              uploadDate, widget.trip.charter.boatId, null));
         }
 
         await Future.delayed(Duration(milliseconds: 500));
@@ -700,7 +701,8 @@ class GalleryViewState extends State<GalleryView> {
             null));
         await OfflineDatabaseHelper.instance
             .insertOffline({'type': "image", 'action': "add", 'id': file.path});
-        widget.photos.add(Photo(element.name, widget.user.userId, file.path,
+
+        galleriesMap[widget.trip.reservationId].addPhoto(Photo(element.name, widget.user.userId, file.path,
             uploadDate, widget.trip.charter.boatId, null));
       }
       setState(() {
@@ -748,9 +750,10 @@ class GalleryViewState extends State<GalleryView> {
               ),
               onPressed: () {
                 setState(() {
+                  saving ? saving = false : saving = true;
+                  editing && !saving ? editing = false : editing = true;
                   deleting = false;
-                  editing = true;
-                  saving = true;
+
                 });
               },
             ),
@@ -761,8 +764,8 @@ class GalleryViewState extends State<GalleryView> {
                     width: portrait ? iconSizePortrait : iconSizeLandscape),
                 onPressed: () {
                   setState(() {
-                    deleting = true;
-                    editing = true;
+                    deleting ? deleting = false : deleting = true;
+                    editing && !deleting ? editing = false : editing = true;
                     saving = false;
                   });
                 }),

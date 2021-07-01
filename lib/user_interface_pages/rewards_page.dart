@@ -30,7 +30,7 @@ class Rewards extends StatefulWidget {
   State<StatefulWidget> createState() => new RewardsState();
 }
 
-class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
+class RewardsState extends State<Rewards>  {
   /*
   instance vars
    */
@@ -39,6 +39,8 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   bool loading = false;
 
   bool timerStarted = false;
+
+  bool userImageRetreived = false;
 
   /*
   initState
@@ -56,7 +58,6 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
 
     homePage = true;
     return PinchToZoom(
@@ -649,7 +650,7 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
           height: portrait
               ? MediaQuery.of(context).size.height / 6
               : MediaQuery.of(context).size.width / 5,
-          child: Image.file(
+          child: sliderImageList.length == 0 ? Container() : Image.file(
             File(sliderImageList[sliderIndex]["filePath"]),
             fit: BoxFit.fill,
           ),
@@ -1051,27 +1052,31 @@ class RewardsState extends State<Rewards> with AutomaticKeepAliveClientMixin {
   }
 
   Future<dynamic> getUserProfileImageData() async {
-    if (!userImageDownloaded) {
-      var userImageRes = await AggressorApi()
-          .downloadUserImage(widget.user.userId, profileData["avatar"]);
+    if(!userImageRetreived) {
+      try {
+        var userImageRes = await AggressorApi()
+            .downloadUserImage(widget.user.userId, profileData["avatar"]);
 
-      var bytes = await readByteStream(userImageRes.stream);
+        var bytes = await readByteStream(userImageRes.stream);
+        var dirData = (await getApplicationDocumentsDirectory()).path;
+        File temp = File(dirData + "/" + profileData["avatar"]);
+        await temp.writeAsBytes(bytes);
+
+        print("settings state rew");
+        setState(() {userImageRetreived = true;});
+        return temp;
+      } catch (e) {
+        var dirData = (await getApplicationDocumentsDirectory()).path;
+
+        print("settings state rew");
+        setState(() {userImageRetreived = true;});
+        return File(dirData + "/" + profileData["avatar"]);
+      }
+    }
+    else{
       var dirData = (await getApplicationDocumentsDirectory()).path;
-      print(dirData + "/" + profileData["avatar"]);
-      File temp = File(dirData + "/" + profileData["avatar"]);
-      await temp.writeAsBytes(bytes);
-
-      setState(() {
-        userImageDownloaded = true;
-      });
-      return temp;
-    } else {
-      var dirData = (await getApplicationDocumentsDirectory()).path;
-
       return File(dirData + "/" + profileData["avatar"]);
     }
   }
 
-  @override
-  bool get wantKeepAlive => true;
 }
