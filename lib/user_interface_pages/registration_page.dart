@@ -103,7 +103,6 @@ class RegistrationPageState extends State<RegistrationPage>{
                   getFirstName(),
                   getLastName(),
                   getEmail(),
-                  getEmail(),
                   getDateOfBirth(),
                   getPassword(),
                   getConfirmPassword(),
@@ -431,7 +430,7 @@ class RegistrationPageState extends State<RegistrationPage>{
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ContactSelection(jsonResponse)));
+                    builder: (context) => ContactSelection(jsonResponse,email,dateOfBirth,)));
           } else {
             throw Exception("Error creating account, please try again.");
           }

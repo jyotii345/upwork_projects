@@ -10,8 +10,10 @@ import 'package:flutter/rendering.dart';
 import 'login_page.dart';
 
 class CreateContact extends StatefulWidget {
-  CreateContact(this.userId);
+  CreateContact(this.userId,this.email,this.dateOfBirth);
 
+  final String email;
+  final DateTime dateOfBirth;
   final String userId;
 
   @override
@@ -34,9 +36,9 @@ class CreateContactState extends State<CreateContact> {
       city = "",
       zip = "",
       territory = "",
-      email,
-      homePhone,
-      mobilePhone;
+      email = "",
+      homePhone = "",
+      mobilePhone = "";
   DateTime dateOfBirth = DateTime.now();
   Map<String, dynamic> countryDropDownSelection;
   Map<String, dynamic> stateDropDownSelection;
@@ -50,6 +52,8 @@ class CreateContactState extends State<CreateContact> {
    */
   @override
   void initState() {
+    email = widget.email;
+    dateOfBirth = widget.dateOfBirth;
     super.initState();
   }
 
@@ -134,7 +138,11 @@ class CreateContactState extends State<CreateContact> {
         if (jsonResponse["status"] == "success") {
           showSuccessDialogue();
         } else {
-          throw Exception("Error creating account, please try again.");
+          setState(() {
+            errorMessage = "Error creating account, please try again.";
+            isLoading = false;
+          });
+          throw Exception();
         }
 
         setState(() {

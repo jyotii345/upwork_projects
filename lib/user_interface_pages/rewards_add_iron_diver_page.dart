@@ -62,7 +62,7 @@ class AddIronDiverState extends State<AddIronDiver> {
 
   @override
   Widget build(BuildContext context) {
-    return  WillPopScope(
+    return WillPopScope(
       onWillPop: poppingPage,
       child: OrientationBuilder(
         builder: (context, orientation) {
@@ -123,9 +123,11 @@ class AddIronDiverState extends State<AddIronDiver> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(width:portrait
-            ? MediaQuery.of(context).size.height / 6
-            : MediaQuery.of(context).size.width / 6,),
+        SizedBox(
+          width: portrait
+              ? MediaQuery.of(context).size.height / 6
+              : MediaQuery.of(context).size.width / 6,
+        ),
         Container(
           width: portrait
               ? MediaQuery.of(context).size.height / 4
@@ -154,7 +156,7 @@ class AddIronDiverState extends State<AddIronDiver> {
         dateDropDownValue.charter == null ||
         dateDropDownValue.charter.startDate == "") {
       setState(() {
-        errorMessage = "You must select a trip to create a gallery for.";
+        errorMessage = "You must select a trip to add an Iron Diver.";
       });
     } else {
       var response = await AggressorApi().saveIronDiver(
@@ -179,6 +181,12 @@ class AddIronDiverState extends State<AddIronDiver> {
   Widget getYachtDropDown(List<Map<String, dynamic>> boatList) {
     //returns a drop down of all yachts that an adventure is associated with
 
+    List<Map<String, dynamic>> displayList = [];
+    boatList.forEach((element) {
+      if (element["iron_divers"] != "no") {
+        displayList.add(element);
+      }
+    });
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
       child: Row(
@@ -224,7 +232,7 @@ class AddIronDiverState extends State<AddIronDiver> {
                     dateDropDownList = getDateDropDownList(newValue);
                   });
                 },
-                items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
+                items: displayList.map<DropdownMenuItem<Map<String, dynamic>>>(
                     (Map<String, dynamic> value) {
                   return DropdownMenuItem<Map<String, dynamic>>(
                     value: value,

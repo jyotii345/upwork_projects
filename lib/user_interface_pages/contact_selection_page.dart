@@ -9,10 +9,12 @@ import 'package:flutter/rendering.dart';
 import 'contact_create_page.dart';
 
 class ContactSelection extends StatefulWidget {
-  ContactSelection(this.jsonResponse);
+  ContactSelection(this.jsonResponse,this.email,this.dateOfBirth);
 
   final dynamic jsonResponse;
 
+  final String email;
+  final DateTime dateOfBirth;
   @override
   State<StatefulWidget> createState() => new ContactSelectionState();
 }
@@ -179,7 +181,7 @@ class ContactSelectionState extends State<ContactSelection>{
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      CreateContact(widget.jsonResponse["userID"].toString())));
+                      CreateContact(widget.jsonResponse["userID"].toString(),widget.email,widget.dateOfBirth)));
         },
         child: Text(
           "Create new contact",
