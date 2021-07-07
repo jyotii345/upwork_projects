@@ -20,18 +20,20 @@ import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
 import 'package:path_provider/path_provider.dart';
 
-class MyFiles extends StatefulWidget {
-  MyFiles(
-    this.user,
-  );
+class FilesTripPage extends StatefulWidget {
+  FilesTripPage(
+      this.user,
+      this.startDate
+      );
 
   final User user;
+  final String startDate;
 
   @override
-  State<StatefulWidget> createState() => new MyFilesState();
+  State<StatefulWidget> createState() => new FileViewState();
 }
 
-class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
+class FileViewState extends State<FilesTripPage> with AutomaticKeepAliveClientMixin {
   /*
   instance vars
    */
@@ -74,26 +76,28 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
-     //clearFiles();
+    //clearFiles();
     getFiles();
 
-    return OrientationBuilder(builder: (context, orientation) {
-      portrait = orientation == Orientation.portrait;
-      return PinchToZoom(
-        Stack(
-          children: [
-            getBackgroundImage(),
-            getPageForm(),
-            Container(
-              height: MediaQuery.of(context).size.height / 7 + 4,
-              width: double.infinity,
-              color: AggressorColors.secondaryColor,
-            ),
-            getBannerImage(),
-          ],
-        ),
-      );
-    });
+    return Scaffold(
+      body: OrientationBuilder(builder: (context, orientation) {
+        portrait = orientation == Orientation.portrait;
+        return PinchToZoom(
+          Stack(
+            children: [
+              getBackgroundImage(),
+              getPageForm(),
+              Container(
+                height: MediaQuery.of(context).size.height / 7 + 4,
+                width: double.infinity,
+                color: AggressorColors.secondaryColor,
+              ),
+              getBannerImage(),
+            ],
+          ),
+        );
+      }),
+    );
   }
 
   /*
@@ -114,7 +118,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             showOffline(),
             showLoading(),
             getPageTitle(),
-            getUploadFile(),
             getFilesSection(),
             showErrorMessage(),
           ],
@@ -123,33 +126,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget getUploadFile() {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Upload file",
-              style: TextStyle(
-                  color: AggressorColors.secondaryColor,
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 40
-                      : MediaQuery.of(context).size.width / 40,
-                  fontWeight: FontWeight.bold),
-            ),
-          ),
-          getFilePrompt(),
-          getDestinationDropdown(tripList),
-          getFileInformation(),
-          getFileName(),
-          getUploadFileButton(),
-        ],
-      ),
-    );
-  }
 
   Widget getDestinationDropdown(List<Trip> tripList) {
     sortedTripList = [selectionTrip];
@@ -212,18 +188,18 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                       value.detailDestination == "General"
                           ? value.detailDestination
                           : value.detailDestination +
-                              " - " +
-                              DateTime.parse(value.charter.startDate)
-                                  .month
-                                  .toString() +
-                              "/" +
-                              DateTime.parse(value.charter.startDate)
-                                  .day
-                                  .toString() +
-                              "/" +
-                              DateTime.parse(value.charter.startDate)
-                                  .year
-                                  .toString(),
+                          " - " +
+                          DateTime.parse(value.charter.startDate)
+                              .month
+                              .toString() +
+                          "/" +
+                          DateTime.parse(value.charter.startDate)
+                              .day
+                              .toString() +
+                          "/" +
+                          DateTime.parse(value.charter.startDate)
+                              .year
+                              .toString(),
                       style: TextStyle(
                           fontSize: portrait
                               ? MediaQuery.of(context).size.height / 40 - 4
@@ -385,7 +361,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -453,43 +429,43 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
       child: Container(
           color: Colors.white,
-          child: fileDataList.length == 0
+          child: filesList.length == 0
               ? Column(
-                  mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                height: .5,
+                color: Colors.grey,
+              ),
+              Container(
+                color: AggressorColors.accentYellow,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    Container(
-                      height: .5,
-                      color: Colors.grey,
-                    ),
-                    Container(
-                      color: AggressorColors.accentYellow,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              width: textBoxSize,
-                              child: Text("File Name",
-                                  textAlign: TextAlign.center),
-                            ),
-                          ),
-                          SizedBox(
-                            width: textBoxSize,
-                            child: Text("Date", textAlign: TextAlign.center),
-                          ),
-                          SizedBox(
-                            width: textBoxSize / 2,
-                            child: Container(),
-                          ),
-                        ],
+                    Expanded(
+                      child: SizedBox(
+                        width: textBoxSize,
+                        child: Text("File Name",
+                            textAlign: TextAlign.center),
                       ),
                     ),
-                    Flexible(
-                      child: Text("You do not have any files to view yet."),
+                    SizedBox(
+                      width: textBoxSize,
+                      child: Text("Date", textAlign: TextAlign.center),
+                    ),
+                    SizedBox(
+                      width: textBoxSize / 2,
+                      child: Container(),
                     ),
                   ],
-                )
+                ),
+              ),
+              Flexible(
+                child: Text("You do not have any files to view yet."),
+              ),
+            ],
+          )
               : getFilesView()),
     );
   }
@@ -539,8 +515,13 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     int index = 0;
 
     fileDataList.forEach((value) {
+      print(value.date);
+      print(widget.startDate);
+
+      if(value.date == widget.startDate){
         filesList.add(value.getFileRow(context, index));
         index++;
+      }
     });
 
     return ListView.builder(
@@ -590,7 +571,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             .compareTo((DateTime.parse(a["LastModified"]))));
 
         var mapResult =
-            await AggressorApi().downloadAwsFile(fileNameList[0]["Key"]);
+        await AggressorApi().downloadAwsFile(fileNameList[0]["Key"]);
         var bytes = await readByteStream(mapResult.stream);
         var dirData = await getApplicationDocumentsDirectory();
         String path = dirData.toString();
@@ -611,7 +592,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             .split(",");
         mapRaw.forEach((element) {
           if (element.split(':')[0].toString().replaceAll("\"", "").trim() !=
-                  "status" &&
+              "status" &&
               element.split(':')[0].toString().replaceAll("\"", "").trim() !=
                   "message") {
             fileDisplayNames[element.split(':')[0].toString().trim()] =
@@ -645,14 +626,14 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                         .downloadAwsFile(elementJson["Key"].toString());
 
                     Uint8List bytes =
-                        await readByteStream(downloadResponse.stream);
+                    await readByteStream(downloadResponse.stream);
 
                     String fileName = elementJson["Key"];
                     int whereIndex = fileName.lastIndexOf("/");
                     fileName = fileName.substring(whereIndex + 1);
 
                     Directory appDocumentsDirectory =
-                        await getApplicationDocumentsDirectory(); // 1
+                    await getApplicationDocumentsDirectory(); // 1
                     String appDocumentsPath = appDocumentsDirectory.path; // 2
                     String filePath = '$appDocumentsPath/$fileName';
                     File tempFile = File(filePath);
@@ -699,7 +680,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 fileName = fileName.substring(whereIndex + 1);
 
                 Directory appDocumentsDirectory =
-                    await getApplicationDocumentsDirectory(); // 1
+                await getApplicationDocumentsDirectory(); // 1
                 String appDocumentsPath = appDocumentsDirectory.path; // 2
                 String filePath = '$appDocumentsPath/$fileName';
                 File tempFile = File(filePath);
@@ -822,7 +803,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           String uploadDate = dropDownValue.charter == null
               ? "general"
               : formatDate(DateTime.parse(dropDownValue.charter.startDate),
-                  [yyyy, '-', mm, '-', dd]);
+              [yyyy, '-', mm, '-', dd]);
 
           var uploadResult = await AggressorApi().uploadAwsFile(
               widget.user.userId,
@@ -834,7 +815,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           if (uploadResult["status"] == "success") {
             Uint8List bytes = File(result.files.single.path).readAsBytesSync();
             Directory appDocumentsDirectory =
-                await getApplicationDocumentsDirectory(); // 1
+            await getApplicationDocumentsDirectory(); // 1
             String appDocumentsPath = appDocumentsDirectory.path; // 2
             String filePath = '$appDocumentsPath/' + uploadResult["filename"];
             File tempFile = File(filePath);
@@ -848,7 +829,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 uploadResult["filename"],
                 fileNameController.text,
                 dropDownValue.charterId));
-            
+
             FileDatabaseHelper.instance.insertFile(FileData(
                 tempFile.path,
                 uploadDate,
@@ -905,7 +886,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     String dataDir = (await getApplicationDocumentsDirectory()).path;
     File displayNameFile = File(dataDir + "/FileDisplayNames.txt");
     displayNameFile =
-        await displayNameFile.writeAsString(fileDisplayNames.toString());
+    await displayNameFile.writeAsString(fileDisplayNames.toString());
 
     int count = 0;
     for (var element in fileNameList) {
@@ -942,25 +923,25 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return errorMessage == ""
         ? Container()
         : Padding(
-            padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
-            child: Text(
-              errorMessage,
-              style: TextStyle(color: Colors.red),
-              textAlign: TextAlign.center,
-            ),
-          );
+      padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
+      child: Text(
+        errorMessage,
+        style: TextStyle(color: Colors.red),
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 
   Widget showLoading() {
     //displays a loading bar if data is being downloaded
     return loading
         ? Padding(
-            padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
-            child: LinearProgressIndicator(
-              backgroundColor: AggressorColors.primaryColor,
-              valueColor: AlwaysStoppedAnimation(Colors.white),
-            ),
-          )
+      padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
+      child: LinearProgressIndicator(
+        backgroundColor: AggressorColors.primaryColor,
+        valueColor: AlwaysStoppedAnimation(Colors.white),
+      ),
+    )
         : Container();
   }
 
@@ -969,16 +950,16 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     return online
         ? Container()
         : Container(
-            color: Colors.red,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
-              child: Text(
-                "Application is offline",
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          );
+      color: Colors.red,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
+        child: Text(
+          "Application is offline",
+          style: TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 
   @override

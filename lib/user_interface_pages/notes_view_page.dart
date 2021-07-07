@@ -11,6 +11,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'file_trip_page.dart';
+
 class ViewNote extends StatefulWidget {
   ViewNote(
     this.user,
@@ -462,13 +464,30 @@ class ViewNoteState extends State<ViewNote> {
                       fontWeight: FontWeight.bold),
                 ),
               ),
+                 IconButton(
+                  iconSize: portrait
+                      ? MediaQuery.of(context).size.height / 20
+                      : MediaQuery.of(context).size.width / 20,
+                  icon: Image.asset("assets/filesblue.png"
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            FilesTripPage(widget.user,  widget.note.startDate),
+                      ),
+                    );
+                  },
+                  color: Colors.white,
+                ),
               Container(
                 height: portrait
                     ? MediaQuery.of(context).size.height / 20
                     : MediaQuery.of(context).size.width / 20,
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AggressorColors.primaryColor),
+                    color: AggressorColors.secondaryColor),
                 child: IconButton(
                   iconSize: portrait
                       ? MediaQuery.of(context).size.height / 35
