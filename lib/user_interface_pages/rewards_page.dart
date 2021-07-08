@@ -40,8 +40,6 @@ class RewardsState extends State<Rewards>  {
 
   bool timerStarted = false;
 
-  bool userImageRetreived = false;
-
   /*
   initState
    */

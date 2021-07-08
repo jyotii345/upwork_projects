@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
@@ -390,10 +391,13 @@ class _LoginSignUpPageState extends State<LoginPage> {
             child: TextButton(
               style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
               onPressed: () {
+                setState(() {
+                  outterDistanceFromLogin ++;
+                });
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => RegistrationPage()));
+                        builder: (context) => RegistrationPage(distanceReduce)));
               },
               child: Text(
                 "Create Account",
@@ -425,5 +429,11 @@ class _LoginSignUpPageState extends State<LoginPage> {
         ],
       ),
     );
+  }
+
+  void distanceReduce(){
+    setState(() {
+      outterDistanceFromLogin --;
+    });
   }
 }

@@ -24,8 +24,11 @@ bool profileDataLoaded = false;
 bool online = true;
 bool filesLoaded = false;
 bool homePage = false;
-
+bool backButton = false;
 int currentIndex = 0;
+int outterDistanceFromLogin = 0;
+
+bool userImageRetreived = false;
 
 Map<String, Gallery> galleriesMap = <String, Gallery>{};
 Map<String, dynamic> profileData = <String, dynamic>{};

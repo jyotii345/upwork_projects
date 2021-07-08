@@ -205,7 +205,7 @@ class AggressorApi {
       String email, String password, String dateOfBirth) async {
     //sends collected information to the API and sees if there are matching users, returns a userID for future queries
     Response response = await post(
-      Uri.https('app.aggressor.com', 'api/app/registration/register'),
+      Uri.https('app.aggressor.com', 'api/app/registration/register'), //todo replace with app.aggressor.com
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',

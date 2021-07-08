@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class EditMyProfile extends StatefulWidget {
@@ -156,6 +157,12 @@ class EditMyProfileState extends State<EditMyProfile> {
         if (selectionFile != null) {
           var response = await AggressorApi()
               .uploadUserImage(widget.user.userId, selectionFile.path);
+
+          var dirData = (await getApplicationDocumentsDirectory()).path;
+          var bytes = selectionFile.readAsBytesSync();
+          File temp = File(dirData + "/" + profileData["avatar"]);
+          await temp.writeAsBytes(bytes);
+
         }
 
 
@@ -192,6 +199,7 @@ class EditMyProfileState extends State<EditMyProfile> {
       } catch (e) {
         print('caught Error: $e');
         setState(() {
+          userImageRetreived = false;
           errorMessage = e.message;
           isLoading = false;
         });
@@ -315,7 +323,7 @@ class EditMyProfileState extends State<EditMyProfile> {
                         getUsername(),
                         getPassword(),
                         getTotalNumberOfDives(),
-                        getAccountType(),
+                        //getAccountType(),
                         getUpdateButton(),
                         showErrorMessage(),
                       ],
@@ -1242,7 +1250,7 @@ class EditMyProfileState extends State<EditMyProfile> {
 
     //try {
     resultList = await MultiImagePicker.pickImages(
-      maxImages: 300,
+      maxImages: 1,
       enableCamera: true,
       selectedAssets: resultList,
       cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
@@ -1272,7 +1280,7 @@ class EditMyProfileState extends State<EditMyProfile> {
     }
 
     setState(() {
-      photosLoaded = false;
+      userImageRetreived = false;
     });
 
     if (!mounted) return;

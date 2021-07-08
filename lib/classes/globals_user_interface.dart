@@ -15,6 +15,7 @@ import 'package:aggressor_adventures/databases/slider_database.dart';
 import 'package:aggressor_adventures/databases/states_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
+import 'package:aggressor_adventures/main.dart';
 import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -211,45 +212,66 @@ Widget getAppBar() {
     centerTitle: true,
     backgroundColor: Colors.white,
     automaticallyImplyLeading: false,
-    leading: SizedBox(
-      height: AppBar().preferredSize.height,
-      child: IconButton(
-        icon: Container(
-          child: Image.asset("assets/callicon.png"),
-        ),
-        onPressed: makeCall,
-      ),
-    ),
+    leading: !homePage
+        ? outterDistanceFromLogin > 0
+            ? IconButton(
+                icon: Icon(Icons.arrow_back),
+                color: AggressorColors.secondaryColor,
+                onPressed: () {
+                  outterDistanceFromLogin = 0;
+                  navigatorKey.currentState.pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+                },
+              )
+            : Container()
+        : SizedBox(
+            height: AppBar().preferredSize.height,
+            child: IconButton(
+              icon: Container(
+                child: Image.asset("assets/callicon.png"),
+              ),
+              onPressed: makeCall,
+            ),
+          ),
     title: Image.asset(
       "assets/logo.png",
       height: AppBar().preferredSize.height,
       fit: BoxFit.fitHeight,
     ),
     actions: <Widget>[
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-        child: SizedBox(
-          height: AppBar().preferredSize.height,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: PopupMenuButton<String>(
-                onSelected: handlePopupClick,
-                child: Container(
-                  child: Image.asset(
-                    "assets/menuicon.png",
-                  ),
+      homePage
+          ? Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+              child: SizedBox(
+                height: AppBar().preferredSize.height,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: PopupMenuButton<String>(
+                      onSelected: handlePopupClick,
+                      child: Container(
+                        child: Image.asset(
+                          "assets/menuicon.png",
+                        ),
+                      ),
+                      itemBuilder: (BuildContext context) {
+                        return {"My Profile", "Sign Out"}.map((String option) {
+                          return PopupMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList();
+                      }),
                 ),
-                itemBuilder: (BuildContext context) {
-                  return {"My Profile", "Sign Out"}.map((String option) {
-                    return PopupMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList();
-                }),
-          ),
-        ),
-      ),
+              ),
+            )
+          : SizedBox(
+              height: AppBar().preferredSize.height,
+              child: IconButton(
+                icon: Container(
+                  child: Image.asset("assets/callicon.png"),
+                ),
+                onPressed: makeCall,
+              ),
+            ),
     ],
   );
 }
@@ -279,4 +301,3 @@ void handlePopupClick(String value) {
   });
   popDistance = 0;
 }
-

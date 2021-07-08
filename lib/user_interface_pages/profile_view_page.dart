@@ -27,7 +27,6 @@ class MyProfileState extends State<MyProfile> {
   /*
   instance vars
    */
-  bool userImageRetreived = false;
 
   /*
   initState
@@ -219,25 +218,25 @@ class MyProfileState extends State<MyProfile> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text("Account Type: "),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Container(
-              width: double.infinity,
-              child: Text(
-                profileData["account_type"],
-                textAlign: TextAlign.center,
-              ),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
-                ),
-              ),
-            ),
-          ),
+          // Align(
+          //   alignment: Alignment.centerLeft,
+          //   child: Text("Account Type: "),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(vertical: 5),
+          //   child: Container(
+          //     width: double.infinity,
+          //     child: Text(
+          //       profileData["account_type"],
+          //       textAlign: TextAlign.center,
+          //     ),
+          //     decoration: BoxDecoration(
+          //       border: Border(
+          //         bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Container(
             width: double.infinity,
             child: Text("Dives completed: "),
@@ -421,6 +420,7 @@ class MyProfileState extends State<MyProfile> {
     //update to show profile data should be reloaded
     setState(() {
       profileDataLoaded = false;
+      userImageRetreived = false;
     });
   }
 

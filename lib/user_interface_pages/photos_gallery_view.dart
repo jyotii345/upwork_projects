@@ -401,13 +401,11 @@ class GalleryViewState extends State<GalleryView> {
                                       child: Stack(
                                         children: [
                                           Positioned.fill(
-                                            child: Image.file(
+                                            child:Image.file(
                                               File(
                                                 widget
                                                     .photos[(index +
-                                                        (9 *
-                                                            (indexMultiplier -
-                                                                1)))]
+                                                    (9 * (indexMultiplier - 1)))]
                                                     .imagePath,
                                               ),
                                               fit: BoxFit.fill,
@@ -491,6 +489,18 @@ class GalleryViewState extends State<GalleryView> {
                                     (MediaQuery.of(context).size.width * .4),
                                 child: Stack(
                                   children: [
+
+                                    Positioned.fill(
+                                      child:Image.file(
+                                        File(
+                                          widget
+                                              .photos[(index +
+                                              (9 * (indexMultiplier - 1)))]
+                                              .imagePath,
+                                        ),
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
                                     Align(
                                       alignment: Alignment.topRight,
                                       child: Padding(

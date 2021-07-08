@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class RegistrationPage extends StatefulWidget {
-  RegistrationPage();
+  RegistrationPage(this.callback);
+
+  final VoidCallback callback;
 
   @override
   State<StatefulWidget> createState() => new RegistrationPageState();
@@ -41,6 +43,7 @@ class RegistrationPageState extends State<RegistrationPage>{
    */
   @override
   void initState() {
+    backButton = true;
     super.initState();
   }
 
@@ -385,6 +388,11 @@ class RegistrationPageState extends State<RegistrationPage>{
       form.save();
       return true;
     }
+    else{
+      setState(() {
+        isLoading = false;
+      });
+    }
     return false;
   }
 
@@ -399,6 +407,7 @@ class RegistrationPageState extends State<RegistrationPage>{
               actions: <Widget>[
                 new TextButton(
                     onPressed: () {
+                      widget.callback();
                       int popCount = 0;
                       Navigator.popUntil(context, (route) {
                         return popCount++ == 2;

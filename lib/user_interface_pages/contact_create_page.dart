@@ -52,7 +52,6 @@ class CreateContactState extends State<CreateContact> {
    */
   @override
   void initState() {
-    email = widget.email;
     dateOfBirth = widget.dateOfBirth;
     super.initState();
   }
@@ -549,6 +548,7 @@ class CreateContactState extends State<CreateContact> {
         ),
         Expanded(
           child: TextFormField(
+            initialValue: widget.email,
             decoration: InputDecoration(hintText: "Email"),
             validator: (value) =>
                 value.isEmpty ? 'Email can\'t be empty' : null,
@@ -599,6 +599,13 @@ class CreateContactState extends State<CreateContact> {
     if (!stateAndCountryLoaded) {
       countryList = await AggressorApi().getCountries();
       stateList = await AggressorApi().getStates();
+
+      print(countryList[0]["country"]);
+      Map<String, dynamic> temp = countryList.where((element) => element["country"].toString().trim() == "USA").elementAt(0);
+      countryList.remove( temp);
+      countryList.insert(0, temp);
+
+
       countryDropDownSelection = countryList[0];
       stateDropDownSelection = stateList[0];
       setState(() {
