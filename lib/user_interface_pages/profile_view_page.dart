@@ -263,7 +263,6 @@ class MyProfileState extends State<MyProfile> {
 
   Widget getPersonalInfo() {
     //returns the personal information section
-    getUserProfileImageData();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,6 +319,7 @@ class MyProfileState extends State<MyProfile> {
           profileData = jsonResponse;
           profileDataLoaded = true;
         });
+        getUserProfileImageData();
       }
     }
     return "finished";
@@ -406,6 +406,7 @@ class MyProfileState extends State<MyProfile> {
 
   void updateCallback() {
     //update to show profile data should be reloaded
+    print("time to update");
     setState(() {
       profileDataLoaded = false;
       userImageRetreived = false;
@@ -420,6 +421,7 @@ class MyProfileState extends State<MyProfile> {
   Future<dynamic> getUserProfileImageData() async {
     if(!userImageRetreived) {
       try {
+        print(profileData["avatar"]);
         var userImageRes = await AggressorApi()
             .downloadUserImage(widget.user.userId, profileData["avatar"]);
 

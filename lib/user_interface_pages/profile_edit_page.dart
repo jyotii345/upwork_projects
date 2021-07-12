@@ -194,6 +194,7 @@ class EditMyProfileState extends State<EditMyProfile> {
         }
 
         setState(() {
+          userImage = selectionFile;
           isLoading = false;
         });
       } catch (e) {
@@ -274,9 +275,6 @@ class EditMyProfileState extends State<EditMyProfile> {
               actions: <Widget>[
                 new TextButton(
                     onPressed: () {
-                      setState(() {
-                        userImageRetreived = false;
-                      });
                       int popCount = 0;
                       Navigator.popUntil(context, (route) {
                         return popCount++ == 2;
@@ -1280,7 +1278,6 @@ class EditMyProfileState extends State<EditMyProfile> {
             .substring(selectionFile.path.lastIndexOf("/") + 1);
 
         userImage = selectionFile;
-        userImageRetreived = false;
       });
 
     if (!mounted) return;

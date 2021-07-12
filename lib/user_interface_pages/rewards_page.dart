@@ -434,7 +434,6 @@ class RewardsState extends State<Rewards> {
 
   Widget getUserRow() {
     //returns the row widget containing the user information and boutique points
-    getUserProfileImageData();
 
     double sectionWidth = portrait
         ? (MediaQuery.of(context).size.width / 3) - 16
@@ -604,6 +603,7 @@ class RewardsState extends State<Rewards> {
             profileData = jsonResponse;
             profileDataLoaded = true;
           });
+          getUserProfileImageData();
         }
       }
       Navigator.push(
@@ -997,8 +997,10 @@ class RewardsState extends State<Rewards> {
 
   void updateCallback() {
     //update to show profile data should be reloaded
+    print("time to update");
     setState(() {
       profileDataLoaded = false;
+      userImageRetreived = false;
     });
   }
 
@@ -1047,6 +1049,8 @@ class RewardsState extends State<Rewards> {
   Future<dynamic> getUserProfileImageData() async {
     if (!userImageRetreived) {
       try {
+
+        print(profileData["avatar"]);
         var userImageRes = await AggressorApi()
             .downloadUserImage(widget.user.userId, profileData["avatar"]);
 
