@@ -639,8 +639,8 @@ class RewardsState extends State<Rewards> {
         Container(
           width: MediaQuery.of(context).size.width,
           height: portrait
-              ? MediaQuery.of(context).size.height / 6
-              : MediaQuery.of(context).size.width / 5,
+              ? MediaQuery.of(context).size.height / 5
+              : MediaQuery.of(context).size.width / 4,
           child: sliderImageList.length == 0
               ? Container()
               : Image.file(
@@ -651,8 +651,8 @@ class RewardsState extends State<Rewards> {
         Container(
           width: MediaQuery.of(context).size.width,
           height: portrait
-              ? MediaQuery.of(context).size.height / 6
-              : MediaQuery.of(context).size.width / 5,
+              ? MediaQuery.of(context).size.height / 5
+              : MediaQuery.of(context).size.width / 4,
           child: Align(
             alignment: Alignment.centerRight,
             child: TextButton(
@@ -680,8 +680,8 @@ class RewardsState extends State<Rewards> {
         Container(
           width: MediaQuery.of(context).size.width,
           height: portrait
-              ? MediaQuery.of(context).size.height / 6
-              : MediaQuery.of(context).size.width / 5,
+              ? MediaQuery.of(context).size.height / 5
+              : MediaQuery.of(context).size.width / 4,
           child: Align(
             alignment: Alignment.centerLeft,
             child: TextButton(
