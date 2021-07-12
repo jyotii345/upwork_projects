@@ -263,6 +263,7 @@ class MyProfileState extends State<MyProfile> {
 
   Widget getPersonalInfo() {
     //returns the personal information section
+    getUserProfileImageData();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,28 +275,15 @@ class MyProfileState extends State<MyProfile> {
           width: portrait
               ? MediaQuery.of(context).size.width / 4
               : MediaQuery.of(context).size.height / 4,
-          child: FutureBuilder(
-              future: getUserProfileImageData(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  try {
-                    return Image.file(
-                      snapshot.data,
+          child: userImage.existsSync() ? Image.file(
+                      userImage,
                       fit: BoxFit.fill,
-                    );
-                  } catch (e) {
-                    return Image.asset(
+                    ): Image.
+                     asset(
                       "assets/noprofile.png",
                       fit: BoxFit.fill,
-                    );
-                  }
-                } else {
-                  return Image.asset(
-                    "assets/noprofile.png",
-                    fit: BoxFit.fill,
-                  );
-                }
-              }),
+                    ),
+
         ),
         Container(
           height: portrait
@@ -441,19 +429,19 @@ class MyProfileState extends State<MyProfile> {
         await temp.writeAsBytes(bytes);
 
         print("settings state v");
-        setState(() {userImageRetreived = true;});
-        return temp;
+        setState(() {userImageRetreived = true; userImage = temp;});
       } catch (e) {
         var dirData = (await getApplicationDocumentsDirectory()).path;
 
         print("settings state v");
-        setState(() {userImageRetreived = true;});
-        return File(dirData + "/" + profileData["avatar"]);
+        setState(() {userImageRetreived = true; userImage = File(dirData + "/" + profileData["avatar"]);});
       }
     }
     else{
       var dirData = (await getApplicationDocumentsDirectory()).path;
-      return File(dirData + "/" + profileData["avatar"]);
+      setState(() {
+        userImage = File(dirData + "/" + profileData["avatar"]);
+      });
     }
   }
 }

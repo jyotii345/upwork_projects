@@ -605,6 +605,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     }
 
     for (var note in notesList) {
+
       await notesDatabaseHelper.insertNotes(note);
     }
   }

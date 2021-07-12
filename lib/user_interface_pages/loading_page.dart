@@ -187,6 +187,7 @@ class LoadingPageState extends State<LoadingPage> {
       loadedCount++;
     });
     var tempProfileData = await ProfileDatabaseHelper.instance.queryProfile();
+    getUserProfileImageData(tempProfileData);
     setState(() {
       loadedCount++;
     });
@@ -538,12 +539,15 @@ class LoadingPageState extends State<LoadingPage> {
       if (jsonResponse["status"] == "success") {
         setState(() {
           profileData = jsonResponse;
+          print("online user image");
+          getUserProfileImageData(profileData);
           profileDataLoaded = true;
         });
       }
 
       updateProfileDetailsCache(jsonResponse);
     }
+
   }
 
   Future<dynamic> getGalleries(List<Photo> photos) async {
@@ -651,6 +655,38 @@ class LoadingPageState extends State<LoadingPage> {
       }
     } catch (e) {
       print("no offline additions");
+    }
+  }
+
+  Future<dynamic> getUserProfileImageData(var profileDataLocal) async {
+    if (!userImageRetreived) {
+      print("loading user image");
+      try {
+        var userImageRes = await AggressorApi()
+            .downloadUserImage(widget.user.userId, profileData["avatar"]);
+
+        var bytes = await readByteStream(userImageRes.stream);
+        var dirData = (await getApplicationDocumentsDirectory()).path;
+        File temp = File(dirData + "/" + profileData["avatar"]);
+        await temp.writeAsBytes(bytes);
+
+        print("settings state rew");
+        setState(() {
+          userImageRetreived = true;
+          userImage = temp;
+        });
+      } catch (e) {
+        var dirData = (await getApplicationDocumentsDirectory()).path;
+
+        print("settings state rew");
+          print(profileDataLocal["avatar"]);
+          userImage = File(dirData.toString() + "/" + profileDataLocal["avatar"].toString());
+
+      }
+    } else {
+      var dirData = (await getApplicationDocumentsDirectory()).path;
+        userImage = File(dirData + "/" + profileDataLocal["avatar"]);
+
     }
   }
 }

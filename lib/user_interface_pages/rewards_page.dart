@@ -30,7 +30,7 @@ class Rewards extends StatefulWidget {
   State<StatefulWidget> createState() => new RewardsState();
 }
 
-class RewardsState extends State<Rewards>  {
+class RewardsState extends State<Rewards> {
   /*
   instance vars
    */
@@ -56,7 +56,6 @@ class RewardsState extends State<Rewards>  {
 
   @override
   Widget build(BuildContext context) {
-
     homePage = true;
     return PinchToZoom(
       OrientationBuilder(
@@ -435,6 +434,8 @@ class RewardsState extends State<Rewards>  {
 
   Widget getUserRow() {
     //returns the row widget containing the user information and boutique points
+    getUserProfileImageData();
+
     double sectionWidth = portrait
         ? (MediaQuery.of(context).size.width / 3) - 16
         : (MediaQuery.of(context).size.width / 3.5);
@@ -454,23 +455,15 @@ class RewardsState extends State<Rewards>  {
               width: sectionWidth,
               child: Padding(
                 padding: const EdgeInsets.all(0.0),
-                child: FutureBuilder(
-                    future: getUserProfileImageData(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && snapshot.data != null) {
-                        try {
-                          return Image.file(snapshot.data, fit: BoxFit.fill,);
-                        } catch (e) {
-                          return Image.asset(
-                            "assets/noprofile.png",fit: BoxFit.fill,
-                          );
-                        }
-                      } else {
-                        return Image.asset(
-                          "assets/noprofile.png",fit: BoxFit.fill,
-                        );
-                      }
-                    }),
+                child: userImage.existsSync()
+                    ? Image.file(
+                        userImage,
+                        fit: BoxFit.fill,
+                      )
+                    : Image.asset(
+                        "assets/noprofile.png",
+                        fit: BoxFit.fill,
+                      ),
               ),
             ),
             Container(
@@ -648,10 +641,12 @@ class RewardsState extends State<Rewards>  {
           height: portrait
               ? MediaQuery.of(context).size.height / 6
               : MediaQuery.of(context).size.width / 5,
-          child: sliderImageList.length == 0 ? Container() : Image.file(
-            File(sliderImageList[sliderIndex]["filePath"]),
-            fit: BoxFit.fill,
-          ),
+          child: sliderImageList.length == 0
+              ? Container()
+              : Image.file(
+                  File(sliderImageList[sliderIndex]["filePath"]),
+                  fit: BoxFit.fill,
+                ),
         ),
         Container(
           width: MediaQuery.of(context).size.width,
@@ -1050,7 +1045,7 @@ class RewardsState extends State<Rewards>  {
   }
 
   Future<dynamic> getUserProfileImageData() async {
-    if(!userImageRetreived) {
+    if (!userImageRetreived) {
       try {
         var userImageRes = await AggressorApi()
             .downloadUserImage(widget.user.userId, profileData["avatar"]);
@@ -1061,20 +1056,26 @@ class RewardsState extends State<Rewards>  {
         await temp.writeAsBytes(bytes);
 
         print("settings state rew");
-        setState(() {userImageRetreived = true;});
-        return temp;
+        setState(() {
+          userImageRetreived = true;
+          userImage = temp;
+        });
       } catch (e) {
         var dirData = (await getApplicationDocumentsDirectory()).path;
 
         print("settings state rew");
-        setState(() {userImageRetreived = true;});
-        return File(dirData + "/" + profileData["avatar"]);
+        setState(() {
+          userImageRetreived = true;
+
+          userImage = File(dirData + "/" + profileData["avatar"]);
+        });
+
       }
-    }
-    else{
+    } else {
       var dirData = (await getApplicationDocumentsDirectory()).path;
-      return File(dirData + "/" + profileData["avatar"]);
+      setState(() {
+        userImage = File(dirData + "/" + profileData["avatar"]);
+      });
     }
   }
-
 }

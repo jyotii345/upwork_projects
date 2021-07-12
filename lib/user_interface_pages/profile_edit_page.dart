@@ -199,7 +199,6 @@ class EditMyProfileState extends State<EditMyProfile> {
       } catch (e) {
         print('caught Error: $e');
         setState(() {
-          userImageRetreived = false;
           errorMessage = e.message;
           isLoading = false;
         });
@@ -275,6 +274,9 @@ class EditMyProfileState extends State<EditMyProfile> {
               actions: <Widget>[
                 new TextButton(
                     onPressed: () {
+                      setState(() {
+                        userImageRetreived = false;
+                      });
                       int popCount = 0;
                       Navigator.popUntil(context, (route) {
                         return popCount++ == 2;
@@ -1263,25 +1265,23 @@ class EditMyProfileState extends State<EditMyProfile> {
       ),
     );
 
-    for (var result in resultList) {
       String path = "";
-      if (result.name.toLowerCase().contains(".heic")) {
-        path = await HeicToJpg.convert(
-            await FlutterAbsolutePath.getAbsolutePath(result.identifier));
+      var tempPath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
+      if (tempPath.toLowerCase().contains(".heic")) {
+
+        path = await HeicToJpg.convert(tempPath);
       } else {
-        path = await FlutterAbsolutePath.getAbsolutePath(result.identifier);
+        path = tempPath;
       }
       selectionFile = File(path);
 
       setState(() {
         profileImagePath = selectionFile.path
             .substring(selectionFile.path.lastIndexOf("/") + 1);
-      });
-    }
 
-    setState(() {
-      userImageRetreived = false;
-    });
+        userImage = selectionFile;
+        userImageRetreived = false;
+      });
 
     if (!mounted) return;
 
