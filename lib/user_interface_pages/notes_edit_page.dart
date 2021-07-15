@@ -70,11 +70,6 @@ class EditNoteState extends State<EditNote> {
         children: [
           getBackgroundImage(),
           getPageForm(),
-          Container(
-            height: MediaQuery.of(context).size.height / 7 + 4,
-            width: double.infinity,
-            color: AggressorColors.secondaryColor,
-          ),
           getBannerImage(),
           getLoading(),
         ],
@@ -110,10 +105,7 @@ class EditNoteState extends State<EditNote> {
           padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
           child: ListView(
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 7,
-              ),
+            Opacity(opacity: 0, child:getBannerImage(),),
               getPageTitle(),
               getYachtInformation(),
               getDepartureDate(),
@@ -535,15 +527,13 @@ class EditNoteState extends State<EditNote> {
     miscNotesController.insertHtml(widget.note.miscNotes);
   }
 
-  Widget getBannerImage() {
+   Widget getBannerImage() {
     //returns banner image
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 7,
-      child: Image.asset(
+    return Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.fill,
-      ),
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.scaleDown,
+
     );
   }
 

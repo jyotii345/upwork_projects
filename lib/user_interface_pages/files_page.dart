@@ -84,11 +84,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           children: [
             getBackgroundImage(),
             getPageForm(),
-            Container(
-              height: MediaQuery.of(context).size.height / 7 + 4,
-              width: double.infinity,
-              color: AggressorColors.secondaryColor,
-            ),
             getBannerImage(),
           ],
         ),
@@ -107,10 +102,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         color: Colors.white,
         child: ListView(
           children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 7,
-            ),
+            Opacity(opacity: 0, child:getBannerImage(),),
             showOffline(),
             showLoading(),
             getPageTitle(),
@@ -396,15 +388,13 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget getBannerImage() {
+   Widget getBannerImage() {
     //returns banner image
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height / 7,
-      child: Image.asset(
+    return Image.asset(
         "assets/bannerimage.png",
-        fit: BoxFit.fill,
-      ),
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.scaleDown,
+
     );
   }
 
