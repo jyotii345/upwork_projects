@@ -37,6 +37,7 @@ class PinchToZoomState extends State<PinchToZoom>
     return InteractiveViewer(
         constrained: true,
         alignPanAxis: false,
+        panEnabled: false,
         boundaryMargin: EdgeInsets.all(20),
         transformationController: _transformationController,
         scaleEnabled: true,
@@ -50,7 +51,7 @@ class PinchToZoomState extends State<PinchToZoom>
   void _animateResetInitialize() async {
     //animation reset for pnich to zoom
 
-    timer = Timer(Duration(seconds: 5), () {
+    timer = Timer(Duration(seconds: 3), () {
       controllerReset.reset();
       animationReset = Matrix4Tween(
         begin: _transformationController.value,
