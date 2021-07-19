@@ -632,76 +632,72 @@ class RewardsState extends State<Rewards> {
 
   Widget getSliderImages() {
     //returns slider images on top of the page
-    return Stack(
-      children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          child: sliderImageList.length == 0
-              ? Container()
-              : Image.file(
-                  File(sliderImageList[sliderIndex]["filePath"]),
-                  fit: BoxFit.scaleDown,
+    return IntrinsicHeight(
+      child: Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: sliderImageList.length == 0
+                ? Container()
+                : Image.file(
+                    File(sliderImageList[sliderIndex]["filePath"]),
+                    fit: BoxFit.scaleDown,
+                  ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  if (sliderIndex + 1 < sliderImageList.length) {
+                    setState(() {
+                      sliderIndex++;
+                    });
+                  } else {
+                    setState(() {
+                      sliderIndex = 0;
+                    });
+                  }
+                },
+                child: Icon(
+                  Icons.chevron_right,
+                  color: Colors.white70,
+                  size: portrait
+                      ? MediaQuery.of(context).size.width / 7.5
+                      : MediaQuery.of(context).size.height / 7.5,
                 ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: portrait
-              ? MediaQuery.of(context).size.height / 3
-              : MediaQuery.of(context).size.width / 2,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () {
-                if (sliderIndex + 1 < sliderImageList.length) {
-                  setState(() {
-                    sliderIndex++;
-                  });
-                } else {
-                  setState(() {
-                    sliderIndex = 0;
-                  });
-                }
-              },
-              child: Icon(
-                Icons.chevron_right,
-                color: Colors.white70,
-                size: portrait
-                    ? MediaQuery.of(context).size.width / 7.5
-                    : MediaQuery.of(context).size.height / 7.5,
               ),
             ),
           ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: portrait
-              ? MediaQuery.of(context).size.height / 3
-              : MediaQuery.of(context).size.width / 2,
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton(
-              onPressed: () {
-                if (sliderIndex > 0) {
-                  setState(() {
-                    sliderIndex--;
-                  });
-                } else {
-                  setState(() {
-                    sliderIndex = sliderImageList.length - 1;
-                  });
-                }
-              },
-              child: Icon(
-                Icons.chevron_left,
-                color: Colors.white70,
-                size: portrait
-                    ? MediaQuery.of(context).size.width / 7.5
-                    : MediaQuery.of(context).size.height / 7.5,
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () {
+                  if (sliderIndex > 0) {
+                    setState(() {
+                      sliderIndex--;
+                    });
+                  } else {
+                    setState(() {
+                      sliderIndex = sliderImageList.length - 1;
+                    });
+                  }
+                },
+                child: Icon(
+                  Icons.chevron_left,
+                  color: Colors.white70,
+                  size: portrait
+                      ? MediaQuery.of(context).size.width / 7.5
+                      : MediaQuery.of(context).size.height / 7.5,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

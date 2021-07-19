@@ -55,8 +55,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-
-
   assets:
     - assets/tripsactive.png
     - assets/tripspassive.png
