@@ -450,8 +450,8 @@ class RewardsState extends State<Rewards> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              height: sectionHeight,
-              width: sectionWidth,
+              height:sectionHeight,
+              width: sectionHeight,
               child: Padding(
                 padding: const EdgeInsets.all(0.0),
                 child: userImage.existsSync()
@@ -477,8 +477,6 @@ class RewardsState extends State<Rewards> {
                         contact.nameM +
                         " " +
                         contact.nameL +
-                        ", " +
-                        profileData["state"] +
                         "\nGuest since " +
                         contact.memberSince +
                         "\nTotal Adventures - " +
@@ -539,8 +537,8 @@ class RewardsState extends State<Rewards> {
                           ),
                           child: Image.asset(
                             "assets/redquestion.png",
-                            height: 10,
-                            width: 10,
+                            height: sectionHeight / 12,
+                            width: sectionHeight / 12,
                           ),
                         ),
                       ),
@@ -732,16 +730,14 @@ class RewardsState extends State<Rewards> {
                         "assets/certification.png",
                         height: MediaQuery.of(context).size.width / 15,
                         width: MediaQuery.of(context).size.width / 15,
-                      ),
-                      Flexible(
-                          child: Padding(
+                      ),Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Text(
                           certificationList[position]["certification"],
                           style: TextStyle(
-                              fontSize: MediaQuery.of(context).size.width / 25),
+                              fontSize: MediaQuery.of(context).size.width / 50),
                         ),
-                      ))
+                      )
                     ],
                   ),
                   secondaryActions: <Widget>[
@@ -794,13 +790,11 @@ class RewardsState extends State<Rewards> {
                         "assets/irondiver.png",
                         height: MediaQuery.of(context).size.width / 15,
                         width: MediaQuery.of(context).size.width / 15,
-                      ),
-                      Flexible(
-                          child: Text(
+                      ), Text(
                         ironDiverList[position]["name"],
                         style: TextStyle(
-                            fontSize: MediaQuery.of(context).size.width / 25),
-                      ))
+                            fontSize: MediaQuery.of(context).size.width / 50),
+                      )
                     ],
                   ),
                   secondaryActions: <Widget>[

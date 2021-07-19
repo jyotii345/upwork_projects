@@ -232,10 +232,13 @@ Widget getAppBar() {
               onPressed: makeCall,
             ),
           ),
-    title: Image.asset(
-      "assets/logo.png",
-      height: AppBar().preferredSize.height,
-      fit: BoxFit.fitHeight,
+    title: Padding(
+      padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+      child: Image.asset(
+        "assets/logo.png",
+        height: AppBar().preferredSize.height,
+        fit: BoxFit.fitHeight,
+      ),
     ),
     actions: <Widget>[
       homePage
