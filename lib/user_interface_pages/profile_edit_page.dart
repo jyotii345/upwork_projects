@@ -59,6 +59,7 @@ class EditMyProfileState extends State<EditMyProfile> {
       username,
       password,
       totalDives,
+  totalAdventures,
       accountType;
 
   File selectionFile;
@@ -148,6 +149,11 @@ class EditMyProfileState extends State<EditMyProfile> {
         if (totalDives == "") {
           totalDives = null;
         }
+
+        if(totalAdventures == ""){
+          totalAdventures = null;
+        }
+
 
         if (selectionFile != null) {
           var response = await AggressorApi()
@@ -315,6 +321,7 @@ class EditMyProfileState extends State<EditMyProfile> {
                         getUsername(),
                         getPassword(),
                         getTotalNumberOfDives(),
+                        getTotalAdventures(),
                         //getAccountType(),
                         getUpdateButton(),
                         showErrorMessage(),
@@ -941,6 +948,50 @@ class EditMyProfileState extends State<EditMyProfile> {
     );
   }
 
+  Widget getTotalAdventures() {
+    //returns the widget item containing the total number of dives
+    return Container(
+      color: Colors.white,
+      child: Row(
+        children: [
+          Container(
+            width: textDisplayWidth,
+            child: Text(
+              "Total Number of Adventures: ",
+              style: TextStyle(fontSize: textSize),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Container(
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: totalAdventures == null || totalAdventures == ""
+                      ? Text(
+                    "0",
+                    style: TextStyle(fontSize: textSize),
+                  )
+                      : Text(
+                    totalAdventures,
+                    style: TextStyle(fontSize: textSize),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget getAccountType() {
     //returns the widget item containing the account type
     return Row(
@@ -1177,6 +1228,7 @@ class EditMyProfileState extends State<EditMyProfile> {
       username = widget.profileData["username"];
       password = "";
       totalDives = widget.profileData["dives"].toString();
+      totalAdventures = widget.profileData["totalAdventures"].toString();
       accountType = widget.profileData["account_type"];
 
       countryDropDownSelection = countriesList[0];

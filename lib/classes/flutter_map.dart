@@ -27,24 +27,25 @@ class FlutterMapWidget {
       return SizedBox(
         width: MediaQuery.of(context).size.width,
         height: portrait ? MediaQuery.of(context).size.height / 5.5 : MediaQuery.of(context).size.width / 4.5,
-        child: FlutterMap(
-          options: new MapOptions(
-            interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
-            minZoom: 0,
-            zoom: 1.0,
-            bounds: LatLngBounds(LatLng(-80.0, -180.0), LatLng(80.0, 180.0)),
-          ),
-          layers: [
-            new TileLayerOptions(
-                urlTemplate:
-                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: ['a', 'b', 'c'],
-                tileProvider: CachedTileProvider()),
-            MarkerLayerOptions(
-              markers: markerList,
+        child:FlutterMap(
+            options: new MapOptions(
+              interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+              minZoom: 1.1,
+              zoom: 1.1,
+              bounds: LatLngBounds(LatLng(-80.0, -180.0), LatLng(80.0, 180.0)),
+                boundsOptions: FitBoundsOptions(padding: EdgeInsets.all(8.0)),
             ),
-          ],
-        ),
+            layers: [
+              new TileLayerOptions(
+                  urlTemplate:
+                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  subdomains: ['a', 'b', 'c'],
+                  tileProvider: CachedTileProvider()),
+              MarkerLayerOptions(
+                markers: markerList,
+              ),
+            ],
+          ),
       );
     } catch (e) {
       return Stack(

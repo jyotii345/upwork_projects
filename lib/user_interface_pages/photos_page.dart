@@ -13,6 +13,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
@@ -134,12 +135,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Adventure:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 50
-                      : MediaQuery.of(context).size.width / 50),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -177,12 +175,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                     width: portrait
                         ? MediaQuery.of(context).size.width / 2
                         : MediaQuery.of(context).size.height / 2,
-                    child: Text(
+                    child: AutoSizeText(
                       value["name"],
-                      style: TextStyle(
-                          fontSize: portrait
-                              ? MediaQuery.of(context).size.height / 40 - 4
-                              : MediaQuery.of(context).size.width / 40 - 4),
+                      maxLines: 1, minFontSize:3.0,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -207,12 +202,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "DepartureDate:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 50
-                      : MediaQuery.of(context).size.width / 50),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -248,7 +240,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                     width: portrait
                         ? MediaQuery.of(context).size.width / 2
                         : MediaQuery.of(context).size.height / 2,
-                    child: Text(
+                    child: AutoSizeText(
                       value.charter == null
                           ? "You have adventures here yet."
                           : DateTime.parse(
@@ -263,10 +255,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                               DateTime.parse(value.charter.startDate)
                                   .year
                                   .toString(),
-                      style: TextStyle(
-                          fontSize: portrait
-                              ? MediaQuery.of(context).size.height / 40 - 4
-                              : MediaQuery.of(context).size.width / 40 - 4),
+                      maxLines: 1, minFontSize:3.0,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -318,9 +307,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 : MediaQuery.of(context).size.width / 2.5,
             child: TextButton(
               onPressed: uploading ? (){} : loadAssets,
-              child: Text(
+              child: AutoSizeText(
                 uploading? "Uploading, please wait...": "Upload Photos",
                 style: TextStyle(color: Colors.white),
+                maxLines: 1, minFontSize:3.0,
               ),
               style: TextButton.styleFrom(
                   backgroundColor: AggressorColors.secondaryColor),

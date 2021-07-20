@@ -156,9 +156,11 @@ class RewardsState extends State<Rewards> {
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
-                    child: Text(
+                    child: AutoSizeText(
                       "Add Certificate",
                       style: TextStyle(color: Colors.white),
+                      minFontSize: 3.0,
+                      maxLines: 1,
                     ),
                   ),
                 ),
@@ -239,9 +241,11 @@ class RewardsState extends State<Rewards> {
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
-                    child: Text(
+                    child: AutoSizeText(
                       "Add Iron Diver",
                       style: TextStyle(color: Colors.white),
+                      minFontSize: 3.0,
+                      maxLines: 1,
                     ),
                   ),
                 ),
@@ -497,7 +501,7 @@ class RewardsState extends State<Rewards> {
                             backgroundColor: AggressorColors.secondaryColor),
                         child: AutoSizeText(
                           "Update My Profile",
-                          maxLines: 1,
+                          maxLines: 1, minFontSize:3.0,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -507,7 +511,7 @@ class RewardsState extends State<Rewards> {
               ),
             ),
             Container(
-              height: sectionHeight,
+              height: sectionHeight + 1,
               width: sectionWidth,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -563,7 +567,7 @@ class RewardsState extends State<Rewards> {
                             backgroundColor: AggressorColors.secondaryColor),
                         child: AutoSizeText(
                           "REDEEM NOW >",
-                          maxLines: 1,
+                          maxLines: 1, minFontSize:3.0,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

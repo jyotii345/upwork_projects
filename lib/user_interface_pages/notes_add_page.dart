@@ -113,7 +113,7 @@ class AddNotesState extends State<AddNotes> {
               getPageTitle(),
               getYachtInformation(),
               getDepartureDate(),
-              getReturnDate(),
+              //returnDate(),
               getPreTripNotes(),
               getPostTripNotes(),
               getMiscNotes(),

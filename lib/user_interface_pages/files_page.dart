@@ -11,6 +11,7 @@ import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:date_format/date_format.dart';
 import 'package:file_picker/file_picker.dart';
@@ -123,14 +124,12 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: Text(
+            child: AutoSizeText(
               "Upload file",
               style: TextStyle(
                   color: AggressorColors.secondaryColor,
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 40
-                      : MediaQuery.of(context).size.width / 40,
                   fontWeight: FontWeight.bold),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           getFilePrompt(),
@@ -159,12 +158,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Destination:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 50
-                      : MediaQuery.of(context).size.width / 50),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -200,7 +196,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                     width: portrait
                         ? MediaQuery.of(context).size.width / 2
                         : MediaQuery.of(context).size.height / 2,
-                    child: Text(
+                    child: AutoSizeText(
                       value.detailDestination == "General"
                           ? value.detailDestination
                           : value.detailDestination +
@@ -216,10 +212,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                               DateTime.parse(value.charter.startDate)
                                   .year
                                   .toString(),
-                      style: TextStyle(
-                          fontSize: portrait
-                              ? MediaQuery.of(context).size.height / 40 - 4
-                              : MediaQuery.of(context).size.width / 40 - 4),
+                      maxLines:1,
+                      minFontSize: 3.0,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -250,12 +244,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Select File:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 45
-                      : MediaQuery.of(context).size.width / 45),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -274,12 +265,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     ),
                   ),
-                  child: Text(
+                  child: AutoSizeText(
                     fileName,
-                    style: TextStyle(
-                        fontSize: portrait
-                            ? MediaQuery.of(context).size.height / 40 - 4
-                            : MediaQuery.of(context).size.width / 40 - 4),
+                    maxLines: 1, minFontSize:3.0,
                     textAlign: TextAlign.center,
                   )),
             ),
@@ -299,12 +287,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "File Name:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 45
-                      : MediaQuery.of(context).size.width / 45),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -358,9 +343,10 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 : MediaQuery.of(context).size.width / 2.5,
             child: TextButton(
               onPressed: uploading || !photosLoaded ? () {} : uploadFile,
-              child: Text(
+              child: AutoSizeText(
                 uploading ? "Uploading, please wait..." : "Upload File",
                 style: TextStyle(color: Colors.white),
+                maxLines: 1, minFontSize:3.0,
               ),
               style: TextButton.styleFrom(
                   backgroundColor: AggressorColors.secondaryColor),
