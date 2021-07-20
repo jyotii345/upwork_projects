@@ -484,7 +484,8 @@ class RewardsState extends State<Rewards> {
                         "\nGuest since " +
                         contact.memberSince +
                         "\nTotal Adventures - " +
-                        tripList.length.toString(),
+                        profileData["totalAdventures"].toString(),
+                        //tripList.length.toString(),//todo replace with proper value
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: sectionHeight / 8.5,

@@ -144,12 +144,12 @@ class ViewNoteState extends State<ViewNote> {
               height: portrait
                   ? MediaQuery.of(context).size.height / 3
                   : MediaQuery.of(context).size.width / 3,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-              ),
+              // decoration: ShapeDecoration(
+              //   shape: RoundedRectangleBorder(
+              //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
+              //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              //   ),
+              // ),
               child: Html(
                 data: widget.note.preTripNotes,
               ),
@@ -184,12 +184,12 @@ class ViewNoteState extends State<ViewNote> {
                 height: portrait
                     ? MediaQuery.of(context).size.height / 3
                     : MediaQuery.of(context).size.width / 3,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                ),
+                // decoration: ShapeDecoration(
+                //   shape: RoundedRectangleBorder(
+                //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                //   ),
+                // ),
                 child: Html(
                   data: widget.note.postTripNotes,
                 )),
@@ -223,12 +223,12 @@ class ViewNoteState extends State<ViewNote> {
                 height: portrait
                     ? MediaQuery.of(context).size.height / 3
                     : MediaQuery.of(context).size.width / 3,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                ),
+                // decoration: ShapeDecoration(
+                //   shape: RoundedRectangleBorder(
+                //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                //   ),
+                // ),
                 child: Html(
                   data: widget.note.miscNotes,
                 )),
