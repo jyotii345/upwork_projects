@@ -110,7 +110,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         color: Colors.white,
         child: ListView(
           children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+            Opacity(
+              opacity: 0,
+              child: getBannerImage(),
+            ),
             showOffline(),
             showLoading(),
             getPageTitle(),
@@ -137,7 +140,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
               "Adventure:",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -177,7 +181,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                         : MediaQuery.of(context).size.height / 2,
                     child: AutoSizeText(
                       value["name"],
-                      maxLines: 1, minFontSize:3.0,
+                      maxLines: 1,
+                      minFontSize: 3.0,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -204,7 +209,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
               "DepartureDate:",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -255,7 +261,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                               DateTime.parse(value.charter.startDate)
                                   .year
                                   .toString(),
-                      maxLines: 1, minFontSize:3.0,
+                      maxLines: 1,
+                      minFontSize: 3.0,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -292,7 +299,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Widget getUploadPhotosButton() {
     //returns the button to create a new gallery
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0,15,0,0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -306,11 +313,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 ? MediaQuery.of(context).size.height / 4
                 : MediaQuery.of(context).size.width / 2.5,
             child: TextButton(
-              onPressed: uploading ? (){} : loadAssets,
+              onPressed: uploading ? () {} : loadAssets,
               child: AutoSizeText(
-                uploading? "Uploading, please wait...": "Upload Photos",
+                uploading ? "Uploading, please wait..." : "Upload Photos",
                 style: TextStyle(color: Colors.white),
-                maxLines: 1, minFontSize:3.0,
+                maxLines: 1,
+                minFontSize: 3.0,
               ),
               style: TextButton.styleFrom(
                   backgroundColor: AggressorColors.secondaryColor),
@@ -605,9 +613,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         });
   }
 
-  VoidCallback pageCallback(){
+  VoidCallback pageCallback() {
     setState(() {
-      photosLoaded  =false;
+      photosLoaded = false;
     });
   }
 
@@ -628,13 +636,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -693,7 +700,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
             print(e.toString());
           }
 
-
           if (response.contents != null) {
             for (var content in response.contents) {
               var elementJson = await jsonDecode(content.toJson());
@@ -721,7 +727,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   String filePath = '$appDocumentsPath/$fileName';
                   File imageFile = File(filePath);
                   imageFile.writeAsBytes(bytes);
-
 
                   await element.initCharterInformation();
                   Photo photo = Photo(
@@ -759,7 +764,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           tempGalleries[tripList[tripIndex].reservationId] = Gallery(
               widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
         } else {
-          if(!tempGalleries[tripList[tripIndex].reservationId].photos.contains(element)){
+          if (!tempGalleries[tripList[tripIndex].reservationId]
+              .photos
+              .contains(element)) {
             tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
           }
         }
@@ -836,7 +843,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     photos.forEach((element) {
       int tripIndex = 0;
       for (int i = 0; i < tripList.length - 1; i++) {
-        if (tripList[i].boat.boatId == element.boatId && formatDate(DateTime.parse(tripList[i].charter.startDate), [yyyy,'-',mm,'-',dd]) == element.date) {
+        if (tripList[i].boat.boatId == element.boatId &&
+            formatDate(DateTime.parse(tripList[i].charter.startDate),
+                    [yyyy, '-', mm, '-', dd]) ==
+                element.date) {
           tripIndex = i;
         }
       }

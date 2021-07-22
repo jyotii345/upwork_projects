@@ -262,7 +262,6 @@ class LoadingPageState extends State<LoadingPage> {
     } catch (e) {
       print("no sliders");
     }
-    updateSliderImages();
     getContactDetails();
     getBoatList();
     getIronDiverList();
@@ -271,6 +270,8 @@ class LoadingPageState extends State<LoadingPage> {
     getCertificationList();
     loadProfileDetails();
 
+
+    await updateSliderImages();
     var profileLinkResponse =
         await AggressorApi().checkProfileLink(widget.user.userId);
 

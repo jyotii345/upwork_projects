@@ -1,6 +1,7 @@
+import 'dart:io';
+
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
-import 'package:aggressor_adventures/classes/flutter_map.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
@@ -27,7 +28,10 @@ class MyTripsState extends State<MyTrips>
 
   List<Widget> pastTripsList;
   List<Widget> upcomingTripsList;
-  FlutterMapWidget flutterMapWidget;
+
+
+  bool timerStarted = false;
+  int sliderIndex = 0;
 
 // coordinates for a center location
 
@@ -37,6 +41,7 @@ class MyTripsState extends State<MyTrips>
   @override
   void initState() {
     super.initState();
+    sliderImageTimer();
     pastTripsList = [];
     upcomingTripsList = [];
   }
@@ -72,17 +77,87 @@ class MyTripsState extends State<MyTrips>
    */
   Widget getForegroundView() {
     //this method returns a column containing the actual content of the page to be shown over the background image
-    flutterMapWidget = FlutterMapWidget(context);
     return ListView(
       children: [
         showOffline(),
-        flutterMapWidget.getMap(),
+        getSliderImages(),
         getPageTitle(),
         getSectionUpcomingTitle(),
         getUpcomingSection(getTripList(tripList)[1]),
         getSectionPastTitle(),
         getPastSection(getTripList(tripList)[0]),
       ],
+    );
+  }
+
+  Widget getSliderImages() {
+    //returns slider images on top of the page
+    return IntrinsicHeight(
+      child: Stack(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: sliderImageList.length == 0
+                ? Container()
+                : Image.file(
+              File(sliderImageList[sliderIndex]["filePath"]),
+              fit: BoxFit.scaleDown,
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  if (sliderIndex + 1 < sliderImageList.length) {
+                    setState(() {
+                      sliderIndex++;
+                    });
+                  } else {
+                    setState(() {
+                      sliderIndex = 0;
+                    });
+                  }
+                },
+                child: Icon(
+                  Icons.chevron_right,
+                  color: Colors.white70,
+                  size: portrait
+                      ? MediaQuery.of(context).size.width / 7.5
+                      : MediaQuery.of(context).size.height / 7.5,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () {
+                  if (sliderIndex > 0) {
+                    setState(() {
+                      sliderIndex--;
+                    });
+                  } else {
+                    setState(() {
+                      sliderIndex = sliderImageList.length - 1;
+                    });
+                  }
+                },
+                child: Icon(
+                  Icons.chevron_left,
+                  color: Colors.white70,
+                  size: portrait
+                      ? MediaQuery.of(context).size.width / 7.5
+                      : MediaQuery.of(context).size.height / 7.5,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -291,15 +366,6 @@ class MyTripsState extends State<MyTrips>
         DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
 
     tripList.forEach((element) {
-      if (element.latitude != "" &&
-          element.latitude != null &&
-          element.longitude != "" &&
-          element.longitude != null) {
-        flutterMapWidget.addMarker(
-            double.parse(element.latitude),
-            double.parse(element.longitude),
-            portrait ? MediaQuery.of(context).size.width / 30 : MediaQuery.of(context).size.height / 30);
-      }
       if (DateTime.parse(element.tripDate).isBefore(DateTime.now())) {
         pastList.add(element);
       } else {
@@ -337,6 +403,28 @@ class MyTripsState extends State<MyTrips>
         ),
       ],
     );
+  }
+
+  void sliderImageTimer() async {
+    try {
+      if (!timerStarted) {
+        setState(() {
+          timerStarted = true;
+        });
+        while (true) {
+          await Future.delayed(Duration(seconds: 5));
+          if (sliderIndex + 1 < sliderImageList.length) {
+            setState(() {
+              sliderIndex++;
+            });
+          } else {
+            setState(() {
+              sliderIndex = 0;
+            });
+          }
+        }
+      }
+    } catch (e) {}
   }
 
   Widget getPageTitle() {

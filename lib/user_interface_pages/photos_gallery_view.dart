@@ -308,7 +308,7 @@ class GalleryViewState extends State<GalleryView> {
     //returns the destination widgets of the gallery
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Text(
+      child:  Text(
         "Destination: " + widget.trip.detailDestination,
         textAlign: TextAlign.left,
         style: TextStyle(
@@ -338,7 +338,7 @@ class GalleryViewState extends State<GalleryView> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Text(
+      child:  Text(
         "Date: " +
             months[DateTime.parse(widget.trip.tripDate).month - 1]
                 .substring(0, 3) +
@@ -377,61 +377,7 @@ class GalleryViewState extends State<GalleryView> {
                             Positioned.fill(
                               child: GestureDetector(
                                 onTap: () {
-                                  imageExpansionDialogue(
-                                    Container(
-                                      height: (MediaQuery.of(context)
-                                              .size
-                                              .width) -
-                                          (MediaQuery.of(context).size.width *
-                                              .4),
-                                      width: (MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              1.2) -
-                                          (MediaQuery.of(context).size.width *
-                                              .4),
-                                      child: Stack(
-                                        children: [
-                                          Positioned.fill(
-                                            child:Image.file(
-                                              File(
-                                                widget
-                                                    .photos[(index +
-                                                    (9 * (indexMultiplier - 1)))]
-                                                    .imagePath,
-                                              ),
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.topRight,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(0.0),
-                                              child: GestureDetector(
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Icon(
-                                                    Icons.close_rounded,
-                                                    color: AggressorColors
-                                                        .primaryColor,
-                                                    size: MediaQuery.of(context)
-                                                            .size
-                                                            .width /
-                                                        15,
-                                                  ),
-                                                ),
-                                                onTap: () {
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
+                                  imageExpansionDialogue((index + (9 * (indexMultiplier - 1))),widget.photos);
                                 },
                                 child: Image.file(
                                   File(
@@ -472,53 +418,8 @@ class GalleryViewState extends State<GalleryView> {
                         )
                       : GestureDetector(
                           onTap: () {
-                            imageExpansionDialogue(
-                              Container(
-                                height: (MediaQuery.of(context).size.width) -
-                                    (MediaQuery.of(context).size.width * .4),
-                                width: (MediaQuery.of(context).size.width *
-                                        1.2) -
-                                    (MediaQuery.of(context).size.width * .4),
-                                child: Stack(
-                                  children: [
-
-                                    Positioned.fill(
-                                      child:Image.file(
-                                        File(
-                                          widget
-                                              .photos[(index +
-                                              (9 * (indexMultiplier - 1)))]
-                                              .imagePath,
-                                        ),
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(0.0),
-                                        child: GestureDetector(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: Icon(
-                                              Icons.close_rounded,
-                                              color:
-                                                  AggressorColors.primaryColor,
-                                              size: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  15,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            imageExpansionDialogue((index +
+                                (9 * (indexMultiplier - 1))),widget.photos
                             );
                           },
                           child:Image.file(
@@ -552,12 +453,120 @@ class GalleryViewState extends State<GalleryView> {
     );
   }
 
-  void imageExpansionDialogue(Widget content) {
+  void imageExpansionDialogue(int index, var photosList) {
     //shows the image in a larger view
+    
+    int showIndex = index;
+    
     showDialog(
       context: context,
       builder: (_) => new AlertDialog(
-        content: content,
+        content: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          return Container(
+            height: (MediaQuery.of(context)
+                .size
+                .width) -
+                (MediaQuery.of(context).size.width *
+                    .4),
+            width: (MediaQuery.of(context)
+                .size
+                .width *
+                1.2) -
+                (MediaQuery.of(context).size.width *
+                    .4),
+            child: IntrinsicHeight(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child:Image.file(
+                      File(photosList[showIndex]
+                          .imagePath,
+                      ),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding:
+                      const EdgeInsets.all(0.0),
+                      child: GestureDetector(
+                        child: Padding(
+                          padding:
+                          const EdgeInsets.all(5.0),
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: AggressorColors
+                                .primaryColor,
+                            size: MediaQuery.of(context)
+                                .size
+                                .width /
+                                15,
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          if (showIndex + 1 < photosList.length) {
+                            setState(() {
+                              showIndex++;
+                            });
+                          } else {
+                            setState(() {
+                              showIndex = 0;
+                            });
+                          }
+                        },
+                        child: Icon(
+                          Icons.chevron_right,
+                          color: Colors.white70,
+                          size: portrait
+                              ? MediaQuery.of(context).size.width / 7.5
+                              : MediaQuery.of(context).size.height / 7.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                        onPressed: () {
+                          if (showIndex > 0) {
+                            setState(() {
+                              showIndex--;
+                            });
+                          } else {
+                            setState(() {
+                              showIndex = photosList.length - 1;
+                            });
+                          }
+                        },
+                        child: Icon(
+                          Icons.chevron_left,
+                          color: Colors.white70,
+                          size: portrait
+                              ? MediaQuery.of(context).size.width / 7.5
+                              : MediaQuery.of(context).size.height / 7.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },),
         contentPadding: EdgeInsets.zero,
         insetPadding: EdgeInsets.zero,
       ),
