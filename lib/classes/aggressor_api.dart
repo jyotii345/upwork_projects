@@ -51,6 +51,8 @@ class AggressorApi {
     String url =
         "https://app.aggressor.com/api/app/reservations/list/" + contactId;
 
+    String testUrl = "https://app.aggressor.com/api/app/reservations/listtest";
+
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
@@ -84,7 +86,8 @@ class AggressorApi {
                 .getTrip(response[i.toString()]["reservationid"].toString());
           }
 
-          if (!await charterDatabaseHelper.charterExists(newTrip.charterId)) {
+
+          if (newTrip.charterId == null || !await charterDatabaseHelper.charterExists(newTrip.charterId)) {
             var charterResponse =
                 await AggressorApi().getCharter(newTrip.charterId);
             if (charterResponse["status"] == "success") {
@@ -476,7 +479,7 @@ class AggressorApi {
 
   Future<dynamic> getCharter(String charterId) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String url = "https://app.aggressor.com/api/app/charters/view/" + charterId;
+    String url = "https://app.aggressor.com/api/app/charters/view/" + charterId.toString();
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});

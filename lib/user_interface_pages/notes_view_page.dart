@@ -5,6 +5,7 @@ import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_edit_page.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -108,7 +109,7 @@ class ViewNoteState extends State<ViewNote> {
               getPageTitle(),
               getYachtInformation(),
               getDepartureDate(),
-              getReturnDate(),
+              //getReturnDate(),
               getPreTripNotes(),
               getPostTripNotes(),
               getMiscNotes(),
@@ -132,12 +133,9 @@ class ViewNoteState extends State<ViewNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
-              child: Text(
+              child: AutoSizeText(
                 "Pre-Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
+                maxLines: 1, minFontSize:3.0,
               ),
             ),
           ),
@@ -146,12 +144,12 @@ class ViewNoteState extends State<ViewNote> {
               height: portrait
                   ? MediaQuery.of(context).size.height / 3
                   : MediaQuery.of(context).size.width / 3,
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-              ),
+              // decoration: ShapeDecoration(
+              //   shape: RoundedRectangleBorder(
+              //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
+              //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              //   ),
+              // ),
               child: Html(
                 data: widget.note.preTripNotes,
               ),
@@ -175,12 +173,9 @@ class ViewNoteState extends State<ViewNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
-              child: Text(
+              child: AutoSizeText(
                 "Post-Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
+                maxLines: 1, minFontSize:3.0,
               ),
             ),
           ),
@@ -189,12 +184,12 @@ class ViewNoteState extends State<ViewNote> {
                 height: portrait
                     ? MediaQuery.of(context).size.height / 3
                     : MediaQuery.of(context).size.width / 3,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                ),
+                // decoration: ShapeDecoration(
+                //   shape: RoundedRectangleBorder(
+                //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                //   ),
+                // ),
                 child: Html(
                   data: widget.note.postTripNotes,
                 )),
@@ -217,12 +212,9 @@ class ViewNoteState extends State<ViewNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
-              child: Text(
+              child: AutoSizeText(
                 "Miscellaneous Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
+                maxLines: 1, minFontSize:3.0,
               ),
             ),
           ),
@@ -231,12 +223,12 @@ class ViewNoteState extends State<ViewNote> {
                 height: portrait
                     ? MediaQuery.of(context).size.height / 3
                     : MediaQuery.of(context).size.width / 3,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  ),
-                ),
+                // decoration: ShapeDecoration(
+                //   shape: RoundedRectangleBorder(
+                //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                //   ),
+                // ),
                 child: Html(
                   data: widget.note.miscNotes,
                 )),
@@ -257,12 +249,9 @@ class ViewNoteState extends State<ViewNote> {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Destination:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 45 - 4
-                      : MediaQuery.of(context).size.width / 45 - 4),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -289,12 +278,9 @@ class ViewNoteState extends State<ViewNote> {
                   : MediaQuery.of(context).size.height / 2 -
                       MediaQuery.of(context).size.width / 40 -
                       10,
-              child: Text(
+              child: AutoSizeText(
                 widget.note.destination,
-                style: TextStyle(
-                    fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
+                maxLines: 1, minFontSize:3.0,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -315,12 +301,9 @@ class ViewNoteState extends State<ViewNote> {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Departure Date:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 45 - 4
-                      : MediaQuery.of(context).size.width / 45 - 4),
+             maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -336,12 +319,9 @@ class ViewNoteState extends State<ViewNote> {
                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
             ),
-            child: Text(
-              widget.note.startDate,
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 45 - 4
-                      : MediaQuery.of(context).size.width / 45 - 4),
+            child: AutoSizeText(
+              widget.note.startDate.split("-")[1] + "/" + widget.note.startDate.split("-")[2] + "/" + widget.note.startDate.split("-")[0] ,
+              maxLines: 1, minFontSize:3.0,
               textAlign: TextAlign.center,
             ),
           ),

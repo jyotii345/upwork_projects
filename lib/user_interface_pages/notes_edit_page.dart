@@ -9,6 +9,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -109,7 +110,7 @@ class EditNoteState extends State<EditNote> {
               getPageTitle(),
               getYachtInformation(),
               getDepartureDate(),
-              getReturnDate(),
+              //getReturnDate(),
               getPreTripNotes(),
               getPostTripNotes(),
               getMiscNotes(),
@@ -147,14 +148,9 @@ class EditNoteState extends State<EditNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
-              child: Text(
+              child: AutoSizeText(
                 "Pre-Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? portrait
-                            ? MediaQuery.of(context).size.height / 45
-                            : MediaQuery.of(context).size.width / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
+                maxLines: 1, minFontSize:3.0,
               ),
             ),
           ),
@@ -253,14 +249,9 @@ class EditNoteState extends State<EditNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
-              child: Text(
+              child: AutoSizeText(
                 "Post-Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? portrait
-                            ? MediaQuery.of(context).size.height / 45
-                            : MediaQuery.of(context).size.width / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
+                maxLines: 1, minFontSize:3.0,
               ),
             ),
           ),
@@ -294,14 +285,9 @@ class EditNoteState extends State<EditNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: Align(
               alignment: Alignment.topLeft,
-              child: Text(
+              child: AutoSizeText(
                 "Miscellaneous Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? portrait
-                            ? MediaQuery.of(context).size.height / 45
-                            : MediaQuery.of(context).size.width / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
+                maxLines: 1, minFontSize:3.0,
               ),
             ),
           ),
@@ -333,14 +319,9 @@ class EditNoteState extends State<EditNote> {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Destination:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? portrait
-                          ? MediaQuery.of(context).size.height / 45
-                          : MediaQuery.of(context).size.width / 45 - 4
-                      : MediaQuery.of(context).size.width / 45 - 4),
+             maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -367,14 +348,9 @@ class EditNoteState extends State<EditNote> {
                   : MediaQuery.of(context).size.height / 2 -
                       MediaQuery.of(context).size.width / 40 -
                       10,
-              child: Text(
+              child: AutoSizeText(
                 widget.note.destination,
-                style: TextStyle(
-                    fontSize: portrait
-                        ? portrait
-                            ? MediaQuery.of(context).size.height / 45
-                            : MediaQuery.of(context).size.width / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
+                maxLines: 1, minFontSize:3.0,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -394,14 +370,9 @@ class EditNoteState extends State<EditNote> {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Departure Date:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? portrait
-                          ? MediaQuery.of(context).size.height / 45
-                          : MediaQuery.of(context).size.width / 45 - 4
-                      : MediaQuery.of(context).size.width / 45 - 4),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -417,14 +388,9 @@ class EditNoteState extends State<EditNote> {
                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
               ),
             ),
-            child: Text(
-              widget.note.startDate,
-              style: TextStyle(
-                  fontSize: portrait
-                      ? portrait
-                          ? MediaQuery.of(context).size.height / 45
-                          : MediaQuery.of(context).size.width / 45 - 4
-                      : MediaQuery.of(context).size.width / 45 - 4),
+            child: AutoSizeText(
+              widget.note.startDate.split("-")[1] + "/" + widget.note.startDate.split("-")[2] + "/" + widget.note.startDate.split("-")[0],
+              maxLines: 1, minFontSize:3.0,
               textAlign: TextAlign.center,
             ),
           ),
@@ -443,14 +409,9 @@ class EditNoteState extends State<EditNote> {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Return Date",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? portrait
-                          ? MediaQuery.of(context).size.height / 45
-                          : MediaQuery.of(context).size.width / 45 - 4
-                      : MediaQuery.of(context).size.width / 45 - 4),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(

@@ -203,6 +203,7 @@ class Trip {
     //get details for this specific trip object and add the results to this trip
     var jsonResponse = await AggressorApi()
         .getReservationDetails(reservationId.toString(), contactId.toString());
+    print(jsonResponse.toString());
     if (jsonResponse["status"] == "success") {
       charterId = jsonResponse["charterid"].toString();
       total = jsonResponse["total"].toString();
@@ -223,8 +224,9 @@ class Trip {
 
   Future<dynamic> initCharterInformation() async {
     //gets charter and boat information about this trip
-    charter = await CharterDatabaseHelper.instance.getCharter(charterId);
-    boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
+
+      charter = await CharterDatabaseHelper.instance.getCharter(charterId);
+   await BoatDatabaseHelper.instance.getBoat(charter.boatId);
     boatList.forEach((boatObj) {
       if (boatObj["boatid"].toString() == boat.boatId) {
         boat.kbygLink = boatObj["kbyg"];

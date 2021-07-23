@@ -34,11 +34,9 @@ class RewardsState extends State<Rewards> {
   /*
   instance vars
    */
-  int sliderIndex = 0;
 
   bool loading = false;
 
-  bool timerStarted = false;
 
   /*
   initState
@@ -46,8 +44,6 @@ class RewardsState extends State<Rewards> {
   @override
   void initState() {
     super.initState();
-
-    sliderImageTimer();
   }
 
   /*
@@ -156,9 +152,11 @@ class RewardsState extends State<Rewards> {
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
-                    child: Text(
+                    child: AutoSizeText(
                       "Add Certificate",
                       style: TextStyle(color: Colors.white),
+                      minFontSize: 3.0,
+                      maxLines: 1,
                     ),
                   ),
                 ),
@@ -239,9 +237,11 @@ class RewardsState extends State<Rewards> {
                     },
                     style: TextButton.styleFrom(
                         backgroundColor: AggressorColors.secondaryColor),
-                    child: Text(
+                    child: AutoSizeText(
                       "Add Iron Diver",
                       style: TextStyle(color: Colors.white),
+                      minFontSize: 3.0,
+                      maxLines: 1,
                     ),
                   ),
                 ),
@@ -480,7 +480,8 @@ class RewardsState extends State<Rewards> {
                         "\nGuest since " +
                         contact.memberSince +
                         "\nTotal Adventures - " +
-                        tripList.length.toString(),
+                        profileData["totalAdventures"].toString(),
+                        //tripList.length.toString(),//todo replace with proper value
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: sectionHeight / 8.5,
@@ -497,7 +498,7 @@ class RewardsState extends State<Rewards> {
                             backgroundColor: AggressorColors.secondaryColor),
                         child: AutoSizeText(
                           "Update My Profile",
-                          maxLines: 1,
+                          maxLines: 1, minFontSize:3.0,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -507,7 +508,7 @@ class RewardsState extends State<Rewards> {
               ),
             ),
             Container(
-              height: sectionHeight,
+              height: sectionHeight + 1,
               width: sectionWidth,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -563,7 +564,7 @@ class RewardsState extends State<Rewards> {
                             backgroundColor: AggressorColors.secondaryColor),
                         child: AutoSizeText(
                           "REDEEM NOW >",
-                          maxLines: 1,
+                          maxLines: 1, minFontSize:3.0,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -632,72 +633,11 @@ class RewardsState extends State<Rewards> {
 
   Widget getSliderImages() {
     //returns slider images on top of the page
-    return IntrinsicHeight(
-      child: Stack(
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: sliderImageList.length == 0
-                ? Container()
-                : Image.file(
-                    File(sliderImageList[sliderIndex]["filePath"]),
-                    fit: BoxFit.scaleDown,
-                  ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  if (sliderIndex + 1 < sliderImageList.length) {
-                    setState(() {
-                      sliderIndex++;
-                    });
-                  } else {
-                    setState(() {
-                      sliderIndex = 0;
-                    });
-                  }
-                },
-                child: Icon(
-                  Icons.chevron_right,
-                  color: Colors.white70,
-                  size: portrait
-                      ? MediaQuery.of(context).size.width / 7.5
-                      : MediaQuery.of(context).size.height / 7.5,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () {
-                  if (sliderIndex > 0) {
-                    setState(() {
-                      sliderIndex--;
-                    });
-                  } else {
-                    setState(() {
-                      sliderIndex = sliderImageList.length - 1;
-                    });
-                  }
-                },
-                child: Icon(
-                  Icons.chevron_left,
-                  color: Colors.white70,
-                  size: portrait
-                      ? MediaQuery.of(context).size.width / 7.5
-                      : MediaQuery.of(context).size.height / 7.5,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return Image.asset(
+      "assets/rewardspage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
+
     );
   }
 
@@ -1011,27 +951,7 @@ class RewardsState extends State<Rewards> {
           );
   }
 
-  void sliderImageTimer() async {
-    try {
-      if (!timerStarted) {
-        setState(() {
-          timerStarted = true;
-        });
-        while (true) {
-          await Future.delayed(Duration(seconds: 5));
-          if (sliderIndex + 1 < sliderImageList.length) {
-            setState(() {
-              sliderIndex++;
-            });
-          } else {
-            setState(() {
-              sliderIndex = 0;
-            });
-          }
-        }
-      }
-    } catch (e) {}
-  }
+
 
   Future<dynamic> getUserProfileImageData() async {
     if (!userImageRetreived) {

@@ -8,6 +8,7 @@ import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'notes_add_page.dart';
@@ -149,12 +150,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "Adventure:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 50
-                      : MediaQuery.of(context).size.width / 50),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -192,12 +190,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                     width: portrait
                         ? MediaQuery.of(context).size.width / 2
                         : MediaQuery.of(context).size.height / 2,
-                    child: Text(
+                    child: AutoSizeText(
                       value["name"],
-                      style: TextStyle(
-                          fontSize: portrait
-                              ? MediaQuery.of(context).size.height / 40 - 4
-                              : MediaQuery.of(context).size.width / 40 - 4),
+                      maxLines :  1,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -221,12 +216,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             width: portrait
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
-            child: Text(
+            child: AutoSizeText(
               "DepartureDate:",
-              style: TextStyle(
-                  fontSize: portrait
-                      ? MediaQuery.of(context).size.height / 50
-                      : MediaQuery.of(context).size.width / 50),
+              maxLines: 1, minFontSize:3.0,
             ),
           ),
           Container(
@@ -262,9 +254,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                     width: portrait
                         ? MediaQuery.of(context).size.width / 2
                         : MediaQuery.of(context).size.height / 2,
-                    child: Text(
-                      value.charter == null
-                          ? "You have adventures here yet."
+                    child: AutoSizeText(
+                        value.charter == null //todo search into why this is always wrong
+                          ? "You don't have adventures here yet."
                           : DateTime.parse(
                                       value.charter.startDate)
                                   .month
@@ -277,10 +269,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                               DateTime.parse(value.charter.startDate)
                                   .year
                                   .toString(),
-                      style: TextStyle(
-                          fontSize: portrait
-                              ? MediaQuery.of(context).size.height / 40 - 4
-                              : MediaQuery.of(context).size.width / 40 - 4),
+                      maxLines: 1, minFontSize:3.0,
                       textAlign: TextAlign.center,
                     ),
                   ),
