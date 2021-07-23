@@ -9,6 +9,7 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
+import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
@@ -251,6 +252,7 @@ class LoadingPageState extends State<LoadingPage> {
     if (tripList == null) {
       tripList = [];
     }
+
 
     return "done";
   }
