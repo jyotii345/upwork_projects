@@ -225,9 +225,12 @@ class Trip {
   Future<dynamic> initCharterInformation() async {
     //gets charter and boat information about this trip
 
-      charter = await CharterDatabaseHelper.instance.getCharter(charterId);
-   await BoatDatabaseHelper.instance.getBoat(charter.boatId);
+    charter = await CharterDatabaseHelper.instance.getCharter(charterId);
+
+   boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
     boatList.forEach((boatObj) {
+      print(boat.toMap());
+      print(boatObj);
       if (boatObj["boatid"].toString() == boat.boatId) {
         boat.kbygLink = boatObj["kbyg"];
       }
