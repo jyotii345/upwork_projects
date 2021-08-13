@@ -229,8 +229,6 @@ class Trip {
 
    boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
     boatList.forEach((boatObj) {
-      print(boat.toMap());
-      print(boatObj);
       if (boatObj["boatid"].toString() == boat.boatId) {
         boat.kbygLink = boatObj["kbyg"];
       }
@@ -458,7 +456,7 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  "Embarkment Date",
+                                  "Start Date",
                                   style: TextStyle(fontSize: screenFontSize),
                                   textAlign: TextAlign.center,
                                 ),

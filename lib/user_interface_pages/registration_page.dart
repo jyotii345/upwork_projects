@@ -496,8 +496,8 @@ class RegistrationPageState extends State<RegistrationPage>{
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 26
-                  : MediaQuery.of(context).size.width / 26,
+                ? MediaQuery.of(context).size.height / 30
+                : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),

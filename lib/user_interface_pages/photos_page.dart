@@ -90,8 +90,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         return Stack(
           children: [
             getBackgroundImage(),
+            getWhiteOverlay(),
             getPageForm(),
-            getBannerImage(),
           ],
         );
       }),
@@ -102,27 +102,48 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Self implemented
    */
 
-  Widget getPageForm() {
-    //returns the main contents of the page
+  Widget getWhiteOverlay() {
+    //returns a white background on the application
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: ListView(
+      ),
+    );
+  }
+
+  Widget getPageForm() {
+    //returns the main contents of the page
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0,0,0, 10),
+      child: ListView(
           children: [
-            Opacity(
-              opacity: 0,
-              child: getBannerImage(),
-            ),
+            getBannerImage(),
             showOffline(),
-            showLoading(),
-            getPageTitle(),
-            getCreateNewGallery(),
-            getMyGalleries(),
-            showErrorMessage(),
+
+
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: showLoading(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: getPageTitle(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: getCreateNewGallery(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: getMyGalleries(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: showErrorMessage(),
+            ),
           ],
         ),
-      ),
     );
   }
 
@@ -208,7 +229,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
-              "DepartureDate:",
+              "Departure Date:",
               maxLines: 1,
               minFontSize: 3.0,
             ),
@@ -388,6 +409,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               DateTime.parse(dateDropDownValue.charter.startDate),
               [yyyy, '-', mm, '-', dd]);
 
+
+          print("uploading to");
+          print(dateDropDownValue.toMap());
+          print(uploadDate);
+
           var response = await AggressorApi().uploadAwsFile(
               widget.user.userId.toString(),
               "gallery",
@@ -425,6 +451,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           String uploadDate = formatDate(
               DateTime.parse(dateDropDownValue.charter.startDate),
               [yyyy, '-', mm, '-', dd]);
+
 
           await PhotoDatabaseHelper.instance.insertPhoto(Photo(
               element.name,
@@ -656,8 +683,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 25
-                  : MediaQuery.of(context).size.width / 25,
+                    ? MediaQuery.of(context).size.height / 30
+                    : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -666,6 +693,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
+
+
 
     if (!photosLoaded && online) {
       setState(() {
@@ -729,6 +758,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   imageFile.writeAsBytes(bytes);
 
                   await element.initCharterInformation();
+
+                  print("placing in date:");
+                  print(element.tripDate);
                   Photo photo = Photo(
                       fileName,
                       widget.user.userId,
@@ -749,12 +781,19 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
       List<Photo> photos = await photoHelper.queryPhoto();
 
+
       photos.forEach((element) {
         int tripIndex = 0;
-        for (int i = 0; i < tripList.length - 1; i++) {
+        for (int i = 0; i < tripList.length; i++) {
+          // print(tripList[i].boat.boatId + " " + element.boatId);
+          // print( formatDate(DateTime.parse(tripList[i].charter.startDate),
+          //     [yyyy, '-', mm, '-', dd]).toString() + " " +
+          //     element.date);
+
+
           if (tripList[i].boat.boatId == element.boatId &&
               formatDate(DateTime.parse(tripList[i].charter.startDate),
-                      [yyyy, '-', mm, '-', dd]) ==
+                      [yyyy, '-', mm, '-', dd]).toString() ==
                   element.date) {
             tripIndex = i;
           }
@@ -772,11 +811,19 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         }
       });
 
-      setState(() {
-        galleriesMap = tempGalleries;
-        photosLoaded = true;
-        loading = false;
+      print(tempGalleries.length);
+      tempGalleries.forEach((key, value) {
+        print(key);
+        print(value);
       });
+
+      if(mounted) {
+        setState(() {
+          galleriesMap = tempGalleries;
+          photosLoaded = true;
+          loading = false;
+        });
+      }
     } else if (!photosLoaded && !online) {
       setState(() {
         loading = true;

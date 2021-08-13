@@ -32,7 +32,6 @@ class ViewNoteState extends State<ViewNote> {
   instance vars
    */
 
-  int pageIndex = 1;
   bool loading = false;
 
   /*
@@ -40,6 +39,7 @@ class ViewNoteState extends State<ViewNote> {
    */
   @override
   void initState() {
+    print("notes view page");
     super.initState();
     popDistance = 1;
   }
@@ -110,9 +110,10 @@ class ViewNoteState extends State<ViewNote> {
               getYachtInformation(),
               getDepartureDate(),
               //getReturnDate(),
+              getPreTripTitle(),
               getPreTripNotes(),
+              getPostTripTitle(),
               getPostTripNotes(),
-              getMiscNotes(),
             ],
           ),
         ),
@@ -120,25 +121,30 @@ class ViewNoteState extends State<ViewNote> {
     );
   }
 
+  Widget getPreTripTitle(){
+    return  Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: AutoSizeText(
+          "Pre-Adventure Notes:",
+          maxLines: 1, minFontSize:3.0,
+        ),
+    );
+  }
+  Widget getPostTripTitle(){
+    return  Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: AutoSizeText(
+        "Post-Adventure Notes:",
+        maxLines: 1, minFontSize:3.0,
+      ),
+    );
+  }
+
   Widget getPreTripNotes() {
     //returns the pre trip notes portion of the page
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: AutoSizeText(
-                "Pre-Adventure Notes:",
-                maxLines: 1, minFontSize:3.0,
-              ),
-            ),
-          ),
+      padding: const EdgeInsets.all(10),
+      child:
           Expanded(
             child: Container(
               height: portrait
@@ -155,30 +161,14 @@ class ViewNoteState extends State<ViewNote> {
               ),
             ),
           ),
-        ],
-      ),
     );
   }
 
   Widget getPostTripNotes() {
     //returns the post trip notes portion of the page
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: AutoSizeText(
-                "Post-Adventure Notes:",
-                maxLines: 1, minFontSize:3.0,
-              ),
-            ),
-          ),
+      padding: const EdgeInsets.all(10),
+      child:
           Expanded(
             child: Container(
                 height: portrait
@@ -194,8 +184,6 @@ class ViewNoteState extends State<ViewNote> {
                   data: widget.note.postTripNotes,
                 )),
           ),
-        ],
-      ),
     );
   }
 
@@ -223,12 +211,6 @@ class ViewNoteState extends State<ViewNote> {
                 height: portrait
                     ? MediaQuery.of(context).size.height / 3
                     : MediaQuery.of(context).size.width / 3,
-                // decoration: ShapeDecoration(
-                //   shape: RoundedRectangleBorder(
-                //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                //   ),
-                // ),
                 child: Html(
                   data: widget.note.miscNotes,
                 )),
@@ -429,8 +411,8 @@ class ViewNoteState extends State<ViewNote> {
                   style: TextStyle(
                       color: AggressorColors.primaryColor,
                       fontSize: portrait
-                          ? MediaQuery.of(context).size.height / 26
-                          : MediaQuery.of(context).size.width / 26,
+                ? MediaQuery.of(context).size.height / 30
+                : MediaQuery.of(context).size.width / 30,
                       fontWeight: FontWeight.bold),
                 ),
               ),

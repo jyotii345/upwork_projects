@@ -55,12 +55,14 @@ class FileViewState extends State<FilesTripPage> with AutomaticKeepAliveClientMi
 
   TextEditingController fileNameController = TextEditingController();
 
+
   /*
   initState
    */
   @override
   void initState() {
     super.initState();
+    popDistance = 2;
     selectionTrip =
         Trip(DateTime.now().toString(), "", "", "", "General", "", "", "", "");
     selectionTrip.detailDestination = "General";
@@ -80,6 +82,8 @@ class FileViewState extends State<FilesTripPage> with AutomaticKeepAliveClientMi
     getFiles();
 
     return Scaffold(
+      appBar: getAppBar(),
+      bottomNavigationBar: getBottomNavigationBar(),
       body: OrientationBuilder(builder: (context, orientation) {
         portrait = orientation == Orientation.portrait;
         return PinchToZoom(
@@ -384,8 +388,8 @@ class FileViewState extends State<FilesTripPage> with AutomaticKeepAliveClientMi
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 25
-                  : MediaQuery.of(context).size.width / 25,
+                    ? MediaQuery.of(context).size.height / 30
+                    : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -452,7 +456,7 @@ class FileViewState extends State<FilesTripPage> with AutomaticKeepAliveClientMi
                 ),
               ),
               Flexible(
-                child: Text("You do not have any files to view yet."),
+                child: Text("You do not have any files for this trip."),
               ),
             ],
           )

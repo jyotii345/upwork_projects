@@ -2,7 +2,7 @@ name: aggressor_adventures
 description: A flutter application for the Aggressor Adventures
 
 publish_to: 'none'
-version: 1.0.0+11
+version: 1.0.1+13
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -43,9 +43,14 @@ dependencies:
   flutter_image_compress: ^1.0.0
 
 flutter_icons:
-  android: "launcher_icon"
+
   ios: true
+  android: "launcher_icon"
   image_path: "assets/appicon.jpg"
+  #image_path_ios: "assets/launcher/icon.png"
+  #image_path_android: "assets/launcher/icon.png"
+  #adaptive_icon_background: "assets/launcher/background.png"
+  #adaptive_icon_foreground: "assets/launcher/foreground.png"
 
 dev_dependencies:
   flutter_test:

@@ -471,7 +471,7 @@ class RewardsState extends State<Rewards> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  contact != null ? Text(
                     contact.nameF +
                         " " +
                         contact.nameM +
@@ -486,7 +486,7 @@ class RewardsState extends State<Rewards> {
                     style: TextStyle(
                         fontSize: sectionHeight / 8.5,
                         fontWeight: FontWeight.bold),
-                  ),
+                  ): Container(),
                   Flexible(
                     child: Container(
                       width: double.infinity,
@@ -538,8 +538,8 @@ class RewardsState extends State<Rewards> {
                           ),
                           child: Image.asset(
                             "assets/redquestion.png",
-                            height: sectionHeight / 12,
-                            width: sectionHeight / 12,
+                            height: sectionHeight / 6,
+                            width: sectionHeight / 6,
                           ),
                         ),
                       ),
@@ -775,8 +775,8 @@ class RewardsState extends State<Rewards> {
             style: TextStyle(
                 color: AggressorColors.primaryColor,
                 fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 25
-                    : MediaQuery.of(context).size.width / 25,
+                    ? MediaQuery.of(context).size.height / 30
+                    : MediaQuery.of(context).size.width / 30,
                 fontWeight: FontWeight.bold),
           ),
         ),

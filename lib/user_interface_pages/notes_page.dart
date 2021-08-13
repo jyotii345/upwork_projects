@@ -50,6 +50,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
+    notesLoaded = false;
     dateDropDownValue = Trip(
       "",
       "",
@@ -83,8 +84,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         Stack(
           children: [
             getBackgroundImage(),
+            getWhiteOverlay(),
             getPageForm(),
-            getBannerImage(),
           ],
         ),
       );
@@ -95,22 +96,39 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Self implemented
    */
 
-  Widget getPageForm() {
-    //returns the main contents of the page
+  Widget getWhiteOverlay() {
+    //returns a white background on the application
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: ListView(
-          children: [
-            Opacity(opacity: 0,child: getBannerImage(),),
-            showOffline(),
-            getPageTitle(),
-            getCreateNote(),
-            getNotesSection(),
-            showErrorMessage(),
-          ],
-        ),
+      ),
+    );
+  }
+
+  Widget getPageForm() {
+    //returns the main contents of the page
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+      child: ListView(
+        children: [
+          getBannerImage(),
+          showOffline(),
+
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getPageTitle(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getCreateNote(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getNotesSection(),
+          ),
+          showErrorMessage(),
+        ],
       ),
     );
   }
@@ -152,7 +170,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
               "Adventure:",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -192,7 +211,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                         : MediaQuery.of(context).size.height / 2,
                     child: AutoSizeText(
                       value["name"],
-                      maxLines :  1,
+                      maxLines: 1,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -217,8 +236,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                 ? MediaQuery.of(context).size.height / 6
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
-              "DepartureDate:",
-              maxLines: 1, minFontSize:3.0,
+              "Departure Date:",
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -255,7 +275,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                         ? MediaQuery.of(context).size.width / 2
                         : MediaQuery.of(context).size.height / 2,
                     child: AutoSizeText(
-                        value.charter == null //todo search into why this is always wrong
+                      value.charter ==
+                              null //todo search into why this is always wrong
                           ? "You don't have adventures here yet."
                           : DateTime.parse(
                                       value.charter.startDate)
@@ -269,7 +290,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                               DateTime.parse(value.charter.startDate)
                                   .year
                                   .toString(),
-                      maxLines: 1, minFontSize:3.0,
+                      maxLines: 1,
+                      minFontSize: 3.0,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -315,7 +337,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget getCreateNoteButton() {
     //returns the button to create the note as it is
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0,15,0,0),
+      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -378,10 +400,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -396,8 +417,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 25
-                  : MediaQuery.of(context).size.width / 25,
+                    ? MediaQuery.of(context).size.height / 30
+                    : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -524,6 +545,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Future<dynamic> getNotes() async {
     //downloads notes from aws.
 
+
     setState(() {
       loading = true;
     });
@@ -560,17 +582,20 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         }
       });
 
-      setState(() {
-        notesList = tempNotes;
-        notesLoaded = true;
-      });
+      if(mounted) {
+        setState(() {
+          notesList = tempNotes;
+          notesLoaded = true;
+        });
       updateNotesCache();
+      }
     } else {
       notesList = await NotesDatabaseHelper.instance.queryNotes();
     }
+    if(mounted){
     setState(() {
       loading = false;
-    });
+    });}
     return "finished";
   }
 
@@ -584,7 +609,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     }
 
     for (var note in notesList) {
-
       await notesDatabaseHelper.insertNotes(note);
     }
   }

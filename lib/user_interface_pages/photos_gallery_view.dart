@@ -191,7 +191,7 @@ class GalleryViewState extends State<GalleryView> {
         builder: (_) => new AlertDialog(
               title: new Text('Success'),
               content:
-                  new Text("The images have been exported to your camera roll"),
+                  new Text("The images have been exported to your phone's camera roll"),
               actions: <Widget>[
                 new TextButton(
                     onPressed: () {
@@ -465,15 +465,10 @@ class GalleryViewState extends State<GalleryView> {
           return Container(
             height: (MediaQuery.of(context)
                 .size
-                .width) -
-                (MediaQuery.of(context).size.width *
-                    .4),
+                .height),
             width: (MediaQuery.of(context)
                 .size
-                .width *
-                1.2) -
-                (MediaQuery.of(context).size.width *
-                    .4),
+                .width) ,
             child: IntrinsicHeight(
               child: Stack(
                 children: [
@@ -482,7 +477,7 @@ class GalleryViewState extends State<GalleryView> {
                       File(photosList[showIndex]
                           .imagePath,
                       ),
-                      fit: BoxFit.fill,
+                      fit: BoxFit.fitWidth,
                     ),
                   ),
                   Align(
@@ -738,8 +733,8 @@ class GalleryViewState extends State<GalleryView> {
                 style: TextStyle(
                     color: AggressorColors.primaryColor,
                     fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 26
-                        : MediaQuery.of(context).size.width / 26,
+                ? MediaQuery.of(context).size.height / 30
+                : MediaQuery.of(context).size.width / 30,
                     fontWeight: FontWeight.bold),
               ),
             ),
