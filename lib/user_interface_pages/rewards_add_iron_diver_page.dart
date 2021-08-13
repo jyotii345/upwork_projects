@@ -74,9 +74,9 @@ class AddIronDiverState extends State<AddIronDiver> {
             body: Stack(
               children: [
                 getBackgroundImage(),
+                getWhiteOverlay(),
                 getPageForm(),
                 showLoading(),
-                getBannerImage(),
               ],
             ),
           );
@@ -89,23 +89,46 @@ class AddIronDiverState extends State<AddIronDiver> {
   Self implemented
    */
 
-  Widget getPageForm() {
-    //returns the main contents of the page
+  Widget getWhiteOverlay() {
+    //returns a white background on the application
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+    );
+  }
+
+  Widget getPageForm() {
+    //returns the main contents of the page
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0,0,0, 10),
+      child:ListView(
           children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
-            getPageTitle(),
-            getYachtDropDown(boatList),
-            getDateDropDown(),
-            getAddButton(),
-            showErrorMessage(),
+            getBannerImage(),
+
+
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: getPageTitle(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: getYachtDropDown(boatList),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: getDateDropDown(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: getAddButton(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: showErrorMessage(),
+            ),
           ],
-        ),
       ),
     );
   }
@@ -303,12 +326,15 @@ class AddIronDiverState extends State<AddIronDiver> {
                   return DropdownMenuItem<Trip>(
                     value: value,
                     child: Container(
+                      color: value.charter == null
+                          ? AggressorColors.accentYellow
+                          : null,
                       width: portrait
                           ? MediaQuery.of(context).size.width / 2
                           : MediaQuery.of(context).size.height / 2,
                       child: Text(
                         value.charter == null
-                            ? "You have adventures here yet."
+                            ? "You have no adventures here yet."
                             : DateTime.parse(
                                         value.charter.startDate)
                                     .month
@@ -375,13 +401,12 @@ class AddIronDiverState extends State<AddIronDiver> {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -418,8 +443,8 @@ class AddIronDiverState extends State<AddIronDiver> {
         style: TextStyle(
             color: AggressorColors.primaryColor,
             fontSize: portrait
-                ? MediaQuery.of(context).size.height / 26
-                : MediaQuery.of(context).size.width / 26,
+                ? MediaQuery.of(context).size.height / 30
+                : MediaQuery.of(context).size.width / 30,
             fontWeight: FontWeight.bold),
       ),
     );

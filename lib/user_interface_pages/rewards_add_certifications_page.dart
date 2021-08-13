@@ -30,7 +30,6 @@ class AddCertificationState extends State<AddCertification> {
 
   String dropDownValue;
 
-  List<Trip> dateDropDownList = [];
   bool loading = false;
 
   /*
@@ -39,7 +38,12 @@ class AddCertificationState extends State<AddCertification> {
   @override
   void initState() {
     super.initState();
-    dropDownValue = certificationOptionList[0];
+
+    if(certificationOptionList[0] != " -- SELECT --"){
+      certificationOptionList.insert(0, " -- SELECT -- ");
+    }
+    dropDownValue = " -- SELECT -- ";
+   // dropDownValue = certificationOptionList[0];
     popDistance = 1;
   }
 
@@ -61,9 +65,9 @@ class AddCertificationState extends State<AddCertification> {
             body: Stack(
               children: [
                 getBackgroundImage(),
+                getWhiteOverlay(),
                 getPageForm(),
                 showLoading(),
-                getBannerImage(),
               ],
             ),
           );
@@ -76,22 +80,41 @@ class AddCertificationState extends State<AddCertification> {
   Self implemented
    */
 
-  Widget getPageForm() {
-    //returns the main contents of the page
+  Widget getWhiteOverlay() {
+    //returns a white background on the application
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
-            getPageTitle(),
-            getCertificateDropDown(),
-            getAddButton(),
-            showErrorMessage(),
+      ),
+    );
+  }
+
+  Widget getPageForm() {
+    //returns the main contents of the page
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0,0,0, 10),
+      child: ListView(
+          children: [ getBannerImage(),
+
+
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: getPageTitle(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: getCertificateDropDown(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: getAddButton(),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: showErrorMessage(),
+            ),
           ],
-        ),
       ),
     );
   }
@@ -130,16 +153,18 @@ class AddCertificationState extends State<AddCertification> {
       loading = true;
     });
 
-    var response = await AggressorApi()
-        .saveCertification(widget.user.userId.toString(), dropDownValue);
+    if(dropDownValue != " -- SELECT -- ") {
+      var response = await AggressorApi()
+          .saveCertification(widget.user.userId.toString(), dropDownValue);
 
-    if (response["status"].toString().toLowerCase() == "success") {
-      widget.refreshState();
-      Navigator.pop(context);
-    } else {
-      setState(() {
-        errorMessage = "Error adding the Certificate, please try again.";
-      });
+      if (response["status"].toString().toLowerCase() == "success") {
+        widget.refreshState();
+        Navigator.pop(context);
+      } else {
+        setState(() {
+          errorMessage = "Error adding the Certificate, please try again.";
+        });
+      }
     }
 
     setState(() {
@@ -279,8 +304,8 @@ class AddCertificationState extends State<AddCertification> {
         style: TextStyle(
             color: AggressorColors.primaryColor,
             fontSize: portrait
-                ? MediaQuery.of(context).size.height / 26
-                : MediaQuery.of(context).size.width / 26,
+                ? MediaQuery.of(context).size.height / 30
+                : MediaQuery.of(context).size.width / 30,
             fontWeight: FontWeight.bold),
       ),
     );

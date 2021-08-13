@@ -60,6 +60,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
+    filesLoaded = false;
     selectionTrip =
         Trip(DateTime.now().toString(), "", "", "", "General", "", "", "", "");
     selectionTrip.detailDestination = "General";
@@ -75,7 +76,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
-     //clearFiles();
+    //clearFiles();
     getFiles();
 
     return OrientationBuilder(builder: (context, orientation) {
@@ -84,8 +85,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         Stack(
           children: [
             getBackgroundImage(),
+            getWhiteOverlay(),
             getPageForm(),
-            getBannerImage(),
           ],
         ),
       );
@@ -98,20 +99,42 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   Widget getPageForm() {
     return Padding(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+      child: ListView(
+        children: [
+          getBannerImage(),
+          showOffline(),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: showLoading(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getPageTitle(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getUploadFile(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getFilesSection(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: showErrorMessage(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getWhiteOverlay() {
+    //returns a white background on the application
+    return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
         color: Colors.white,
-        child: ListView(
-          children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
-            showOffline(),
-            showLoading(),
-            getPageTitle(),
-            getUploadFile(),
-            getFilesSection(),
-            showErrorMessage(),
-          ],
-        ),
       ),
     );
   }
@@ -129,7 +152,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               style: TextStyle(
                   color: AggressorColors.secondaryColor,
                   fontWeight: FontWeight.bold),
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           getFilePrompt(),
@@ -156,11 +180,12 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         children: [
           SizedBox(
             width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
+                ? (MediaQuery.of(context).size.height / 6) - 16
+                : (MediaQuery.of(context).size.width / 6) - 16,
             child: AutoSizeText(
               "Destination:",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -212,7 +237,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                               DateTime.parse(value.charter.startDate)
                                   .year
                                   .toString(),
-                      maxLines:1,
+                      maxLines: 1,
                       minFontSize: 3.0,
                       textAlign: TextAlign.center,
                     ),
@@ -242,11 +267,12 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         children: [
           SizedBox(
             width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
+                ? (MediaQuery.of(context).size.height / 6) - 16
+                : (MediaQuery.of(context).size.width / 6) - 16,
             child: AutoSizeText(
               "Select File:",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -267,7 +293,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                   ),
                   child: AutoSizeText(
                     fileName,
-                    maxLines: 1, minFontSize:3.0,
+                    maxLines: 1,
+                    minFontSize: 3.0,
                     textAlign: TextAlign.center,
                   )),
             ),
@@ -285,11 +312,12 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         children: [
           SizedBox(
             width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
+                ? (MediaQuery.of(context).size.height / 6) - 16
+                : (MediaQuery.of(context).size.width / 6) - 16,
             child: AutoSizeText(
               "File Name:",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -334,8 +362,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         children: [
           SizedBox(
             width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
+                ? (MediaQuery.of(context).size.height / 6) - 16
+                : (MediaQuery.of(context).size.width / 6) - 16,
           ),
           Container(
             width: portrait
@@ -346,7 +374,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               child: AutoSizeText(
                 uploading ? "Uploading, please wait..." : "Upload File",
                 style: TextStyle(color: Colors.white),
-                maxLines: 1, minFontSize:3.0,
+                maxLines: 1,
+                minFontSize: 3.0,
               ),
               style: TextButton.styleFrom(
                   backgroundColor: AggressorColors.secondaryColor),
@@ -374,13 +403,12 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -394,8 +422,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 25
-                  : MediaQuery.of(context).size.width / 25,
+                    ? MediaQuery.of(context).size.height / 30
+                    : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -515,8 +543,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     int index = 0;
 
     fileDataList.forEach((value) {
-        filesList.add(value.getFileRow(context, index));
-        index++;
+      filesList.add(value.getFileRow(context, index));
+      index++;
     });
 
     return ListView.builder(
@@ -531,10 +559,13 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Future<dynamic> getFiles() async {
     //downloads file from aws. If the file is not already in storage, it will be stored on the device.
 
+    print("get files called");
+    print(filesLoaded);
     if (!filesLoaded && online) {
       setState(() {
         loading = true;
       });
+
       String region = "us-east-1";
       String bucketId = "aggressor.app.user.images";
       final AwsS3Client s3client = AwsS3Client(
@@ -560,6 +591,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           print("no map found or map error ");
         }
       }
+
 
       if (fileNameList.length > 0) {
         fileNameList.sort((a, b) => DateTime.parse(b["LastModified"])
@@ -594,9 +626,11 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 element.split(':')[1].toString().trim();
           }
         });
+
       }
 
       try {
+        print("starting file downloads");
         for (var element in tripList) {
           var response;
           try {
@@ -609,14 +643,19 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                         [yyyy, '-', mm, '-', dd]).toString() +
                     "/",
                 delimiter: "/");
+
+            print(response.toString());
+            print(element.charterId);
+
             if (response.contents != null) {
-              response.contents.forEach((content) async {
+              for(var content in response.contents){
                 var elementJson = await jsonDecode(content.toJson());
                 if (elementJson["Size"] != "0") {
                   if (!await FileDatabaseHelper.instance.fileExists(
                       elementJson["Key"].toString().substring(
                           elementJson["Key"].toString().lastIndexOf("/") +
                               1))) {
+
                     StreamedResponse downloadResponse = await AggressorApi()
                         .downloadAwsFile(elementJson["Key"].toString());
 
@@ -632,7 +671,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                     String appDocumentsPath = appDocumentsDirectory.path; // 2
                     String filePath = '$appDocumentsPath/$fileName';
                     File tempFile = File(filePath);
-                    tempFile.writeAsBytes(bytes);
+                    await tempFile.writeAsBytes(bytes);
 
                     String date = elementJson["Key"].toString().substring(
                         elementJson["Key"].toString().lastIndexOf('/') - 10,
@@ -646,13 +685,16 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                         element.charter == null
                             ? "general"
                             : element.charter.charterId);
-                    fileHelper.insertFile(fileData);
+                    await fileHelper.insertFile(fileData);
                   }
                 }
-              });
+              }
             }
-          } catch (e) {}
+          } catch (e) {
+            print("error downloading the files");
+          }
         }
+
 
         var response = await s3client.listObjects(
             prefix: widget.user.userId + "/files/general/general/",
@@ -679,24 +721,27 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 String appDocumentsPath = appDocumentsDirectory.path; // 2
                 String filePath = '$appDocumentsPath/$fileName';
                 File tempFile = File(filePath);
-                tempFile.writeAsBytes(bytes);
+                await tempFile.writeAsBytes(bytes);
 
-                fileDataList.forEach((element) {});
                 if (!await fileHelper.fileExists(
                   fileName,
                 )) {
                   FileData fileData = FileData(
                       tempFile.path, "general", fileName, "", "general");
 
-                  fileHelper.insertFile(fileData);
+                  await fileHelper.insertFile(fileData);
                 }
               }
             }
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        print("error with general files");
+      }
+
 
       tempFiles = await fileHelper.queryFile();
+
 
       for (var element in tempFiles) {
         if ((element.displayName == "" || element.displayName == null) &&
@@ -713,11 +758,13 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         });
       }
 
-      setState(() {
-        loading = false;
-        fileDataList = tempFiles;
-        filesLoaded = true;
-      });
+      if (mounted) {
+        setState(() {
+          loading = false;
+          fileDataList = tempFiles;
+          filesLoaded = true;
+        });
+      }
     } else {
       //TODO test offline mode names
       if (!filesLoaded) {
@@ -814,7 +861,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             String appDocumentsPath = appDocumentsDirectory.path; // 2
             String filePath = '$appDocumentsPath/' + uploadResult["filename"];
             File tempFile = File(filePath);
-            tempFile.writeAsBytes(bytes);
+            await tempFile.writeAsBytes(bytes);
 
             print(uploadResult["filename"]);
 
@@ -824,8 +871,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 uploadResult["filename"],
                 fileNameController.text,
                 dropDownValue.charterId));
-            
-            FileDatabaseHelper.instance.insertFile(FileData(
+
+           await  FileDatabaseHelper.instance.insertFile(FileData(
                 tempFile.path,
                 uploadDate,
                 uploadResult["filename"],

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
@@ -61,6 +62,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
     super.initState();
     helper = UserDatabaseHelper.instance;
     checkLoginStatus();
+    ensureDataReset();
   }
 
   @override
@@ -434,6 +436,58 @@ class _LoginSignUpPageState extends State<LoginPage> {
   void distanceReduce(){
     setState(() {
       outterDistanceFromLogin --;
+    });
+  }
+
+  void ensureDataReset(){
+    print("resetting data");
+    setState(() {
+
+      loadedCount = 0;
+      loadingLength = 0;
+      photosLoaded = false;
+      notesLoaded = false;
+      certificateLoaded = false;
+      ironDiversLoaded = false;
+      contactLoaded = false;
+      profileDataLoaded = false;
+      online = true;
+      filesLoaded = false;
+      homePage = false;
+
+      currentIndex = 0;
+
+      galleriesMap = <String, Gallery>{};
+      profileData = <String, dynamic>{};
+      fileDisplayNames = <String, String>{};
+
+      notLoadedList = [];
+      tripList = [];
+      loadSize = [];
+      boatList = [];
+      fileDataList = [];
+      statesList = [];
+      countriesList = [];
+      sliderImageList = [];
+      notesList = [];
+      ironDiverList = [];
+      certificationList = [];
+
+      contact = null;
+
+      certificationOptionList = [
+        'Non-Diver',
+        'Junior Open Water',
+        'Open Water',
+        'Advanced Open Water',
+        'Rescue Diver',
+        'Master Scuba Diver',
+        'Dive Master',
+        'Assistant Instructor',
+        'Instructor',
+        'Instructor Trainer',
+        'Nitrox',
+      ];
     });
   }
 }

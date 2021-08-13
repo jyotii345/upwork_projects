@@ -9,6 +9,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -114,9 +115,11 @@ class AddNotesState extends State<AddNotes> {
               getYachtInformation(),
               getDepartureDate(),
               //returnDate(),
+              getPreTripTitle(),
               getPreTripNotes(),
+              getPostTripTitle(),
               getPostTripNotes(),
-              getMiscNotes(),
+              //getMiscNotes(),
               getSaveNotesButton(),
             ],
           ),
@@ -139,27 +142,31 @@ class AddNotesState extends State<AddNotes> {
     );
   }
 
+
+  Widget getPreTripTitle(){
+    return  Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: AutoSizeText(
+        "Pre-Adventure Notes:",
+        maxLines: 1, minFontSize:3.0,
+      ),
+    );
+  }
+
+  Widget getPostTripTitle(){
+    return  Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: AutoSizeText(
+        "Post-Adventure Notes:",
+        maxLines: 1, minFontSize:3.0,
+      ),
+    );
+  }
+
   Widget getPreTripNotes() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                "Pre-Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
-              ),
-            ),
-          ),
+      padding: const EdgeInsets.all(10),
+      child:
           Expanded(
             child: Container(
               height: portrait
@@ -175,8 +182,6 @@ class AddNotesState extends State<AddNotes> {
               ),
             ),
           ),
-        ],
-      ),
     );
   }
 
@@ -255,25 +260,8 @@ class AddNotesState extends State<AddNotes> {
 
   Widget getPostTripNotes() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                "Post-Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
-              ),
-            ),
-          ),
+      padding: const EdgeInsets.all(10),
+      child:
           Expanded(
             child: Container(
               height: portrait
@@ -289,8 +277,6 @@ class AddNotesState extends State<AddNotes> {
               ),
             ),
           ),
-        ],
-      ),
     );
   }
 
@@ -567,8 +553,8 @@ class AddNotesState extends State<AddNotes> {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 26
-                  : MediaQuery.of(context).size.width / 26,
+                ? MediaQuery.of(context).size.height / 30
+                : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),

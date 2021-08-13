@@ -127,6 +127,31 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     setState(() {
+
+      photosLoaded = false;
+      notesLoaded = false;
+      certificateLoaded = false;
+      ironDiversLoaded = false;
+      contactLoaded = false;
+      profileDataLoaded = false;
+      filesLoaded = false;
+      homePage = false;
+
+      currentIndex = 0;
+
+      certificationOptionList = [
+        'Non-Diver',
+        'Junior Open Water',
+        'Open Water',
+        'Advanced Open Water',
+        'Rescue Diver',
+        'Master Scuba Diver',
+        'Dive Master',
+        'Assistant Instructor',
+        'Instructor',
+        'Instructor Trainer',
+        'Nitrox',
+      ];
       Wakelock.disable();
     });
     Navigator.pushReplacement(
@@ -208,6 +233,7 @@ class LoadingPageState extends State<LoadingPage> {
 
     var photosList = await PhotoDatabaseHelper.instance.queryPhoto();
     var tempGalleriesMap = await getGalleries(photosList);
+
     setState(() {
       loadedCount++;
     });
@@ -262,6 +288,7 @@ class LoadingPageState extends State<LoadingPage> {
     } catch (e) {
       print("no sliders");
     }
+
     getContactDetails();
     getBoatList();
     getIronDiverList();
@@ -304,9 +331,14 @@ class LoadingPageState extends State<LoadingPage> {
       });
     }
 
+
     var tempFiles = await FileDatabaseHelper.instance.queryFile();
     var tempPhotos = await PhotoDatabaseHelper.instance.queryPhoto();
     var tempGalleryMap = await getGalleries(tempPhotos);
+
+    print(tempFiles.toList());
+    print(tempGalleryMap);
+
 
     setState(() {
       fileDataList = tempFiles;
@@ -661,7 +693,6 @@ class LoadingPageState extends State<LoadingPage> {
 
   Future<dynamic> getUserProfileImageData(var profileDataLocal) async {
     if (!userImageRetreived) {
-      print("loading user image");
       try {
         var userImageRes = await AggressorApi()
             .downloadUserImage(widget.user.userId, profileData["avatar"]);
@@ -671,7 +702,6 @@ class LoadingPageState extends State<LoadingPage> {
         File temp = File(dirData + "/" + profileData["avatar"]);
         await temp.writeAsBytes(bytes);
 
-        print("settings state rew");
         setState(() {
           userImageRetreived = true;
           userImage = temp;
@@ -679,8 +709,6 @@ class LoadingPageState extends State<LoadingPage> {
       } catch (e) {
         var dirData = (await getApplicationDocumentsDirectory()).path;
 
-        print("settings state rew");
-          print(profileDataLocal["avatar"]);
           userImage = File(dirData.toString() + "/" + profileDataLocal["avatar"].toString());
 
       }

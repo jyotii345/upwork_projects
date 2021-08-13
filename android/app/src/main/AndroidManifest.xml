@@ -7,7 +7,7 @@
 
    <application
         android:label="Adventure Of A Lifetime"
-        android:icon="@mipmap/launcher_icon">
+        android:icon="@mipmap/ic_launcher">
 
        android:requestLegacyExternalStorage="true"
         <activity

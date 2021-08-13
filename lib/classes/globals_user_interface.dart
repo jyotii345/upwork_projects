@@ -288,7 +288,7 @@ makeCall() async {
   }
 }
 
-void handlePopupClick(String value) {
+void handlePopupClick(String value) async {
   switch (value) {
     case 'My Profile':
       currentIndex = 5;

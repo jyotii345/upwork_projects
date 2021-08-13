@@ -111,9 +111,11 @@ class EditNoteState extends State<EditNote> {
               getYachtInformation(),
               getDepartureDate(),
               //getReturnDate(),
+              getPreTripTitle(),
               getPreTripNotes(),
+              getPostTripTitle(),
               getPostTripNotes(),
-              getMiscNotes(),
+              //getMiscNotes(),
               getSaveNotesButton(),
             ],
           ),
@@ -136,24 +138,32 @@ class EditNoteState extends State<EditNote> {
     );
   }
 
+
+  Widget getPreTripTitle(){
+    return  Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: AutoSizeText(
+        "Pre-Adventure Notes:",
+        maxLines: 1, minFontSize:3.0,
+      ),
+    );
+  }
+
+  Widget getPostTripTitle(){
+    return  Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: AutoSizeText(
+        "Post-Adventure Notes:",
+        maxLines: 1, minFontSize:3.0,
+      ),
+    );
+  }
+
+
   Widget getPreTripNotes() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: AutoSizeText(
-                "Pre-Adventure Notes:",
-                maxLines: 1, minFontSize:3.0,
-              ),
-            ),
-          ),
+      padding: const EdgeInsets.all(10),
+      child:
           Expanded(
             child: Container(
               height: MediaQuery.of(context).size.height / 3,
@@ -167,8 +177,6 @@ class EditNoteState extends State<EditNote> {
               ),
             ),
           ),
-        ],
-      ),
     );
   }
 
@@ -239,22 +247,8 @@ class EditNoteState extends State<EditNote> {
 
   Widget getPostTripNotes() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: AutoSizeText(
-                "Post-Adventure Notes:",
-                maxLines: 1, minFontSize:3.0,
-              ),
-            ),
-          ),
+      padding: const EdgeInsets.all(15),
+      child:
           Expanded(
             child: Container(
               height: MediaQuery.of(context).size.height / 3,
@@ -268,8 +262,6 @@ class EditNoteState extends State<EditNote> {
               ),
             ),
           ),
-        ],
-      ),
     );
   }
 
@@ -508,8 +500,8 @@ class EditNoteState extends State<EditNote> {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 26
-                  : MediaQuery.of(context).size.width / 26,
+                ? MediaQuery.of(context).size.height / 30
+                : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),

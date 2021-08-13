@@ -29,7 +29,6 @@ class MyTripsState extends State<MyTrips>
   List<Widget> pastTripsList;
   List<Widget> upcomingTripsList;
 
-
   bool timerStarted = false;
   int sliderIndex = 0;
 
@@ -100,9 +99,9 @@ class MyTripsState extends State<MyTrips>
             child: sliderImageList.length == 0
                 ? Container()
                 : Image.file(
-              File(sliderImageList[sliderIndex]["filePath"]),
-              fit: BoxFit.scaleDown,
-            ),
+                    File(sliderImageList[sliderIndex]["filePath"]),
+                    fit: BoxFit.scaleDown,
+                  ),
           ),
           Container(
             width: MediaQuery.of(context).size.width,
@@ -216,7 +215,7 @@ class MyTripsState extends State<MyTrips>
                           SizedBox(
                             width: textBoxSize,
                             child: Text(
-                              "Embarkment Date",
+                              "Start Date",
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -244,7 +243,8 @@ class MyTripsState extends State<MyTrips>
 
     upcomingTripsList.clear();
     upcomingTrips.forEach((element) {
-      upcomingTripsList.add(element.getUpcomingTripCard(context, refresh, portrait));
+      upcomingTripsList
+          .add(element.getUpcomingTripCard(context, refresh, portrait));
     });
 
     return ListView.builder(
@@ -296,7 +296,7 @@ class MyTripsState extends State<MyTrips>
                 SizedBox(
                   width: textBoxSize,
                   child: Text(
-                    "Embarkment Date",
+                    "Start Date",
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -341,7 +341,9 @@ class MyTripsState extends State<MyTrips>
               "Past Adventures",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45,
+                fontSize: portrait
+                    ? MediaQuery.of(context).size.height / 45
+                    : MediaQuery.of(context).size.width / 45,
               ),
             ),
           ),
@@ -388,7 +390,9 @@ class MyTripsState extends State<MyTrips>
               "Upcoming Adventures",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: portrait ? MediaQuery.of(context).size.height / 45 : MediaQuery.of(context).size.width / 45,
+                fontSize: portrait
+                    ? MediaQuery.of(context).size.height / 45
+                    : MediaQuery.of(context).size.width / 45,
               ),
             ),
           ),
@@ -437,7 +441,9 @@ class MyTripsState extends State<MyTrips>
           "Manage My Adventures",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: portrait ? MediaQuery.of(context).size.height / 30 : MediaQuery.of(context).size.width / 30,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 30
+                  : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
