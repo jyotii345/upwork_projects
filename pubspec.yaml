@@ -2,7 +2,7 @@ name: aggressor_adventures
 description: A flutter application for the Aggressor Adventures
 
 publish_to: 'none'
-version: 1.0.1+14
+version: 1.0.3+15
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
