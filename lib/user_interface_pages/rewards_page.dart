@@ -37,7 +37,6 @@ class RewardsState extends State<Rewards> {
 
   bool loading = false;
 
-
   /*
   initState
    */
@@ -101,7 +100,14 @@ class RewardsState extends State<Rewards> {
                 color: Colors.grey[400],
               ),
             ),
-            getProgressSection(),
+            getProgressSection(),Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Divider(
+                height: 2,
+                color: Colors.grey[400],
+              ),
+            ),
+            getAllStarListView(),
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: Divider(
@@ -450,7 +456,7 @@ class RewardsState extends State<Rewards> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              height:sectionHeight,
+              height: sectionHeight,
               width: sectionHeight,
               child: Padding(
                 padding: const EdgeInsets.all(0.0),
@@ -471,22 +477,24 @@ class RewardsState extends State<Rewards> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  contact != null ? Text(
-                    contact.nameF +
-                        " " +
-                        contact.nameM +
-                        " " +
-                        contact.nameL +
-                        "\nGuest since " +
-                        contact.memberSince +
-                        "\nTotal Adventures - " +
-                        profileData["totalAdventures"].toString(),
-                        //tripList.length.toString(),//todo replace with proper value
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: sectionHeight / 8.5,
-                        fontWeight: FontWeight.bold),
-                  ): Container(),
+                  contact != null
+                      ? Text(
+                          contact.nameF +
+                              " " +
+                              contact.nameM +
+                              " " +
+                              contact.nameL +
+                              "\nGuest since " +
+                              contact.memberSince +
+                              "\nTotal Adventures - " +
+                              profileData["totalAdventures"].toString(),
+                          //tripList.length.toString(),//todo replace with proper value
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: sectionHeight / 8.5,
+                              fontWeight: FontWeight.bold),
+                        )
+                      : Container(),
                   Flexible(
                     child: Container(
                       width: double.infinity,
@@ -498,7 +506,8 @@ class RewardsState extends State<Rewards> {
                             backgroundColor: AggressorColors.secondaryColor),
                         child: AutoSizeText(
                           "Update My Profile",
-                          maxLines: 1, minFontSize:3.0,
+                          maxLines: 1,
+                          minFontSize: 3.0,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -564,7 +573,8 @@ class RewardsState extends State<Rewards> {
                             backgroundColor: AggressorColors.secondaryColor),
                         child: AutoSizeText(
                           "REDEEM NOW >",
-                          maxLines: 1, minFontSize:3.0,
+                          maxLines: 1,
+                          minFontSize: 3.0,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -637,7 +647,6 @@ class RewardsState extends State<Rewards> {
       "assets/rewardspage.png",
       width: MediaQuery.of(context).size.width,
       fit: BoxFit.scaleDown,
-
     );
   }
 
@@ -666,7 +675,8 @@ class RewardsState extends State<Rewards> {
                         "assets/certification.png",
                         height: MediaQuery.of(context).size.width / 15,
                         width: MediaQuery.of(context).size.width / 15,
-                      ),Padding(
+                      ),
+                      Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Text(
                           certificationList[position]["certification"],
@@ -726,7 +736,8 @@ class RewardsState extends State<Rewards> {
                         "assets/irondiver.png",
                         height: MediaQuery.of(context).size.width / 15,
                         width: MediaQuery.of(context).size.width / 15,
-                      ), Text(
+                      ),
+                      Text(
                         ironDiverList[position]["name"],
                         style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width / 50),
@@ -951,12 +962,79 @@ class RewardsState extends State<Rewards> {
           );
   }
 
+  Widget getAllStarListView() {
+    //returns the list view of the awards the user has earned
+    getAllStars();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15.0, 5, 15.0, 0.0),
+      child: ListView(
+        shrinkWrap: true,
+        children: [
+          Row(
+            children: [
+              Container(
+                  height: MediaQuery.of(context).size.width / 6,
+                  child: Image.asset('assets/allstar.png')),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Text(
+              "Awarded to every guest who traveled with Aggressor Adventures for 3 trips or more within the year",
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width / 28,),
+            ),
+          ),
+          for (var element in allStarsList)
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 5,bottom: 5),
+              child: Row(
+                children: [
+                  Text(
+                    element['year'],
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: MediaQuery.of(context).size.width / 18,
+                    ),
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width / 10,
+                      height: MediaQuery.of(context).size.width / 10,
+                      child: Image.asset(
+                        'assets/star.png',
+                      )),
+                  Text(
+                    "Awarded for year " + element['year'],
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width / 18,
+                    ),
+                  ),
+                ],
+              ),
+            )
+        ],
+      ),
+    );
+  }
 
+  Future<dynamic> getAllStars() async {
+    if (!allStarLoaded) {
+      var allStarJson = await AggressorApi().getAllStar(widget.user.contactId);
+
+      List<dynamic> tempList = [];
+      for (var element in allStarJson) {
+        tempList.add(element);
+      }
+      setState(() {
+        allStarsList = tempList;
+        allStarLoaded = true;
+      });
+    }
+  }
 
   Future<dynamic> getUserProfileImageData() async {
     if (!userImageRetreived) {
       try {
-
         print(profileData["avatar"]);
         var userImageRes = await AggressorApi()
             .downloadUserImage(widget.user.userId, profileData["avatar"]);
@@ -980,7 +1058,6 @@ class RewardsState extends State<Rewards> {
 
           userImage = File(dirData + "/" + profileData["avatar"]);
         });
-
       }
     } else {
       var dirData = (await getApplicationDocumentsDirectory()).path;

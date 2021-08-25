@@ -477,7 +477,6 @@ class EditNoteState extends State<EditNote> {
 
     preNotesController.insertHtml(widget.note.preTripNotes);
     postNotesController.insertHtml(widget.note.postTripNotes);
-    miscNotesController.insertHtml(widget.note.miscNotes);
   }
 
    Widget getBannerImage() {

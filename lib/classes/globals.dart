@@ -27,6 +27,7 @@ bool online = true;
 bool filesLoaded = false;
 bool homePage = false;
 bool backButton = false;
+bool allStarLoaded = false;
 int currentIndex = 0;
 int outterDistanceFromLogin = 0;
 
@@ -47,6 +48,7 @@ List<dynamic> sliderImageList = [];
 List<dynamic> notesList = [];
 List<dynamic> ironDiverList = [];
 List<dynamic> certificationList = [];
+List<dynamic> allStarsList = [];
 
 File userImage = File("");
 

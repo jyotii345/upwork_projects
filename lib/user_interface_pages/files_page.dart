@@ -582,13 +582,15 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           delimiter: "/");
 
       fileNameList.clear();
-      for (var value in mapsList.contents) {
-        try {
-          if (double.parse(value.size) > 0) {
-            fileNameList.add(await jsonDecode(value.toJson()));
+      if(mapsList.contents != null) {
+        for (var value in mapsList.contents) {
+          try {
+            if (double.parse(value.size) > 0) {
+              fileNameList.add(await jsonDecode(value.toJson()));
+            }
+          } catch (e) {
+            print("no map found or map error ");
           }
-        } catch (e) {
-          print("no map found or map error ");
         }
       }
 
