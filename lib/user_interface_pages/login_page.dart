@@ -454,9 +454,11 @@ class _LoginSignUpPageState extends State<LoginPage> {
       online = true;
       filesLoaded = false;
       homePage = false;
+      allStarLoaded = false;
 
       currentIndex = 0;
 
+      allStarsList = [];
       galleriesMap = <String, Gallery>{};
       profileData = <String, dynamic>{};
       fileDisplayNames = <String, String>{};

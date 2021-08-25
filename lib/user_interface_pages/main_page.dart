@@ -94,22 +94,24 @@ class _MyHomePageState extends State<MyHomePage>
   void signOutUser() async {
     //sings user out and clears databases
 
+
+    await BoatDatabaseHelper.instance.deleteBoatTable();
+    await CertificateDatabaseHelper.instance.deleteCertificateTable();
+    await CharterDatabaseHelper.instance.deleteCharterTable();
+    await ContactDatabaseHelper.instance.deleteContactTable();
+    await CountriesDatabaseHelper.instance.deleteCountriesTable();
+    await FileDatabaseHelper.instance.deleteFileTable();
+    await     IronDiverDatabaseHelper.instance.deleteIronDiverTable();
+    await NotesDatabaseHelper.instance.deleteNotesTable();
+    await OfflineDatabaseHelper.instance.deleteOfflineTable();
+    await PhotoDatabaseHelper.instance.deletePhotoTable();
+    await ProfileDatabaseHelper.instance.deleteProfileTable();
+    await SlidersDatabaseHelper.instance.deleteSlidersTable();
+    await StatesDatabaseHelper.instance.deleteStatesTable();
+    await TripDatabaseHelper.instance.deleteTripTable();
+    await UserDatabaseHelper.instance.deleteUser(100);
+
     setState(() {
-      BoatDatabaseHelper.instance.deleteBoatTable();
-      CertificateDatabaseHelper.instance.deleteCertificateTable();
-      CharterDatabaseHelper.instance.deleteCharterTable();
-      ContactDatabaseHelper.instance.deleteContactTable();
-      CountriesDatabaseHelper.instance.deleteCountriesTable();
-      FileDatabaseHelper.instance.deleteFileTable();
-      IronDiverDatabaseHelper.instance.deleteIronDiverTable();
-      NotesDatabaseHelper.instance.deleteNotesTable();
-      OfflineDatabaseHelper.instance.deleteOfflineTable();
-      PhotoDatabaseHelper.instance.deletePhotoTable();
-      ProfileDatabaseHelper.instance.deleteProfileTable();
-      SlidersDatabaseHelper.instance.deleteSlidersTable();
-      StatesDatabaseHelper.instance.deleteStatesTable();
-      TripDatabaseHelper.instance.deleteTripTable();
-      UserDatabaseHelper.instance.deleteUser(100);
 
       navigatorKey.currentState
           .pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
