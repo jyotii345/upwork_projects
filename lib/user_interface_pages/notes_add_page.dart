@@ -166,9 +166,7 @@ class AddNotesState extends State<AddNotes> {
   Widget getPreTripNotes() {
     return Padding(
       padding: const EdgeInsets.all(10),
-      child:
-          Expanded(
-            child: Container(
+      child: Container(
               height: portrait
                   ? MediaQuery.of(context).size.height / 3
                   : MediaQuery.of(context).size.width / 3,
@@ -180,7 +178,6 @@ class AddNotesState extends State<AddNotes> {
                   toolbarPosition: ToolbarPosition.custom,
                 ),
               ),
-            ),
           ),
     );
   }
@@ -261,9 +258,7 @@ class AddNotesState extends State<AddNotes> {
   Widget getPostTripNotes() {
     return Padding(
       padding: const EdgeInsets.all(10),
-      child:
-          Expanded(
-            child: Container(
+      child: Container(
               height: portrait
                   ? MediaQuery.of(context).size.height / 3
                   : MediaQuery.of(context).size.width / 3,
@@ -276,48 +271,6 @@ class AddNotesState extends State<AddNotes> {
                 ),
               ),
             ),
-          ),
-    );
-  }
-
-  Widget getMiscNotes() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                "Miscellaneous Adventure Notes:",
-                style: TextStyle(
-                    fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 45 - 4
-                        : MediaQuery.of(context).size.width / 45 - 4),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              height: portrait
-                  ? MediaQuery.of(context).size.height / 3
-                  : MediaQuery.of(context).size.width / 3,
-              child: HtmlEditor(
-                controller: miscNotesController,
-                htmlEditorOptions:
-                    HtmlEditorOptions(hint: "Miscellaneous adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(
-                  toolbarPosition: ToolbarPosition.custom,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

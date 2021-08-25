@@ -105,7 +105,10 @@ class ViewNoteState extends State<ViewNote> {
           padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
           child: ListView(
             children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+              Opacity(
+                opacity: 0,
+                child: getBannerImage(),
+              ),
               getPageTitle(),
               getYachtInformation(),
               getDepartureDate(),
@@ -121,21 +124,24 @@ class ViewNoteState extends State<ViewNote> {
     );
   }
 
-  Widget getPreTripTitle(){
-    return  Padding(
+  Widget getPreTripTitle() {
+    return Padding(
       padding: const EdgeInsets.all(15.0),
       child: AutoSizeText(
-          "Pre-Adventure Notes:",
-          maxLines: 1, minFontSize:3.0,
-        ),
+        "Pre-Adventure Notes:",
+        maxLines: 1,
+        minFontSize: 3.0,
+      ),
     );
   }
-  Widget getPostTripTitle(){
-    return  Padding(
+
+  Widget getPostTripTitle() {
+    return Padding(
       padding: const EdgeInsets.all(15.0),
       child: AutoSizeText(
         "Post-Adventure Notes:",
-        maxLines: 1, minFontSize:3.0,
+        maxLines: 1,
+        minFontSize: 3.0,
       ),
     );
   }
@@ -144,23 +150,20 @@ class ViewNoteState extends State<ViewNote> {
     //returns the pre trip notes portion of the page
     return Padding(
       padding: const EdgeInsets.all(10),
-      child:
-          Expanded(
-            child: Container(
-              height: portrait
-                  ? MediaQuery.of(context).size.height / 3
-                  : MediaQuery.of(context).size.width / 3,
-              // decoration: ShapeDecoration(
-              //   shape: RoundedRectangleBorder(
-              //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
-              //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              //   ),
-              // ),
-              child: Html(
-                data: widget.note.preTripNotes,
-              ),
-            ),
-          ),
+      child: Container(
+        height: portrait
+            ? MediaQuery.of(context).size.height / 3
+            : MediaQuery.of(context).size.width / 3,
+        // decoration: ShapeDecoration(
+        //   shape: RoundedRectangleBorder(
+        //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
+        //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        //   ),
+        // ),
+        child: Html(
+          data: widget.note.preTripNotes,
+        ),
+      ),
     );
   }
 
@@ -168,54 +171,19 @@ class ViewNoteState extends State<ViewNote> {
     //returns the post trip notes portion of the page
     return Padding(
       padding: const EdgeInsets.all(10),
-      child:
-          Expanded(
-            child: Container(
-                height: portrait
-                    ? MediaQuery.of(context).size.height / 3
-                    : MediaQuery.of(context).size.width / 3,
-                // decoration: ShapeDecoration(
-                //   shape: RoundedRectangleBorder(
-                //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
-                //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                //   ),
-                // ),
-                child: Html(
-                  data: widget.note.postTripNotes,
-                )),
-          ),
-    );
-  }
-
-  Widget getMiscNotes() {
-    //returns the misc trip notes portion of the page
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: portrait
-                ? MediaQuery.of(context).size.height / 6
-                : MediaQuery.of(context).size.width / 6,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: AutoSizeText(
-                "Miscellaneous Adventure Notes:",
-                maxLines: 1, minFontSize:3.0,
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-                height: portrait
-                    ? MediaQuery.of(context).size.height / 3
-                    : MediaQuery.of(context).size.width / 3,
-                child: Html(
-                  data: widget.note.miscNotes,
-                )),
-          ),
-        ],
+      child: Container(
+        height: portrait
+            ? MediaQuery.of(context).size.height / 3
+            : MediaQuery.of(context).size.width / 3,
+        // decoration: ShapeDecoration(
+        //   shape: RoundedRectangleBorder(
+        //     side: BorderSide(width: 1.0, style: BorderStyle.solid),
+        //     borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        //   ),
+        // ),
+        child: Html(
+          data: widget.note.postTripNotes,
+        ),
       ),
     );
   }
@@ -233,7 +201,8 @@ class ViewNoteState extends State<ViewNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
               "Destination:",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -262,7 +231,8 @@ class ViewNoteState extends State<ViewNote> {
                       10,
               child: AutoSizeText(
                 widget.note.destination,
-                maxLines: 1, minFontSize:3.0,
+                maxLines: 1,
+                minFontSize: 3.0,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -285,7 +255,8 @@ class ViewNoteState extends State<ViewNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
               "Departure Date:",
-             maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -302,8 +273,13 @@ class ViewNoteState extends State<ViewNote> {
               ),
             ),
             child: AutoSizeText(
-              widget.note.startDate.split("-")[1] + "/" + widget.note.startDate.split("-")[2] + "/" + widget.note.startDate.split("-")[0] ,
-              maxLines: 1, minFontSize:3.0,
+              widget.note.startDate.split("-")[1] +
+                  "/" +
+                  widget.note.startDate.split("-")[2] +
+                  "/" +
+                  widget.note.startDate.split("-")[0],
+              maxLines: 1,
+              minFontSize: 3.0,
               textAlign: TextAlign.center,
             ),
           ),
@@ -387,13 +363,12 @@ class ViewNoteState extends State<ViewNote> {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -411,28 +386,27 @@ class ViewNoteState extends State<ViewNote> {
                   style: TextStyle(
                       color: AggressorColors.primaryColor,
                       fontSize: portrait
-                ? MediaQuery.of(context).size.height / 30
-                : MediaQuery.of(context).size.width / 30,
+                          ? MediaQuery.of(context).size.height / 30
+                          : MediaQuery.of(context).size.width / 30,
                       fontWeight: FontWeight.bold),
                 ),
               ),
-                 IconButton(
-                  iconSize: portrait
-                      ? MediaQuery.of(context).size.height / 20
-                      : MediaQuery.of(context).size.width / 20,
-                  icon: Image.asset("assets/filesblue.png"
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            FilesTripPage(widget.user,  widget.note.startDate),
-                      ),
-                    );
-                  },
-                  color: Colors.white,
-                ),
+              IconButton(
+                iconSize: portrait
+                    ? MediaQuery.of(context).size.height / 20
+                    : MediaQuery.of(context).size.width / 20,
+                icon: Image.asset("assets/filesblue.png"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          FilesTripPage(widget.user, widget.note.startDate),
+                    ),
+                  );
+                },
+                color: Colors.white,
+              ),
               Container(
                 height: portrait
                     ? MediaQuery.of(context).size.height / 20
