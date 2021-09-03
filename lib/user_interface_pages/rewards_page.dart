@@ -100,7 +100,8 @@ class RewardsState extends State<Rewards> {
                 color: Colors.grey[400],
               ),
             ),
-            getProgressSection(),Padding(
+            getProgressSection(),
+            Padding(
               padding: const EdgeInsets.all(5.0),
               child: Divider(
                 height: 2,
@@ -354,6 +355,7 @@ class RewardsState extends State<Rewards> {
 
   Widget getProgressSection() {
     //returns the section of tha page that holds the progress bars
+
     double barHeight = portrait
         ? MediaQuery.of(context).size.height / 40
         : MediaQuery.of(context).size.width / 40;
@@ -377,7 +379,9 @@ class RewardsState extends State<Rewards> {
             child: LinearPercentIndicator(
               percent: contact.vipCount == null
                   ? 0
-                  : (double.parse(contact.vipCount) * 6.67) / 100,
+                  : (double.parse(contact.vipCount) * 6.67) / 100 > 1.0
+                      ? 1.0
+                      : (double.parse(contact.vipCount) * 6.67) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -394,7 +398,9 @@ class RewardsState extends State<Rewards> {
             child: LinearPercentIndicator(
               percent: contact.vipPlusCount == null
                   ? 0
-                  : (double.parse(contact.vipPlusCount) * 4.0) / 100,
+                  : (double.parse(contact.vipPlusCount) * 4.0) / 100 > 1.0
+                      ? 1.0
+                      : (double.parse(contact.vipPlusCount) * 4.0) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -411,7 +417,7 @@ class RewardsState extends State<Rewards> {
             child: LinearPercentIndicator(
               percent: contact.sevenSeasCount == null
                   ? 0
-                  : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
+                  : (double.parse(contact.sevenSeasCount) * 14.29) / 100 > 1.0 ? 1.0 : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -428,7 +434,7 @@ class RewardsState extends State<Rewards> {
             child: LinearPercentIndicator(
               percent: contact.aaCount == null
                   ? 0
-                  : (double.parse(contact.aaCount) * 33.34) / 100,
+                  : (double.parse(contact.aaCount) * 33.34) / 100 > 1.0 ? 1.0 :  (double.parse(contact.aaCount) * 33.34) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -935,7 +941,6 @@ class RewardsState extends State<Rewards> {
 
   void updateCallback() {
     //update to show profile data should be reloaded
-    print("time to update");
     setState(() {
       profileDataLoaded = false;
       userImageRetreived = false;
@@ -968,12 +973,13 @@ class RewardsState extends State<Rewards> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(15.0, 5, 15.0, 0.0),
       child: ListView(
+        physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         children: [
           Row(
             children: [
               Container(
-                  height: MediaQuery.of(context).size.width / 15,
+                  height: MediaQuery.of(context).size.width / 6,
                   child: Image.asset('assets/allstar.png')),
             ],
           ),
@@ -981,27 +987,34 @@ class RewardsState extends State<Rewards> {
             padding: const EdgeInsets.only(left: 10.0),
             child: AutoSizeText(
               "Awarded to every guest who traveled with Aggressor Adventures for 3 trips or more within the year",
-              minFontSize: 3.0,
+              style: TextStyle(
+                fontSize: MediaQuery.of(context).size.width / 28,
+              ),
             ),
           ),
           for (var element in allStarsList)
             Padding(
-              padding: const EdgeInsets.only(left: 10, top: 5,bottom: 5),
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
               child: Row(
                 children: [
                   AutoSizeText(
                     element['year'],
-                    minFontSize: 3.0,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: MediaQuery.of(context).size.width / 18,
+                    ),
                   ),
                   Container(
-                      width: MediaQuery.of(context).size.width / 22,
-                      height: MediaQuery.of(context).size.width / 22,
+                      width: MediaQuery.of(context).size.width / 10,
+                      height: MediaQuery.of(context).size.width / 10,
                       child: Image.asset(
                         'assets/star.png',
                       )),
                   AutoSizeText(
                     "Awarded for year " + element['year'],
-                    minFontSize: 3.0,
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width / 18,
+                    ),
                   ),
                 ],
               ),
@@ -1029,7 +1042,6 @@ class RewardsState extends State<Rewards> {
   Future<dynamic> getUserProfileImageData() async {
     if (!userImageRetreived) {
       try {
-        print(profileData["avatar"]);
         var userImageRes = await AggressorApi()
             .downloadUserImage(widget.user.userId, profileData["avatar"]);
 
@@ -1038,7 +1050,6 @@ class RewardsState extends State<Rewards> {
         File temp = File(dirData + "/" + profileData["avatar"]);
         await temp.writeAsBytes(bytes);
 
-        print("settings state rew");
         setState(() {
           userImageRetreived = true;
           userImage = temp;
@@ -1046,7 +1057,6 @@ class RewardsState extends State<Rewards> {
       } catch (e) {
         var dirData = (await getApplicationDocumentsDirectory()).path;
 
-        print("settings state rew");
         setState(() {
           userImageRetreived = true;
 

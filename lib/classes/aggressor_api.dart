@@ -868,7 +868,6 @@ class AggressorApi {
   Future<dynamic> getAllStar(String contactId, ) async {
     //delete a certification by a certain id
     notesList.clear();
-    print(contactId);
     String url =
         "https://app.aggressor.com/api/app/allstars/list/" + contactId ;
 
@@ -879,7 +878,6 @@ class AggressorApi {
 
     var pageJson = json.decode(await pageResponse.stream.bytesToString());
 
-    print(pageJson);
     return pageJson;
   }
 }
