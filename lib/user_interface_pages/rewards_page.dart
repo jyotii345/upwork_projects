@@ -973,16 +973,15 @@ class RewardsState extends State<Rewards> {
           Row(
             children: [
               Container(
-                  height: MediaQuery.of(context).size.width / 6,
+                  height: MediaQuery.of(context).size.width / 15,
                   child: Image.asset('assets/allstar.png')),
             ],
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10.0),
-            child: Text(
+            child: AutoSizeText(
               "Awarded to every guest who traveled with Aggressor Adventures for 3 trips or more within the year",
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width / 28,),
+              minFontSize: 3.0,
             ),
           ),
           for (var element in allStarsList)
@@ -990,24 +989,19 @@ class RewardsState extends State<Rewards> {
               padding: const EdgeInsets.only(left: 10, top: 5,bottom: 5),
               child: Row(
                 children: [
-                  Text(
+                  AutoSizeText(
                     element['year'],
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width / 18,
-                    ),
+                    minFontSize: 3.0,
                   ),
                   Container(
-                      width: MediaQuery.of(context).size.width / 10,
-                      height: MediaQuery.of(context).size.width / 10,
+                      width: MediaQuery.of(context).size.width / 22,
+                      height: MediaQuery.of(context).size.width / 22,
                       child: Image.asset(
                         'assets/star.png',
                       )),
-                  Text(
+                  AutoSizeText(
                     "Awarded for year " + element['year'],
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 18,
-                    ),
+                    minFontSize: 3.0,
                   ),
                 ],
               ),

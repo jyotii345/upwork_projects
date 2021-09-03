@@ -123,44 +123,47 @@ class GalleryViewState extends State<GalleryView> {
   Widget getSelectionOptions() {
     return Align(
       alignment: Alignment.bottomCenter,
-      child: Container(
-        color: AggressorColors.secondaryColor,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: deleting
-                    ? Text(
-                        "Delete selected photos?",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: portrait
-                                ? MediaQuery.of(context).size.height / 35
-                                : MediaQuery.of(context).size.width / 35),
-                      )
-                    : Text(
-                        "Save selected photos?",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: portrait
-                                ? MediaQuery.of(context).size.height / 35
-                                : MediaQuery.of(context).size.width / 35),
-                      ),
-              ),
-              TextButton(
-                  child: Text(
-                    "Continue",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: portrait
-                            ? MediaQuery.of(context).size.height / 35
-                            : MediaQuery.of(context).size.width / 35),
-                  ),
-                  onPressed: deleting
-                      ? showDeleteConfirmationDialogue
-                      : exportSelection),
-            ],
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Container(
+          color: AggressorColors.secondaryColor,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: deleting
+                      ? Text(
+                          "Delete selected photos?",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: portrait
+                                  ? MediaQuery.of(context).size.height / 60
+                                  : MediaQuery.of(context).size.width / 60),
+                        )
+                      : Text(
+                          "Save selected photos to camera roll?",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: portrait
+                                  ? MediaQuery.of(context).size.height / 60
+                                  : MediaQuery.of(context).size.width / 60),
+                        ),
+                ),
+                TextButton(
+                    child: Text(
+                      "Continue",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 50
+                              : MediaQuery.of(context).size.width / 50),
+                    ),
+                    onPressed: deleting
+                        ? showDeleteConfirmationDialogue
+                        : exportSelection),
+              ],
+            ),
           ),
         ),
       ),
@@ -748,7 +751,7 @@ class GalleryViewState extends State<GalleryView> {
             ),
             TextButton(
               child: Icon(
-                Icons.save,
+                Icons.download_rounded,
                 color: AggressorColors.secondaryColor,
                 size: portrait ? iconSizePortrait : iconSizeLandscape,
               ),

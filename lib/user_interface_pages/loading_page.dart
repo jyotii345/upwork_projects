@@ -50,6 +50,7 @@ class LoadingPageState extends State<LoadingPage> {
    */
 
   double percent = 0.0;
+  String loadingMessage = "Loading, please wait";
 
   /*
   initState
@@ -88,11 +89,11 @@ class LoadingPageState extends State<LoadingPage> {
                     ),
                     percent > 1
                         ? Text(
-                            "Downloading trip data: 100%",
+                            loadingMessage + ": 100%",
                             textAlign: TextAlign.center,
                           )
                         : Text(
-                            "Downloading trip data: " +
+                            loadingMessage + ": " +
                                 int.parse((percent * 100).round().toString())
                                     .toString() +
                                 "%",
@@ -228,7 +229,7 @@ class LoadingPageState extends State<LoadingPage> {
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
-        percent = (loadedCount / (loadingLength));
+        percent += (loadedCount / (loadingLength));
       });
     }
 
@@ -299,8 +300,13 @@ class LoadingPageState extends State<LoadingPage> {
     getCertificationList();
     loadProfileDetails();
 
-
+    setState(() {
+      loadingMessage = "Loading images";
+    });
     await updateSliderImages();
+    setState(() {
+      loadingMessage = "Loading profile Data";
+    });
     var profileLinkResponse =
         await AggressorApi().checkProfileLink(widget.user.userId);
 
@@ -314,10 +320,14 @@ class LoadingPageState extends State<LoadingPage> {
       );
     }
 
+    setState(() {
+      loadingMessage = "Loading your adventure information";
+    });
     var tempList = await AggressorApi()
         .getReservationList(widget.user.contactId, loadingCallBack);
     setState(() {
       tripList = tempList;
+      loadingMessage = "Initializing your adventures";
     });
 
     if (tripList == null) {
@@ -329,14 +339,21 @@ class LoadingPageState extends State<LoadingPage> {
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
-        percent = (loadedCount / (loadingLength * 2));
+        percent += (loadedCount / (loadingLength * 2));
       });
     }
 
+    setState(() {
+      loadingMessage = "loading your files";
+    });
 
     var tempFiles = await FileDatabaseHelper.instance.queryFile();
     var tempPhotos = await PhotoDatabaseHelper.instance.queryPhoto();
     var tempGalleryMap = await getGalleries(tempPhotos);
+
+    setState(() {
+      loadingMessage = "Almost there!";
+    });
 
     print(tempFiles.toList());
     print(tempGalleryMap);
@@ -374,14 +391,18 @@ class LoadingPageState extends State<LoadingPage> {
       String filePath = '$appDocumentsPath/$fileName';
       File tempFile = await File(filePath).writeAsBytes(bytes);
 
-      try {
-        await slidersDatabaseHelper.deleteSliders(fileName);
-      } catch (e) {
-        print("no such file");
-      }
+      // try {
+      //   await slidersDatabaseHelper.deleteSliders(fileName);
+      // } catch (e) {
+      //   print("no such file");
+      // }
+
       await slidersDatabaseHelper
           .insertSliders({'fileName': fileName, 'filePath': tempFile.path});
       sliderImageList.add({'filePath': tempFile.path, 'fileName': fileName});
+      setState(() {
+        percent += .05;
+      });
     }
     return "done";
   }
@@ -389,7 +410,7 @@ class LoadingPageState extends State<LoadingPage> {
   VoidCallback loadingCallBack() {
     setState(() {
       loadedCount++;
-      percent = ((loadedCount / (loadingLength * 2)));
+      percent += ((loadedCount / (loadingLength * 2)));
     });
   }
 
