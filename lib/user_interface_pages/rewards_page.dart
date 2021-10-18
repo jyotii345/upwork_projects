@@ -8,6 +8,7 @@ import 'package:aggressor_adventures/databases/certificate_database.dart';
 import 'package:aggressor_adventures/databases/contact_database.dart';
 import 'package:aggressor_adventures/databases/iron_diver_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_edit_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/redeem_points_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_certifications_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -576,7 +577,7 @@ class RewardsState extends State<Rewards> {
                       width: double.infinity,
                       child: TextButton(
                         onPressed: () {
-                          launchRedeem();
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RedeemPointsPage(contact.contactId, widget.user,int.parse(contact.boutiquePoints))));
                         },
                         style: TextButton.styleFrom(
                             backgroundColor: AggressorColors.secondaryColor),

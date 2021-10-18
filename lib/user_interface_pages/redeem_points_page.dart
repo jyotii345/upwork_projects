@@ -1,0 +1,440 @@
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
+import 'package:aggressor_adventures/classes/contact.dart';
+import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/classes/globals_user_interface.dart';
+import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
+import 'package:aggressor_adventures/classes/user.dart';
+import 'package:aggressor_adventures/databases/contact_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/view_coupons.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+
+class RedeemPointsPage extends StatefulWidget {
+  RedeemPointsPage(this.userId, this.user, this.userPoints);
+
+  final String userId;
+  final User user;
+  final int userPoints;
+
+  @override
+  State<StatefulWidget> createState() => new RedeemPointsPageState();
+}
+
+class RedeemPointsPageState extends State<RedeemPointsPage> {
+  /*
+  instance vars
+   */
+
+  double textSize, textDisplayWidth;
+
+  bool isLoading = false;
+  String errorMessage = "";
+
+  int points = 0;
+  double worth = 0;
+  int myPoints =0;
+  final formKey = new GlobalKey<FormState>();
+
+  List<dynamic> countryList = [], stateList = [];
+
+  TextEditingController pointController = TextEditingController();
+
+  /*
+  initState
+   */
+  @override
+  void initState() {
+    myPoints = widget.userPoints;
+    super.initState();
+  }
+
+  /*
+  Build
+   */
+  @override
+  Widget build(BuildContext context) {
+    textSize = MediaQuery.of(context).size.width / 25;
+
+    textDisplayWidth = MediaQuery.of(context).size.width / 2.6;
+
+    return Scaffold(
+      appBar: getAppBar(),
+      body: PinchToZoom(
+        OrientationBuilder(
+          builder: (context, orientation) {
+            portrait = orientation == Orientation.portrait;
+            return Stack(
+              children: [
+                getPageForm(),
+                getLoadingWheel(),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /*
+  Self implemented
+   */
+
+  Widget getPageForm() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+      child: Container(
+        color: Colors.white,
+        child: ListView(
+          children: [
+            getPageTitle(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
+              child: Container(
+                height: 1,
+                color: Colors.grey[400],
+                width: double.infinity,
+              ),
+            ),
+            getPointRedeem(),
+            getBalance(),
+
+            showErrorMessage(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15.0),
+              child: Container(
+                height: 1,
+                color: Colors.grey[400],
+                width: double.infinity,
+              ),
+            ),
+            getButtons(),
+            getInformation(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget showErrorMessage() {
+    return errorMessage == ""
+        ? Container()
+        : Padding(
+            padding: EdgeInsets.fromLTRB(20.0, 5.0, 10.0, 10.0),
+            child: Text(
+              errorMessage,
+              style: TextStyle(color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+          );
+  }
+
+  Widget getPageTitle() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 10, 10, 0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Text(
+          "Points (" + widget.user.nameF + " " + widget.user.nameL + ")",
+          style: TextStyle(
+              color: AggressorColors.secondaryColor,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 40
+                  : MediaQuery.of(context).size.width / 40,
+              fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  Widget getPointRedeem() {
+    return Container(
+      height: MediaQuery.of(context).size.height / 16,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Container(
+              decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5)),
+              child: TextField(
+                keyboardType: TextInputType.number,
+                controller: pointController,
+                onChanged: (value) {
+                  updateWorth();
+                },
+                decoration: InputDecoration(
+                  hintText: '0',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(8),
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(
+                "=",
+                style:
+                    TextStyle(fontSize: MediaQuery.of(context).size.width / 14),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  border: Border.all(width: 1, color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5)),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.grey[300]),
+                      child: Center(
+                        child: Text(
+                          "\$",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 1,
+                    color: Colors.grey,
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Align(
+                          child: Text(
+                            worth.toStringAsFixed(2),
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          alignment: Alignment.centerLeft),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getBalance() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15.0),
+      child: Text(
+        "Balance: " +
+            myPoints.toString() +
+            " = \$" +
+            (myPoints * .05).toStringAsFixed(2),
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: MediaQuery.of(context).size.width / 20),
+      ),
+    );
+  }
+
+  Widget getButtons() {
+    return Row(
+      children: [
+        TextButton(
+          onPressed: () {Navigator.of(context).push(MaterialPageRoute(builder: (context) => ViewCouponsPage(widget.userId)));},
+          child: Text(
+            "View Past Coupons",
+            style: TextStyle(color: Colors.white),
+          ),
+          style: TextButton.styleFrom(
+              backgroundColor: AggressorColors.secondaryColor),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: TextButton(
+            onPressed: () {
+              pointController.clear();
+              setState(() {
+                points = 0;
+                worth = 0;
+              });
+            },
+            child: Text(
+              "Cancel",
+              style: TextStyle(color: Colors.black),
+            ),
+            style: TextButton.styleFrom(backgroundColor: Colors.amber),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 1,
+          ),
+        ),
+        TextButton(
+          onPressed: redeemPoints,
+          child: Text(
+            "Redeem Points",
+            style: TextStyle(color: Colors.black),
+          ),
+          style: TextButton.styleFrom(backgroundColor: Colors.green),
+        ),
+      ],
+    );
+  }
+
+  void updateWorth() {
+    setState(() {
+      try {
+        points = int.parse(pointController.text);
+        worth = points * .05;
+      } catch (e) {
+        points = 0;
+        worth = 0;
+      }
+    });
+  }
+
+  Widget getInformation() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 15.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Ways To Earn Boutique Points:\n",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Text(
+                "•\tYou will receive 400 points after making a reservation and making a deposit on your adventure."
+                "\n•\tYou will receive 100 points for completing the Guest Survey/Guest Survey's will be emailed to you after your adventure."
+                "\n•\tYou wiill receive 100 points as a Birthday gift."
+                "\n•\tYou may redeem your points once you have a point balance."
+                "\n•\tPoints that are not redeemed do not expire.\n"),
+          ),
+          Text(
+            "FAQ'S\n",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(
+              "How much are my points worth?\nEach point is equivalent to \$0.05 USD.\n"),
+          Text(
+            "Do Redeemed Points Expire?\n",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(
+              "Yes, the redeemed points will expire 2 years after you receive a redeemed code.\n"),
+          Text(
+            "Is there a way to check unused coupon codes?\n",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(
+              "Yes, you can see all your unused coupon codes by clicking the \"View Past Coupons\" button.")
+        ],
+      ),
+    );
+  }
+
+
+
+  void redeemPoints()async{
+    int redeeming = int.parse(pointController.text);
+    print(redeeming);
+    if(redeeming <= widget.userPoints){
+      var response = await AggressorApi().redeemPoints(widget.userId, redeeming);
+      print(response);
+      if(response["status"] == "success"){
+        int newPoints = myPoints - redeeming;
+        updateContact();
+        pointController.clear();
+        setState(() {
+          myPoints = newPoints;
+          errorMessage = "Points redeemed successfully.";
+        });
+      }
+      else{
+        setState(() {
+          errorMessage = "You do not have that many points, please try again.";
+        });
+      }
+    }
+    else{
+      setState(() {
+        errorMessage = "You do not have that many points, please try again.";
+      });
+    }
+  }
+
+
+  void updateContact()async{
+    var response = await AggressorApi().getContact(widget.user.contactId);
+    setState(() {
+      contact = Contact(
+          response["contactid"],
+          response["first_name"],
+          response["middle_name"],
+          response["last_name"],
+          response["email"],
+          response["vipcount"],
+          response["vippluscount"],
+          response["sevenseascount"],
+          response["aacount"],
+          response["boutique_points"],
+          response["vip"],
+          response["vipPlus"],
+          response["sevenSeas"],
+          response["adventuresClub"],
+          response["memberSince"]);
+    });
+    updateContactCache(response);
+  }
+
+  void updateContactCache(var response) async {
+    //cleans and saves the contacts to the database
+    ContactDatabaseHelper contactDatabaseHelper =
+        ContactDatabaseHelper.instance;
+    try {
+      await contactDatabaseHelper.deleteContactTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    await contactDatabaseHelper.insertContact(
+        response["contactid"],
+        response["first_name"],
+        response["middle_name"],
+        response["last_name"],
+        response["email"],
+        response["vipcount"],
+        response["vippluscount"],
+        response["sevenseascount"],
+        response["aacount"],
+        response["boutique_points"],
+        response["vip"],
+        response["vipPlus"],
+        response["sevenSeas"],
+        response["adventuresClub"],
+        response["memberSince"]);
+  }
+
+  Widget getLoadingWheel() {
+    return isLoading ? Center(child: CircularProgressIndicator()) : Container();
+  }
+}

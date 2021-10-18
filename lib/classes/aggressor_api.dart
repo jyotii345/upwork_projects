@@ -880,4 +880,37 @@ class AggressorApi {
 
     return pageJson;
   }
+
+
+  Future<dynamic> redeemPoints(String userId, int points) async {
+    //redeem points for a coupon
+    notesList.clear();
+    String url =
+        "https://app.aggressor.com/api/app/boutique/redeem/" + userId + "/" + points.toString() ;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    var pageJson = json.decode(await pageResponse.stream.bytesToString());
+
+    return pageJson;
+  }
+
+  Future<dynamic> getCoupons(String userId,) async {
+    //get the coupons from the API
+    notesList.clear();
+    String url =
+        "https://app.aggressor.com/api/app/boutique/list/" + userId ;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    var pageJson = json.decode(await pageResponse.stream.bytesToString());
+
+    return pageJson;
+  }
 }
