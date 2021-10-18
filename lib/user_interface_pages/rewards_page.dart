@@ -417,7 +417,9 @@ class RewardsState extends State<Rewards> {
             child: LinearPercentIndicator(
               percent: contact.sevenSeasCount == null
                   ? 0
-                  : (double.parse(contact.sevenSeasCount) * 14.29) / 100 > 1.0 ? 1.0 : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
+                  : (double.parse(contact.sevenSeasCount) * 14.29) / 100 > 1.0
+                      ? 1.0
+                      : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -434,7 +436,9 @@ class RewardsState extends State<Rewards> {
             child: LinearPercentIndicator(
               percent: contact.aaCount == null
                   ? 0
-                  : (double.parse(contact.aaCount) * 33.34) / 100 > 1.0 ? 1.0 :  (double.parse(contact.aaCount) * 33.34) / 100,
+                  : (double.parse(contact.aaCount) * 33.34) / 100 > 1.0
+                      ? 1.0
+                      : (double.parse(contact.aaCount) * 33.34) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -494,7 +498,6 @@ class RewardsState extends State<Rewards> {
                               contact.memberSince +
                               "\nTotal Adventures - " +
                               profileData["totalAdventures"].toString(),
-                          //tripList.length.toString(),//todo replace with proper value
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: sectionHeight / 8.5,
@@ -976,49 +979,49 @@ class RewardsState extends State<Rewards> {
         physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
         children: [
-          Row(
-            children: [
-              Container(
-                  height: MediaQuery.of(context).size.width / 6,
-                  child: Image.asset('assets/allstar.png')),
-            ],
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              children: [
+                Text(
+                  "All-Star Club",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: AggressorColors.primaryColor,
+                      fontSize: MediaQuery.of(context).size.width / 27,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: AutoSizeText(
-              "Awarded to every guest who traveled with Aggressor Adventures for 3 trips or more within the year",
-              style: TextStyle(
-                fontSize: MediaQuery.of(context).size.width / 28,
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: GridView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: allStarsList.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    Image.asset("assets/allstarnew.jpg"),
+                    AutoSizeText(
+                      allStarsList[index]["year"],
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width / 27,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                );
+              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 0,
               ),
             ),
           ),
-          for (var element in allStarsList)
-            Padding(
-              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-              child: Row(
-                children: [
-                  AutoSizeText(
-                    element['year'],
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: MediaQuery.of(context).size.width / 18,
-                    ),
-                  ),
-                  Container(
-                      width: MediaQuery.of(context).size.width / 10,
-                      height: MediaQuery.of(context).size.width / 10,
-                      child: Image.asset(
-                        'assets/star.png',
-                      )),
-                  AutoSizeText(
-                    "Awarded for year " + element['year'],
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 18,
-                    ),
-                  ),
-                ],
-              ),
-            )
         ],
       ),
     );
