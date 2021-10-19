@@ -36,7 +36,7 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
 
   int points = 0;
   double worth = 0;
-  int myPoints =0;
+  int myPoints = 0;
   final formKey = new GlobalKey<FormState>();
 
   List<dynamic> countryList = [], stateList = [];
@@ -103,7 +103,6 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
             ),
             getPointRedeem(),
             getBalance(),
-
             showErrorMessage(),
             Padding(
               padding: const EdgeInsets.only(bottom: 15.0),
@@ -261,10 +260,14 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
         Expanded(
           flex: 2,
           child: TextButton(
-            onPressed: () {Navigator.of(context).push(MaterialPageRoute(builder: (context) => ViewCouponsPage(widget.userId)));},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ViewCouponsPage(widget.userId)));
+            },
             child: AutoSizeText(
               "View Past Coupons",
               maxLines: 1,
+              minFontSize: 3,
               style: TextStyle(color: Colors.white),
             ),
             style: TextButton.styleFrom(
@@ -285,8 +288,8 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
               },
               child: AutoSizeText(
                 "Cancel",
-
                 maxLines: 1,
+                minFontSize: 3,
                 style: TextStyle(color: Colors.black),
               ),
               style: TextButton.styleFrom(backgroundColor: Colors.amber),
@@ -305,6 +308,7 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
             onPressed: redeemPoints,
             child: AutoSizeText(
               "Redeem Points",
+              minFontSize: 3,
               maxLines: 1,
               style: TextStyle(color: Colors.black),
             ),
@@ -339,48 +343,58 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 10.0),
+            child: Text("•\tMake a reservation, deposit and receive 400 points.\n" +
+                "•\tComplete a Guest Survey after your adventure and receive 100 points.\n" +
+                "•\tHappy Birthday – receive 100 points on your special day.\n"),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+              left: 30,
+            ),
             child: Text(
-                "•\tYou will receive 400 points after making a reservation and making a deposit on your adventure."
-                "\n•\tYou will receive 100 points for completing the Guest Survey/Guest Survey's will be emailed to you after your adventure."
-                "\n•\tYou wiill receive 100 points as a Birthday gift."
-                "\n•\tYou may redeem your points once you have a point balance."
-                "\n•\tPoints that are not redeemed do not expire.\n"),
+              "Points may be redeemed once you have a point balance and do not expire.\n",
+            ),
           ),
           Text(
             "FAQ'S\n",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          Text(
-              "How much are my points worth?\nEach point is equivalent to \$0.05 USD.\n"),
-          Text(
-            "Do Redeemed Points Expire?\n",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.only(left:10.0),
+            child: Text(
+                "•\tHow much are my points worth?\n"),
           ),
-          Text(
-              "Yes, the redeemed points will expire 2 years after you receive a redeemed code.\n"),
-          Text(
-            "Is there a way to check unused coupon codes?\n",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.only(left:30.0),
+            child: Text("Each point is equivalent to \$0.05 USD.\n"),
           ),
-          Text(
-              "Yes, you can see all your unused coupon codes by clicking the \"View Past Coupons\" button.")
+          Padding(
+            padding: const EdgeInsets.only(left:10.0),
+            child: Text(
+              "•\tDo Redeemed Points Expire?\n",
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left:30.0),
+            child: Text(
+                "Yes, redeemed points expire 2 years after receiving code if they are not used. Click “View Past Coupons” button to check unused coupon(s)."),
+          ),
         ],
       ),
     );
   }
 
-
-
-  void redeemPoints()async{
+  void redeemPoints() async {
     setState(() {
       isLoading = true;
     });
     int redeeming = int.parse(pointController.text);
     print(redeeming);
-    if(redeeming <= widget.userPoints){
-      var response = await AggressorApi().redeemPoints(widget.userId, redeeming);
+    if (redeeming <= widget.userPoints) {
+      var response =
+          await AggressorApi().redeemPoints(widget.userId, redeeming);
       print(response);
-      if(response["status"] == "success"){
+      if (response["status"] == "success") {
         int newPoints = myPoints - redeeming;
         updateContact();
         pointController.clear();
@@ -388,23 +402,21 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
           myPoints = newPoints;
           isLoading = false;
         });
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ViewCouponsPage(widget.userId)));
-      }
-      else{
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ViewCouponsPage(widget.userId)));
+      } else {
         setState(() {
           errorMessage = "You do not have that many points, please try again.";
         });
       }
-    }
-    else{
+    } else {
       setState(() {
         errorMessage = "You do not have that many points, please try again.";
       });
     }
   }
 
-
-  void updateContact()async{
+  void updateContact() async {
     var response = await AggressorApi().getContact(widget.user.contactId);
     setState(() {
       contact = Contact(
