@@ -91,33 +91,42 @@ class MyTripsState extends State<MyTrips>
 
   Widget getSliderImages() {
     //returns slider images on top of the page
+    print("getting sliders");
+    print(sliderImageList.length);
+    print(sliderIndex);
     return IntrinsicHeight(
       child: Stack(
         children: [
           Container(
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
+            width: MediaQuery.of(context).size.width,
             child: sliderImageList.length == 0
                 ? Container()
-                : FadeInImage(
-              fit: BoxFit.scaleDown,
-              placeholder: FileImage(
-                File(sliderImageList[sliderIndex == 0 ? sliderImageList.length -
-                    1 : sliderIndex == sliderImageList.length - 1
-                    ? 0 : sliderIndex - 1]["filePath"]),
-              ),
-              image: FileImage(
-                File(sliderImageList[sliderIndex]["filePath"]),
-              ),
-            ),
+                : Stack(
+                    children: [
+                      Image.file(
+                        File(
+                          sliderImageList[sliderIndex == 0
+                              ? sliderImageList.length - 1
+                              : sliderIndex - 1]["filePath"],
+                        ),
+                        fit: BoxFit.scaleDown,
+                      ),
+                      FadeInImage(
+                        fit: BoxFit.scaleDown,
+                        placeholder: FileImage(
+                          File(sliderImageList[sliderIndex == 0
+                              ? sliderImageList.length - 1
+                              : sliderIndex - 1]["filePath"]),
+                        ),
+                        image: FileImage(
+                          File(sliderImageList[sliderIndex]["filePath"]),
+                        ),
+                      ),
+                    ],
+                  ),
           ),
           Container(
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
+            width: MediaQuery.of(context).size.width,
             child: Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -136,23 +145,14 @@ class MyTripsState extends State<MyTrips>
                   Icons.chevron_right,
                   color: Colors.white70,
                   size: portrait
-                      ? MediaQuery
-                      .of(context)
-                      .size
-                      .width / 7.5
-                      : MediaQuery
-                      .of(context)
-                      .size
-                      .height / 7.5,
+                      ? MediaQuery.of(context).size.width / 7.5
+                      : MediaQuery.of(context).size.height / 7.5,
                 ),
               ),
             ),
           ),
           Container(
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
+            width: MediaQuery.of(context).size.width,
             child: Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
@@ -171,14 +171,8 @@ class MyTripsState extends State<MyTrips>
                   Icons.chevron_left,
                   color: Colors.white70,
                   size: portrait
-                      ? MediaQuery
-                      .of(context)
-                      .size
-                      .width / 7.5
-                      : MediaQuery
-                      .of(context)
-                      .size
-                      .height / 7.5,
+                      ? MediaQuery.of(context).size.width / 7.5
+                      : MediaQuery.of(context).size.height / 7.5,
                 ),
               ),
             ),
@@ -196,19 +190,16 @@ class MyTripsState extends State<MyTrips>
           color: Colors.white,
           child: upcomingTrips.length == 0
               ? Center(
-            child: Text(
-                "You do not have any upcoming adventures booked yet."),
-          )
+                  child: Text(
+                      "You do not have any upcoming adventures booked yet."),
+                )
               : getUpcomingListViews(upcomingTrips)),
     );
   }
 
   Widget getPastSection(List<Trip> pastTrips) {
     //returns either the no past trips dialogue or the listview
-    double textBoxSize = MediaQuery
-        .of(context)
-        .size
-        .width / 4.3;
+    double textBoxSize = MediaQuery.of(context).size.width / 4.3;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
@@ -216,55 +207,55 @@ class MyTripsState extends State<MyTrips>
           color: Colors.white,
           child: pastTrips.length == 0
               ? Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                height: .5,
-                color: Colors.grey,
-              ),
-              Container(
-                color: AggressorColors.accentYellow,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
-                      width: textBoxSize,
-                      child: Text("Conf#", textAlign: TextAlign.center),
+                    Container(
+                      height: .5,
+                      color: Colors.grey,
                     ),
-                    Spacer(
-                      flex: 10,
-                    ),
-                    SizedBox(
-                      width: textBoxSize,
-                      child:
-                      Text("Adventure", textAlign: TextAlign.center),
-                    ),
-                    Spacer(
-                      flex: 10,
-                    ),
-                    SizedBox(
-                      width: textBoxSize,
-                      child: Text(
-                        "Start Date",
-                        textAlign: TextAlign.center,
+                    Container(
+                      color: AggressorColors.accentYellow,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          SizedBox(
+                            width: textBoxSize,
+                            child: Text("Conf#", textAlign: TextAlign.center),
+                          ),
+                          Spacer(
+                            flex: 10,
+                          ),
+                          SizedBox(
+                            width: textBoxSize,
+                            child:
+                                Text("Adventure", textAlign: TextAlign.center),
+                          ),
+                          Spacer(
+                            flex: 10,
+                          ),
+                          SizedBox(
+                            width: textBoxSize,
+                            child: Text(
+                              "Start Date",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(
+                            width: textBoxSize / 2,
+                          ),
+                          SizedBox(
+                            width: textBoxSize / 2,
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      width: textBoxSize / 2,
-                    ),
-                    SizedBox(
-                      width: textBoxSize / 2,
+                    Flexible(
+                      child: Text(
+                          "You do not have any past adventures to view yet."),
                     ),
                   ],
-                ),
-              ),
-              Flexible(
-                child: Text(
-                    "You do not have any past adventures to view yet."),
-              ),
-            ],
-          )
+                )
               : getPastTripListViews(pastTrips)),
     );
   }
@@ -294,10 +285,7 @@ class MyTripsState extends State<MyTrips>
   Widget getPastTripListViews(List<Trip> pastTrips) {
     //returns the list item containing past trip objects
 
-    double textBoxSize = MediaQuery
-        .of(context)
-        .size
-        .width / 4.3;
+    double textBoxSize = MediaQuery.of(context).size.width / 4.3;
     pastTripsList.clear();
     pastTripsList.add(
       Container(
@@ -376,14 +364,8 @@ class MyTripsState extends State<MyTrips>
               style: TextStyle(
                 color: Colors.black,
                 fontSize: portrait
-                    ? MediaQuery
-                    .of(context)
-                    .size
-                    .height / 45
-                    : MediaQuery
-                    .of(context)
-                    .size
-                    .width / 45,
+                    ? MediaQuery.of(context).size.height / 45
+                    : MediaQuery.of(context).size.width / 45,
               ),
             ),
           ),
@@ -431,14 +413,8 @@ class MyTripsState extends State<MyTrips>
               style: TextStyle(
                 color: Colors.black,
                 fontSize: portrait
-                    ? MediaQuery
-                    .of(context)
-                    .size
-                    .height / 45
-                    : MediaQuery
-                    .of(context)
-                    .size
-                    .width / 45,
+                    ? MediaQuery.of(context).size.height / 45
+                    : MediaQuery.of(context).size.width / 45,
               ),
             ),
           ),
@@ -488,14 +464,8 @@ class MyTripsState extends State<MyTrips>
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                  ? MediaQuery
-                  .of(context)
-                  .size
-                  .height / 30
-                  : MediaQuery
-                  .of(context)
-                  .size
-                  .width / 30,
+                  ? MediaQuery.of(context).size.height / 30
+                  : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -508,7 +478,7 @@ class MyTripsState extends State<MyTrips>
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
         colorFilter:
-        ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
+            ColorFilter.mode(Colors.white.withOpacity(0.25), BlendMode.dstATop),
         child: Image.asset(
           "assets/pagebackground.png",
           fit: BoxFit.cover,
@@ -524,12 +494,12 @@ class MyTripsState extends State<MyTrips>
     return online
         ? Container()
         : Container(
-      color: Colors.red,
-      child: Text(
-        "Application is offline",
-        style: TextStyle(color: Colors.white),
-        textAlign: TextAlign.center,
-      ),
-    );
+            color: Colors.red,
+            child: Text(
+              "Application is offline",
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+          );
   }
 }
