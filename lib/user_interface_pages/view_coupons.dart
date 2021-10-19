@@ -40,6 +40,8 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
   @override
   void initState() {
     super.initState();
+
+    popDistance = 2;
   }
 
   /*
@@ -52,7 +54,7 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
     textDisplayWidth = MediaQuery.of(context).size.width / 2.6;
 
     return Scaffold(
-      appBar: getAppBar(),
+      appBar: getCouponsAppBar(),
       body: PinchToZoom(
         OrientationBuilder(
           builder: (context, orientation) {

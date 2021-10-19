@@ -7,6 +7,7 @@ import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/contact_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/view_coupons.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -48,6 +49,8 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
   @override
   void initState() {
     myPoints = widget.userPoints;
+
+    popDistance = 1;
     super.initState();
   }
 
@@ -61,7 +64,7 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
     textDisplayWidth = MediaQuery.of(context).size.width / 2.6;
 
     return Scaffold(
-      appBar: getAppBar(),
+      appBar: getCouponsAppBar(),
       body: PinchToZoom(
         OrientationBuilder(
           builder: (context, orientation) {
@@ -255,44 +258,58 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
   Widget getButtons() {
     return Row(
       children: [
-        TextButton(
-          onPressed: () {Navigator.of(context).push(MaterialPageRoute(builder: (context) => ViewCouponsPage(widget.userId)));},
-          child: Text(
-            "View Past Coupons",
-            style: TextStyle(color: Colors.white),
-          ),
-          style: TextButton.styleFrom(
-              backgroundColor: AggressorColors.secondaryColor),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+        Expanded(
+          flex: 2,
           child: TextButton(
-            onPressed: () {
-              pointController.clear();
-              setState(() {
-                points = 0;
-                worth = 0;
-              });
-            },
-            child: Text(
-              "Cancel",
-              style: TextStyle(color: Colors.black),
+            onPressed: () {Navigator.of(context).push(MaterialPageRoute(builder: (context) => ViewCouponsPage(widget.userId)));},
+            child: AutoSizeText(
+              "View Past Coupons",
+              maxLines: 1,
+              style: TextStyle(color: Colors.white),
             ),
-            style: TextButton.styleFrom(backgroundColor: Colors.amber),
+            style: TextButton.styleFrom(
+                backgroundColor: AggressorColors.secondaryColor),
           ),
         ),
         Expanded(
+          flex: 1,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: TextButton(
+              onPressed: () {
+                pointController.clear();
+                setState(() {
+                  points = 0;
+                  worth = 0;
+                });
+              },
+              child: AutoSizeText(
+                "Cancel",
+
+                maxLines: 1,
+                style: TextStyle(color: Colors.black),
+              ),
+              style: TextButton.styleFrom(backgroundColor: Colors.amber),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
           child: Container(
             height: 1,
           ),
         ),
-        TextButton(
-          onPressed: redeemPoints,
-          child: Text(
-            "Redeem Points",
-            style: TextStyle(color: Colors.black),
+        Expanded(
+          flex: 2,
+          child: TextButton(
+            onPressed: redeemPoints,
+            child: AutoSizeText(
+              "Redeem Points",
+              maxLines: 1,
+              style: TextStyle(color: Colors.black),
+            ),
+            style: TextButton.styleFrom(backgroundColor: Colors.green),
           ),
-          style: TextButton.styleFrom(backgroundColor: Colors.green),
         ),
       ],
     );
@@ -355,6 +372,9 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
 
 
   void redeemPoints()async{
+    setState(() {
+      isLoading = true;
+    });
     int redeeming = int.parse(pointController.text);
     print(redeeming);
     if(redeeming <= widget.userPoints){
@@ -366,8 +386,9 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
         pointController.clear();
         setState(() {
           myPoints = newPoints;
-          errorMessage = "Points redeemed successfully.";
+          isLoading = false;
         });
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ViewCouponsPage(widget.userId)));
       }
       else{
         setState(() {

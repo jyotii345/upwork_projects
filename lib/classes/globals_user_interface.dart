@@ -279,6 +279,80 @@ Widget getAppBar() {
   );
 }
 
+
+Widget getCouponsAppBar() {
+  return AppBar(
+    elevation: 0,
+    centerTitle: true,
+    backgroundColor: Colors.white,
+    automaticallyImplyLeading: false,
+    leading: !homePage
+        ? outterDistanceFromLogin > 0
+        ? IconButton(
+      icon: Icon(Icons.arrow_back),
+      color: AggressorColors.secondaryColor,
+      onPressed: () {
+        outterDistanceFromLogin = 0;
+        navigatorKey.currentState.pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+      },
+    )
+        : Container()
+        : SizedBox(
+      height: AppBar().preferredSize.height,
+      child: IconButton(
+        icon: Container(
+          child: Image.asset("assets/callicon.png"),
+        ),
+        onPressed: makeCall,
+      ),
+    ),
+    title: Padding(
+      padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+      child: Image.asset(
+        "assets/logo.png",
+        height: AppBar().preferredSize.height,
+        fit: BoxFit.fitHeight,
+      ),
+    ),
+    actions: <Widget>[
+      homePage
+          ? Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+        child: SizedBox(
+          height: AppBar().preferredSize.height,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: PopupMenuButton<String>(
+                onSelected: handleCouponPopupClick,
+                child: Container(
+                  child: Image.asset(
+                    "assets/menuicon.png",
+                  ),
+                ),
+                itemBuilder: (BuildContext context) {
+                  return {"Home", "My Profile", "Sign Out"}.map((String option) {
+                    return PopupMenuItem<String>(
+                      value: option,
+                      child: Text(option),
+                    );
+                  }).toList();
+                }),
+          ),
+        ),
+      )
+          : SizedBox(
+        height: AppBar().preferredSize.height,
+        child: IconButton(
+          icon: Container(
+            child: Image.asset("assets/callicon.png"),
+          ),
+          onPressed: makeCall,
+        ),
+      ),
+    ],
+  );
+}
+
 makeCall() async {
   const url = 'tel:7069932531';
   try {
@@ -290,6 +364,27 @@ makeCall() async {
 
 void handlePopupClick(String value) async {
   switch (value) {
+    case 'My Profile':
+      currentIndex = 5;
+      mainPageCallback();
+      break;
+    case 'Sign Out':
+      mainPageSignOutCallback();
+      break;
+  }
+  int popCount = 0;
+  Navigator.popUntil(navigatorKey.currentContext, (route) {
+    return popCount++ == popDistance;
+  });
+  popDistance = 0;
+}
+
+void handleCouponPopupClick(String value) async {
+  switch (value) {
+    case 'Home':
+      currentIndex = 0;
+      mainPageCallback();
+      break;
     case 'My Profile':
       currentIndex = 5;
       mainPageCallback();
