@@ -645,7 +645,6 @@ class LoadingPageState extends State<LoadingPage> {
                 uploadNote.endDate,
                 uploadNote.preTripNotes,
                 uploadNote.postTripNotes,
-                uploadNote.miscNotes,
                 uploadNote.boatId,
                 widget.user.userId);
             if (response["status"] == "success") {
@@ -667,7 +666,6 @@ class LoadingPageState extends State<LoadingPage> {
                 uploadNote.endDate,
                 uploadNote.preTripNotes,
                 uploadNote.postTripNotes,
-                uploadNote.miscNotes,
                 uploadNote.boatId,
                 widget.user.userId,
                 uploadNote.id);

@@ -388,30 +388,41 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
     setState(() {
       isLoading = true;
     });
-    int redeeming = int.parse(pointController.text);
-    print(redeeming);
-    if (redeeming <= widget.userPoints) {
-      var response =
-          await AggressorApi().redeemPoints(widget.userId, redeeming);
-      print(response);
-      if (response["status"] == "success") {
-        int newPoints = myPoints - redeeming;
-        updateContact();
-        pointController.clear();
-        setState(() {
-          myPoints = newPoints;
-          isLoading = false;
-        });
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ViewCouponsPage(widget.userId)));
+    try {
+      int redeeming = int.parse(pointController.text);
+      print(redeeming);
+      if (redeeming <= widget.userPoints && redeeming > 0) {
+        var response =
+        await AggressorApi().redeemPoints(widget.userId, redeeming);
+        print(response);
+        if (response["status"] == "success") {
+          int newPoints = myPoints - redeeming;
+          updateContact();
+          pointController.clear();
+          setState(() {
+            myPoints = newPoints;
+            isLoading = false;
+          });
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ViewCouponsPage(widget.userId)));
+        } else {
+          setState(() {
+            errorMessage =
+            "You do not have that many points, please try again.";
+            isLoading = false;
+          });
+        }
       } else {
         setState(() {
           errorMessage = "You do not have that many points, please try again.";
+          isLoading = false;
         });
       }
-    } else {
+    }catch(e){
+
       setState(() {
-        errorMessage = "You do not have that many points, please try again.";
+        errorMessage = "Points to redeem must be a number greater than 0";
+        isLoading = false;
       });
     }
   }

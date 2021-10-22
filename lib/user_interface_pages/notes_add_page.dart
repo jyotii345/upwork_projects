@@ -201,7 +201,6 @@ class AddNotesState extends State<AddNotes> {
           endDate,
           await preNotesController.getText(),
           await postNotesController.getText(),
-          await miscNotesController.getText(),
           widget.noteTrip.boat.boatId,
           widget.user.userId);
 

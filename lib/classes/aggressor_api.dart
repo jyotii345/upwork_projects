@@ -611,7 +611,6 @@ class AggressorApi {
       String endDate,
       String preTripNotes,
       String postTripNotes,
-      String miscNotes,
       String boatId,
       String userId) async {
     //create and send a login request to the Aggressor Api and return the current user
@@ -628,7 +627,6 @@ class AggressorApi {
         "end_date": endDate,
         "pre_trip_notes": preTripNotes,
         "post_trip_notes": postTripNotes,
-        "misc": miscNotes,
       }),
     );
 
@@ -640,7 +638,6 @@ class AggressorApi {
       String endDate,
       String preTripNotes,
       String postTripNotes,
-      String miscNotes,
       String boatId,
       String userId,
       String id) async {
@@ -658,7 +655,6 @@ class AggressorApi {
         "end_date": endDate,
         "pre_trip_notes": preTripNotes,
         "post_trip_notes": postTripNotes,
-        "misc": miscNotes,
       }),
     );
 

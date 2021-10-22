@@ -191,7 +191,6 @@ class EditNoteState extends State<EditNote> {
         widget.note.endDate,
         await preNotesController.getText(),
         await postNotesController.getText(),
-        await miscNotesController.getText(),
         widget.note.boatId,
         widget.user.userId,
         widget.note.id,
