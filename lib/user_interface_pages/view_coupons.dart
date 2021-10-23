@@ -3,8 +3,10 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ViewCouponsPage extends StatefulWidget {
   ViewCouponsPage(this.userId);
@@ -40,7 +42,6 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
   @override
   void initState() {
     super.initState();
-
     popDistance = 2;
   }
 
@@ -50,7 +51,6 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
   @override
   Widget build(BuildContext context) {
     textSize = MediaQuery.of(context).size.width / 25;
-
     textDisplayWidth = MediaQuery.of(context).size.width / 2.6;
 
     return Scaffold(
@@ -108,12 +108,65 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
             return ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: snapshot.data.length,
+                itemCount: snapshot.data.length + 1,
                 itemBuilder: (context, index) {
+                  if (index == snapshot.data.length) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: RichText(
+                              text: TextSpan(
+                                  style: DefaultTextStyle.of(context).style,
+                                  children: [
+                                TextSpan(
+                                    text:
+                                        "Visit Aggressor Boutique to redeem your Boutique Points Coupon at "),
+                                TextSpan(
+                                    text: "https://aggressorboutique.com",
+                                    style: TextStyle(color: Colors.blue),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        print("tap");
+                                        launch("https://aggressorboutique.com");
+                                      })
+                              ])),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            "Make your selection and follow steps to checkout",
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            "Step 01 - Complete shipping information",
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            "Step 02 - Review & Payments. Below the PAYMENT METHOD you will"
+                            " see APPLY DISCOUNT CODE ^. Click the drop-down to reveal the \"Enter discount code\" "
+                            "box. Enter code and click APPLY DISCOUNT",
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Text(
+                            "Step 03 - Complete your purchase",
+                          ),
+                        )
+                      ],
+                    );
+                  }
                   return ListTile(
-                    tileColor: snapshot.data[index]['codeUsed'] == true
-                  ? Colors.red
-                      : Colors.green,
+                      tileColor: snapshot.data[index]['codeUsed'] == true
+                          ? Colors.red
+                          : Colors.green,
                       title: Row(
                         children: [
                           Column(
