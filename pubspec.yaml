@@ -1,0 +1,99 @@
+name: aggressor_adventures
+description: A flutter application for the Aggressor Adventures
+
+publish_to: 'none'
+version: 1.0.5+23
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.13.3
+  sqflite: ^2.0.0+3
+  path_provider: ^2.0.2
+  async: ^2.6.1
+  flutter_cache_manager: ^3.1.1
+  date_format: ^2.0.2
+  url_launcher: ^6.0.6
+  multi_image_picker: ^4.8.0
+  permission_handler: ^8.1.1
+  flutter_aws_s3_client: ^0.6.0
+  flutter_absolute_path: ^1.0.6
+  chunked_stream: ^1.4.1
+  file_picker: ^3.0.2+2
+  cached_network_image: ^3.0.0
+  flutter_map: any
+  image_downloader: ^0.30.0
+  cupertino_icons: ^1.0.3
+  percent_indicator: ^3.0.1
+  wakelock: ^0.5.2
+  heic_to_jpg: ^0.2.0
+  open_file: ^3.2.1
+  flutter_launcher_icons: ^0.9.0
+  flutter_html: ^2.1.0
+  html_editor_enhanced: ^2.2.0+1
+  flutter_masked_text: ^0.8.0
+  data_connection_checker: ^0.3.4
+  flutter_slidable: ^0.6.0
+  flutter_archive: ^4.0.1
+  auto_size_text: ^2.1.0
+  image_gallery_saver: ^1.6.9
+  flutter_image_compress: ^1.0.0
+
+flutter_icons:
+
+  ios: true
+  android: "launcher_icon"
+  image_path: "assets/appicon.jpg"
+  #image_path_ios: "assets/launcher/icon.png"
+  #image_path_android: "assets/launcher/icon.png"
+  #adaptive_icon_background: "assets/launcher/background.png"
+  #adaptive_icon_foreground: "assets/launcher/foreground.png"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/tripsactive.png
+    - assets/tripspassive.png
+    - assets/notesactive.png
+    - assets/notespassive.png
+    - assets/photosactive.png
+    - assets/photospassive.png
+    - assets/rewardsactive.png
+    - assets/rewardspassive.png
+    - assets/filesactive.png
+    - assets/filespassive.png
+    - assets/notesblue.png
+    - assets/photosblue.png
+    - assets/addphotosblue.png
+    - assets/filesblue.png
+    - assets/logo.png
+    - assets/loginbackground.png
+    - assets/pagebackground.png
+    - assets/bannerimage.png
+    - assets/adventureclub.png
+    - assets/callicon.png
+    - assets/menuicon.png
+    - assets/certification.png
+    - assets/divemilestone.png
+    - assets/filearrow.png
+    - assets/irondiver.png
+    - assets/leftarrow.png
+    - assets/rightarrow.png
+    - assets/noprofile.png
+    - assets/redquestion.png
+    - assets/trashcan.png
+    - assets/vipclub.png
+    - assets/vipplusclub.png
+    - assets/redflag.png
+    - assets/sevenseasclub.png
+    - assets/rewardspage.png
+    - assets/allstarnew.jpg
