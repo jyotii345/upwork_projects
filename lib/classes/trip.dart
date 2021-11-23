@@ -15,6 +15,7 @@ import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.da
 import 'package:aggressor_adventures/user_interface_pages/notes_add_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/trip_make_payment_page.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -225,14 +226,20 @@ class Trip {
   Future<dynamic> initCharterInformation() async {
     //gets charter and boat information about this trip
 
-    charter = await CharterDatabaseHelper.instance.getCharter(charterId);
+    try {
+      charter = await CharterDatabaseHelper.instance.getCharter(charterId);
+      print(charter);
+      print(charter.boatId);
 
-   boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
-    boatList.forEach((boatObj) {
-      if (boatObj["boatid"].toString() == boat.boatId) {
-        boat.kbygLink = boatObj["kbyg"];
-      }
-    });
+      boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
+      boatList.forEach((boatObj) {
+        if (boatObj["boatid"].toString() == boat.boatId) {
+          boat.kbygLink = boatObj["kbyg"];
+        }
+      });
+    } catch (e) {
+      print("charter not in DB");
+    }
   }
 
   Widget getUpcomingTripCard(
@@ -493,7 +500,7 @@ class Trip {
                                 width: textBoxSize,
                                 height: rowSectionHeight,
                                 child: Center(
-                                  child: Text(
+                                  child: AutoSizeText(
                                     reservationId,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: screenFontSize),
@@ -754,6 +761,7 @@ class Trip {
       'November',
       'December'
     ];
+
     return Column(
       children: [
         Container(
@@ -772,20 +780,35 @@ class Trip {
               ),
               SizedBox(
                 width: textBoxSize,
-                child: Text(boat.name, textAlign: TextAlign.center),
+                child: boat == null
+                    ? Text(title, textAlign: TextAlign.center)
+                    : Text(boat.name, textAlign: TextAlign.center),
               ),
-              SizedBox(
-                width: textBoxSize,
-                child: Text(
-                  months[DateTime.parse(charter.startDate).month - 1]
-                          .substring(0, 3) +
-                      " " +
-                      DateTime.parse(charter.startDate).day.toString() +
-                      ", " +
-                      DateTime.parse(charter.startDate).year.toString(),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              charter != null
+                  ? SizedBox(
+                      width: textBoxSize,
+                      child: Text(
+                        months[DateTime.parse(charter.startDate).month - 1]
+                                .substring(0, 3) +
+                            " " +
+                            DateTime.parse(charter.startDate).day.toString() +
+                            ", " +
+                            DateTime.parse(charter.startDate).year.toString(),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : SizedBox(
+                      width: textBoxSize,
+                      child: Text(
+                        months[DateTime.parse(tripDate).month - 1]
+                                .substring(0, 3) +
+                            " " +
+                            DateTime.parse(tripDate).day.toString() +
+                            ", " +
+                            DateTime.parse(tripDate).year.toString(),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
               SizedBox(
                 width: textBoxSize / 2,
                 child: IconButton(

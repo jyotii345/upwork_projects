@@ -4,6 +4,7 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/user_interface_pages/contact_selection_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/reg_completed_page.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class RegistrationPage extends StatefulWidget {
   State<StatefulWidget> createState() => new RegistrationPageState();
 }
 
-class RegistrationPageState extends State<RegistrationPage>{
+class RegistrationPageState extends State<RegistrationPage> {
   /*
   instance vars
    */
@@ -52,7 +53,6 @@ class RegistrationPageState extends State<RegistrationPage>{
    */
   @override
   Widget build(BuildContext context) {
-
     textSize = MediaQuery.of(context).size.width / 25;
 
     homePage = false;
@@ -89,7 +89,10 @@ class RegistrationPageState extends State<RegistrationPage>{
         color: Colors.white,
         child: ListView(
           children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+            Opacity(
+              opacity: 0,
+              child: getBannerImage(),
+            ),
             Form(
               key: formKey,
               child: Column(
@@ -98,7 +101,7 @@ class RegistrationPageState extends State<RegistrationPage>{
                   getFirstName(),
                   getLastName(),
                   getEmail(),
-                  getDateOfBirth(),
+                  //getDateOfBirth(),
                   getPassword(),
                   getConfirmPassword(),
                 ],
@@ -331,8 +334,11 @@ class RegistrationPageState extends State<RegistrationPage>{
           Text(
             "• Password must contain one special character",
             style: TextStyle(
-                color: Colors.grey[400],
-              fontSize: portrait ? MediaQuery.of(context).size.height / 60 : MediaQuery.of(context).size.width / 60,),
+              color: Colors.grey[400],
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 60
+                  : MediaQuery.of(context).size.width / 60,
+            ),
           ),
         ],
       ),
@@ -379,8 +385,7 @@ class RegistrationPageState extends State<RegistrationPage>{
     if (form.validate()) {
       form.save();
       return true;
-    }
-    else{
+    } else {
       setState(() {
         isLoading = false;
       });
@@ -425,13 +430,18 @@ class RegistrationPageState extends State<RegistrationPage>{
           }
         } else {
           String birthday = formatDate(dateOfBirth, [yyyy, '-', mm, '-', dd]);
-          var jsonResponse = await AggressorApi()
-              .sendRegistration(firstName, lastName, email, password, birthday);
+          var jsonResponse = await AggressorApi().sendRegistrationCondensed(
+            firstName,
+            lastName,
+            email,
+            password,
+          );
+          print(jsonResponse);
           if (jsonResponse["status"] == "success") {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ContactSelection(jsonResponse,email,dateOfBirth,)));
+                    builder: (context) => RegistrationCompletedPage()));
           } else {
             throw Exception("Error creating account, please try again.");
           }
@@ -475,13 +485,12 @@ class RegistrationPageState extends State<RegistrationPage>{
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -496,8 +505,8 @@ class RegistrationPageState extends State<RegistrationPage>{
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                ? MediaQuery.of(context).size.height / 30
-                : MediaQuery.of(context).size.width / 30,
+                  ? MediaQuery.of(context).size.height / 30
+                  : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -508,5 +517,4 @@ class RegistrationPageState extends State<RegistrationPage>{
     //shows loading wheel if the page is loading data
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
-
 }

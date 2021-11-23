@@ -224,19 +224,31 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                     child: AutoSizeText(
                       value.detailDestination == "General"
                           ? value.detailDestination
-                          : value.detailDestination +
-                              " - " +
-                              DateTime.parse(value.charter.startDate)
-                                  .month
-                                  .toString() +
-                              "/" +
-                              DateTime.parse(value.charter.startDate)
-                                  .day
-                                  .toString() +
-                              "/" +
-                              DateTime.parse(value.charter.startDate)
-                                  .year
-                                  .toString(),
+                          : value.charter == null
+                              ? value.detailDestination +
+                                  " - " +
+                                  DateTime.parse(value.tripDate)
+                                      .month
+                                      .toString() +
+                                  "/" +
+                                  DateTime.parse(value.tripDate)
+                                      .day
+                                      .toString() +
+                                  "/" +
+                                  DateTime.parse(value.tripDate).year.toString()
+                              : value.detailDestination +
+                                  " - " +
+                                  DateTime.parse(value.charter.startDate)
+                                      .month
+                                      .toString() +
+                                  "/" +
+                                  DateTime.parse(value.charter.startDate)
+                                      .day
+                                      .toString() +
+                                  "/" +
+                                  DateTime.parse(value.charter.startDate)
+                                      .year
+                                      .toString(),
                       maxLines: 1,
                       minFontSize: 3.0,
                       textAlign: TextAlign.center,
@@ -422,8 +434,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 30
-                    : MediaQuery.of(context).size.width / 30,
+                  ? MediaQuery.of(context).size.height / 30
+                  : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -582,7 +594,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           delimiter: "/");
 
       fileNameList.clear();
-      if(mapsList.contents != null) {
+      if (mapsList.contents != null) {
         for (var value in mapsList.contents) {
           try {
             if (double.parse(value.size) > 0) {
@@ -593,7 +605,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           }
         }
       }
-
 
       if (fileNameList.length > 0) {
         fileNameList.sort((a, b) => DateTime.parse(b["LastModified"])
@@ -628,7 +639,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 element.split(':')[1].toString().trim();
           }
         });
-
       }
 
       try {
@@ -650,14 +660,13 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             print(element.charterId);
 
             if (response.contents != null) {
-              for(var content in response.contents){
+              for (var content in response.contents) {
                 var elementJson = await jsonDecode(content.toJson());
                 if (elementJson["Size"] != "0") {
                   if (!await FileDatabaseHelper.instance.fileExists(
                       elementJson["Key"].toString().substring(
                           elementJson["Key"].toString().lastIndexOf("/") +
                               1))) {
-
                     StreamedResponse downloadResponse = await AggressorApi()
                         .downloadAwsFile(elementJson["Key"].toString());
 
@@ -696,7 +705,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             print("error downloading the files");
           }
         }
-
 
         var response = await s3client.listObjects(
             prefix: widget.user.userId + "/files/general/general/",
@@ -741,9 +749,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         print("error with general files");
       }
 
-
       tempFiles = await fileHelper.queryFile();
-
 
       for (var element in tempFiles) {
         if ((element.displayName == "" || element.displayName == null) &&
@@ -874,7 +880,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 fileNameController.text,
                 dropDownValue.charterId));
 
-           await  FileDatabaseHelper.instance.insertFile(FileData(
+            await FileDatabaseHelper.instance.insertFile(FileData(
                 tempFile.path,
                 uploadDate,
                 uploadResult["filename"],

@@ -451,7 +451,6 @@ class RewardsState extends State<Rewards> {
 
   Widget getUserRow() {
     //returns the row widget containing the user information and boutique points
-
     double sectionWidth = portrait
         ? (MediaQuery.of(context).size.width / 3) - 16
         : (MediaQuery.of(context).size.width / 3.5);
@@ -488,11 +487,9 @@ class RewardsState extends State<Rewards> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  contact != null
+                  contact != null || contact.nameF == null
                       ? Text(
-                          contact.nameF +
-                              " " +
-                              contact.nameM +
+                          contact.nameF.toString() +
                               " " +
                               contact.nameL +
                               "\nGuest since " +
@@ -577,7 +574,21 @@ class RewardsState extends State<Rewards> {
                       width: double.infinity,
                       child: TextButton(
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RedeemPointsPage(contact.contactId, widget.user,int.parse(contact.boutiquePoints))));
+                          print(contact.boutiquePoints);
+                          print("val ^");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => RedeemPointsPage(
+                                contact.contactId,
+                                widget.user,
+                                contact != null &&
+                                        contact.boutiquePoints != null &&
+                                        contact.boutiquePoints.isNotEmpty
+                                    ? int.parse(contact.boutiquePoints)
+                                    : 0,
+                              ),
+                            ),
+                          );
                         },
                         style: TextButton.styleFrom(
                             backgroundColor: AggressorColors.secondaryColor),

@@ -48,13 +48,24 @@ class MyProfileState extends State<MyProfile> {
         OrientationBuilder(
           builder: (context, orientation) {
             portrait = orientation == Orientation.portrait;
-            return Stack(
-              children: [
-                getBackgroundImage(),
-                getPageForm(),
-                getBannerImage(),
-              ],
-            );
+            try {
+              return Stack(
+                children: [
+                  getBackgroundImage(),
+                  getPageForm(),
+                  getBannerImage(),
+                ],
+              );
+            } catch (e) {
+              return Stack(
+                children: [
+                  getBackgroundImage(),
+                  Text(
+                      "Please complete your contact page online to view this page."),
+                  getBannerImage(),
+                ],
+              );
+            }
           },
         ),
       ),
@@ -73,7 +84,10 @@ class MyProfileState extends State<MyProfile> {
         color: Colors.white,
         child: ListView(
           children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+            Opacity(
+              opacity: 0,
+              child: getBannerImage(),
+            ),
             showOffline(),
             getPageTitle(),
             getPageContents(),
@@ -159,15 +173,19 @@ class MyProfileState extends State<MyProfile> {
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Column(
         children: [
-          Text(profileData["address1"]),
-          profileData["address2"] == ""
+          profileData.containsKey("address1") && profileData["address1"] != null
+              ? Text(profileData["address1"])
+              : Container(),
+          profileData["address2"] == "" || profileData["address2"] == null
               ? Container()
               : Text(profileData["address2"]),
-          Text(profileData["city"] +
-              ", " +
-              territory +
-              " " +
-              getCountry(profileData["country"].toString())),
+          profileData["city"] == null
+              ? Container()
+              : Text(profileData["city"] +
+                  ", " +
+                  territory +
+                  " " +
+                  getCountry(profileData["country"].toString())),
         ],
       ),
     );
@@ -266,15 +284,15 @@ class MyProfileState extends State<MyProfile> {
           width: portrait
               ? MediaQuery.of(context).size.width / 4
               : MediaQuery.of(context).size.height / 4,
-          child: userImage.existsSync() ? Image.file(
-                      userImage,
-                      fit: BoxFit.fill,
-                    ): Image.
-                     asset(
-                      "assets/noprofile.png",
-                      fit: BoxFit.fill,
-                    ),
-
+          child: userImage.existsSync()
+              ? Image.file(
+                  userImage,
+                  fit: BoxFit.fill,
+                )
+              : Image.asset(
+                  "assets/noprofile.png",
+                  fit: BoxFit.fill,
+                ),
         ),
         Container(
           height: portrait
@@ -285,13 +303,25 @@ class MyProfileState extends State<MyProfile> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                profileData["first"] == null ? "" : profileData["first"] + " " + profileData["last"],
+                profileData["first"] == null
+                    ? ""
+                    : profileData["first"] + " " + profileData["last"],
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(profileData["email"]),
-              Text("Home Phone: " + profileData["home_phone"]),
-              Text("Work Phone: " + profileData["work_phone"]),
-              Text("Mobile Phone: " + profileData["mobile_phone"]),
+              profileData.containsKey("home_phone")
+                  ? Text("Home Phone: ")
+                  : Text("Home Phone: " + profileData["home_phone"]),
+              profileData.containsKey("home_phone")
+                  ? Text("Work Phone: ")
+                  : Text("Work Phone: " + profileData["work_phone"] == null
+                      ? ""
+                      : profileData["work_phone"]),
+              profileData.containsKey("home_phone")
+                  ? Text("Mobile Phone: ")
+                  : Text("Mobile Phone: " + profileData["mobile_phone"] == null
+                      ? ""
+                      : profileData["mobile_phone"]),
             ],
           ),
         ),
@@ -334,13 +364,12 @@ class MyProfileState extends State<MyProfile> {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -358,8 +387,8 @@ class MyProfileState extends State<MyProfile> {
               style: TextStyle(
                   color: AggressorColors.primaryColor,
                   fontSize: portrait
-                ? MediaQuery.of(context).size.height / 30
-                : MediaQuery.of(context).size.width / 30,
+                      ? MediaQuery.of(context).size.height / 30
+                      : MediaQuery.of(context).size.width / 30,
                   fontWeight: FontWeight.bold),
             ),
           ),
@@ -409,7 +438,7 @@ class MyProfileState extends State<MyProfile> {
   }
 
   Future<dynamic> getUserProfileImageData() async {
-    if(!userImageRetreived) {
+    if (!userImageRetreived) {
       try {
         print(profileData["avatar"]);
         var userImageRes = await AggressorApi()
@@ -421,15 +450,20 @@ class MyProfileState extends State<MyProfile> {
         await temp.writeAsBytes(bytes);
 
         print("settings state v");
-        setState(() {userImageRetreived = true; userImage = temp;});
+        setState(() {
+          userImageRetreived = true;
+          userImage = temp;
+        });
       } catch (e) {
         var dirData = (await getApplicationDocumentsDirectory()).path;
 
         print("settings state v");
-        setState(() {userImageRetreived = true; userImage = File(dirData + "/" + profileData["avatar"]);});
+        setState(() {
+          userImageRetreived = true;
+          userImage = File(dirData + "/" + profileData["avatar"]);
+        });
       }
-    }
-    else{
+    } else {
       var dirData = (await getApplicationDocumentsDirectory()).path;
       setState(() {
         userImage = File(dirData + "/" + profileData["avatar"]);

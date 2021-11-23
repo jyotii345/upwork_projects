@@ -93,7 +93,8 @@ class LoadingPageState extends State<LoadingPage> {
                             textAlign: TextAlign.center,
                           )
                         : Text(
-                            loadingMessage + ": " +
+                            loadingMessage +
+                                ": " +
                                 int.parse((percent * 100).round().toString())
                                     .toString() +
                                 "%",
@@ -129,7 +130,6 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     setState(() {
-
       photosLoaded = false;
       notesLoaded = false;
       certificateLoaded = false;
@@ -280,7 +280,6 @@ class LoadingPageState extends State<LoadingPage> {
       tripList = [];
     }
 
-
     return "done";
   }
 
@@ -292,6 +291,9 @@ class LoadingPageState extends State<LoadingPage> {
       print("no sliders");
     }
 
+    print("****** debug ******");
+    //AggressorApi().debugOutput();
+    print("****** end debug *******");
     getContactDetails();
     getBoatList();
     getIronDiverList();
@@ -335,6 +337,8 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     for (var trip in tripList) {
+      print("init info");
+      print(trip.toMap());
       trip.user = widget.user;
       await trip.initCharterInformation();
       setState(() {
@@ -357,7 +361,6 @@ class LoadingPageState extends State<LoadingPage> {
 
     print(tempFiles.toList());
     print(tempGalleryMap);
-
 
     setState(() {
       fileDataList = tempFiles;
@@ -603,7 +606,6 @@ class LoadingPageState extends State<LoadingPage> {
 
       updateProfileDetailsCache(jsonResponse);
     }
-
   }
 
   Future<dynamic> getGalleries(List<Photo> photos) async {
@@ -625,7 +627,7 @@ class LoadingPageState extends State<LoadingPage> {
         tempGalleries[tripList[tripIndex].reservationId] = Gallery(
             widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
       } else {
-          tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+        tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
       }
     });
     return tempGalleries;
@@ -730,13 +732,12 @@ class LoadingPageState extends State<LoadingPage> {
       } catch (e) {
         var dirData = (await getApplicationDocumentsDirectory()).path;
 
-          userImage = File(dirData.toString() + "/" + profileDataLocal["avatar"].toString());
-
+        userImage = File(
+            dirData.toString() + "/" + profileDataLocal["avatar"].toString());
       }
     } else {
       var dirData = (await getApplicationDocumentsDirectory()).path;
-        userImage = File(dirData + "/" + profileDataLocal["avatar"]);
-
+      userImage = File(dirData + "/" + profileDataLocal["avatar"]);
     }
   }
 }
