@@ -114,7 +114,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         children: [
           getBannerImage(),
           showOffline(),
-
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: getPageTitle(),
@@ -417,8 +416,8 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 30
-                    : MediaQuery.of(context).size.width / 30,
+                  ? MediaQuery.of(context).size.height / 30
+                  : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -545,7 +544,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   Future<dynamic> getNotes() async {
     //downloads notes from aws.
 
-
     setState(() {
       loading = true;
     });
@@ -572,30 +570,33 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
 
       List<Note> tempNotes = [];
       notesMap.forEach((key, value) {
-        tempNotes.add(value);
-        int insertAt = tripList.indexWhere((element) =>
-            element.boat.boatId == value.boatId &&
-            DateTime.parse(value.startDate) ==
-                DateTime.parse(element.charter.startDate));
-        if (insertAt != -1) {
-          tripList[insertAt].note = value;
+        if (value.boatId != null) {
+          int insertAt = tripList.indexWhere((element) =>
+              (element.boat != null && value.boatId != null) &&
+              element.boat.boatId == value.boatId &&
+              DateTime.parse(value.startDate) ==
+                  DateTime.parse(element.charter.startDate));
+          if (insertAt != -1) {
+            tripList[insertAt].note = value;
+          }
         }
       });
 
-      if(mounted) {
+      if (mounted) {
         setState(() {
           notesList = tempNotes;
           notesLoaded = true;
         });
-      updateNotesCache();
+        updateNotesCache();
       }
     } else {
       notesList = await NotesDatabaseHelper.instance.queryNotes();
     }
-    if(mounted){
-    setState(() {
-      loading = false;
-    });}
+    if (mounted) {
+      setState(() {
+        loading = false;
+      });
+    }
     return "finished";
   }
 

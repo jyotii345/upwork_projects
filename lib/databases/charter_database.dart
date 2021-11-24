@@ -14,7 +14,8 @@ class CharterDatabaseHelper {
 
   CharterDatabaseHelper._privateConstructor();
 
-  static final CharterDatabaseHelper instance = CharterDatabaseHelper._privateConstructor();
+  static final CharterDatabaseHelper instance =
+      CharterDatabaseHelper._privateConstructor();
   static Database _database;
 
   Future<Database> get database async {
@@ -28,7 +29,8 @@ class CharterDatabaseHelper {
     // initialize the database
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
-    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(path,
+        version: _databaseVersion, onCreate: _onCreate);
   }
 
   Future _onCreate(Database db, int version) async {
@@ -74,27 +76,33 @@ class CharterDatabaseHelper {
   Future<bool> charterExists(String charterId) async {
     //check if a charter exists based on its charter id
     final db = await database;
-    var result = await db.rawQuery('SELECT EXISTS(SELECT 1 FROM charter WHERE charterId = ?)', [charterId]);
+    var result = await db.rawQuery(
+        'SELECT EXISTS(SELECT 1 FROM charter WHERE charterId = ?)',
+        [charterId]);
     int exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
   Future<Charter> getCharter(String charterId) async {
     //get a charter from the database based on its charterId
-    final db = await database;
-    var result = await db
-        .rawQuery('SELECT * FROM charter WHERE charterId = ?', [charterId]);
-    return Charter(
-      result[0]['charterId'],
-      result[0]['startDate'],
-      result[0]['statusId'],
-      result[0]['boatId'],
-      result[0]['nights'],
-      result[0]['itinerary'],
-      result[0]['embarkment'],
-      result[0]['disembarkment'],
-      result[0]['destination'],
-    );
+    try {
+      final db = await database;
+      var result = await db
+          .rawQuery('SELECT * FROM charter WHERE charterId = ?', [charterId]);
+      return Charter(
+        result[0]['charterId'],
+        result[0]['startDate'],
+        result[0]['statusId'],
+        result[0]['boatId'],
+        result[0]['nights'],
+        result[0]['itinerary'],
+        result[0]['embarkment'],
+        result[0]['disembarkment'],
+        result[0]['destination'],
+      );
+    } catch (e) {
+      print("charter not in DB");
+    }
   }
 
   Future<List<Charter>> queryCharter() async {

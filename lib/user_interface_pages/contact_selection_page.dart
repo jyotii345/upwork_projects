@@ -2,6 +2,7 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
+import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -9,17 +10,20 @@ import 'package:flutter/rendering.dart';
 import 'contact_create_page.dart';
 
 class ContactSelection extends StatefulWidget {
-  ContactSelection(this.jsonResponse,this.email,this.dateOfBirth);
+  ContactSelection(this.jsonResponse, this.email, this.dateOfBirth, this.name,
+      this.password);
 
   final dynamic jsonResponse;
 
   final String email;
   final DateTime dateOfBirth;
+  final String name;
+  final String password;
   @override
   State<StatefulWidget> createState() => new ContactSelectionState();
 }
 
-class ContactSelectionState extends State<ContactSelection>{
+class ContactSelectionState extends State<ContactSelection> {
   /*
   instance vars
    */
@@ -44,7 +48,6 @@ class ContactSelectionState extends State<ContactSelection>{
    */
   @override
   Widget build(BuildContext context) {
-
     textSize = MediaQuery.of(context).size.width / 25;
 
     return Scaffold(
@@ -78,7 +81,10 @@ class ContactSelectionState extends State<ContactSelection>{
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+            Opacity(
+              opacity: 0,
+              child: getBannerImage(),
+            ),
             getPageTitle(),
             getPagePrompt(),
             getContactList(),
@@ -169,11 +175,16 @@ class ContactSelectionState extends State<ContactSelection>{
             errorMessage = "";
           });
 
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      CreateContact(widget.jsonResponse["userID"].toString(),widget.email,widget.dateOfBirth)));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage()
+                // CreateContact(
+                // widget.jsonResponse["userID"].toString(),
+                // widget.name,
+                // widget.email,
+                // widget.password)
+                ),
+          );
         },
         child: Text(
           "Create new contact",
@@ -192,7 +203,9 @@ class ContactSelectionState extends State<ContactSelection>{
         child: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Text(
-              "No contacts were found with this information, please create a new contact.", textAlign: TextAlign.center,),
+            "No contacts were found with this information, please create a new contact.",
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     } else {
@@ -267,13 +280,12 @@ class ContactSelectionState extends State<ContactSelection>{
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -287,12 +299,11 @@ class ContactSelectionState extends State<ContactSelection>{
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                ? MediaQuery.of(context).size.height / 30
-                : MediaQuery.of(context).size.width / 30,
+                  ? MediaQuery.of(context).size.height / 30
+                  : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
-
 }

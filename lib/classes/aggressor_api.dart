@@ -86,8 +86,8 @@ class AggressorApi {
                 .getTrip(response[i.toString()]["reservationid"].toString());
           }
 
-
-          if (newTrip.charterId == null || !await charterDatabaseHelper.charterExists(newTrip.charterId)) {
+          if (newTrip.charterId == null ||
+              !await charterDatabaseHelper.charterExists(newTrip.charterId)) {
             var charterResponse =
                 await AggressorApi().getCharter(newTrip.charterId);
             if (charterResponse["status"] == "success") {
@@ -105,6 +105,9 @@ class AggressorApi {
               await charterDatabaseHelper.insertCharter(newCharter);
 
               if (!await boatDatabaseHelper.boatExists(newCharter.boatId)) {
+                print("getting new charter");
+                print(newCharter);
+                print(newCharter.boatId);
                 var boatResponse =
                     await AggressorApi().getBoat(newCharter.boatId);
                 if (boatResponse["status"] == "success") {
@@ -208,7 +211,8 @@ class AggressorApi {
       String email, String password, String dateOfBirth) async {
     //sends collected information to the API and sees if there are matching users, returns a userID for future queries
     Response response = await post(
-      Uri.https('app.aggressor.com', 'api/app/registration/register'), //todo replace with app.aggressor.com
+      Uri.https('app.aggressor.com', 'api/app/registration/register'),
+      //todo replace with app.aggressor.com
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -221,7 +225,30 @@ class AggressorApi {
         'dob': dateOfBirth,
       }),
     );
+    return jsonDecode(response.body);
+  }
 
+  Future<dynamic> sendRegistrationCondensed(
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+  ) async {
+    //sends collected information to the API and sees if there are matching users, returns a userID for future queries
+    Response response = await post(
+      Uri.https('app.aggressor.com',
+          'api/app/registration/register'), //todo replace with app.aggressor.com
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'first': firstName,
+        'last': lastName,
+        'email': email,
+        'password': password,
+      }),
+    );
     return jsonDecode(response.body);
   }
 
@@ -296,6 +323,26 @@ class AggressorApi {
         'mobile': mobilePhone,
         'dateOfBirth': dateOfBirth,
         'gender': gender
+      }),
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  Future<dynamic> sendNewContactCondensed(
+      String userId, String name, String email, String password) async {
+    //creates a new contact and returns success on completion
+    Response response = await post(
+      Uri.https(
+          'app.aggressor.com', "api/app/registration/newcontact/" + userId),
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'name': name,
+        'email': email,
+        'password': password,
       }),
     );
 
@@ -379,7 +426,8 @@ class AggressorApi {
   }
 
   Future<dynamic> downloadUserImage(String userId, userImageName) async {
-    var res = await downloadAwsFile(userId + "/profile/crs/app/" + userImageName);
+    var res =
+        await downloadAwsFile(userId + "/profile/crs/app/" + userImageName);
     return res;
   }
 
@@ -479,7 +527,8 @@ class AggressorApi {
 
   Future<dynamic> getCharter(String charterId) async {
     //create and send a contact details request to the Aggressor Api and return json response
-    String url = "https://app.aggressor.com/api/app/charters/view/" + charterId.toString();
+    String url = "https://app.aggressor.com/api/app/charters/view/" +
+        charterId.toString();
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -860,12 +909,12 @@ class AggressorApi {
     }
   }
 
-
-  Future<dynamic> getAllStar(String contactId, ) async {
+  Future<dynamic> getAllStar(
+    String contactId,
+  ) async {
     //delete a certification by a certain id
     notesList.clear();
-    String url =
-        "https://app.aggressor.com/api/app/allstars/list/" + contactId ;
+    String url = "https://app.aggressor.com/api/app/allstars/list/" + contactId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -876,13 +925,14 @@ class AggressorApi {
 
     return pageJson;
   }
-
 
   Future<dynamic> redeemPoints(String userId, int points) async {
     //redeem points for a coupon
     notesList.clear();
-    String url =
-        "https://app.aggressor.com/api/app/boutique/redeem/" + userId + "/" + points.toString() ;
+    String url = "https://app.aggressor.com/api/app/boutique/redeem/" +
+        userId +
+        "/" +
+        points.toString();
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -894,11 +944,12 @@ class AggressorApi {
     return pageJson;
   }
 
-  Future<dynamic> getCoupons(String userId,) async {
+  Future<dynamic> getCoupons(
+    String userId,
+  ) async {
     //get the coupons from the API
     notesList.clear();
-    String url =
-        "https://app.aggressor.com/api/app/boutique/list/" + userId ;
+    String url = "https://app.aggressor.com/api/app/boutique/list/" + userId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -907,6 +958,21 @@ class AggressorApi {
 
     var pageJson = json.decode(await pageResponse.stream.bytesToString());
 
+    return pageJson;
+  }
+
+  Future<dynamic> debugOutput() async {
+    notesList.clear();
+    String url = "http://52.14.72.191/api/app/reservations/view/36027/41033";
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    var pageJson = json.decode(await pageResponse.stream.bytesToString());
+
+    print(pageJson);
     return pageJson;
   }
 }

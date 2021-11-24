@@ -10,11 +10,13 @@ import 'package:flutter/rendering.dart';
 import 'login_page.dart';
 
 class CreateContact extends StatefulWidget {
-  CreateContact(this.userId,this.email,this.dateOfBirth);
+  CreateContact(this.userId, this.name, this.email, this.password);
 
   final String email;
-  final DateTime dateOfBirth;
+  //final DateTime dateOfBirth;
   final String userId;
+  final String name;
+  final String password;
 
   @override
   State<StatefulWidget> createState() => new CreateContactState();
@@ -52,7 +54,7 @@ class CreateContactState extends State<CreateContact> {
    */
   @override
   void initState() {
-    dateOfBirth = widget.dateOfBirth;
+    //dateOfBirth = widget.dateOfBirth;
     super.initState();
   }
 
@@ -61,7 +63,6 @@ class CreateContactState extends State<CreateContact> {
    */
   @override
   Widget build(BuildContext context) {
-
     textSize = MediaQuery.of(context).size.width / 25;
 
     textDisplayWidth = MediaQuery.of(context).size.width / 2.6;
@@ -114,20 +115,23 @@ class CreateContactState extends State<CreateContact> {
 
         String birthday = formatDate(dateOfBirth, [yyyy, mm, dd]);
 
-        var jsonResponse = await AggressorApi().sendNewContact(
-            widget.userId,
-            address1,
-            address2,
-            city,
-            countryDropDownSelection["country"] == "USA" ? territory : "",
-            countryDropDownSelection["country"] != "USA" ? territory : "",
-            countryDropDownSelection["countryid"].toString(),
-            zip,
-            email,
-            homePhone,
-            mobilePhone,
-            birthday,
-            genderDropDownOption.toLowerCase());
+        // var jsonResponse = await AggressorApi().sendNewContact(
+        //     widget.userId,
+        //     address1,
+        //     address2,
+        //     city,
+        //     countryDropDownSelection["country"] == "USA" ? territory : "",
+        //     countryDropDownSelection["country"] != "USA" ? territory : "",
+        //     countryDropDownSelection["countryid"].toString(),
+        //     zip,
+        //     email,
+        //     homePhone,
+        //     mobilePhone,
+        //     birthday,
+        //     genderDropDownOption.toLowerCase());
+
+        var jsonResponse = await AggressorApi().sendNewContactCondensed(
+            widget.userId, widget.name, widget.email, widget.password);
 
         if (jsonResponse["status"] == "success") {
           showSuccessDialogue();
@@ -177,7 +181,10 @@ class CreateContactState extends State<CreateContact> {
         color: Colors.white,
         child: ListView(
           children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+            Opacity(
+              opacity: 0,
+              child: getBannerImage(),
+            ),
             getPageTitle(),
             getContactDetails(),
             showErrorMessage(),
@@ -217,13 +224,12 @@ class CreateContactState extends State<CreateContact> {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -236,7 +242,9 @@ class CreateContactState extends State<CreateContact> {
           "Create new contact",
           style: TextStyle(
               color: AggressorColors.primaryColor,
-              fontSize: portrait ? MediaQuery.of(context).size.height / 26 : MediaQuery.of(context).size.width / 26 ,
+              fontSize: portrait
+                  ? MediaQuery.of(context).size.height / 26
+                  : MediaQuery.of(context).size.width / 26,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -255,17 +263,17 @@ class CreateContactState extends State<CreateContact> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    getAddress1(),
-                    getAddress2(),
-                    getCity(),
-                    getCountry(),
-                    getTerritory(),
-                    getZip(),
+                    //getAddress1(),
+                    //getAddress2(),
+                    //getCity(),
+                    //getCountry(),
+                    //getTerritory(),
+                    //getZip(),
                     getEmail(),
-                    getHomePhone(),
-                    getMobilePhone(),
-                    getDateOfBirth(),
-                    getGender(),
+                    //getHomePhone(),
+                    //getMobilePhone(),
+                    //getDateOfBirth(),
+                    //getGender(),
                     getCreateContactButton(),
                   ],
                 ),
@@ -330,7 +338,7 @@ class CreateContactState extends State<CreateContact> {
       children: [
         Container(
           width: textDisplayWidth,
-          child: Text("Birthday: "),
+          child: Text("Birthday: (optional)"),
         ),
         Expanded(
           child: Container(
@@ -591,10 +599,11 @@ class CreateContactState extends State<CreateContact> {
       stateList = await AggressorApi().getStates();
 
       print(countryList[0]["country"]);
-      Map<String, dynamic> temp = countryList.where((element) => element["country"].toString().trim() == "USA").elementAt(0);
-      countryList.remove( temp);
+      Map<String, dynamic> temp = countryList
+          .where((element) => element["country"].toString().trim() == "USA")
+          .elementAt(0);
+      countryList.remove(temp);
       countryList.insert(0, temp);
-
 
       countryDropDownSelection = countryList[0];
       stateDropDownSelection = stateList[0];
@@ -608,5 +617,4 @@ class CreateContactState extends State<CreateContact> {
   Widget getLoadingWheel() {
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
-
 }
