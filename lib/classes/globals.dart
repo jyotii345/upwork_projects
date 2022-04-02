@@ -11,7 +11,6 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:flutter/cupertino.dart';
 import 'gallery.dart';
 
-
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 double loadedCount = 0;
@@ -30,6 +29,8 @@ bool backButton = false;
 bool allStarLoaded = false;
 int currentIndex = 0;
 int outterDistanceFromLogin = 0;
+
+bool showVideo = false;
 
 bool userImageRetreived = false;
 
@@ -51,7 +52,6 @@ List<dynamic> certificationList = [];
 List<dynamic> allStarsList = [];
 
 File userImage = File("");
-
 
 Contact contact = null;
 

@@ -54,7 +54,7 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
     textDisplayWidth = MediaQuery.of(context).size.width / 2.6;
 
     return Scaffold(
-      appBar: getCouponsAppBar(),
+      appBar: getAppBar(),
       body: PinchToZoom(
         OrientationBuilder(
           builder: (context, orientation) {
@@ -103,7 +103,6 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
     return FutureBuilder(
         future: AggressorApi().getCoupons(widget.userId),
         builder: (context, snapshot) {
-          print(snapshot.data);
           if (snapshot.hasData) {
             return ListView.builder(
                 shrinkWrap: true,
@@ -129,7 +128,6 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
                                     style: TextStyle(color: Colors.blue),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
-                                        print("tap");
                                         launch("https://aggressorboutique.com");
                                       })
                               ])),

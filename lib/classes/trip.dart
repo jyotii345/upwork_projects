@@ -204,7 +204,6 @@ class Trip {
     //get details for this specific trip object and add the results to this trip
     var jsonResponse = await AggressorApi()
         .getReservationDetails(reservationId.toString(), contactId.toString());
-    print(jsonResponse.toString());
     if (jsonResponse["status"] == "success") {
       charterId = jsonResponse["charterid"].toString();
       total = jsonResponse["total"].toString();
@@ -228,8 +227,6 @@ class Trip {
 
     try {
       charter = await CharterDatabaseHelper.instance.getCharter(charterId);
-      print(charter);
-      print(charter.boatId);
 
       boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
       boatList.forEach((boatObj) {

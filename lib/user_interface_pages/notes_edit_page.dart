@@ -62,19 +62,20 @@ class EditNoteState extends State<EditNote> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: poppingPage,
-        child: Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: getAppBar(),
-      bottomNavigationBar: getBottomNavigationBar(),
-      body: Stack(
-        children: [
-          getBackgroundImage(),
-          getPageForm(),
-          getBannerImage(),
-          getLoading(),
-        ],
-      ),),
+      onWillPop: poppingPage,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: getAppBar(),
+        bottomNavigationBar: getBottomNavigationBar(),
+        body: Stack(
+          children: [
+            getBackgroundImage(),
+            getPageForm(),
+            getBannerImage(),
+            getLoading(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -106,7 +107,10 @@ class EditNoteState extends State<EditNote> {
           padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
           child: ListView(
             children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+              Opacity(
+                opacity: 0,
+                child: getBannerImage(),
+              ),
               getPageTitle(),
               getYachtInformation(),
               getDepartureDate(),
@@ -138,45 +142,41 @@ class EditNoteState extends State<EditNote> {
     );
   }
 
-
-  Widget getPreTripTitle(){
-    return  Padding(
+  Widget getPreTripTitle() {
+    return Padding(
       padding: const EdgeInsets.all(15.0),
       child: AutoSizeText(
         "Pre-Adventure Notes:",
-        maxLines: 1, minFontSize:3.0,
+        maxLines: 1,
+        minFontSize: 3.0,
       ),
     );
   }
 
-  Widget getPostTripTitle(){
-    return  Padding(
+  Widget getPostTripTitle() {
+    return Padding(
       padding: const EdgeInsets.all(15.0),
       child: AutoSizeText(
         "Post-Adventure Notes:",
-        maxLines: 1, minFontSize:3.0,
+        maxLines: 1,
+        minFontSize: 3.0,
       ),
     );
   }
-
 
   Widget getPreTripNotes() {
     return Padding(
       padding: const EdgeInsets.all(10),
-      child:
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 3,
-              child: HtmlEditor(
-                controller: preNotesController,
-                htmlEditorOptions:
-                    HtmlEditorOptions(hint: "Pre-Adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(
-                  toolbarPosition: ToolbarPosition.custom,
-                ),
-              ),
-            ),
+      child: Container(
+        height: MediaQuery.of(context).size.height / 3,
+        child: HtmlEditor(
+          controller: preNotesController,
+          htmlEditorOptions: HtmlEditorOptions(hint: "Pre-Adventure notes"),
+          htmlToolbarOptions: HtmlToolbarOptions(
+            toolbarPosition: ToolbarPosition.custom,
           ),
+        ),
+      ),
     );
   }
 
@@ -247,20 +247,16 @@ class EditNoteState extends State<EditNote> {
   Widget getPostTripNotes() {
     return Padding(
       padding: const EdgeInsets.all(15),
-      child:
-          Expanded(
-            child: Container(
-              height: MediaQuery.of(context).size.height / 3,
-              child: HtmlEditor(
-                controller: postNotesController,
-                htmlEditorOptions:
-                    HtmlEditorOptions(hint: "Post-Adventure notes"),
-                htmlToolbarOptions: HtmlToolbarOptions(
-                  toolbarPosition: ToolbarPosition.custom,
-                ),
-              ),
-            ),
+      child: Container(
+        height: MediaQuery.of(context).size.height / 3,
+        child: HtmlEditor(
+          controller: postNotesController,
+          htmlEditorOptions: HtmlEditorOptions(hint: "Post-Adventure notes"),
+          htmlToolbarOptions: HtmlToolbarOptions(
+            toolbarPosition: ToolbarPosition.custom,
           ),
+        ),
+      ),
     );
   }
 
@@ -278,7 +274,8 @@ class EditNoteState extends State<EditNote> {
               alignment: Alignment.topLeft,
               child: AutoSizeText(
                 "Miscellaneous Adventure Notes:",
-                maxLines: 1, minFontSize:3.0,
+                maxLines: 1,
+                minFontSize: 3.0,
               ),
             ),
           ),
@@ -312,7 +309,8 @@ class EditNoteState extends State<EditNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
               "Destination:",
-             maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -341,7 +339,8 @@ class EditNoteState extends State<EditNote> {
                       10,
               child: AutoSizeText(
                 widget.note.destination,
-                maxLines: 1, minFontSize:3.0,
+                maxLines: 1,
+                minFontSize: 3.0,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -363,7 +362,8 @@ class EditNoteState extends State<EditNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
               "Departure Date:",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -380,8 +380,13 @@ class EditNoteState extends State<EditNote> {
               ),
             ),
             child: AutoSizeText(
-              widget.note.startDate.split("-")[1] + "/" + widget.note.startDate.split("-")[2] + "/" + widget.note.startDate.split("-")[0],
-              maxLines: 1, minFontSize:3.0,
+              widget.note.startDate.split("-")[1] +
+                  "/" +
+                  widget.note.startDate.split("-")[2] +
+                  "/" +
+                  widget.note.startDate.split("-")[0],
+              maxLines: 1,
+              minFontSize: 3.0,
               textAlign: TextAlign.center,
             ),
           ),
@@ -402,7 +407,8 @@ class EditNoteState extends State<EditNote> {
                 : MediaQuery.of(context).size.width / 6,
             child: AutoSizeText(
               "Return Date",
-              maxLines: 1, minFontSize:3.0,
+              maxLines: 1,
+              minFontSize: 3.0,
             ),
           ),
           Container(
@@ -478,13 +484,12 @@ class EditNoteState extends State<EditNote> {
     postNotesController.insertHtml(widget.note.postTripNotes);
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -498,8 +503,8 @@ class EditNoteState extends State<EditNote> {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                ? MediaQuery.of(context).size.height / 30
-                : MediaQuery.of(context).size.width / 30,
+                  ? MediaQuery.of(context).size.height / 30
+                  : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),

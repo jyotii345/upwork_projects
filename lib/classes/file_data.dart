@@ -2,15 +2,12 @@
 file_data class to hold the contents of a file object generated from the aws s3 bucket
  */
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 
@@ -23,7 +20,8 @@ class FileData {
   User user;
   VoidCallback callback;
 
-  FileData(String filePath, String date, String fileName,String displayName, String boatId) {
+  FileData(String filePath, String date, String fileName, String displayName,
+      String boatId) {
     //default constructor
     this.filePath = filePath;
     this.date = date;
@@ -38,8 +36,8 @@ class FileData {
       'filePath': filePath,
       'date': date,
       'fileName': fileName,
-      'boatId' : boatId,
-      'displayName' : displayName,
+      'boatId': boatId,
+      'displayName': displayName,
     };
   }
 
@@ -105,9 +103,10 @@ class FileData {
     );
   }
 
-  void deleteFile() async{
+  void deleteFile() async {
     fileDataList.remove(this);
-    var res = await AggressorApi().deleteAwsFile(user.userId.toString(), "files", boatId.toString(), date.toString(), fileName);
+    await AggressorApi().deleteAwsFile(user.userId.toString(), "files",
+        boatId.toString(), date.toString(), fileName);
     await FileDatabaseHelper.instance.deleteFile(fileName);
     await Future.delayed(Duration(seconds: 1));
     callback();
@@ -117,17 +116,17 @@ class FileData {
   Future<void> openFile() async {
     //opens the contents of a file on the defualt application for the native device
     final _result = await OpenFile.open(filePath);
-    print(filePath);
-    print(_result.message.toString());
   }
 
-  void setUser(User user){
+  void setUser(User user) {
     this.user = user;
   }
-  void setCallback(VoidCallback callback){
+
+  void setCallback(VoidCallback callback) {
     this.callback = callback;
   }
-  void setDisplayName(String displayName){
+
+  void setDisplayName(String displayName) {
     this.displayName = displayName;
   }
 }

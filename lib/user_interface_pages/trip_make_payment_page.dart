@@ -4,12 +4,9 @@ import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
 
 class MakePayment extends StatefulWidget {
@@ -49,7 +46,6 @@ class MakePaymentState extends State<MakePayment> {
   void initState() {
     super.initState();
     popDistance = 1;
-
   }
 
   /*
@@ -58,7 +54,6 @@ class MakePaymentState extends State<MakePayment> {
 
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: poppingPage,
       child: PinchToZoom(
@@ -96,7 +91,10 @@ class MakePaymentState extends State<MakePayment> {
         color: Colors.white,
         child: ListView(
           children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+            Opacity(
+              opacity: 0,
+              child: getBannerImage(),
+            ),
             getPageTitle(),
             getPaymentInformation(),
             getPaymentDetails(),
@@ -400,7 +398,7 @@ class MakePaymentState extends State<MakePayment> {
         child: TextFormField(
           keyboardType: TextInputType.number,
           inputFormatters: [
-            WhitelistingTextInputFormatter.digitsOnly,
+            FilteringTextInputFormatter.digitsOnly,
             CardNumberInputFormatter(),
             LengthLimitingTextInputFormatter(22),
           ],
@@ -427,7 +425,7 @@ class MakePaymentState extends State<MakePayment> {
             child: TextFormField(
               keyboardType: TextInputType.number,
               inputFormatters: [
-                WhitelistingTextInputFormatter.digitsOnly,
+                FilteringTextInputFormatter.digitsOnly,
                 CardDateInputFormatter(),
                 LengthLimitingTextInputFormatter(7),
               ],
@@ -436,8 +434,11 @@ class MakePaymentState extends State<MakePayment> {
                 hintText: "00/0000",
                 labelText: "Expiration Date",
               ),
-              validator: (value) =>
-                  value.isEmpty ? 'Exp Date can\'t be empty' : value.trim().length !=7 ? 'Exp date format incorrect' : null,
+              validator: (value) => value.isEmpty
+                  ? 'Exp Date can\'t be empty'
+                  : value.trim().length != 7
+                      ? 'Exp date format incorrect'
+                      : null,
               onSaved: (value) => cardExpirationDate = value.trim(),
             ),
           ),
@@ -447,7 +448,7 @@ class MakePaymentState extends State<MakePayment> {
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 inputFormatters: [
-                  WhitelistingTextInputFormatter.digitsOnly,
+                  FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(3),
                 ],
                 decoration: new InputDecoration(
@@ -518,13 +519,12 @@ class MakePaymentState extends State<MakePayment> {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -650,7 +650,6 @@ void showSuccessDialogue() {
   );
 }
 
-
 class CardNumberInputFormatter extends TextInputFormatter {
   //automatically updates the format to a credit card format
   @override
@@ -676,7 +675,6 @@ class CardNumberInputFormatter extends TextInputFormatter {
         text: string,
         selection: new TextSelection.collapsed(offset: string.length));
   }
-
 }
 
 class CardDateInputFormatter extends TextInputFormatter {

@@ -3,7 +3,6 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProfileLinkPage extends StatefulWidget {
   ProfileLinkPage(this.user, this.message);
@@ -19,7 +18,6 @@ class ProfileLinkPageState extends State<ProfileLinkPage> {
   /*
   instance vars
    */
-
 
   /*
   initState
@@ -52,7 +50,6 @@ class ProfileLinkPageState extends State<ProfileLinkPage> {
 /*
   self implemented
    */
-
 
   Widget getBottomNavigation() {
     /*

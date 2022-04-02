@@ -13,7 +13,6 @@ import 'package:aggressor_adventures/user_interface_pages/rewards_add_certificat
 import 'package:aggressor_adventures/user_interface_pages/rewards_add_iron_diver_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chunked_stream/chunked_stream.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:path_provider/path_provider.dart';
@@ -574,8 +573,6 @@ class RewardsState extends State<Rewards> {
                       width: double.infinity,
                       child: TextButton(
                         onPressed: () {
-                          print(contact.boutiquePoints);
-                          print("val ^");
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => RedeemPointsPage(
@@ -612,7 +609,7 @@ class RewardsState extends State<Rewards> {
 
   void openProfileView() {
     setState(() {
-      currentIndex = 5;
+      currentIndex = 4;
     });
   }
 

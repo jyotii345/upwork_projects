@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
-import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
@@ -9,16 +8,12 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
-import 'package:async/async.dart';
 import 'package:date_format/date_format.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../classes/aggressor_colors.dart';
 
@@ -69,7 +64,6 @@ class GalleryViewState extends State<GalleryView> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.photos.length);
     return WillPopScope(
       onWillPop: poppingPage,
       child: Scaffold(
@@ -106,7 +100,10 @@ class GalleryViewState extends State<GalleryView> {
         color: Colors.white,
         child: ListView(
           children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+            Opacity(
+              opacity: 0,
+              child: getBannerImage(),
+            ),
             showLoading(),
             getPageTitle(),
             getDestination(),
@@ -176,7 +173,7 @@ class GalleryViewState extends State<GalleryView> {
     }
 
     for (var value in selectedList) {
-      var res = await ImageGallerySaver.saveImage(
+      await ImageGallerySaver.saveImage(
           File(value.imagePath).readAsBytesSync());
     }
     setState(() {
@@ -193,8 +190,8 @@ class GalleryViewState extends State<GalleryView> {
         context: context,
         builder: (_) => new AlertDialog(
               title: new Text('Success'),
-              content:
-                  new Text("The images have been exported to your phone's camera roll"),
+              content: new Text(
+                  "The images have been exported to your phone's camera roll"),
               actions: <Widget>[
                 new TextButton(
                     onPressed: () {
@@ -293,10 +290,7 @@ class GalleryViewState extends State<GalleryView> {
                 onPressed: () {
                   if (widget.photos.length - (9 * (indexMultiplier - 1)) > 9) {
                     setState(() {
-                      print("adding to index");
-                      print(indexMultiplier);
                       indexMultiplier++;
-                      print(indexMultiplier);
                     });
                   }
                 })
@@ -311,7 +305,7 @@ class GalleryViewState extends State<GalleryView> {
     //returns the destination widgets of the gallery
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      child:  Text(
+      child: Text(
         "Destination: " + widget.trip.detailDestination,
         textAlign: TextAlign.left,
         style: TextStyle(
@@ -341,7 +335,7 @@ class GalleryViewState extends State<GalleryView> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
-      child:  Text(
+      child: Text(
         "Date: " +
             months[DateTime.parse(widget.trip.tripDate).month - 1]
                 .substring(0, 3) +
@@ -380,13 +374,15 @@ class GalleryViewState extends State<GalleryView> {
                             Positioned.fill(
                               child: GestureDetector(
                                 onTap: () {
-                                  imageExpansionDialogue((index + (9 * (indexMultiplier - 1))),widget.photos);
+                                  imageExpansionDialogue(
+                                      (index + (9 * (indexMultiplier - 1))),
+                                      widget.photos);
                                 },
                                 child: Image.file(
                                   File(
                                     widget
                                         .photos[(index +
-                                        (9 * (indexMultiplier - 1)))]
+                                            (9 * (indexMultiplier - 1)))]
                                         .imagePath,
                                   ),
                                   fit: BoxFit.fill,
@@ -421,15 +417,14 @@ class GalleryViewState extends State<GalleryView> {
                         )
                       : GestureDetector(
                           onTap: () {
-                            imageExpansionDialogue((index +
-                                (9 * (indexMultiplier - 1))),widget.photos
-                            );
+                            imageExpansionDialogue(
+                                (index + (9 * (indexMultiplier - 1))),
+                                widget.photos);
                           },
-                          child:Image.file(
+                          child: Image.file(
                             File(
                               widget
-                                  .photos[(index +
-                                  (9 * (indexMultiplier - 1)))]
+                                  .photos[(index + (9 * (indexMultiplier - 1)))]
                                   .imagePath,
                             ),
                             fit: BoxFit.fill,
@@ -458,113 +453,105 @@ class GalleryViewState extends State<GalleryView> {
 
   void imageExpansionDialogue(int index, var photosList) {
     //shows the image in a larger view
-    
+
     int showIndex = index;
-    
+
     showDialog(
       context: context,
       builder: (_) => new AlertDialog(
-        content: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-          return Container(
-            height: (MediaQuery.of(context)
-                .size
-                .height),
-            width: (MediaQuery.of(context)
-                .size
-                .width) ,
-            child: IntrinsicHeight(
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child:Image.file(
-                      File(photosList[showIndex]
-                          .imagePath,
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              height: (MediaQuery.of(context).size.height),
+              width: (MediaQuery.of(context).size.width),
+              child: IntrinsicHeight(
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Image.file(
+                        File(
+                          photosList[showIndex].imagePath,
+                        ),
+                        fit: BoxFit.fitWidth,
                       ),
-                      fit: BoxFit.fitWidth,
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding:
-                      const EdgeInsets.all(0.0),
-                      child: GestureDetector(
-                        child: Padding(
-                          padding:
-                          const EdgeInsets.all(5.0),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(0.0),
+                        child: GestureDetector(
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: AggressorColors.primaryColor,
+                              size: MediaQuery.of(context).size.width / 15,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            if (showIndex + 1 < photosList.length) {
+                              setState(() {
+                                showIndex++;
+                              });
+                            } else {
+                              setState(() {
+                                showIndex = 0;
+                              });
+                            }
+                          },
                           child: Icon(
-                            Icons.close_rounded,
-                            color: AggressorColors
-                                .primaryColor,
-                            size: MediaQuery.of(context)
-                                .size
-                                .width /
-                                15,
+                            Icons.chevron_right,
+                            color: Colors.white70,
+                            size: portrait
+                                ? MediaQuery.of(context).size.width / 7.5
+                                : MediaQuery.of(context).size.height / 7.5,
                           ),
                         ),
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
                       ),
                     ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {
-                          if (showIndex + 1 < photosList.length) {
-                            setState(() {
-                              showIndex++;
-                            });
-                          } else {
-                            setState(() {
-                              showIndex = 0;
-                            });
-                          }
-                        },
-                        child: Icon(
-                          Icons.chevron_right,
-                          color: Colors.white70,
-                          size: portrait
-                              ? MediaQuery.of(context).size.width / 7.5
-                              : MediaQuery.of(context).size.height / 7.5,
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: () {
+                            if (showIndex > 0) {
+                              setState(() {
+                                showIndex--;
+                              });
+                            } else {
+                              setState(() {
+                                showIndex = photosList.length - 1;
+                              });
+                            }
+                          },
+                          child: Icon(
+                            Icons.chevron_left,
+                            color: Colors.white70,
+                            size: portrait
+                                ? MediaQuery.of(context).size.width / 7.5
+                                : MediaQuery.of(context).size.height / 7.5,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () {
-                          if (showIndex > 0) {
-                            setState(() {
-                              showIndex--;
-                            });
-                          } else {
-                            setState(() {
-                              showIndex = photosList.length - 1;
-                            });
-                          }
-                        },
-                        child: Icon(
-                          Icons.chevron_left,
-                          color: Colors.white70,
-                          size: portrait
-                              ? MediaQuery.of(context).size.width / 7.5
-                              : MediaQuery.of(context).size.height / 7.5,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },),
+            );
+          },
+        ),
         contentPadding: EdgeInsets.zero,
         insetPadding: EdgeInsets.zero,
       ),
@@ -588,13 +575,12 @@ class GalleryViewState extends State<GalleryView> {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -669,8 +655,13 @@ class GalleryViewState extends State<GalleryView> {
         if (response["status"] == "success") {
           widget.photos.add(Photo(element.name, widget.user.userId, file.path,
               uploadDate, widget.trip.charter.boatId, null));
-          galleriesMap[widget.trip.reservationId].addPhoto(Photo(element.name, widget.user.userId, file.path,
-              uploadDate, widget.trip.charter.boatId, null));
+          galleriesMap[widget.trip.reservationId].addPhoto(Photo(
+              element.name,
+              widget.user.userId,
+              file.path,
+              uploadDate,
+              widget.trip.charter.boatId,
+              null));
         }
 
         await Future.delayed(Duration(milliseconds: 500));
@@ -709,8 +700,13 @@ class GalleryViewState extends State<GalleryView> {
         await OfflineDatabaseHelper.instance
             .insertOffline({'type': "image", 'action': "add", 'id': file.path});
 
-        galleriesMap[widget.trip.reservationId].addPhoto(Photo(element.name, widget.user.userId, file.path,
-            uploadDate, widget.trip.charter.boatId, null));
+        galleriesMap[widget.trip.reservationId].addPhoto(Photo(
+            element.name,
+            widget.user.userId,
+            file.path,
+            uploadDate,
+            widget.trip.charter.boatId,
+            null));
       }
       setState(() {
         photosLoaded = false;
@@ -736,8 +732,8 @@ class GalleryViewState extends State<GalleryView> {
                 style: TextStyle(
                     color: AggressorColors.primaryColor,
                     fontSize: portrait
-                ? MediaQuery.of(context).size.height / 30
-                : MediaQuery.of(context).size.width / 30,
+                        ? MediaQuery.of(context).size.height / 30
+                        : MediaQuery.of(context).size.width / 30,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -760,7 +756,6 @@ class GalleryViewState extends State<GalleryView> {
                   saving ? saving = false : saving = true;
                   editing && !saving ? editing = false : editing = true;
                   deleting = false;
-
                 });
               },
             ),
@@ -788,7 +783,7 @@ class GalleryViewState extends State<GalleryView> {
     });
     if (online) {
       for (var value in widget.photos) {
-        var res = await AggressorApi().deleteAwsFile(
+        await AggressorApi().deleteAwsFile(
             widget.user.userId.toString(),
             "gallery",
             widget.trip.charter.boatId.toString(),

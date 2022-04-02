@@ -16,7 +16,6 @@ import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:date_format/date_format.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
@@ -25,7 +24,6 @@ import 'package:http/http.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:aggressor_adventures/classes/globals.dart' as galleryMap;
 
 class Photos extends StatefulWidget {
   Photos(
@@ -115,35 +113,33 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   Widget getPageForm() {
     //returns the main contents of the page
     return Padding(
-      padding: EdgeInsets.fromLTRB(0,0,0, 10),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: ListView(
-          children: [
-            getBannerImage(),
-            showOffline(),
-
-
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: showLoading(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: getPageTitle(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: getCreateNewGallery(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: getMyGalleries(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: showErrorMessage(),
-            ),
-          ],
-        ),
+        children: [
+          getBannerImage(),
+          showOffline(),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: showLoading(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getPageTitle(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getCreateNewGallery(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getMyGalleries(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: showErrorMessage(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -409,11 +405,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               DateTime.parse(dateDropDownValue.charter.startDate),
               [yyyy, '-', mm, '-', dd]);
 
-
-          print("uploading to");
-          print(dateDropDownValue.toMap());
-          print(uploadDate);
-
           var response = await AggressorApi().uploadAwsFile(
               widget.user.userId.toString(),
               "gallery",
@@ -422,9 +413,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               uploadDate);
 
           await Future.delayed(Duration(milliseconds: 1000));
-          if (response["status"] == "success") {
-            print("uploaded");
-          }
         }
 
         setState(() {
@@ -451,7 +439,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           String uploadDate = formatDate(
               DateTime.parse(dateDropDownValue.charter.startDate),
               [yyyy, '-', mm, '-', dd]);
-
 
           await PhotoDatabaseHelper.instance.insertPhoto(Photo(
               element.name,
@@ -683,8 +670,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 30
-                    : MediaQuery.of(context).size.width / 30,
+                  ? MediaQuery.of(context).size.height / 30
+                  : MediaQuery.of(context).size.width / 30,
               fontWeight: FontWeight.bold),
         ),
       ),
@@ -693,8 +680,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Future<dynamic> getGalleries() async {
     //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
-
-
 
     if (!photosLoaded && online) {
       setState(() {
@@ -759,8 +744,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
                   await element.initCharterInformation();
 
-                  print("placing in date:");
-                  print(element.tripDate);
                   Photo photo = Photo(
                       fileName,
                       widget.user.userId,
@@ -781,7 +764,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
       List<Photo> photos = await photoHelper.queryPhoto();
 
-
       photos.forEach((element) {
         int tripIndex = 0;
         for (int i = 0; i < tripList.length; i++) {
@@ -789,7 +771,6 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           // print( formatDate(DateTime.parse(tripList[i].charter.startDate),
           //     [yyyy, '-', mm, '-', dd]).toString() + " " +
           //     element.date);
-
 
           if (tripList[i].boat.boatId == element.boatId &&
               formatDate(DateTime.parse(tripList[i].charter.startDate),
@@ -811,13 +792,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         }
       });
 
-      print(tempGalleries.length);
-      tempGalleries.forEach((key, value) {
-        print(key);
-        print(value);
-      });
-
-      if(mounted) {
+      if (mounted) {
         setState(() {
           galleriesMap = tempGalleries;
           photosLoaded = true;

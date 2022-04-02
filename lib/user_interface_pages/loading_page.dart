@@ -9,7 +9,6 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
-import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
@@ -32,7 +31,6 @@ import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock/wakelock.dart';
 
 class LoadingPage extends StatefulWidget {
@@ -174,7 +172,7 @@ class LoadingPageState extends State<LoadingPage> {
     });
 
     setState(() {
-      loadingLength = tripList.length + 12.toDouble();
+      loadingLength = (tripList.length + 12.toDouble()) * 2;
     });
 
     var tempSliderImageList =
@@ -285,15 +283,16 @@ class LoadingPageState extends State<LoadingPage> {
 
   Future<dynamic> getOnlineLoad() async {
     //load data from the internet if the application is online
+
+    setState(() {
+      loadingLength == 0 ? loadingLength = 100 : loadingLength = loadingLength;
+    });
     try {
       sliderImageList = await SlidersDatabaseHelper.instance.querySliders();
     } catch (e) {
       print("no sliders");
     }
 
-    print("****** debug ******");
-    //AggressorApi().debugOutput();
-    print("****** end debug *******");
     getContactDetails();
     getBoatList();
     getIronDiverList();
@@ -325,6 +324,7 @@ class LoadingPageState extends State<LoadingPage> {
     setState(() {
       loadingMessage = "Loading your adventure information";
     });
+
     var tempList = await AggressorApi()
         .getReservationList(widget.user.contactId, loadingCallBack);
     setState(() {
@@ -337,13 +337,11 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     for (var trip in tripList) {
-      print("init info");
-      print(trip.toMap());
       trip.user = widget.user;
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
-        percent += (loadedCount / (loadingLength * 2));
+        percent += .01;
       });
     }
 
@@ -358,9 +356,6 @@ class LoadingPageState extends State<LoadingPage> {
     setState(() {
       loadingMessage = "Almost there!";
     });
-
-    print(tempFiles.toList());
-    print(tempGalleryMap);
 
     setState(() {
       fileDataList = tempFiles;
@@ -404,7 +399,7 @@ class LoadingPageState extends State<LoadingPage> {
           .insertSliders({'fileName': fileName, 'filePath': tempFile.path});
       sliderImageList.add({'filePath': tempFile.path, 'fileName': fileName});
       setState(() {
-        percent += .05;
+        percent += .01;
       });
     }
     return "done";
@@ -413,7 +408,7 @@ class LoadingPageState extends State<LoadingPage> {
   VoidCallback loadingCallBack() {
     setState(() {
       loadedCount++;
-      percent += ((loadedCount / (loadingLength * 2)));
+      percent += .01;
     });
   }
 
@@ -615,11 +610,15 @@ class LoadingPageState extends State<LoadingPage> {
     photos.forEach((element) {
       int tripIndex = 0;
       for (int i = 0; i < tripList.length - 1; i++) {
-        if (tripList[i].boat.boatId == element.boatId &&
-            formatDate(DateTime.parse(tripList[i].charter.startDate),
-                    [yyyy, '-', mm, '-', dd]) ==
-                element.date) {
-          tripIndex = i;
+        try {
+          if (tripList[i].boat.boatId == element.boatId &&
+              formatDate(DateTime.parse(tripList[i].charter.startDate),
+                      [yyyy, '-', mm, '-', dd]) ==
+                  element.date) {
+            tripIndex = i;
+          }
+        } catch (e) {
+          print(e);
         }
       }
 
