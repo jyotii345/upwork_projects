@@ -1,4 +1,5 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
@@ -7,13 +8,12 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-import '../classes/aggressor_colors.dart';
 
 class MakePayment extends StatefulWidget {
-  MakePayment(this.user, this.trip);
-
   final User user;
   final Trip trip;
+
+  const MakePayment(this.user, this.trip);
 
   @override
   State<StatefulWidget> createState() => new MakePaymentState();

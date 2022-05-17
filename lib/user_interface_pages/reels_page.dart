@@ -1,10 +1,12 @@
 import 'dart:io';
+
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
 import '../classes/aggressor_colors.dart';
 import '../classes/globals.dart';
 
@@ -70,68 +72,75 @@ class ReelsState extends State<Reels> {
                         )
                       : Container(),
                   showVideo
-                      ? YoutubePlayerBuilder(
-                          player: YoutubePlayer(
-                            liveUIColor: Colors.black,
-                            actionsPadding: EdgeInsets.all(5),
-                            controller: _controller,
-                            showVideoProgressIndicator: true,
-                            progressColors: ProgressBarColors(
-                              playedColor: AggressorColors.primaryColor,
-                              handleColor: AggressorColors.secondaryColor,
-                            ),
-                            onEnded: (metaData) {
-                              setState(() {
-                                showVideo = false;
-                                widget.hideBars();
-                                _controller = null;
-                              });
-                            },
-                          ),
-                          builder: (context, player) {
-                            return Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      top: AppBar().preferredSize.height,
-                                      bottom: AppBar().preferredSize.height,
-                                    ),
-                                    child: player,
-                                  ),
+                      ? Center(
+                          child: YoutubePlayerBuilder(
+                              player: YoutubePlayer(
+                                liveUIColor: Colors.pink,
+                                actionsPadding: EdgeInsets.all(5),
+                                controller: _controller,
+                                showVideoProgressIndicator: true,
+                                progressColors: ProgressBarColors(
+                                  playedColor: AggressorColors.primaryColor,
+                                  handleColor: AggressorColors.secondaryColor,
                                 ),
-                                Align(
-                                  alignment: Alignment.topRight,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                      top: AppBar().preferredSize.height,
-                                    ),
-                                    child: GestureDetector(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Icon(
-                                          Icons.close_rounded,
-                                          color: AggressorColors.primaryColor,
-                                          size: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              15,
+                                onEnded: (metaData) {
+                                  setState(() {
+                                    showVideo = false;
+                                    widget.hideBars();
+                                    _controller = null;
+                                  });
+                                },
+                              ),
+                              builder: (context, player) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            top: AppBar().preferredSize.height,
+                                            bottom:
+                                                AppBar().preferredSize.height,
+                                          ),
+                                          child: player,
                                         ),
                                       ),
-                                      onTap: () {
-                                        setState(() {
-                                          showVideo = false;
-                                          widget.hideBars();
-                                          _controller = null;
-                                        });
-                                      },
-                                    ),
+                                    ],
                                   ),
+                                );
+                              }),
+                        )
+                      : Container(),
+                  showVideo
+                      ? Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: AppBar().preferredSize.height,
+                            ),
+                            child: GestureDetector(
+                              child: Padding(
+                                padding: const EdgeInsets.all(25.0),
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  color: AggressorColors.primaryColor,
+                                  size: portrait
+                                      ? MediaQuery.of(context).size.width / 15
+                                      : MediaQuery.of(context).size.height / 15,
                                 ),
-                              ],
-                            );
-                          })
-                      : Container()
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  showVideo = false;
+                                  widget.hideBars();
+                                  _controller = null;
+                                });
+                              },
+                            ),
+                          ),
+                        )
+                      : Container(),
                 ],
               );
             },
@@ -182,13 +191,13 @@ class ReelsState extends State<Reels> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<dynamic> reels = snapshot.data;
-
               if (reels.isEmpty) {
                 return Center(
                   child: Text("No reels to show at this time."),
                 );
               }
               return GridView.builder(
+                physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: reels.length,
                 itemBuilder: (context, index) {
@@ -263,8 +272,14 @@ class ReelsState extends State<Reels> {
                                       Icon(
                                         Icons.play_arrow_rounded,
                                         color: Colors.white,
-                                        size:
-                                            MediaQuery.of(context).size.width /
+                                        size: portrait
+                                            ? MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                20
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .height /
                                                 20,
                                       ),
                                       Text(
@@ -299,7 +314,7 @@ class ReelsState extends State<Reels> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisExtent: portrait
                       ? MediaQuery.of(context).size.width / 3
-                      : MediaQuery.of(context).size.height / 3,
+                      : MediaQuery.of(context).size.height / 2,
                   crossAxisCount: 4,
                   childAspectRatio: 1 / 1.6,
                   crossAxisSpacing: 20,
