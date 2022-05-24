@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
+
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
@@ -9,13 +11,15 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
+import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
+import 'package:html_editor_enhanced/utils/utils.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:http/http.dart' as http;
 
 class AggressorApi {
   final String apiKey = "pwBL1rik1hyi5JWPid";
@@ -51,8 +55,6 @@ class AggressorApi {
     String url =
         "https://app.aggressor.com/api/app/reservations/list/" + contactId;
 
-    String testUrl = "https://app.aggressor.com/api/app/reservations/listtest";
-
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
@@ -78,7 +80,7 @@ class AggressorApi {
           if (!await tripDatabaseHelper
               .tripExists(response[i.toString()]["reservationid"].toString())) {
             newTrip = Trip.fromJson(response[i.toString()]);
-            var detailsResponse = await newTrip.getTripDetails(contactId);
+            await newTrip.getTripDetails(contactId);
 
             await tripDatabaseHelper.insertTrip(newTrip);
           } else {
@@ -105,9 +107,6 @@ class AggressorApi {
               await charterDatabaseHelper.insertCharter(newCharter);
 
               if (!await boatDatabaseHelper.boatExists(newCharter.boatId)) {
-                print("getting new charter");
-                print(newCharter);
-                print(newCharter.boatId);
                 var boatResponse =
                     await AggressorApi().getBoat(newCharter.boatId);
                 if (boatResponse["status"] == "success") {
@@ -212,7 +211,6 @@ class AggressorApi {
     //sends collected information to the API and sees if there are matching users, returns a userID for future queries
     Response response = await post(
       Uri.https('app.aggressor.com', 'api/app/registration/register'),
-      //todo replace with app.aggressor.com
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -236,8 +234,7 @@ class AggressorApi {
   ) async {
     //sends collected information to the API and sees if there are matching users, returns a userID for future queries
     Response response = await post(
-      Uri.https('app.aggressor.com',
-          'api/app/registration/register'), //todo replace with app.aggressor.com
+      Uri.https('app.aggressor.com', 'api/app/registration/register'),
       headers: <String, String>{
         'apikey': apiKey,
         'Content-Type': 'application/json; charset=UTF-8',
@@ -444,7 +441,7 @@ class AggressorApi {
         "/" +
         datePath;
 
-    File file = File(filePath);
+    File(filePath);
 
     var uri = Uri.parse(url);
     MultipartRequest request = http.MultipartRequest('POST', uri);
@@ -503,7 +500,7 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
 
-    var resultJson = json.decode(await pageResponse.stream.bytesToString());
+    json.decode(await pageResponse.stream.bytesToString());
     return pageResponse;
   }
 
@@ -886,18 +883,14 @@ class AggressorApi {
       try {
         for (var value in resList.contents) {
           if (double.parse(value.size) > 0) {
-            var res = await deleteAwsFile(
-                userId,
-                "config",
-                "databases",
-                "filesDatabase",
+            await deleteAwsFile(userId, "config", "databases", "filesDatabase",
                 value.key.substring(value.key.lastIndexOf("/") + 1));
           }
         }
       } catch (e) {
         print("empty data file");
       }
-      var key = await uploadAwsFile(
+      await uploadAwsFile(
         userId,
         "config",
         "databases",
@@ -961,18 +954,91 @@ class AggressorApi {
     return pageJson;
   }
 
-  Future<dynamic> debugOutput() async {
-    notesList.clear();
-    String url = "http://52.14.72.191/api/app/reservations/view/36027/41033";
+  Future<dynamic> getReelsList() async {
+    //allows a user to link user to a contact
+    String url = 'https://app.aggressor.com/api/app/reels/list';
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
     StreamedResponse pageResponse = await request.send();
+    return jsonDecode(await pageResponse.stream.bytesToString());
+  }
 
-    var pageJson = json.decode(await pageResponse.stream.bytesToString());
+  Future<File> getReelImage(String imageId, String imageName) async {
+    //allows a user to link user to a contact
+    String url = 'https://app.aggressor.com/api/app/reels/image/' + imageId;
 
-    print(pageJson);
-    return pageJson;
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey});
+
+    StreamedResponse pageResponse = await request.send();
+
+    var bytes = await readByteStream(pageResponse.stream);
+
+    imageName = imageName.toLowerCase();
+    print(imageId);
+    print(imageName);
+    print("getting image^");
+
+    File imageFile = File((await getApplicationDocumentsDirectory()).path +
+        "/$imageName" +
+        "_" +
+        getRandString(10));
+
+    await imageFile.writeAsBytes(bytes);
+    print(imageFile.lengthSync());
+
+    return imageFile;
+  }
+
+  Future<File> getReelVideo(String videoId, String videoName) async {
+    //allows a user to link user to a contact
+
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+
+    videoName = videoName.toLowerCase();
+    File file = new File('$tempPath/$videoName');
+
+    try {
+      if (file.lengthSync() != 0) {
+        return file;
+      }
+    } catch (e) {}
+    print("loading video stream");
+    String url = 'https://app.aggressor.com/api/app/reels/stream/' + videoId;
+
+    print(url);
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {"apikey": apiKey},
+    );
+
+    await file.writeAsBytes(response.bodyBytes);
+
+    print(await file.length());
+    return file;
+  }
+
+  Future<dynamic> increaseReelCounter(String reelId) async {
+    print("loading video stream");
+    String url = 'https://app.aggressor.com/api/app/reels/counter/' + reelId;
+
+    print(url);
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {"apikey": apiKey},
+    );
+
+    return response.body;
+  }
+
+  String generateRandomString(int len) {
+    var r = Random();
+    return String.fromCharCodes(
+        List.generate(len, (index) => r.nextInt(33) + 89));
   }
 }

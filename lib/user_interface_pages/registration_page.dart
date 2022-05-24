@@ -6,9 +6,7 @@ import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/user_interface_pages/contact_selection_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/reg_completed_page.dart';
 import 'package:date_format/date_format.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class RegistrationPage extends StatefulWidget {
   RegistrationPage(this.callback);
@@ -436,7 +434,6 @@ class RegistrationPageState extends State<RegistrationPage> {
             email,
             password,
           );
-          print(jsonResponse);
           if (jsonResponse["status"] == "success") {
             Navigator.push(
                 context,

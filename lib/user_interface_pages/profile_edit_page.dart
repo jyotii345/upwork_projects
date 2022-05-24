@@ -59,7 +59,7 @@ class EditMyProfileState extends State<EditMyProfile> {
       username,
       password,
       totalDives,
-  totalAdventures,
+      totalAdventures,
       accountType;
 
   File selectionFile;
@@ -79,13 +79,12 @@ class EditMyProfileState extends State<EditMyProfile> {
    */
   @override
   Widget build(BuildContext context) {
-
     return WillPopScope(
       onWillPop: poppingPage,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: getAppBar(),
-        bottomNavigationBar: getBottomNavigationBar(),
+        bottomNavigationBar: getCouponBottomNavigationBar(),
         body: PinchToZoom(
           OrientationBuilder(
             builder: (context, orientation) {
@@ -150,10 +149,9 @@ class EditMyProfileState extends State<EditMyProfile> {
           totalDives = null;
         }
 
-        if(totalAdventures == ""){
+        if (totalAdventures == "") {
           totalAdventures = null;
         }
-
 
         if (selectionFile != null) {
           var response = await AggressorApi()
@@ -163,9 +161,7 @@ class EditMyProfileState extends State<EditMyProfile> {
           var bytes = selectionFile.readAsBytesSync();
           File temp = File(dirData + "/" + profileData["avatar"]);
           await temp.writeAsBytes(bytes);
-
         }
-
 
         var jsonResponse = await AggressorApi().saveProfileData(
             widget.user.userId,
@@ -304,7 +300,10 @@ class EditMyProfileState extends State<EditMyProfile> {
                     key: formKey,
                     child: ListView(
                       children: [
-            Opacity(opacity: 0, child:getBannerImage(),),
+                        Opacity(
+                          opacity: 0,
+                          child: getBannerImage(),
+                        ),
                         getPageTitle(),
                         getName(),
                         getProfilePicture(),
@@ -976,13 +975,13 @@ class EditMyProfileState extends State<EditMyProfile> {
                   padding: const EdgeInsets.all(3.0),
                   child: totalAdventures == null || totalAdventures == ""
                       ? Text(
-                    "0",
-                    style: TextStyle(fontSize: textSize),
-                  )
+                          "0",
+                          style: TextStyle(fontSize: textSize),
+                        )
                       : Text(
-                    totalAdventures,
-                    style: TextStyle(fontSize: textSize),
-                  ),
+                          totalAdventures,
+                          style: TextStyle(fontSize: textSize),
+                        ),
                 ),
               ),
             ),
@@ -1050,13 +1049,12 @@ class EditMyProfileState extends State<EditMyProfile> {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     //returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -1074,8 +1072,8 @@ class EditMyProfileState extends State<EditMyProfile> {
                 style: TextStyle(
                     color: AggressorColors.primaryColor,
                     fontSize: portrait
-                ? MediaQuery.of(context).size.height / 30
-                : MediaQuery.of(context).size.width / 30,
+                        ? MediaQuery.of(context).size.height / 30
+                        : MediaQuery.of(context).size.width / 30,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -1255,7 +1253,6 @@ class EditMyProfileState extends State<EditMyProfile> {
       } catch (e) {
         print(e.toString());
       }
-      ;
     }
     return "finished";
   }
@@ -1305,22 +1302,22 @@ class EditMyProfileState extends State<EditMyProfile> {
       ),
     );
 
-      String path = "";
-      var tempPath = await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
-      if (tempPath.toLowerCase().contains(".heic")) {
+    String path = "";
+    var tempPath =
+        await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
+    if (tempPath.toLowerCase().contains(".heic")) {
+      path = await HeicToJpg.convert(tempPath);
+    } else {
+      path = tempPath;
+    }
+    selectionFile = File(path);
 
-        path = await HeicToJpg.convert(tempPath);
-      } else {
-        path = tempPath;
-      }
-      selectionFile = File(path);
+    setState(() {
+      profileImagePath =
+          selectionFile.path.substring(selectionFile.path.lastIndexOf("/") + 1);
 
-      setState(() {
-        profileImagePath = selectionFile.path
-            .substring(selectionFile.path.lastIndexOf("/") + 1);
-
-        userImage = selectionFile;
-      });
+      userImage = selectionFile;
+    });
 
     if (!mounted) return;
 
@@ -1328,7 +1325,6 @@ class EditMyProfileState extends State<EditMyProfile> {
       errorMessage = error;
     });
   }
-
 
   Future<bool> poppingPage() {
     setState(() {

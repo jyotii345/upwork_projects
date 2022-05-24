@@ -4,9 +4,7 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
 
 class AddIronDiver extends StatefulWidget {
@@ -102,33 +100,31 @@ class AddIronDiverState extends State<AddIronDiver> {
   Widget getPageForm() {
     //returns the main contents of the page
     return Padding(
-      padding: EdgeInsets.fromLTRB(0,0,0, 10),
-      child:ListView(
-          children: [
-            getBannerImage(),
-
-
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: getPageTitle(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: getYachtDropDown(boatList),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: getDateDropDown(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: getAddButton(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: showErrorMessage(),
-            ),
-          ],
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+      child: ListView(
+        children: [
+          getBannerImage(),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getPageTitle(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getYachtDropDown(boatList),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: getDateDropDown(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: getAddButton(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: showErrorMessage(),
+          ),
+        ],
       ),
     );
   }

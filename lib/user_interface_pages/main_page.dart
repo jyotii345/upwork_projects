@@ -19,6 +19,7 @@ import 'package:aggressor_adventures/databases/states_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/reels_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -72,10 +73,10 @@ class _MyHomePageState extends State<MyHomePage>
     homePage = true;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: getAppBar(),
+      appBar: showVideo ? null : getAppBar(),
       body: Scaffold(
         resizeToAvoidBottomInset: false,
-        bottomNavigationBar: getBottomNavigationBar(),
+        bottomNavigationBar: showVideo ? null : getBottomNavigationBar(),
         body: getIndexStack(),
       ),
     );
@@ -85,15 +86,12 @@ class _MyHomePageState extends State<MyHomePage>
   Self implemented
    */
 
-
-  VoidCallback refreshState(){
-    setState(() {
-    });
+  VoidCallback refreshState() {
+    setState(() {});
   }
 
   void signOutUser() async {
     //sings user out and clears databases
-
 
     await BoatDatabaseHelper.instance.deleteBoatTable();
     await CertificateDatabaseHelper.instance.deleteCertificateTable();
@@ -101,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage>
     await ContactDatabaseHelper.instance.deleteContactTable();
     await CountriesDatabaseHelper.instance.deleteCountriesTable();
     await FileDatabaseHelper.instance.deleteFileTable();
-    await     IronDiverDatabaseHelper.instance.deleteIronDiverTable();
+    await IronDiverDatabaseHelper.instance.deleteIronDiverTable();
     await NotesDatabaseHelper.instance.deleteNotesTable();
     await OfflineDatabaseHelper.instance.deleteOfflineTable();
     await PhotoDatabaseHelper.instance.deletePhotoTable();
@@ -112,9 +110,8 @@ class _MyHomePageState extends State<MyHomePage>
     await UserDatabaseHelper.instance.deleteUser(100);
 
     setState(() {
-
-      navigatorKey.currentState
-          .pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
+      navigatorKey.currentState.pushReplacement(
+          MaterialPageRoute(builder: (context) => LoginPage()));
     });
   }
 
@@ -129,28 +126,25 @@ class _MyHomePageState extends State<MyHomePage>
           widget.user,
         ),
         //trips page
-        Notes(
-          widget.user,
-        ),
+        Rewards(widget.user),
         // notes page
         Photos(
           widget.user,
         ),
         // photos page
-        Rewards(widget.user),
         // rewards page
-        MyFiles(
-          widget.user,
-        ),
+        Reels(widget.user, refreshState),
         // login page
         MyProfile(widget.user),
         //my profile page
+        MyFiles(widget.user),
+        // my files page
+        Notes(widget.user),
+        // my notes page
       ],
       index: currentIndex,
     );
   }
-
-
 
   @override
   bool get wantKeepAlive => true;

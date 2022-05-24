@@ -2,7 +2,7 @@ name: aggressor_adventures
 description: A flutter application for the Aggressor Adventures
 
 publish_to: 'none'
-version: 1.0.5+26
+version: 1.1.1+33
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -18,17 +18,17 @@ dependencies:
   date_format: ^2.0.2
   url_launcher: ^6.0.6
   multi_image_picker: ^4.8.0
-  permission_handler: ^8.1.1
+  permission_handler: ^9.2.0
   flutter_aws_s3_client: ^0.6.0
   flutter_absolute_path: ^1.0.6
   chunked_stream: ^1.4.1
-  file_picker: ^3.0.2+2
+  file_picker: ^4.5.1
   cached_network_image: ^3.0.0
   flutter_map: any
   image_downloader: ^0.30.0
   cupertino_icons: ^1.0.3
   percent_indicator: ^3.0.1
-  wakelock: ^0.5.2
+  wakelock: ^0.6.1+1
   heic_to_jpg: ^0.2.0
   open_file: ^3.2.1
   flutter_launcher_icons: ^0.9.0
@@ -41,6 +41,7 @@ dependencies:
   auto_size_text: ^2.1.0
   image_gallery_saver: ^1.6.9
   flutter_image_compress: ^1.0.0
+  youtube_player_flutter: ^8.0.0
 
 flutter_icons:
 
@@ -52,6 +53,10 @@ flutter_icons:
   #adaptive_icon_background: "assets/launcher/background.png"
   #adaptive_icon_foreground: "assets/launcher/foreground.png"
 
+
+dependency_overrides:
+  platform: ^3.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -61,39 +66,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/tripsactive.png
-    - assets/tripspassive.png
-    - assets/notesactive.png
-    - assets/notespassive.png
-    - assets/photosactive.png
-    - assets/photospassive.png
-    - assets/rewardsactive.png
-    - assets/rewardspassive.png
-    - assets/filesactive.png
-    - assets/filespassive.png
-    - assets/notesblue.png
-    - assets/photosblue.png
-    - assets/addphotosblue.png
-    - assets/filesblue.png
-    - assets/logo.png
-    - assets/loginbackground.png
-    - assets/pagebackground.png
-    - assets/bannerimage.png
-    - assets/adventureclub.png
-    - assets/callicon.png
-    - assets/menuicon.png
-    - assets/certification.png
-    - assets/divemilestone.png
-    - assets/filearrow.png
-    - assets/irondiver.png
-    - assets/leftarrow.png
-    - assets/rightarrow.png
-    - assets/noprofile.png
-    - assets/redquestion.png
-    - assets/trashcan.png
-    - assets/vipclub.png
-    - assets/vipplusclub.png
-    - assets/redflag.png
-    - assets/sevenseasclub.png
-    - assets/rewardspage.png
-    - assets/allstarnew.jpg
+    - assets/

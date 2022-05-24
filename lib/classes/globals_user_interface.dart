@@ -1,29 +1,10 @@
 library user_interface;
 
-import 'package:aggressor_adventures/databases/boat_database.dart';
-import 'package:aggressor_adventures/databases/certificate_database.dart';
-import 'package:aggressor_adventures/databases/charter_database.dart';
-import 'package:aggressor_adventures/databases/contact_database.dart';
-import 'package:aggressor_adventures/databases/countries_database.dart';
-import 'package:aggressor_adventures/databases/files_database.dart';
-import 'package:aggressor_adventures/databases/iron_diver_database.dart';
-import 'package:aggressor_adventures/databases/notes_database.dart';
-import 'package:aggressor_adventures/databases/offline_database.dart';
-import 'package:aggressor_adventures/databases/photo_database.dart';
-import 'package:aggressor_adventures/databases/profile_database.dart';
-import 'package:aggressor_adventures/databases/slider_database.dart';
-import 'package:aggressor_adventures/databases/states_database.dart';
-import 'package:aggressor_adventures/databases/trip_database.dart';
-import 'package:aggressor_adventures/databases/user_database.dart';
-import 'package:aggressor_adventures/main.dart';
 import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
-import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'aggressor_colors.dart';
-import 'gallery.dart';
 import 'globals.dart';
 
 double iconSizePortrait =
@@ -50,7 +31,7 @@ Widget getBottomNavigationBar() {
         selectedFontSize: 0,
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
-          onTabTapped(index);
+          onTabTapped(index, orientation);
         },
         backgroundColor: AggressorColors.primaryColor,
         currentIndex: currentIndex > 4 ? 0 : currentIndex,
@@ -91,7 +72,7 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                "assets/notespassive.png",
+                "assets/rewardspassive.png",
               ),
             ),
             icon: Container(
@@ -102,7 +83,7 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                "assets/notesactive.png",
+                "assets/rewardsactive.png",
               ),
             ),
             label: '',
@@ -141,6 +122,93 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
+                "assets/reelinactive.png",
+              ),
+            ),
+            icon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset(
+                "assets/reelactive.png",
+              ),
+            ),
+            label: '',
+          ),
+          new BottomNavigationBarItem(
+            icon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset(
+                "assets/moreactive.png",
+              ),
+            ),
+            label: '',
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Widget getCouponBottomNavigationBar() {
+  return OrientationBuilder(
+    builder: (context, orientation) {
+      orientation == Orientation.portrait ? portrait = true : portrait = false;
+      return BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        selectedFontSize: 0,
+        type: BottomNavigationBarType.fixed,
+        onTap: (int index) {
+          onCouponTabTapped(index, orientation);
+        },
+        backgroundColor: AggressorColors.primaryColor,
+        currentIndex: currentIndex > 4 ? 0 : currentIndex,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white60,
+        items: [
+          new BottomNavigationBarItem(
+            activeIcon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset(
+                "assets/tripspassive.png",
+              ),
+            ),
+            icon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset(
+                "assets/tripsactive.png",
+              ),
+            ),
+            label: '',
+          ),
+          new BottomNavigationBarItem(
+            activeIcon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset(
                 "assets/rewardspassive.png",
               ),
             ),
@@ -166,7 +234,7 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                "assets/filespassive.png",
+                "assets/photospassive.png",
               ),
             ),
             icon: Container(
@@ -177,7 +245,46 @@ Widget getBottomNavigationBar() {
                   ? iconSizePortrait
                   : iconSizeLandscape,
               child: Image.asset(
-                "assets/filesactive.png",
+                "assets/photosactive.png",
+              ),
+            ),
+            label: '',
+          ),
+          new BottomNavigationBarItem(
+            activeIcon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset(
+                "assets/reelinactive.png",
+              ),
+            ),
+            icon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset(
+                "assets/reelactive.png",
+              ),
+            ),
+            label: '',
+          ),
+          new BottomNavigationBarItem(
+            icon: Container(
+              width: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              height: orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape,
+              child: Image.asset(
+                "assets/moreactive.png",
               ),
             ),
             label: '',
@@ -188,21 +295,119 @@ Widget getBottomNavigationBar() {
   );
 }
 
-void onTabTapped(
-  int index,
-) {
+void onTabTapped(int index, Orientation orientation) {
   /*
     set the state of the navigation bar selection to index
      */
 
-  if (homePage) {
-    currentIndex = index;
-    mainPageCallback();
-    int popCount = 0;
-    Navigator.popUntil(navigatorKey.currentContext, (route) {
-      return popCount++ == popDistance;
+  if (index != 4) {
+    if (homePage) {
+      currentIndex = index;
+      mainPageCallback();
+      int popCount = 0;
+      Navigator.popUntil(navigatorKey.currentContext, (route) {
+        return popCount++ == popDistance;
+      });
+      popDistance = 0;
+    }
+  } else {
+    //todo show the more options dialogue
+    //add the following my files,my notes,  my profile, signout
+    showMenu<String>(
+      context: navigatorKey.currentContext,
+      position: RelativeRect.fromLTRB(
+          double.infinity,
+          MediaQuery.of(navigatorKey.currentContext).size.height -
+              (orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape) -
+              AppBar().preferredSize.height,
+          0,
+          0),
+      items: [
+        PopupMenuItem<String>(child: const Text('• My files'), value: '1'),
+        PopupMenuItem<String>(child: const Text('• My notes'), value: '2'),
+        PopupMenuItem<String>(child: const Text('• My profile'), value: '3'),
+        PopupMenuItem<String>(child: const Text('• Sign Out'), value: '4'),
+      ],
+      elevation: 8.0,
+    ).then<void>((String itemSelected) {
+      if (itemSelected == null) return;
+
+      if (itemSelected == "1") {
+        currentIndex = 5;
+        mainPageCallback();
+      } else if (itemSelected == "2") {
+        currentIndex = 6;
+        mainPageCallback();
+      } else if (itemSelected == "3") {
+        currentIndex = 4;
+        mainPageCallback();
+      } else {
+        mainPageSignOutCallback();
+      }
     });
-    popDistance = 0;
+  }
+}
+
+void onCouponTabTapped(int index, Orientation orientation) {
+  /*
+    set the state of the navigation bar selection to index
+     */
+
+  if (index != 4) {
+    if (homePage) {
+      currentIndex = index;
+      mainPageCallback();
+      int popCount = 0;
+      Navigator.popUntil(navigatorKey.currentContext, (route) {
+        return popCount++ == popDistance;
+      });
+      popDistance = 0;
+    }
+  } else {
+    //todo show the more options dialogue
+    //add the following my files,my notes,  my profile, signout
+    showMenu<String>(
+      context: navigatorKey.currentContext,
+      position: RelativeRect.fromLTRB(
+          double.infinity,
+          MediaQuery.of(navigatorKey.currentContext).size.height -
+              (orientation == Orientation.portrait
+                  ? iconSizePortrait
+                  : iconSizeLandscape) -
+              AppBar().preferredSize.height,
+          0,
+          0),
+      items: [
+        PopupMenuItem<String>(child: const Text('• My files'), value: '1'),
+        PopupMenuItem<String>(child: const Text('• My notes'), value: '2'),
+        PopupMenuItem<String>(child: const Text('• My profile'), value: '3'),
+        PopupMenuItem<String>(child: const Text('• Sign Out'), value: '4'),
+      ],
+      elevation: 8.0,
+    ).then<void>((String itemSelected) {
+      if (itemSelected == null) return;
+
+      if (itemSelected == "1") {
+        currentIndex = 5;
+        mainPageCallback();
+      } else if (itemSelected == "2") {
+        currentIndex = 6;
+        mainPageCallback();
+      } else if (itemSelected == "3") {
+        currentIndex = 4;
+        mainPageCallback();
+      } else {
+        mainPageSignOutCallback();
+      }
+
+      int popCount = 0;
+      Navigator.popUntil(navigatorKey.currentContext, (route) {
+        return popCount++ == popDistance;
+      });
+      popDistance = 0;
+    });
   }
 }
 
@@ -212,26 +417,17 @@ Widget getAppBar() {
     centerTitle: true,
     backgroundColor: Colors.white,
     automaticallyImplyLeading: false,
-    leading: !homePage
-        ? outterDistanceFromLogin > 0
-            ? IconButton(
-                icon: Icon(Icons.arrow_back),
-                color: AggressorColors.secondaryColor,
-                onPressed: () {
-                  outterDistanceFromLogin = 0;
-                  navigatorKey.currentState.pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
-                },
-              )
-            : Container()
-        : SizedBox(
-            height: AppBar().preferredSize.height,
-            child: IconButton(
-              icon: Container(
-                child: Image.asset("assets/callicon.png"),
-              ),
-              onPressed: makeCall,
-            ),
-          ),
+    leading: outterDistanceFromLogin > 0
+        ? IconButton(
+            icon: Icon(Icons.arrow_back),
+            color: AggressorColors.secondaryColor,
+            onPressed: () {
+              outterDistanceFromLogin = 0;
+              navigatorKey.currentState.pushReplacement(
+                  MaterialPageRoute(builder: (context) => LoginPage()));
+            },
+          )
+        : Container(),
     title: Padding(
       padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
       child: Image.asset(
@@ -242,28 +438,13 @@ Widget getAppBar() {
     ),
     actions: <Widget>[
       homePage
-          ? Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-              child: SizedBox(
-                height: AppBar().preferredSize.height,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: PopupMenuButton<String>(
-                      onSelected: handlePopupClick,
-                      child: Container(
-                        child: Image.asset(
-                          "assets/menuicon.png",
-                        ),
-                      ),
-                      itemBuilder: (BuildContext context) {
-                        return {"My Profile", "Sign Out"}.map((String option) {
-                          return PopupMenuItem<String>(
-                            value: option,
-                            child: Text(option),
-                          );
-                        }).toList();
-                      }),
+          ? SizedBox(
+              height: AppBar().preferredSize.height,
+              child: IconButton(
+                icon: Container(
+                  child: Image.asset("assets/callicon.png"),
                 ),
+                onPressed: makeCall,
               ),
             )
           : SizedBox(
@@ -275,80 +456,6 @@ Widget getAppBar() {
                 onPressed: makeCall,
               ),
             ),
-    ],
-  );
-}
-
-
-Widget getCouponsAppBar() {
-  return AppBar(
-    elevation: 0,
-    centerTitle: true,
-    backgroundColor: Colors.white,
-    automaticallyImplyLeading: false,
-    leading: !homePage
-        ? outterDistanceFromLogin > 0
-        ? IconButton(
-      icon: Icon(Icons.arrow_back),
-      color: AggressorColors.secondaryColor,
-      onPressed: () {
-        outterDistanceFromLogin = 0;
-        navigatorKey.currentState.pushReplacement(MaterialPageRoute(builder: (context) => LoginPage()));
-      },
-    )
-        : Container()
-        : SizedBox(
-      height: AppBar().preferredSize.height,
-      child: IconButton(
-        icon: Container(
-          child: Image.asset("assets/callicon.png"),
-        ),
-        onPressed: makeCall,
-      ),
-    ),
-    title: Padding(
-      padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-      child: Image.asset(
-        "assets/logo.png",
-        height: AppBar().preferredSize.height,
-        fit: BoxFit.fitHeight,
-      ),
-    ),
-    actions: <Widget>[
-      homePage
-          ? Padding(
-        padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-        child: SizedBox(
-          height: AppBar().preferredSize.height,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: PopupMenuButton<String>(
-                onSelected: handleCouponPopupClick,
-                child: Container(
-                  child: Image.asset(
-                    "assets/menuicon.png",
-                  ),
-                ),
-                itemBuilder: (BuildContext context) {
-                  return {"Home", "My Profile", "Sign Out"}.map((String option) {
-                    return PopupMenuItem<String>(
-                      value: option,
-                      child: Text(option),
-                    );
-                  }).toList();
-                }),
-          ),
-        ),
-      )
-          : SizedBox(
-        height: AppBar().preferredSize.height,
-        child: IconButton(
-          icon: Container(
-            child: Image.asset("assets/callicon.png"),
-          ),
-          onPressed: makeCall,
-        ),
-      ),
     ],
   );
 }
@@ -365,7 +472,7 @@ makeCall() async {
 void handlePopupClick(String value) async {
   switch (value) {
     case 'My Profile':
-      currentIndex = 5;
+      currentIndex = 4;
       mainPageCallback();
       break;
     case 'Sign Out':
@@ -386,7 +493,7 @@ void handleCouponPopupClick(String value) async {
       mainPageCallback();
       break;
     case 'My Profile':
-      currentIndex = 5;
+      currentIndex = 4;
       mainPageCallback();
       break;
     case 'Sign Out':

@@ -8,10 +8,7 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/contact_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/view_coupons.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 
 class RedeemPointsPage extends StatefulWidget {
   RedeemPointsPage(this.userId, this.user, this.userPoints);
@@ -64,7 +61,8 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
     textDisplayWidth = MediaQuery.of(context).size.width / 2.6;
 
     return Scaffold(
-      appBar: getCouponsAppBar(),
+      appBar: getAppBar(),
+      bottomNavigationBar: getCouponBottomNavigationBar(),
       body: PinchToZoom(
         OrientationBuilder(
           builder: (context, orientation) {
@@ -360,22 +358,21 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           Padding(
-            padding: const EdgeInsets.only(left:10.0),
-            child: Text(
-                "•\tHow much are my points worth?\n"),
+            padding: const EdgeInsets.only(left: 10.0),
+            child: Text("•\tHow much are my points worth?\n"),
           ),
           Padding(
-            padding: const EdgeInsets.only(left:30.0),
+            padding: const EdgeInsets.only(left: 30.0),
             child: Text("Each point is equivalent to \$0.05 USD.\n"),
           ),
           Padding(
-            padding: const EdgeInsets.only(left:10.0),
+            padding: const EdgeInsets.only(left: 10.0),
             child: Text(
               "•\tDo Redeemed Points Expire?\n",
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(left:30.0),
+            padding: const EdgeInsets.only(left: 30.0),
             child: Text(
                 "Yes, redeemed points expire 2 years after receiving code if they are not used. Click “View Past Coupons” button to check unused coupon(s)."),
           ),
@@ -390,11 +387,9 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
     });
     try {
       int redeeming = int.parse(pointController.text);
-      print(redeeming);
       if (redeeming <= widget.userPoints && redeeming > 0) {
         var response =
-        await AggressorApi().redeemPoints(widget.userId, redeeming);
-        print(response);
+            await AggressorApi().redeemPoints(widget.userId, redeeming);
         if (response["status"] == "success") {
           int newPoints = myPoints - redeeming;
           updateContact();
@@ -408,7 +403,7 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
         } else {
           setState(() {
             errorMessage =
-            "You do not have that many points, please try again.";
+                "You do not have that many points, please try again.";
             isLoading = false;
           });
         }
@@ -418,8 +413,7 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
           isLoading = false;
         });
       }
-    }catch(e){
-
+    } catch (e) {
       setState(() {
         errorMessage = "Points to redeem must be a number greater than 0";
         isLoading = false;

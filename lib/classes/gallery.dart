@@ -1,8 +1,6 @@
 /*
 gallery class that create a gallery object to hold objects of photos
  */
-import 'dart:convert';
-import 'dart:ui';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/photo.dart';
@@ -12,7 +10,6 @@ import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.dart';
 import 'package:date_format/date_format.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'aggressor_api.dart';
@@ -50,13 +47,12 @@ class Gallery {
 
   addPhoto(Photo photo) {
     //adds a photo to the photos list
-    bool exists  = false;
-
+    bool exists = false;
 
     photos.forEach((element) {
-      if(element.imageName == photo.imageName)exists = true;
+      if (element.imageName == photo.imageName) exists = true;
     });
-    if(!exists){
+    if (!exists) {
       photos.add(photo);
     }
   }
@@ -175,7 +171,7 @@ class Gallery {
 
     if (online) {
       for (var value in photos) {
-        var res = await AggressorApi().deleteAwsFile(
+         await AggressorApi().deleteAwsFile(
             user.userId.toString(),
             "gallery",
             trip.charter.boatId.toString(),

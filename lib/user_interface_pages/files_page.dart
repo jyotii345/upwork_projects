@@ -571,8 +571,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   Future<dynamic> getFiles() async {
     //downloads file from aws. If the file is not already in storage, it will be stored on the device.
 
-    print("get files called");
-    print(filesLoaded);
     if (!filesLoaded && online) {
       setState(() {
         loading = true;
@@ -655,9 +653,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                         [yyyy, '-', mm, '-', dd]).toString() +
                     "/",
                 delimiter: "/");
-
-            print(response.toString());
-            print(element.charterId);
 
             if (response.contents != null) {
               for (var content in response.contents) {
@@ -870,8 +865,6 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
             String filePath = '$appDocumentsPath/' + uploadResult["filename"];
             File tempFile = File(filePath);
             await tempFile.writeAsBytes(bytes);
-
-            print(uploadResult["filename"]);
 
             fileDataList.add(FileData(
                 tempFile.path,

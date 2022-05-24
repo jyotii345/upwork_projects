@@ -60,7 +60,7 @@ class PhotoDatabaseHelper {
     // delete a photo in the database
     final db = await database;
 
-    var res = await db.delete(
+    await db.delete(
       'photo',
       where: "imagePath = ?",
       whereArgs: [imagePath],

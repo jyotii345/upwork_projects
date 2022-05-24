@@ -91,9 +91,6 @@ class MyTripsState extends State<MyTrips>
 
   Widget getSliderImages() {
     //returns slider images on top of the page
-    print("getting sliders");
-    print(sliderImageList.length);
-    print(sliderIndex);
     return IntrinsicHeight(
       child: Stack(
         children: [

@@ -8,7 +8,6 @@ import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_edit_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -433,14 +432,13 @@ class MyProfileState extends State<MyProfile> {
   }
 
   Future<bool> poppingPage() {
-    onTabTapped(0);
+    onTabTapped(0, null);
     return new Future.value(false);
   }
 
   Future<dynamic> getUserProfileImageData() async {
     if (!userImageRetreived) {
       try {
-        print(profileData["avatar"]);
         var userImageRes = await AggressorApi()
             .downloadUserImage(widget.user.userId, profileData["avatar"]);
 
@@ -449,7 +447,6 @@ class MyProfileState extends State<MyProfile> {
         File temp = File(dirData + "/" + profileData["avatar"]);
         await temp.writeAsBytes(bytes);
 
-        print("settings state v");
         setState(() {
           userImageRetreived = true;
           userImage = temp;
@@ -457,7 +454,6 @@ class MyProfileState extends State<MyProfile> {
       } catch (e) {
         var dirData = (await getApplicationDocumentsDirectory()).path;
 
-        print("settings state v");
         setState(() {
           userImageRetreived = true;
           userImage = File(dirData + "/" + profileData["avatar"]);
