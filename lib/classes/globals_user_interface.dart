@@ -325,6 +325,7 @@ void onTabTapped(int index, Orientation orientation) {
           0,
           0),
       items: [
+        PopupMenuItem<String>(child: const Text('• Contact us'), value: '0'),
         PopupMenuItem<String>(child: const Text('• My files'), value: '1'),
         PopupMenuItem<String>(child: const Text('• My notes'), value: '2'),
         PopupMenuItem<String>(child: const Text('• My profile'), value: '3'),
@@ -334,7 +335,9 @@ void onTabTapped(int index, Orientation orientation) {
     ).then<void>((String itemSelected) {
       if (itemSelected == null) return;
 
-      if (itemSelected == "1") {
+      if (itemSelected == "0") {
+        launch("mailto:info@aggressor.com");
+      } else if (itemSelected == "1") {
         currentIndex = 5;
         mainPageCallback();
       } else if (itemSelected == "2") {
@@ -380,6 +383,7 @@ void onCouponTabTapped(int index, Orientation orientation) {
           0,
           0),
       items: [
+        PopupMenuItem<String>(child: const Text('• Contact us'), value: '0'),
         PopupMenuItem<String>(child: const Text('• My files'), value: '1'),
         PopupMenuItem<String>(child: const Text('• My notes'), value: '2'),
         PopupMenuItem<String>(child: const Text('• My profile'), value: '3'),
@@ -389,7 +393,9 @@ void onCouponTabTapped(int index, Orientation orientation) {
     ).then<void>((String itemSelected) {
       if (itemSelected == null) return;
 
-      if (itemSelected == "1") {
+      if (itemSelected == "0") {
+        launch("mailto:info@aggressor.com");
+      } else if (itemSelected == "1") {
         currentIndex = 5;
         mainPageCallback();
       } else if (itemSelected == "2") {
