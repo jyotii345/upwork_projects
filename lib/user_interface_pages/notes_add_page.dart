@@ -40,7 +40,7 @@ class AddNotesState extends State<AddNotes> {
   int pageIndex = 1;
   String departureDate = "";
   String returnDate = "";
-  Trip dropDownValue;
+  // Trip dropDownValue;
 
   HtmlEditorController preNotesController = HtmlEditorController();
   HtmlEditorController postNotesController = HtmlEditorController();
@@ -188,12 +188,12 @@ class AddNotesState extends State<AddNotes> {
         loading = true;
       });
       String startDate = formatDate(
-          DateTime.parse(widget.noteTrip.charter.startDate),
+          DateTime.parse(widget.noteTrip.charter!.startDate!),
           [yyyy, '-', mm, '-', dd]);
 
       String endDate = formatDate(
-          DateTime.parse(widget.noteTrip.charter.startDate)
-              .add(Duration(days: int.parse(widget.noteTrip.charter.nights))),
+          DateTime.parse(widget.noteTrip.charter!.startDate!)
+              .add(Duration(days: int.parse(widget.noteTrip.charter!.nights!))),
           [yyyy, '-', mm, '-', dd]);
 
       var res = await AggressorApi().saveNote(
@@ -201,8 +201,8 @@ class AddNotesState extends State<AddNotes> {
           endDate,
           await preNotesController.getText(),
           await postNotesController.getText(),
-          widget.noteTrip.boat.boatId,
-          widget.user.userId);
+          widget.noteTrip.boat!.boatId!,
+          widget.user.userId!);
 
       setState(() {
         loading = false;
@@ -215,24 +215,24 @@ class AddNotesState extends State<AddNotes> {
         loading = true;
       });
       String startDate = formatDate(
-          DateTime.parse(widget.noteTrip.charter.startDate),
+          DateTime.parse(widget.noteTrip.charter!.startDate!),
           [yyyy, '-', mm, '-', dd]);
 
       String endDate = formatDate(
-          DateTime.parse(widget.noteTrip.charter.startDate)
-              .add(Duration(days: int.parse(widget.noteTrip.charter.nights))),
+          DateTime.parse(widget.noteTrip.charter!.startDate!)
+              .add(Duration(days: int.parse(widget.noteTrip.charter!.nights!))),
           [yyyy, '-', mm, '-', dd]);
 
       OfflineDatabaseHelper.instance.insertOffline({
-        'id': widget.noteTrip.boat.boatId + "_" + startDate.toString(),
+        'id': widget.noteTrip.boat!.boatId! + "_" + startDate.toString(),
         'type': 'note',
         'action': 'add',
       });
 
       NotesDatabaseHelper.instance.insertNotes(Note(
-          widget.noteTrip.boat.boatId + "_" + startDate.toString(),
-          widget.noteTrip.boat.boatId,
-          widget.noteTrip.destination,
+          widget.noteTrip.boat!.boatId! + "_" + startDate.toString(),
+          widget.noteTrip.boat!.boatId!,
+          widget.noteTrip.destination!,
           startDate,
           endDate,
           await preNotesController.getText(),
@@ -316,7 +316,7 @@ class AddNotesState extends State<AddNotes> {
                       MediaQuery.of(context).size.width / 40 -
                       10,
               child: Text(
-                widget.noteTrip.boat.name,
+                widget.noteTrip.boat!.name!,
                 style: TextStyle(
                     fontSize: portrait
                         ? MediaQuery.of(context).size.height / 45 - 4
@@ -362,15 +362,15 @@ class AddNotesState extends State<AddNotes> {
               ),
             ),
             child: Text(
-              DateTime.parse(widget.noteTrip.charter.startDate)
+              DateTime.parse(widget.noteTrip.charter!.startDate!)
                       .month
                       .toString() +
                   "/" +
-                  DateTime.parse(widget.noteTrip.charter.startDate)
+                  DateTime.parse(widget.noteTrip.charter!.startDate!)
                       .day
                       .toString() +
                   "/" +
-                  DateTime.parse(widget.noteTrip.charter.startDate)
+                  DateTime.parse(widget.noteTrip.charter!.startDate!)
                       .year
                       .toString(),
               style: TextStyle(
@@ -429,21 +429,21 @@ class AddNotesState extends State<AddNotes> {
                         MediaQuery.of(context).size.width / 40 -
                         10,
                 child: Text(
-                  DateTime.parse(widget.noteTrip.charter.startDate)
+                  DateTime.parse(widget.noteTrip.charter!.startDate!)
                           .add(Duration(
-                              days: int.parse(widget.noteTrip.charter.nights)))
+                              days: int.parse(widget.noteTrip.charter!.nights!)))
                           .month
                           .toString() +
                       "/" +
-                      DateTime.parse(widget.noteTrip.charter.startDate)
+                      DateTime.parse(widget.noteTrip.charter!.startDate!)
                           .add(Duration(
-                              days: int.parse(widget.noteTrip.charter.nights)))
+                              days: int.parse(widget.noteTrip.charter!.nights!)))
                           .day
                           .toString() +
                       "/" +
-                      DateTime.parse(widget.noteTrip.charter.startDate)
+                      DateTime.parse(widget.noteTrip.charter!.startDate!)
                           .add(Duration(
-                              days: int.parse(widget.noteTrip.charter.nights)))
+                              days: int.parse(widget.noteTrip.charter!.nights!)))
                           .year
                           .toString(),
                   style: TextStyle(

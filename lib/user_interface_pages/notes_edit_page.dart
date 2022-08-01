@@ -37,7 +37,7 @@ class EditNoteState extends State<EditNote> {
   int pageIndex = 1;
   String departureDate = "";
   String returnDate = "";
-  Trip dropDownValue;
+  // Trip dropDownValue;
 
   HtmlEditorController preNotesController = HtmlEditorController();
   HtmlEditorController postNotesController = HtmlEditorController();
@@ -187,13 +187,13 @@ class EditNoteState extends State<EditNote> {
       });
 
       var res = await AggressorApi().updateNote(
-        widget.note.startDate,
-        widget.note.endDate,
+        widget.note.startDate!,
+        widget.note.endDate!,
         await preNotesController.getText(),
         await postNotesController.getText(),
-        widget.note.boatId,
-        widget.user.userId,
-        widget.note.id,
+        widget.note.boatId!,
+        widget.user.userId!,
+        widget.note.id!,
       );
 
       setState(() {
@@ -201,7 +201,7 @@ class EditNoteState extends State<EditNote> {
         notesLoaded = false;
       });
 
-      widget.note.callback();
+      widget.note.callback!();
 
       var count = 0;
       Navigator.popUntil(context, (route) {
@@ -215,13 +215,13 @@ class EditNoteState extends State<EditNote> {
       OfflineDatabaseHelper.instance.insertOffline(
           {'id': widget.note.id, 'type': 'note', 'action': 'edit'});
 
-      await NotesDatabaseHelper.instance.deleteNotes(widget.note.id);
+      await NotesDatabaseHelper.instance.deleteNotes(widget.note.id!);
       await NotesDatabaseHelper.instance.insertNotes(Note(
-          widget.note.id,
-          widget.note.boatId,
-          widget.note.destination,
-          widget.note.startDate,
-          widget.note.endDate,
+          widget.note.id!,
+          widget.note.boatId!,
+          widget.note.destination!,
+          widget.note.startDate!,
+          widget.note.endDate!,
           await preNotesController.getText(),
           await postNotesController.getText(),
           await miscNotesController.getText(),
@@ -233,7 +233,7 @@ class EditNoteState extends State<EditNote> {
         loading = false;
         notesLoaded = false;
       });
-      widget.note.callback();
+      widget.note.callback!();
       var count = 0;
       Navigator.popUntil(context, (route) {
         return count++ == 2;
@@ -338,7 +338,7 @@ class EditNoteState extends State<EditNote> {
                       MediaQuery.of(context).size.width / 40 -
                       10,
               child: AutoSizeText(
-                widget.note.destination,
+                widget.note.destination!,
                 maxLines: 1,
                 minFontSize: 3.0,
                 textAlign: TextAlign.center,
@@ -380,11 +380,11 @@ class EditNoteState extends State<EditNote> {
               ),
             ),
             child: AutoSizeText(
-              widget.note.startDate.split("-")[1] +
+              widget.note.startDate!.split("-")[1] +
                   "/" +
-                  widget.note.startDate.split("-")[2] +
+                  widget.note.startDate!.split("-")[2] +
                   "/" +
-                  widget.note.startDate.split("-")[0],
+                  widget.note.startDate!.split("-")[0],
               maxLines: 1,
               minFontSize: 3.0,
               textAlign: TextAlign.center,
@@ -436,7 +436,7 @@ class EditNoteState extends State<EditNote> {
                       MediaQuery.of(context).size.width / 40 -
                       10,
               child: Text(
-                widget.note.endDate,
+                widget.note.endDate!,
                 style: TextStyle(
                     fontSize: portrait
                         ? portrait
@@ -453,7 +453,7 @@ class EditNoteState extends State<EditNote> {
   }
 
   Widget getBackgroundImage() {
-    //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
+    // this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: Container(
@@ -480,12 +480,12 @@ class EditNoteState extends State<EditNote> {
   void setText() async {
     await Future.delayed(Duration(milliseconds: 1000));
 
-    preNotesController.insertHtml(widget.note.preTripNotes);
-    postNotesController.insertHtml(widget.note.postTripNotes);
+    preNotesController.insertHtml(widget.note.preTripNotes!);
+    postNotesController.insertHtml(widget.note.postTripNotes!);
   }
 
   Widget getBannerImage() {
-    //returns banner image
+    // returns banner image
     return Image.asset(
       "assets/bannerimage.png",
       width: MediaQuery.of(context).size.width,

@@ -12,13 +12,13 @@ import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 
 class FileData {
-  String filePath;
-  String date;
-  String fileName;
-  String displayName;
-  String boatId;
-  User user;
-  VoidCallback callback;
+  String? filePath;
+  String? date;
+  String? fileName;
+  String? displayName;
+  String? boatId;
+  User? user;
+  VoidCallback? callback;
 
   FileData(String filePath, String date, String fileName, String displayName,
       String boatId) {
@@ -70,7 +70,7 @@ class FileData {
                     child: SizedBox(
                       width: textBoxSize,
                       child: Text(
-                        displayName == "" ? fileName : displayName,
+                        displayName == "" ? fileName.toString() : displayName.toString(),
                         textAlign: TextAlign.left,
                         style: TextStyle(color: AggressorColors.secondaryColor),
                       ),
@@ -81,7 +81,7 @@ class FileData {
               SizedBox(
                 width: textBoxSize,
                 child: Text(
-                  date,
+                  date.toString(),
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -105,11 +105,11 @@ class FileData {
 
   void deleteFile() async {
     fileDataList.remove(this);
-    await AggressorApi().deleteAwsFile(user.userId.toString(), "files",
-        boatId.toString(), date.toString(), fileName);
-    await FileDatabaseHelper.instance.deleteFile(fileName);
+    await AggressorApi().deleteAwsFile(user!.userId.toString(), "files",
+        boatId.toString(), date.toString(), fileName!);
+    await FileDatabaseHelper.instance.deleteFile(fileName!);
     await Future.delayed(Duration(seconds: 1));
-    callback();
+    callback!();
     filesLoaded = false;
   }
 

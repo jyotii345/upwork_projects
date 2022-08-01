@@ -10,7 +10,7 @@ import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+// import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -174,7 +174,7 @@ class GalleryViewState extends State<GalleryView> {
 
     for (var value in selectedList) {
       await ImageGallerySaver.saveImage(
-          File(value.imagePath).readAsBytesSync());
+          File(value.imagePath!).readAsBytesSync());
     }
     setState(() {
       editing = false;
@@ -242,12 +242,12 @@ class GalleryViewState extends State<GalleryView> {
 
     for (var value in selectedList) {
       String uploadDate =
-          formatDate(DateTime.parse(value.date), [yyyy, '-', mm, '-', dd]);
+          formatDate(DateTime.parse(value.date!), [yyyy, '-', mm, '-', dd]);
 
-      await AggressorApi().deleteAwsFile(widget.user.userId, "gallery",
-          widget.trip.boat.boatId, uploadDate, value.imageName);
+      await AggressorApi().deleteAwsFile(widget.user.userId!, "gallery",
+          widget.trip.boat!.boatId!, uploadDate, value.imageName!);
 
-      await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+      await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath!);
     }
     setState(() {
       editing = false;
@@ -306,7 +306,7 @@ class GalleryViewState extends State<GalleryView> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Text(
-        "Destination: " + widget.trip.detailDestination,
+        "Destination: " + widget.trip.detailDestination!,
         textAlign: TextAlign.left,
         style: TextStyle(
             fontSize: portrait
@@ -337,12 +337,12 @@ class GalleryViewState extends State<GalleryView> {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Text(
         "Date: " +
-            months[DateTime.parse(widget.trip.tripDate).month - 1]
+            months[DateTime.parse(widget.trip.tripDate!).month - 1]
                 .substring(0, 3) +
             " " +
-            DateTime.parse(widget.trip.tripDate).day.toString() +
+            DateTime.parse(widget.trip.tripDate!).day.toString() +
             ", " +
-            DateTime.parse(widget.trip.tripDate).year.toString(),
+            DateTime.parse(widget.trip.tripDate!).year.toString(),
         textAlign: TextAlign.left,
         style: TextStyle(
             fontSize: portrait
@@ -383,7 +383,7 @@ class GalleryViewState extends State<GalleryView> {
                                     widget
                                         .photos[(index +
                                             (9 * (indexMultiplier - 1)))]
-                                        .imagePath,
+                                        .imagePath!,
                                   ),
                                   fit: BoxFit.fill,
                                 ),
@@ -425,7 +425,7 @@ class GalleryViewState extends State<GalleryView> {
                             File(
                               widget
                                   .photos[(index + (9 * (indexMultiplier - 1)))]
-                                  .imagePath,
+                                  .imagePath!,
                             ),
                             fit: BoxFit.fill,
                           ),
@@ -633,35 +633,46 @@ class GalleryViewState extends State<GalleryView> {
       for (Asset element in resultList) {
         String path = "";
 
-        if (element.name.toLowerCase().contains(".heic")) {
-          path = await HeicToJpg.convert(
-              await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+        if (element.name!.toLowerCase().contains(".heic")) {
+          // path = (await HeicToJpg.convert(
+          //     await FlutterAbsolutePath.getAbsolutePath(element.identifier)))!;
         } else {
-          path = await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+          // path = await FlutterAbsolutePath.getAbsolutePath(element.identifier);
         }
 
         File file = File(path);
 
         String uploadDate = formatDate(
-            DateTime.parse(widget.trip.charter.startDate),
+            DateTime.parse(widget.trip.charter!.startDate!),
             [yyyy, '-', mm, '-', dd]);
         var response = await AggressorApi().uploadAwsFile(
             widget.user.userId.toString(),
             "gallery",
-            widget.trip.charter.boatId.toString(),
+            widget.trip.charter!.boatId.toString(),
             file.path,
             uploadDate);
 
         if (response["status"] == "success") {
-          widget.photos.add(Photo(element.name, widget.user.userId, file.path,
-              uploadDate, widget.trip.charter.boatId, null));
-          galleriesMap[widget.trip.reservationId].addPhoto(Photo(
-              element.name,
-              widget.user.userId,
-              file.path,
-              uploadDate,
-              widget.trip.charter.boatId,
-              null));
+          widget.photos.add(
+            Photo(
+              imageName: element.name!,
+              userId: widget.user.userId!,
+              imagePath: file.path,
+              date: uploadDate,
+              boatId: widget.trip.charter!.boatId!,
+              key: null,
+            ),
+          );
+          galleriesMap[widget.trip.reservationId]!.addPhoto(
+            Photo(
+              imageName:element.name!,
+              userId: widget.user.userId!,
+              imagePath:file.path,
+              date:uploadDate,
+              boatId:widget.trip.charter!.boatId!,
+              key:null,
+            ),
+          );
         }
 
         await Future.delayed(Duration(milliseconds: 500));
@@ -678,35 +689,35 @@ class GalleryViewState extends State<GalleryView> {
     } else {
       for (var element in resultList) {
         String path = "";
-        if (element.name.toLowerCase().contains(".heic")) {
-          path = await HeicToJpg.convert(
-              await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+        if (element.name!.toLowerCase().contains(".heic")) {
+          // path = (await HeicToJpg.convert(
+          //     await FlutterAbsolutePath.getAbsolutePath(element.identifier)))!;
         } else {
-          path = await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+          // path = await FlutterAbsolutePath.getAbsolutePath(element.identifier);
         }
         File file = File(path);
 
         String uploadDate = formatDate(
-            DateTime.parse(widget.trip.charter.startDate),
+            DateTime.parse(widget.trip.charter!.startDate!),
             [yyyy, '-', mm, '-', dd]);
 
         await PhotoDatabaseHelper.instance.insertPhoto(Photo(
-            element.name,
-            widget.user.userId,
-            file.path,
-            uploadDate,
-            widget.trip.charter.boatId,
-            null));
+            imageName:element.name!,
+            userId:widget.user.userId!,
+            imagePath:file.path,
+            date:uploadDate,
+            boatId:widget.trip.charter!.boatId!,
+            key:null));
         await OfflineDatabaseHelper.instance
             .insertOffline({'type': "image", 'action': "add", 'id': file.path});
 
-        galleriesMap[widget.trip.reservationId].addPhoto(Photo(
-            element.name,
-            widget.user.userId,
-            file.path,
-            uploadDate,
-            widget.trip.charter.boatId,
-            null));
+        galleriesMap[widget.trip.reservationId]!.addPhoto(Photo(
+            imageName:element.name!,
+            userId:widget.user.userId!,
+            imagePath:file.path,
+            date:uploadDate,
+            boatId:widget.trip.charter!.boatId!,
+            key:null));
       }
       setState(() {
         photosLoaded = false;
@@ -786,19 +797,19 @@ class GalleryViewState extends State<GalleryView> {
         await AggressorApi().deleteAwsFile(
             widget.user.userId.toString(),
             "gallery",
-            widget.trip.charter.boatId.toString(),
-            formatDate(DateTime.parse(widget.trip.charter.startDate),
+            widget.trip.charter!.boatId.toString(),
+            formatDate(DateTime.parse(widget.trip.charter!.startDate!),
                 [yyyy, '-', mm, '-', dd]),
             value.imageName.toString());
 
-        PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+        PhotoDatabaseHelper.instance.deletePhoto(value.imagePath!);
       }
       await Future.delayed(Duration(seconds: 1));
     } else {
       for (var value in widget.photos) {
         await OfflineDatabaseHelper.instance.insertOffline(
             {'type': 'image', "id": value.imagePath, "action": "delete"});
-        await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+        await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath!);
       }
     }
 

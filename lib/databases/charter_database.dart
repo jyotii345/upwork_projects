@@ -16,13 +16,13 @@ class CharterDatabaseHelper {
 
   static final CharterDatabaseHelper instance =
       CharterDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -79,29 +79,30 @@ class CharterDatabaseHelper {
     var result = await db.rawQuery(
         'SELECT EXISTS(SELECT 1 FROM charter WHERE charterId = ?)',
         [charterId]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
-  Future<Charter> getCharter(String charterId) async {
-    //get a charter from the database based on its charterId
+  Future<Charter?> getCharter(String charterId) async {
+    // get a charter from the database based on its charterId
     try {
       final db = await database;
       var result = await db
           .rawQuery('SELECT * FROM charter WHERE charterId = ?', [charterId]);
       return Charter(
-        result[0]['charterId'],
-        result[0]['startDate'],
-        result[0]['statusId'],
-        result[0]['boatId'],
-        result[0]['nights'],
-        result[0]['itinerary'],
-        result[0]['embarkment'],
-        result[0]['disembarkment'],
-        result[0]['destination'],
+        result[0]['charterId'].toString(),
+        result[0]['startDate'].toString(),
+        result[0]['statusId'].toString(),
+        result[0]['boatId'].toString(),
+        result[0]['nights'].toString(),
+        result[0]['itinerary'].toString(),
+        result[0]['embarkment'].toString(),
+        result[0]['disembarkment'].toString(),
+        result[0]['destination'].toString(),
       );
     } catch (e) {
       print("charter not in DB");
+      return null;
     }
   }
 

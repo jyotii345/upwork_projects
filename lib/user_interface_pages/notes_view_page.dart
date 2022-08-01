@@ -228,7 +228,7 @@ class ViewNoteState extends State<ViewNote> {
                       MediaQuery.of(context).size.width / 40 -
                       10,
               child: AutoSizeText(
-                widget.note.destination,
+                widget.note.destination!,
                 maxLines: 1,
                 minFontSize: 3.0,
                 textAlign: TextAlign.center,
@@ -271,11 +271,11 @@ class ViewNoteState extends State<ViewNote> {
               ),
             ),
             child: AutoSizeText(
-              widget.note.startDate.split("-")[1] +
+              widget.note.startDate!.split("-")[1] +
                   "/" +
-                  widget.note.startDate.split("-")[2] +
+                  widget.note.startDate!.split("-")[2] +
                   "/" +
-                  widget.note.startDate.split("-")[0],
+                  widget.note.startDate!.split("-")[0],
               maxLines: 1,
               minFontSize: 3.0,
               textAlign: TextAlign.center,
@@ -330,7 +330,7 @@ class ViewNoteState extends State<ViewNote> {
                       MediaQuery.of(context).size.width / 40 -
                       10,
               child: Text(
-                widget.note.startDate,
+                widget.note.startDate!,
                 style: TextStyle(
                     fontSize: portrait
                         ? MediaQuery.of(context).size.height / 45 - 4
@@ -399,7 +399,7 @@ class ViewNoteState extends State<ViewNote> {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          FilesTripPage(widget.user, widget.note.startDate),
+                          FilesTripPage(widget.user, widget.note.startDate!),
                     ),
                   );
                 },

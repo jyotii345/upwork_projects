@@ -16,13 +16,13 @@ class SlidersDatabaseHelper {
 
   static final SlidersDatabaseHelper instance =
   SlidersDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -51,7 +51,7 @@ class SlidersDatabaseHelper {
     int id = await db.insert(
       'sliders',
       slider,
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      // conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return id;
   }
@@ -78,7 +78,7 @@ class SlidersDatabaseHelper {
     final db = await database;
     var result = await db.rawQuery(
         'SELECT EXISTS(SELECT 1 FROM sliders WHERE fileName = ?)', [fileName]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
@@ -88,14 +88,14 @@ class SlidersDatabaseHelper {
     var result =
     await db.rawQuery('SELECT * FROM sliders WHERE fileName = ?', [fileName]);
     return Note(
-      result[0]['id'],
-      result[0]['boatId'],
-      result[0]['destination'],
-      result[0]['startDate'],
-      result[0]['endDate'],
-      result[0]['preTripSliders'],
-      result[0]['postTripSliders'],
-      result[0]['miscSliders'],
+      result[0]['id'].toString(),
+      result[0]['boatId'].toString(),
+      result[0]['destination'].toString(),
+      result[0]['startDate'].toString(),
+      result[0]['endDate'].toString(),
+      result[0]['preTripSliders'].toString(),
+      result[0]['postTripSliders'].toString(),
+      result[0]['miscSliders'].toString(),
       null,
       null,
       null,

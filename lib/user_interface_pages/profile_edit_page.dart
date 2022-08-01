@@ -7,13 +7,16 @@ import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/profile_database.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+// import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../databases/states_database.dart';
 
 class EditMyProfile extends StatefulWidget {
   EditMyProfile(this.user, this.updateCallback, this.profileData);
@@ -37,32 +40,54 @@ class EditMyProfileState extends State<EditMyProfile> {
 
   bool isLoading = false;
 
-  double textDisplayWidth, textSize;
+  double textDisplayWidth = 0, textSize = 0, textSizeInputField = 0;
 
-  Map<String, dynamic> countryDropDownSelection;
-  Map<String, dynamic> stateDropDownSelection;
+  Map<String, dynamic> countryDropDownSelection = {};
+  Map<String, dynamic> stateDropDownSelection = {};
 
   bool stateAndCountryLoaded = false;
 
-  String name,
+
+
+
+  // String name = "",
+  //     profileImagePath = "",
+  //     address1 = "",
+  //     address2 = "",
+  //     city = "",
+  //     territory = "",
+  //     zip = "",
+  //     country = "",
+  //     email = "",
+  //     homePhone = "",
+  //     workPhone = "",
+  //     mobilePhone = "",
+  //     username = "",
+  //     totalDives = "",
+  //     totalAdventures = "",
+  //     accountType = "";
+  //
+  // String? password;
+
+  String? name ,
       profileImagePath,
-      address1,
+      address1 ,
       address2,
-      city,
-      territory,
-      zip,
+      city ,
+      territory ,
+      zip ,
       country,
-      email,
-      homePhone,
+      email ,
+      homePhone ,
       workPhone,
       mobilePhone,
-      username,
-      password,
-      totalDives,
-      totalAdventures,
-      accountType;
+      username ,
+      totalDives ,
+      totalAdventures ,
+      accountType ,
+      password;
 
-  File selectionFile;
+  File? selectionFile;
 
   /*
   initState
@@ -71,7 +96,31 @@ class EditMyProfileState extends State<EditMyProfile> {
   void initState() {
     super.initState();
 
+    // getStatesList();
     popDistance = 1;
+  }
+
+  //
+  // void getStatesList() async {
+  //   //set the initial states list
+  //   statesList = await AggressorApi().getStates();
+  //   updateStatesCache();
+  // }
+
+  void updateStatesCache() async {
+    //cleans and saves the states to the database
+    StatesDatabaseHelper statesDatabaseHelper = StatesDatabaseHelper.instance;
+    try {
+      await statesDatabaseHelper.deleteStatesTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var state in statesList) {
+      await statesDatabaseHelper.insertStates(state);
+    }
+
+
   }
 
   /*
@@ -95,6 +144,9 @@ class EditMyProfileState extends State<EditMyProfile> {
               textSize = portrait
                   ? MediaQuery.of(context).size.width / 30
                   : MediaQuery.of(context).size.height / 30;
+              textSizeInputField = portrait
+                  ? MediaQuery.of(context).size.width / 37
+                  : MediaQuery.of(context).size.height / 37;
               return Stack(
                 children: [
                   getBackgroundImage(),
@@ -117,7 +169,7 @@ class EditMyProfileState extends State<EditMyProfile> {
   bool validateAndSave() {
     //ensure all fields are valid before saving
     final form = formKey.currentState;
-    if (form.validate()) {
+    if (form!.validate()) {
       form.save();
       return true;
     }
@@ -137,8 +189,8 @@ class EditMyProfileState extends State<EditMyProfile> {
           territory = stateDropDownSelection["stateAbbr"];
         }
 
-        if (password != "") {
-          if (!validatePassword(password)) {
+        if (password!=null && password != "") {
+          if (!validatePassword(password!)) {
             throw Exception(
               "Password does not meet security requirements: \n• Password must be 8 characters long or larger\n• Password must contain at least one numerical digit\n• Password must contain at least one capital letter\n• Password must contain one special character",
             );
@@ -155,31 +207,31 @@ class EditMyProfileState extends State<EditMyProfile> {
 
         if (selectionFile != null) {
           var response = await AggressorApi()
-              .uploadUserImage(widget.user.userId, selectionFile.path);
+              .uploadUserImage(widget.user.userId!, selectionFile!.path);
 
           var dirData = (await getApplicationDocumentsDirectory()).path;
-          var bytes = selectionFile.readAsBytesSync();
+          var bytes = selectionFile!.readAsBytesSync();
           File temp = File(dirData + "/" + profileData["avatar"]);
           await temp.writeAsBytes(bytes);
         }
 
         var jsonResponse = await AggressorApi().saveProfileData(
-            widget.user.userId,
+            widget.user.userId!,
             widget.profileData["first"],
             widget.profileData["last"],
-            email,
-            address1,
-            address2,
-            city,
-            country == "2" ? territory : "",
-            country != "2" ? territory : "",
-            country,
-            zip,
-            username,
+            email!,
+            address1!,
+            address2!,
+            city!,
+            country == "2" ? territory??"" : "",
+            country != "2" ? territory??"" : "",
+            country!,
+            zip!,
+            username!,
             password != "" ? password : null,
-            homePhone,
-            workPhone,
-            mobilePhone);
+            homePhone!,
+            workPhone!,
+            mobilePhone!);
 
         if (jsonResponse["status"] == "success") {
           stateAndCountryLoaded = false;
@@ -191,13 +243,13 @@ class EditMyProfileState extends State<EditMyProfile> {
         }
 
         setState(() {
-          userImage = selectionFile;
+          userImage = selectionFile!;
           isLoading = false;
         });
       } catch (e) {
         print('caught Error: $e');
         setState(() {
-          errorMessage = e.message;
+          errorMessage = e.toString();//.message;
           isLoading = false;
         });
       }
@@ -218,7 +270,7 @@ class EditMyProfileState extends State<EditMyProfile> {
 
   Future<dynamic> loadProfileDetails() async {
     //loads the initial value of the users profile data
-    var jsonResponse = await AggressorApi().getProfileData(widget.user.userId);
+    var jsonResponse = await AggressorApi().getProfileData(widget.user.userId!);
     if (jsonResponse["status"] == "success") {
       setState(() {
         profileData = jsonResponse;
@@ -355,8 +407,8 @@ class EditMyProfileState extends State<EditMyProfile> {
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                name,
-                style: TextStyle(fontSize: textSize),
+                name!,
+                style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
               ),
             ),
           ),
@@ -414,7 +466,7 @@ class EditMyProfileState extends State<EditMyProfile> {
                   child: profileImagePath == ""
                       ? Text("No file chosen")
                       : Text(
-                          profileImagePath,
+                          profileImagePath!,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Colors.black, fontSize: textSize),
@@ -448,15 +500,16 @@ class EditMyProfileState extends State<EditMyProfile> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
+
                   child: TextFormField(
                     initialValue: address1,
-                    style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
@@ -464,8 +517,8 @@ class EditMyProfileState extends State<EditMyProfile> {
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
                     validator: (value) =>
-                        value.isEmpty ? 'Address 1 can\'t be empty' : null,
-                    onSaved: (value) => address1 = value.trim(),
+                        (value==null||(value==null||value.isEmpty)) ? 'Address 1 can\'t be empty' : null,
+                    onSaved: (value) => address1 = value!.trim(),
                   ),
                 ),
               ),
@@ -494,22 +547,23 @@ class EditMyProfileState extends State<EditMyProfile> {
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
+
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(3.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                 child: TextFormField(
                   initialValue: address2,
-                  style: TextStyle(fontSize: textSize),
+                  style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   ),
-                  onSaved: (value) => address2 = value.trim(),
+                  onSaved: (value) => address2 = value!.trim(),
                 ),
               ),
             ),
@@ -539,15 +593,15 @@ class EditMyProfileState extends State<EditMyProfile> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                      side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                   child: TextFormField(
                     initialValue: city,
-                    style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
@@ -555,8 +609,8 @@ class EditMyProfileState extends State<EditMyProfile> {
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
                     validator: (value) =>
-                        value.isEmpty ? 'City can\'t be empty' : null,
-                    onSaved: (value) => city = value.trim(),
+                        (value==null||(value==null||value.isEmpty)) ? 'City can\'t be empty' : null,
+                    onSaved: (value) => city = value!.trim(),
                   ),
                 ),
               ),
@@ -608,15 +662,15 @@ class EditMyProfileState extends State<EditMyProfile> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                   child: TextFormField(
                     initialValue: zip,
-                    style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
@@ -624,7 +678,7 @@ class EditMyProfileState extends State<EditMyProfile> {
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
                     validator: (value) =>
-                        value.isEmpty ? 'Zip code can\'t be empty' : null,
+                       (value==null|| (value==null||value.isEmpty)) ? 'Zip code can\'t be empty' : null,
                     onSaved: (value) => zip = value.toString().trim(),
                   ),
                 ),
@@ -672,15 +726,15 @@ class EditMyProfileState extends State<EditMyProfile> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                   child: TextFormField(
                     initialValue: email,
-                    style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
@@ -688,8 +742,8 @@ class EditMyProfileState extends State<EditMyProfile> {
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
                     validator: (value) =>
-                        value.isEmpty ? 'Email can\'t be empty' : null,
-                    onSaved: (value) => email = value.trim(),
+                        (value==null||value.isEmpty) ? 'Email can\'t be empty' : null,
+                    onSaved: (value) => email = value!.trim(),
                   ),
                 ),
               ),
@@ -718,22 +772,22 @@ class EditMyProfileState extends State<EditMyProfile> {
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(3.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                 child: TextFormField(
                   initialValue: homePhone,
-                  style: TextStyle(fontSize: textSize),
+                  style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   ),
-                  onSaved: (value) => homePhone = value.trim(),
+                  onSaved: (value) => homePhone = value!.trim(),
                 ),
               ),
             ),
@@ -763,22 +817,22 @@ class EditMyProfileState extends State<EditMyProfile> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                   child: TextFormField(
                     initialValue: workPhone,
-                    style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
-                    onSaved: (value) => workPhone = value.trim(),
+                    onSaved: (value) => workPhone = value!.trim(),
                   ),
                 ),
               ),
@@ -807,22 +861,22 @@ class EditMyProfileState extends State<EditMyProfile> {
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(3.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                 child: TextFormField(
                   initialValue: mobilePhone,
-                  style: TextStyle(fontSize: textSize),
+                  style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     isDense: true,
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   ),
-                  onSaved: (value) => mobilePhone = value.trim(),
+                  onSaved: (value) => mobilePhone = value!.trim(),
                 ),
               ),
             ),
@@ -849,8 +903,8 @@ class EditMyProfileState extends State<EditMyProfile> {
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                username,
-                style: TextStyle(fontSize: textSize),
+                username!,
+                style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
               ),
             ),
           ),
@@ -877,15 +931,15 @@ class EditMyProfileState extends State<EditMyProfile> {
               decoration: ShapeDecoration(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                  side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                   borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(3.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                 child: TextFormField(
                   initialValue: "",
-                  style: TextStyle(fontSize: textSize),
+                  style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     isDense: true,
@@ -893,7 +947,7 @@ class EditMyProfileState extends State<EditMyProfile> {
                         EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   ),
                   onSaved: (value) =>
-                      password == "" ? () {} : password = value.trim(),
+                      password == "" ? () {} : password = value!.trim(),
                 ),
               ),
             ),
@@ -923,20 +977,20 @@ class EditMyProfileState extends State<EditMyProfile> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                   child: totalDives == null || totalDives == ""
                       ? Text(
                           "0",
-                          style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                         )
                       : Text(
-                          totalDives,
-                          style: TextStyle(fontSize: textSize),
+                          totalDives!,
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                         ),
                 ),
               ),
@@ -967,20 +1021,20 @@ class EditMyProfileState extends State<EditMyProfile> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                   child: totalAdventures == null || totalAdventures == ""
                       ? Text(
                           "0",
-                          style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                         )
                       : Text(
-                          totalAdventures,
-                          style: TextStyle(fontSize: textSize),
+                          totalAdventures!,
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                         ),
                 ),
               ),
@@ -1006,7 +1060,7 @@ class EditMyProfileState extends State<EditMyProfile> {
           child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
-              accountType,
+              accountType!,
               style: TextStyle(fontSize: textSize),
             ),
           ),
@@ -1087,7 +1141,6 @@ class EditMyProfileState extends State<EditMyProfile> {
                         ? MediaQuery.of(context).size.width / 10
                         : MediaQuery.of(context).size.height / 10),
                 onPressed: () {
-                  //TODO implement button function
                 }),
           ],
         ),
@@ -1103,7 +1156,7 @@ class EditMyProfileState extends State<EditMyProfile> {
               child: Container(
                 decoration: ShapeDecoration(
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
@@ -1111,9 +1164,9 @@ class EditMyProfileState extends State<EditMyProfile> {
                   isExpanded: true,
                   value: stateDropDownSelection,
                   underline: Container(),
-                  onChanged: (Map<String, dynamic> newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      stateDropDownSelection = newValue;
+                      stateDropDownSelection = newValue!;
                       country == "2"
                           ? territory = newValue["stateAbbr"]
                           : () {};
@@ -1123,10 +1176,10 @@ class EditMyProfileState extends State<EditMyProfile> {
                       .map<DropdownMenuItem<Map<String, dynamic>>>((value) {
                     return DropdownMenuItem<Map<String, dynamic>>(
                       child: Padding(
-                        padding: const EdgeInsets.all(3.0),
+                        padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                         child: Container(
                           child: Text(value["state"],
-                              style: TextStyle(fontSize: textSize)),
+                            style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),),
                         ),
                       ),
                       value: value,
@@ -1143,15 +1196,15 @@ class EditMyProfileState extends State<EditMyProfile> {
                 decoration: ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1.0, style: BorderStyle.solid),
+                    side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                   child: TextFormField(
                     initialValue: territory,
-                    style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       isDense: true,
@@ -1174,16 +1227,16 @@ class EditMyProfileState extends State<EditMyProfile> {
         child: Container(
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1.0, style: BorderStyle.solid),
+              side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
               borderRadius: BorderRadius.all(Radius.circular(5.0)),
             ),
           ),
           child: DropdownButton<Map<String, dynamic>>(
             isExpanded: true,
             value: countryDropDownSelection,
-            onChanged: (Map<String, dynamic> newValue) {
+            onChanged: (Map<String, dynamic>? newValue) {
               setState(() {
-                countryDropDownSelection = newValue;
+                countryDropDownSelection = newValue!;
                 country = newValue["countryid"].toString();
               });
             },
@@ -1191,10 +1244,10 @@ class EditMyProfileState extends State<EditMyProfile> {
                 .map<DropdownMenuItem<Map<String, dynamic>>>((value) {
               return DropdownMenuItem<Map<String, dynamic>>(
                 child: Padding(
-                  padding: const EdgeInsets.all(3.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
                   child: Text(
                     value["country"],
-                    style: TextStyle(fontSize: textSize),
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
                   ),
                 ),
                 value: value,
@@ -1207,7 +1260,7 @@ class EditMyProfileState extends State<EditMyProfile> {
   }
 
   Future<dynamic> getCountryAndState() async {
-    //load the initial data for the page
+    // load the initial data for the page
     if (!stateAndCountryLoaded) {
       name = widget.profileData["first"] + " " + widget.profileData["last"];
       profileImagePath = widget.profileData["avatar"];
@@ -1230,7 +1283,7 @@ class EditMyProfileState extends State<EditMyProfile> {
       accountType = widget.profileData["account_type"];
 
       countryDropDownSelection = countriesList[0];
-      stateDropDownSelection = statesList[0];
+      stateDropDownSelection =statesList.isEmpty?{}: statesList[0];
 
       countriesList.forEach((element) {
         if (element["countryid"].toString() == country) {
@@ -1258,7 +1311,7 @@ class EditMyProfileState extends State<EditMyProfile> {
   }
 
   Widget showErrorMessage() {
-    //returns the value of an error message if there is an error message to display
+    // returns the value of an error message if there is an error message to display
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -1272,12 +1325,12 @@ class EditMyProfileState extends State<EditMyProfile> {
   }
 
   Widget getLoadingWheel() {
-    //returns a loading wheel if data is loading or sending
+    // returns a loading wheel if data is loading or sending
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 
   Future<void> loadAssets() async {
-    //loads the asset objects from the image picker
+    // loads the asset objects from the image picker
     List<Asset> resultList = <Asset>[];
     String error = '';
 
@@ -1287,37 +1340,56 @@ class EditMyProfileState extends State<EditMyProfile> {
       await Permission.camera.request();
     }
 
-    //try {
-    resultList = await MultiImagePicker.pickImages(
-      maxImages: 1,
-      enableCamera: true,
-      selectedAssets: resultList,
-      cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-      materialOptions: MaterialOptions(
-        actionBarColor: "#ff428cc7",
-        actionBarTitle: "Aggressor Adventures",
-        allViewTitle: "All Photos",
-        useDetailsView: false,
-        selectCircleStrokeColor: "#ff428cc7",
-      ),
-    );
+    // try {
+    // resultList = await MultiImagePicker.pickImages(
+    //   maxImages: 1,
+    //   enableCamera: true,
+    //   selectedAssets: resultList,
+    //   cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+    //   materialOptions: MaterialOptions(
+    //     actionBarColor: "#ff428cc7",
+    //     actionBarTitle: "Aggressor Adventures",
+    //     allViewTitle: "All Photos",
+    //     useDetailsView: false,
+    //     selectCircleStrokeColor: "#ff428cc7",
+    //   ),
+    // );
 
-    String path = "";
-    var tempPath =
-        await FlutterAbsolutePath.getAbsolutePath(resultList[0].identifier);
-    if (tempPath.toLowerCase().contains(".heic")) {
-      path = await HeicToJpg.convert(tempPath);
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      selectionFile = file;
+
+      setState(() {
+        profileImagePath =
+            selectionFile!.path.substring(selectionFile!.path.lastIndexOf("/") + 1);
+
+        userImage = selectionFile!;
+      });
     } else {
-      path = tempPath;
+      // User canceled the picker
     }
-    selectionFile = File(path);
 
-    setState(() {
-      profileImagePath =
-          selectionFile.path.substring(selectionFile.path.lastIndexOf("/") + 1);
-
-      userImage = selectionFile;
-    });
+    // String path = "";
+    // var tempPath =
+    //
+    //     resultList.first.
+    //
+    //     await FilePicker.getAbsolutePath(resultList[0].identifier);
+    // if (tempPath.toLowerCase().contains(".heic")) {
+    //   path = (await HeicToJpg.convert(tempPath))!;
+    // } else {
+    //   path = tempPath;
+    // }
+    // selectionFile = File(path);
+    //
+    // setState(() {
+    //   profileImagePath =
+    //       selectionFile!.path.substring(selectionFile!.path.lastIndexOf("/") + 1);
+    //
+    //   userImage = selectionFile!;
+    // });
 
     if (!mounted) return;
 

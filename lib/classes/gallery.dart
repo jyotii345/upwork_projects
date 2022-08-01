@@ -15,12 +15,12 @@ import 'package:flutter/material.dart';
 import 'aggressor_api.dart';
 
 class Gallery {
-  User user;
-  String boatId;
-  List<Photo> photos;
-  Trip trip;
-  VoidCallback deleteCallback = () {};
-  List<VoidCallback> callBackList;
+  User? user;
+  String? boatId;
+  List<Photo>? photos;
+  Trip? trip;
+  VoidCallback? deleteCallback = () {};
+  List<VoidCallback>? callBackList;
 
   Gallery(
     User user,
@@ -49,11 +49,11 @@ class Gallery {
     //adds a photo to the photos list
     bool exists = false;
 
-    photos.forEach((element) {
+    photos!.forEach((element) {
       if (element.imageName == photo.imageName) exists = true;
     });
     if (!exists) {
-      photos.add(photo);
+      photos!.add(photo);
     }
   }
 
@@ -96,7 +96,7 @@ class Gallery {
                       openGalleryView(context);
                     },
                     child: Text(
-                      trip.boat.name,
+                      trip!.boat!.name!,
                       textAlign: TextAlign.left,
                       style: TextStyle(color: AggressorColors.secondaryColor),
                     ),
@@ -106,12 +106,12 @@ class Gallery {
               SizedBox(
                 width: textBoxSize,
                 child: Text(
-                  months[DateTime.parse(trip.tripDate).month - 1]
+                  months[DateTime.parse(trip!.tripDate!).month - 1]
                           .substring(0, 3) +
                       " " +
-                      DateTime.parse(trip.tripDate).day.toString() +
+                      DateTime.parse(trip!.tripDate!).day.toString() +
                       ", " +
-                      DateTime.parse(trip.tripDate).year.toString(),
+                      DateTime.parse(trip!.tripDate!).year.toString(),
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -158,41 +158,41 @@ class Gallery {
         context,
         MaterialPageRoute(
             builder: (context) => GalleryView(
-                  user,
-                  boatId,
-                  photos,
-                  trip,
-                ))).then((value) => deleteCallback());
+                  user!,
+                  boatId!,
+                  photos!,
+                  trip!,
+                ))).then((value) => deleteCallback!());
   }
 
   void deleteGallery() async {
-    galleriesMap.remove(trip.reservationId);
-    deleteCallback();
+    galleriesMap.remove(trip!.reservationId);
+    deleteCallback!();
 
     if (online) {
-      for (var value in photos) {
+      for (var value in photos!) {
          await AggressorApi().deleteAwsFile(
-            user.userId.toString(),
+            user!.userId.toString(),
             "gallery",
-            trip.charter.boatId.toString(),
-            formatDate(DateTime.parse(trip.charter.startDate),
+            trip!.charter!.boatId.toString(),
+            formatDate(DateTime.parse(trip!.charter!.startDate!),
                 [yyyy, '-', mm, '-', dd]),
             value.imageName.toString());
 
-        PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+        PhotoDatabaseHelper.instance.deletePhoto(value.imagePath!);
       }
 
       await Future.delayed(Duration(seconds: 1));
-      deleteCallback();
+      deleteCallback!();
       filesLoaded = false;
     } else {
-      for (var value in photos) {
+      for (var value in photos!) {
         await OfflineDatabaseHelper.instance.insertOffline(
             {'type': 'image', "id": value.imagePath, "action": "delete"});
-        await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath);
+        await PhotoDatabaseHelper.instance.deletePhoto(value.imagePath!);
       }
 
-      deleteCallback();
+      deleteCallback!();
       filesLoaded = false;
     }
   }

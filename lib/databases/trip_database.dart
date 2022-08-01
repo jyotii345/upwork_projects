@@ -16,14 +16,14 @@ class TripDatabaseHelper {
 
   static final TripDatabaseHelper instance =
       TripDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -78,7 +78,7 @@ class TripDatabaseHelper {
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM trip WHERE reservationId = ?)', [reservationId]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
@@ -88,26 +88,26 @@ class TripDatabaseHelper {
     var result = await db
         .rawQuery('SELECT * FROM trip WHERE reservationId = ?', [reservationId]);
     return Trip.TripWithDetails(
-      result[0]['tripDate'],
-      result[0]['title'],
-      result[0]['latitude'],
-      result[0]['longitude'],
-      result[0]['destination'],
-      result[0]['reservationDate'],
-      result[0]['reservationId'],
-      result[0]['charterId'],
-      result[0]['total'],
-      result[0]['discount'],
-      result[0]['payments'],
-      result[0]['due'],
-      result[0]['dueDate'],
-      result[0]['passengers'],
-      result[0]['location'],
-      result[0]['embark'],
-      result[0]['disembark'],
-      result[0]['detailDestination'],
-      result[0]['loginKey'],
-      result[0]['passengerId']
+      result[0]['tripDate'].toString(),
+      result[0]['title'].toString(),
+      result[0]['latitude'].toString(),
+      result[0]['longitude'].toString(),
+      result[0]['destination'].toString(),
+      result[0]['reservationDate'].toString(),
+      result[0]['reservationId'].toString(),
+      result[0]['charterId'].toString(),
+      result[0]['total'].toString(),
+      result[0]['discount'].toString(),
+      result[0]['payments'].toString(),
+      result[0]['due'].toString(),
+      result[0]['dueDate'].toString(),
+      result[0]['passengers'].toString(),
+      result[0]['location'].toString(),
+      result[0]['embark'].toString(),
+      result[0]['disembark'].toString(),
+      result[0]['detailDestination'].toString(),
+      result[0]['loginKey'].toString(),
+      result[0]['passengerId'].toString()
     );
 
   }

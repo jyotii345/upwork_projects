@@ -89,9 +89,9 @@ class AggressorApi {
           }
 
           if (newTrip.charterId == null ||
-              !await charterDatabaseHelper.charterExists(newTrip.charterId)) {
+              !await charterDatabaseHelper.charterExists(newTrip.charterId!)) {
             var charterResponse =
-                await AggressorApi().getCharter(newTrip.charterId);
+                await AggressorApi().getCharter(newTrip.charterId!);
             if (charterResponse["status"] == "success") {
               Charter newCharter = Charter(
                   charterResponse["charterid"].toString(),
@@ -106,9 +106,9 @@ class AggressorApi {
 
               await charterDatabaseHelper.insertCharter(newCharter);
 
-              if (!await boatDatabaseHelper.boatExists(newCharter.boatId)) {
+              if (!await boatDatabaseHelper.boatExists(newCharter.boatId!)) {
                 var boatResponse =
-                    await AggressorApi().getBoat(newCharter.boatId);
+                    await AggressorApi().getBoat(newCharter.boatId!);
                 if (boatResponse["status"] == "success") {
                   Boat newBoat;
 
@@ -128,21 +128,23 @@ class AggressorApi {
             }
           }
         }
-        loadingCallBack();
+
+        // percent+=0.01;
+        percent=i/loadingLength;
+        // loadingCallBack();
         i++;
       }
 
       Database db = await tripDatabaseHelper.database;
       List<Map> queryList = await db.rawQuery('SELECT * FROM trip');
       if (queryList.length > 0) {
-        tripList = queryList.map((data) => Trip.fromMap(data)).toList();
+        tripList = queryList.map(( data) => Trip.fromMap(data)).toList();
       } else {
         tripList = [];
       }
     } else {
       tripList = [];
     }
-
     return tripList;
   }
 
@@ -370,7 +372,7 @@ class AggressorApi {
     String country,
     String zip,
     String username,
-    String password,
+    String? password,
     String homePhone,
     String workPhone,
     String mobilePhone,
@@ -881,10 +883,10 @@ class AggressorApi {
       var resList =
           await s3client.listObjects(prefix: databasePath, delimiter: "/");
       try {
-        for (var value in resList.contents) {
-          if (double.parse(value.size) > 0) {
+        for (var value in resList!.contents!) {
+          if (double.parse(value.size!) > 0) {
             await deleteAwsFile(userId, "config", "databases", "filesDatabase",
-                value.key.substring(value.key.lastIndexOf("/") + 1));
+                value.key!.substring(value.key!.lastIndexOf("/") + 1));
           }
         }
       } catch (e) {
@@ -940,7 +942,7 @@ class AggressorApi {
   Future<dynamic> getCoupons(
     String userId,
   ) async {
-    //get the coupons from the API
+    // get the coupons from the API
     notesList.clear();
     String url = "https://app.aggressor.com/api/app/boutique/list/" + userId;
 
@@ -955,8 +957,9 @@ class AggressorApi {
   }
 
   Future<dynamic> getReelsList() async {
-    //allows a user to link user to a contact
+    // allows a user to link user to a contact
     String url = 'https://app.aggressor.com/api/app/reels/list';
+    // String url = 'https://app.aggressor.com/api/app/reels/list';
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -965,8 +968,9 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
+
   Future<File> getReelImage(String imageId, String imageName) async {
-    //allows a user to link user to a contact
+    // allows a user to link user to a contact
     String url = 'https://app.aggressor.com/api/app/reels/image/' + imageId;
 
     Request request = Request("GET", Uri.parse(url))
@@ -993,7 +997,7 @@ class AggressorApi {
   }
 
   Future<File> getReelVideo(String videoId, String videoName) async {
-    //allows a user to link user to a contact
+    // allows a user to link user to a contact
 
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;

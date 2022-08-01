@@ -29,18 +29,28 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   instance vars
    */
 
-  Map<String, dynamic> dropDownValue;
+  Map<String, dynamic>? dropDownValue=boatList.isEmpty?null: boatList[0];
 
   List<Widget> noteList = [];
 
-  List<Trip> sortedTripList;
+  List<Trip>? sortedTripList;
 
   String errorMessage = "";
 
   List<Trip> dateDropDownList = [];
-  Trip dateDropDownValue;
+  Trip dateDropDownValue=Trip(
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  );
 
-  BuildContext pageContext;
+  BuildContext? pageContext;
 
   bool loading = false;
 
@@ -63,7 +73,54 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       "",
     );
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
-    dropDownValue = boatList[0];
+    if(boatList.isEmpty){
+      getBoatList();
+    }
+
+
+    if(tripList.isEmpty){
+      updateTripListList();
+    }
+  }
+
+  updateTripListList() async {
+    setState(() {
+      loading=true;
+    });
+    var tempList =
+    await AggressorApi().getReservationList(widget.user.contactId!,(){});
+    tripList = tempList;
+    for (var trip in tripList) {
+      trip.user = widget.user;
+      await trip.initCharterInformation();
+
+      // setState(() {
+      //   if(percent<0.9){
+      //     percent += .05;
+      //   }
+        percent += (loadedCount / (loadingLength));
+      // });
+    }
+
+    // await getGalleries();
+    setState(() {
+      loading = false;
+    });
+  }
+
+
+  void getBoatList() async {
+    // set the initial boat list
+
+    setState(() {
+      loading = true;
+    });
+    boatList = await AggressorApi().getBoatList();
+    dropDownValue =boatList.isEmpty?null: boatList[0];
+
+    setState(() {
+      loading = false;
+    });
   }
 
   /*
@@ -97,7 +154,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
    */
 
   Widget getWhiteOverlay() {
-    //returns a white background on the application
+    // returns a white background on the application
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
       child: Container(
@@ -107,7 +164,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getPageForm() {
-    //returns the main contents of the page
+    // returns the main contents of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: ListView(
@@ -133,10 +190,13 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getCreateNote() {
-    //returns the create note section of the page
+    // returns the create note section of the page
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: Column(
+      child:
+      (dropDownValue==null)?
+      Center(child: CircularProgressIndicator()):
+      Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -157,7 +217,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getYachtDropDown(List<Map<String, dynamic>> boatList) {
-    //returns the drop down of yachts associated with the users trips
+    // returns the drop down of yachts associated with the users trips
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
@@ -194,9 +254,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              onChanged: (Map<String, dynamic> newValue) {
+              onChanged: (Map<String, dynamic>? newValue) {
                 setState(() {
-                  dropDownValue = newValue;
+                  dropDownValue = newValue!;
                   dateDropDownList = getDateDropDownList(newValue);
                 });
               },
@@ -224,7 +284,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getDateDropDown() {
-    //returns the drop down of the dates associated with a specific yachts trips with the user
+    // returns the drop down of the dates associated with a specific yachts trips with the user
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
@@ -261,9 +321,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
               iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              onChanged: (Trip newValue) {
+              onChanged: (Trip? newValue) {
                 setState(() {
-                  dateDropDownValue = newValue;
+                  dateDropDownValue = newValue!;
                 });
               },
               items: dateDropDownList.map<DropdownMenuItem<Trip>>((Trip value) {
@@ -275,18 +335,18 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
                         : MediaQuery.of(context).size.height / 2,
                     child: AutoSizeText(
                       value.charter ==
-                              null //todo search into why this is always wrong
+                              null
                           ? "You don't have adventures here yet."
                           : DateTime.parse(
-                                      value.charter.startDate)
+                                      value.charter!.startDate!)
                                   .month
                                   .toString() +
                               "/" +
-                              DateTime.parse(value.charter.startDate)
+                              DateTime.parse(value.charter!.startDate!)
                                   .day
                                   .toString() +
                               "/" +
-                              DateTime.parse(value.charter.startDate)
+                              DateTime.parse(value.charter!.startDate!)
                                   .year
                                   .toString(),
                       maxLines: 1,
@@ -304,12 +364,12 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   List<Trip> getDateDropDownList(Map<String, dynamic> boatMap) {
-    //returns the list of dates to be displayed with the selected trip
+    // returns the list of dates to be displayed with the selected trip
 
     List<Trip> tempList = [];
     tripList.forEach((element) {
-      if (element.boat.boatId.toString() == boatMap["boatid"].toString() ||
-          element.boat.boatId.toString() == boatMap["boatId"].toString()) {
+      if (element.boat!=null&&(element.boat!.boatId.toString() == boatMap["boatid"].toString() ||
+          element.boat!.boatId.toString() == boatMap["boatId"].toString()) ){
         tempList.add(element);
       }
     });
@@ -328,13 +388,13 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   List<Trip> sortTripList(List<Trip> tripList) {
     List<Trip> tempList = tripList;
     tempList.sort((a, b) =>
-        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+        DateTime.parse(b.tripDate!).compareTo(DateTime.parse(a.tripDate!)));
 
     return tempList;
   }
 
   Widget getCreateNoteButton() {
-    //returns the button to create the note as it is
+    // returns the button to create the note as it is
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Row(
@@ -352,7 +412,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             child: TextButton(
               onPressed: () {
                 if (dateDropDownValue.charter != null) {
-                  if (dateDropDownValue.charter.startDate != "") {
+                  if ((dateDropDownValue.charter!.startDate!) != "") {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -477,7 +537,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget getNotesView() {
-    //returns the list item containing notes objects
+    // returns the list item containing notes objects
 
     double textBoxSize = portrait
         ? MediaQuery.of(context).size.width / 4
@@ -551,7 +611,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       Map<String, Note> notesMap = <String, Note>{};
 
       List<dynamic> noteResponse =
-          await AggressorApi().getNoteList(widget.user.userId);
+          await AggressorApi().getNoteList(widget.user.userId!);
 
       for (var element in noteResponse) {
         notesMap[element["id"].toString()] = Note(
@@ -562,7 +622,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
             element["endDate"],
             element["preTripNotes"],
             element["postTripNotes"],
-            element["misc"],
+            element["misc"]??"",
             widget.user,
             pageContext,
             notesCallBack);
@@ -573,9 +633,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
         if (value.boatId != null) {
           int insertAt = tripList.indexWhere((element) =>
               (element.boat != null && value.boatId != null) &&
-              element.boat.boatId == value.boatId &&
-              DateTime.parse(value.startDate) ==
-                  DateTime.parse(element.charter.startDate));
+              element.boat!.boatId! == value.boatId &&
+              DateTime.parse(value.startDate!) ==
+                  DateTime.parse(element.charter!.startDate!));
           if (insertAt != -1) {
             tripList[insertAt].note = value;
           }
@@ -615,7 +675,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showErrorMessage() {
-    //shows an error message if there is one
+    // shows an error message if there is one
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -629,7 +689,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showLoading() {
-    //shows a loading line if the notes are being downloaded
+    // shows a loading line if the notes are being downloaded
     return loading
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
@@ -642,7 +702,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showOffline() {
-    //displays offline when the application does not have internet connection
+    // displays offline when the application does not have internet connection
     return online
         ? Container()
         : Container(
@@ -659,10 +719,12 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
   }
 
   VoidCallback notesCallBack() {
-    //this callback ensures that notes are updated after a new one is created
-    setState(() {
-      notesLoaded = false;
-    });
+    // this callback ensures that notes are updated after a new one is created
+    return (){
+      setState(() {
+        notesLoaded = false;
+      });
+    };
   }
 
   @override

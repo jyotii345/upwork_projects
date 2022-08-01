@@ -25,10 +25,20 @@ class AddIronDiverState extends State<AddIronDiver> {
   int pageIndex = 3;
   String errorMessage = "";
 
-  Map<String, dynamic> dropDownValue;
+  Map<String, dynamic> dropDownValue={};
 
   List<Trip> dateDropDownList = [];
-  Trip dateDropDownValue;
+  Trip dateDropDownValue= Trip(
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  );
   bool loading = false;
 
   /*
@@ -165,7 +175,7 @@ class AddIronDiverState extends State<AddIronDiver> {
 
     if (dropDownValue["name"] == " -- SELECT -- " ||
         dateDropDownValue.charter == null ||
-        dateDropDownValue.charter.startDate == "") {
+        dateDropDownValue.charter!.startDate == "") {
       setState(() {
         errorMessage = "You must select a trip to add an Iron Diver.";
       });
@@ -237,9 +247,9 @@ class AddIronDiverState extends State<AddIronDiver> {
                 iconSize: portrait
                     ? MediaQuery.of(context).size.height / 35
                     : MediaQuery.of(context).size.width / 35,
-                onChanged: (Map<String, dynamic> newValue) {
+                onChanged: (Map<String, dynamic>? newValue) {
                   setState(() {
-                    dropDownValue = newValue;
+                    dropDownValue = newValue!;
                     dateDropDownList = getDateDropDownList(newValue);
                   });
                 },
@@ -312,9 +322,9 @@ class AddIronDiverState extends State<AddIronDiver> {
                 iconSize: portrait
                     ? MediaQuery.of(context).size.height / 35
                     : MediaQuery.of(context).size.width / 35,
-                onChanged: (Trip newValue) {
+                onChanged: (Trip? newValue) {
                   setState(() {
-                    dateDropDownValue = newValue;
+                    dateDropDownValue = newValue!;
                   });
                 },
                 items:
@@ -332,15 +342,15 @@ class AddIronDiverState extends State<AddIronDiver> {
                         value.charter == null
                             ? "You have no adventures here yet."
                             : DateTime.parse(
-                                        value.charter.startDate)
+                                        value.charter!.startDate!)
                                     .month
                                     .toString() +
                                 "/" +
-                                DateTime.parse(value.charter.startDate)
+                                DateTime.parse(value.charter!.startDate!)
                                     .day
                                     .toString() +
                                 "/" +
-                                DateTime.parse(value.charter.startDate)
+                                DateTime.parse(value.charter!.startDate!)
                                     .year
                                     .toString(),
                         style: TextStyle(
@@ -364,7 +374,7 @@ class AddIronDiverState extends State<AddIronDiver> {
     //generates the list of dates a trip is scheduled on a particular yacht
     List<Trip> tempList = [];
     tripList.forEach((element) {
-      if (element.boat.boatId.toString() == boatMap["boatid"].toString()) {
+      if (element.boat!.boatId.toString() == boatMap["boatid"].toString()) {
         tempList.add(element);
       }
     });
@@ -381,7 +391,7 @@ class AddIronDiverState extends State<AddIronDiver> {
   }
 
   Widget getBackgroundImage() {
-    //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
+    // this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
@@ -398,7 +408,7 @@ class AddIronDiverState extends State<AddIronDiver> {
   }
 
   Widget getBannerImage() {
-    //returns banner image
+    // returns banner image
     return Image.asset(
       "assets/bannerimage.png",
       width: MediaQuery.of(context).size.width,
@@ -407,7 +417,7 @@ class AddIronDiverState extends State<AddIronDiver> {
   }
 
   Widget showLoading() {
-    //displays a loading bar if data is being downloaded
+    // displays a loading bar if data is being downloaded
     return loading
         ? Center(
             child: CircularProgressIndicator(),
@@ -416,7 +426,7 @@ class AddIronDiverState extends State<AddIronDiver> {
   }
 
   Widget showErrorMessage() {
-    //displays an error message if there is one
+    // displays an error message if there is one
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -430,7 +440,7 @@ class AddIronDiverState extends State<AddIronDiver> {
   }
 
   Widget getPageTitle() {
-    //returns the title of the page
+    // returns the title of the page
 
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 0),

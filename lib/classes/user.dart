@@ -2,14 +2,14 @@
 creates a user class to hold the contens of a user class
  */
 class User {
-  String userId;
-  String nameF;
-  String nameL;
-  String email;
-  String contactId;
-  String OFYContactId;
-  String userType;
-  String contactType;
+  String? userId;
+  String? nameF;
+  String? nameL;
+  String? email;
+  String? contactId;
+  String? OFYContactId;
+  String? userType;
+  String? contactType;
 
   User(
     String userId,
@@ -19,7 +19,7 @@ class User {
     String contactId,
     String OFYContactId,
     String userType,
-    String contactType,
+    String? contactType,
   ) {
     //default constructor
     this.userId = userId;

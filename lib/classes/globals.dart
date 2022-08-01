@@ -15,7 +15,7 @@ final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 double loadedCount = 0;
 double loadingLength = 0;
-
+double percent=0.0;
 bool photosLoaded = false;
 bool notesLoaded = false;
 bool certificateLoaded = false;
@@ -53,7 +53,7 @@ List<dynamic> allStarsList = [];
 
 File userImage = File("");
 
-Contact contact = null;
+Contact? contact = null;
 
 List<String> certificationOptionList = [
   'Non-Diver',

@@ -15,13 +15,13 @@ class ProfileDatabaseHelper {
 
   static final ProfileDatabaseHelper instance =
       ProfileDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -44,22 +44,22 @@ class ProfileDatabaseHelper {
    */
 
   Future<int> insertProfile(
-    String userId,
-    String first,
-    String last,
-    String email,
-    String address1,
-    String address2,
-    String city,
-    String state,
-    String province,
-    String country,
-    String zip,
-    String username,
-    String password,
-    String homePhone,
-    String workPhone,
-    String mobilePhone,
+    String? userId,
+    String? first,
+    String? last,
+    String? email,
+    String? address1,
+    String? address2,
+    String? city,
+    String? state,
+    String? province,
+    String? country,
+    String? zip,
+    String? username,
+    String? password,
+    String? homePhone,
+    String? workPhone,
+    String? mobilePhone,
   ) async {
     //add a profile to the database
     final Database db = await database;
@@ -73,7 +73,7 @@ class ProfileDatabaseHelper {
         'email': email,
         'address1': address1,
         'address2': address2,
-        'address2': address2,
+        // 'address2': address2,
         'state': state,
         'province': province,
         'country': country,
@@ -111,7 +111,7 @@ class ProfileDatabaseHelper {
     final db = await database;
     var result = await db.rawQuery(
         'SELECT EXISTS(SELECT 1 FROM profile WHERE userId = ?)', [userId]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 

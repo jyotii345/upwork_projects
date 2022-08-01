@@ -39,18 +39,21 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   String fileName = "";
 
-  Trip dropDownValue, selectionTrip;
+  Trip dropDownValue = Trip(
+          DateTime.now().toString(), "", "", "", "General", "", "", "", ""),
+      selectionTrip = Trip(
+          DateTime.now().toString(), "", "", "", "General", "", "", "", "");
 
   bool loading = false;
   bool uploading = false;
 
   List<dynamic> filesList = [];
   List<dynamic> fileNameList = [];
-  List<Trip> sortedTripList;
+  List<Trip> sortedTripList=[];
 
   String errorMessage = "";
 
-  FilePickerResult result;
+  FilePickerResult? result;
 
   TextEditingController fileNameController = TextEditingController();
 
@@ -209,9 +212,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              onChanged: (Trip newValue) {
+              onChanged: (Trip? newValue) {
                 setState(() {
-                  dropDownValue = newValue;
+                  dropDownValue = newValue!;
                 });
               },
               items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
@@ -223,30 +226,30 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                         : MediaQuery.of(context).size.height / 2,
                     child: AutoSizeText(
                       value.detailDestination == "General"
-                          ? value.detailDestination
+                          ? value.detailDestination!
                           : value.charter == null
-                              ? value.detailDestination +
+                              ? value.detailDestination! +
                                   " - " +
-                                  DateTime.parse(value.tripDate)
+                                  DateTime.parse(value.tripDate!)
                                       .month
                                       .toString() +
                                   "/" +
-                                  DateTime.parse(value.tripDate)
+                                  DateTime.parse(value.tripDate!)
                                       .day
                                       .toString() +
                                   "/" +
-                                  DateTime.parse(value.tripDate).year.toString()
-                              : value.detailDestination +
+                                  DateTime.parse(value.tripDate!).year.toString()
+                              : value.detailDestination! +
                                   " - " +
-                                  DateTime.parse(value.charter.startDate)
+                                  DateTime.parse(value.charter!.startDate!)
                                       .month
                                       .toString() +
                                   "/" +
-                                  DateTime.parse(value.charter.startDate)
+                                  DateTime.parse(value.charter!.startDate!)
                                       .day
                                       .toString() +
                                   "/" +
-                                  DateTime.parse(value.charter.startDate)
+                                  DateTime.parse(value.charter!.startDate!)
                                       .year
                                       .toString(),
                       maxLines: 1,
@@ -266,7 +269,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   List<Trip> sortTripList(List<Trip> tripList) {
     List<Trip> tempList = tripList;
     tempList.sort((a, b) =>
-        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+        DateTime.parse(b.tripDate!).compareTo(DateTime.parse(a.tripDate!)));
 
     return tempList;
   }
@@ -588,14 +591,14 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       List<FileData> tempFiles = [];
 
       var mapsList = await s3client.listObjects(
-          prefix: widget.user.userId + "/config/files/nameMaps/",
+          prefix: widget.user.userId! + "/config/files/nameMaps/",
           delimiter: "/");
 
       fileNameList.clear();
-      if (mapsList.contents != null) {
-        for (var value in mapsList.contents) {
+      if (mapsList!.contents != null) {
+        for (var value in mapsList.contents!) {
           try {
-            if (double.parse(value.size) > 0) {
+            if (double.parse(value.size!) > 0) {
               fileNameList.add(await jsonDecode(value.toJson()));
             }
           } catch (e) {
@@ -645,11 +648,11 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
           var response;
           try {
             response = await s3client.listObjects(
-                prefix: widget.user.userId +
+                prefix: widget.user.userId! +
                     "/files/" +
-                    element.charterId +
+                    element.charterId! +
                     "/" +
-                    formatDate(DateTime.parse(element.charter.startDate),
+                    formatDate(DateTime.parse(element.charter!.startDate!),
                         [yyyy, '-', mm, '-', dd]).toString() +
                     "/",
                 delimiter: "/");
@@ -690,7 +693,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                         "",
                         element.charter == null
                             ? "general"
-                            : element.charter.charterId);
+                            : element.charter!.charterId!);
                     await fileHelper.insertFile(fileData);
                   }
                 }
@@ -702,11 +705,11 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         }
 
         var response = await s3client.listObjects(
-            prefix: widget.user.userId + "/files/general/general/",
+            prefix: widget.user.userId! + "/files/general/general/",
             delimiter: "/");
 
-        if (response.contents != null) {
-          for (var content in response.contents) {
+        if (response!.contents != null) {
+          for (var content in response.contents!) {
             var elementJson = await jsonDecode(content.toJson());
             if (elementJson["Size"] != "0") {
               if (!await FileDatabaseHelper.instance.fileExists(
@@ -749,8 +752,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       for (var element in tempFiles) {
         if ((element.displayName == "" || element.displayName == null) &&
             fileDisplayNames.containsKey(element.fileName)) {
-          element.setDisplayName(fileDisplayNames[element.fileName]);
-          await FileDatabaseHelper.instance.deleteFile(element.fileName);
+          element.setDisplayName(fileDisplayNames[element.fileName]!);
+          await FileDatabaseHelper.instance.deleteFile(element.fileName!);
           await FileDatabaseHelper.instance.insertFile(element);
         }
         element.setUser(widget.user);
@@ -784,8 +787,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         for (var element in fileDataList) {
           if (element.displayName == "" &&
               fileDisplayNames.containsKey(element.fileName)) {
-            element.setDisplayName(fileDisplayNames[element.fileName]);
-            await FileDatabaseHelper.instance.deleteFile(element.fileName);
+            element.setDisplayName(fileDisplayNames[element.fileName]!);
+            await FileDatabaseHelper.instance.deleteFile(element.fileName!);
             await FileDatabaseHelper.instance.insertFile(element);
           }
           element.setUser(widget.user);
@@ -807,7 +810,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     );
 
     setState(() {
-      fileName = result.names[0];
+      fileName = result!.names[0]!;
     });
   }
 
@@ -822,16 +825,16 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         accessKey: "AKIA43MMI6CI2KP4CUUY",
         secretKey: "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");
 
-    var path = widget.user.userId + "/files/general/general/";
+    var path = widget.user.userId! + "/files/general/general/";
     var resList = await s3client.listObjects(prefix: path, delimiter: "/");
-    for (var value in resList.contents) {
-      if (double.parse(value.size) > 0) {
+    for (var value in resList!.contents!) {
+      if (double.parse(value.size!) > 0) {
         var res = await AggressorApi().deleteAwsFile(
-            widget.user.userId,
+            widget.user.userId!,
             "files",
             "general",
             "general",
-            value.key.substring(value.key.lastIndexOf("/") + 1));
+            value.key!.substring(value.key!.lastIndexOf("/") + 1));
       }
     }
   }
@@ -847,18 +850,18 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
         if (result != null) {
           String uploadDate = dropDownValue.charter == null
               ? "general"
-              : formatDate(DateTime.parse(dropDownValue.charter.startDate),
+              : formatDate(DateTime.parse(dropDownValue.charter!.startDate!),
                   [yyyy, '-', mm, '-', dd]);
 
           var uploadResult = await AggressorApi().uploadAwsFile(
-              widget.user.userId,
+              widget.user.userId!,
               "files",
-              dropDownValue.charterId,
-              result.files.single.path,
+              dropDownValue.charterId!,
+              result!.files.single.path!,
               uploadDate);
 
           if (uploadResult["status"] == "success") {
-            Uint8List bytes = File(result.files.single.path).readAsBytesSync();
+            Uint8List bytes = File(result!.files.single.path!).readAsBytesSync();
             Directory appDocumentsDirectory =
                 await getApplicationDocumentsDirectory(); // 1
             String appDocumentsPath = appDocumentsDirectory.path; // 2
@@ -871,14 +874,14 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 uploadDate,
                 uploadResult["filename"],
                 fileNameController.text,
-                dropDownValue.charterId));
+                dropDownValue.charterId!));
 
             await FileDatabaseHelper.instance.insertFile(FileData(
                 tempFile.path,
                 uploadDate,
                 uploadResult["filename"],
                 fileNameController.text,
-                dropDownValue.charterId));
+                dropDownValue.charterId!));
 
             setState(() {
               fileDisplayNames[uploadResult["filename"].toString()] =
@@ -920,9 +923,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     String bucketId = "aggressor.app.user.images";
 
     fileDataList.forEach((element) {
-      //ensures all values are in the new map even if they are loaded from offline
+      // ensures all values are in the new map even if they are loaded from offline
       if (!fileDisplayNames.containsKey(element.fileName)) {
-        fileDisplayNames[element.fileName] = element.displayName;
+        fileDisplayNames[element.fileName!] = element.displayName!;
       }
     });
 
@@ -938,7 +941,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
       } else {
         try {
           await AggressorApi().deleteAwsFile(
-              widget.user.userId,
+              widget.user.userId!,
               "config",
               "files",
               "nameMaps",
@@ -952,7 +955,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     }
 
     try {
-      var uploading = await AggressorApi().uploadAwsFile(widget.user.userId,
+      var uploading = await AggressorApi().uploadAwsFile(widget.user.userId!,
           "config", "files", displayNameFile.path, "nameMaps");
       return true;
     } catch (e) {
@@ -962,7 +965,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showErrorMessage() {
-    //displays an error message if there is an error to be shown
+    // displays an error message if there is an error to be shown
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -976,7 +979,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showLoading() {
-    //displays a loading bar if data is being downloaded
+    // displays a loading bar if data is being downloaded
     return loading
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
@@ -989,7 +992,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showOffline() {
-    //displays offline when the application does not have internet connection
+    // displays offline when the application does not have internet connection
     return online
         ? Container()
         : Container(

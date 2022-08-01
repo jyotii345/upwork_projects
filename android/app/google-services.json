@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "232826693292",
+    "project_id": "adventure-of-a-lifetime-app",
+    "storage_bucket": "adventure-of-a-lifetime-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:232826693292:android:f3623a0b582e8266d76109",
+        "android_client_info": {
+          "package_name": "io.adventure.aggressor_adventures"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "232826693292-6jne96spni9a9e3k230qpt3m0j722nt8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.adventure.aggressor_adventures",
+            "certificate_hash": "50076dc04f87451e880e08360c6edbf82b8542f7"
+          }
+        },
+        {
+          "client_id": "232826693292-t1m4iacfh9dhvvvrucg05g82mpbrc32f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4VMuOd_gay_uNWzJcxi0T3tP99GayLa4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "232826693292-t1m4iacfh9dhvvvrucg05g82mpbrc32f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "232826693292-jh1upor1le5ha1a54m2u15o9bgae0ful.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.aggressor.Adventure-Of-A-Lifetime-Test"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

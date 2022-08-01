@@ -16,13 +16,13 @@ class PhotoDatabaseHelper {
 
   static final PhotoDatabaseHelper instance =
       PhotoDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -79,7 +79,7 @@ class PhotoDatabaseHelper {
     var result = await db.rawQuery(
         'SELECT EXISTS(SELECT 1 FROM photo WHERE imageName = ? AND boatId = ?)',
         [image, boatId]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
@@ -88,7 +88,7 @@ class PhotoDatabaseHelper {
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM photo WHERE key = ?)', [key]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
@@ -96,13 +96,17 @@ class PhotoDatabaseHelper {
     final db = await database;
     var result = await db
         .rawQuery('SELECT * FROM photo WHERE imagePath = ?', [filePath]);
-    return Photo(
-        result[0]['imageName'],
-        result[0]['userId'],
-        result[0]['imagePath'],
-        result[0]['date'],
-        result[0]['boatId'],
-        result[0]['key']);
+    return
+        // Photo(imageName: imageName, userId: userId, imagePath: imagePath, date: date, boatId: boatId, key: key)
+
+        Photo(
+      imageName: result[0]['imageName'].toString(),
+      userId: result[0]['userId'].toString(),
+      imagePath: result[0]['imagePath'].toString(),
+      date: result[0]['date'].toString(),
+      boatId: result[0]['boatId'].toString(),
+      key: result[0]['key'].toString(),
+    );
   }
 
   Future<List<Photo>> queryPhoto() async {
@@ -112,13 +116,22 @@ class PhotoDatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query('photo');
 
     return List.generate(maps.length, (i) {
-      return Photo(
-          maps[i]['imageName'],
-          maps[i]['userId'],
-          maps[i]['imagePath'],
-          maps[i]['date'],
-          maps[i]['boatId'],
-          maps[i]['key']);
+      return
+        Photo(
+          imageName: maps[i]['imageName'].toString(),
+          userId: maps[i]['userId'].toString(),
+          imagePath: maps[i]['imagePath'].toString(),
+          date: maps[i]['date'].toString(),
+          boatId: maps[i]['boatId'].toString(),
+          key: maps[i]['key'].toString(),
+        );
+        // Photo(
+        //   maps[i]['imageName'],
+        //   maps[i]['userId'],
+        //   maps[i]['imagePath'],
+        //   maps[i]['date'],
+        //   maps[i]['boatId'],
+        //   maps[i]['key']);
     });
   }
 }

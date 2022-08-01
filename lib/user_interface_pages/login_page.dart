@@ -10,7 +10,11 @@ import 'package:aggressor_adventures/databases/user_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/registration_page.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../classes/aggressor_colors.dart';
 import 'loading_page.dart';
+import 'main_page.dart';
+import 'profile_link_page.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage();
@@ -33,23 +37,23 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
   String errorText = ""; //string value of errors detected on login
 
-  Database database; // instance variable for sql database
+  Database? database; // instance variable for sql database
 
-  double sectionWidth, sectionHeight, textSize;
+  double sectionWidth = 0, sectionHeight = 0, textSize = 0;
 
   //user variables to be received upon successful login
-  String userId;
-  String nameF;
-  String nameL;
-  String email;
-  String contactId;
-  String OFYContactId;
-  String userType;
-  String contactType;
+  String userId = "";
+  String nameF = "";
+  String nameL = "";
+  String email = "";
+  String contactId = "";
+  String OFYContactId = "";
+  String userType = "";
+  String contactType = "";
 
-  UserDatabaseHelper helper;
+  UserDatabaseHelper helper = UserDatabaseHelper.instance;
 
-  User currentUser;
+  User? currentUser;
 
   /*
   initState
@@ -73,7 +77,70 @@ class _LoginSignUpPageState extends State<LoginPage> {
           portrait = orientation == Orientation.portrait;
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            appBar: getAppBar(),
+            appBar: AppBar(
+              elevation: 0,
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              automaticallyImplyLeading: false,
+              leading: SizedBox(
+                      child: IconButton(
+                        icon: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Icon(
+                              Icons.mail,
+                              size: 24,
+                              color: Color(0xff418CC7),
+                            ),
+                            Text(
+                              "MAIL",
+                              style: TextStyle(
+                                  color: Color(0xff418CC7),
+                                  fontSize: 9,
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.w600),
+                            )
+                          ],
+                        ),
+                        onPressed: () {
+                          launch("mailto:info@aggressor.com");
+                        },
+                      ),
+                    ),
+              leadingWidth: 60,
+              title: Padding(
+                padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                child: Image.asset(
+                  "assets/logo.png",
+                  height: AppBar().preferredSize.height,
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+              actions: <Widget>[
+                homePage
+                    ? SizedBox(
+                        height: AppBar().preferredSize.height,
+                        child: IconButton(
+                          icon: Container(
+                            child: Image.asset("assets/callicon.png"),
+                          ),
+                          onPressed: makeCall,
+                        ),
+                      )
+                    : SizedBox(
+                        height: AppBar().preferredSize.height,
+                        child: IconButton(
+                          icon: Container(
+                            child: Image.asset("assets/callicon.png"),
+                          ),
+                          onPressed: makeCall,
+                        ),
+                      ),
+              ],
+            ),
             body: Stack(
               children: <Widget>[
                 getBackgroundImage(),
@@ -81,7 +148,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
                 getLoadingWheel(),
               ],
             ),
-            bottomNavigationBar: getBottomNavigationBar(),
+            // bottomNavigationBar: getBottomNavigationBar(),
           );
         },
       ),
@@ -96,7 +163,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: Image.asset(
-        "assets/loginbackground.png", //TODO make background fit always
+        "assets/loginbackground.png",
         fit: portrait ? BoxFit.fitHeight : BoxFit.fill,
         height: double.infinity,
         width: double.infinity,
@@ -116,7 +183,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
         ? MediaQuery.of(context).size.height / 40
         : MediaQuery.of(context).size.width / 50;
     textSize = portrait
-        ? MediaQuery.of(context).size.width / 27
+        ? MediaQuery.of(context).size.width / 35
         : MediaQuery.of(context).size.height / 60;
     return Column(
       children: [
@@ -127,11 +194,11 @@ class _LoginSignUpPageState extends State<LoginPage> {
                   ? MediaQuery.of(context).size.height / 4
                   : MediaQuery.of(context).size.height / 4.25,
               25,
-              portrait ? 5 : 2.5),
+              portrait ? 8 : 3.5),
           child: getUserTextField(),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(25, 0, 25, portrait ? 5 : 2.5),
+          padding: EdgeInsets.fromLTRB(25, 0, 25, portrait ? 8 : 3.5),
           child: getPassTextField(),
         ),
         Padding(
@@ -169,16 +236,18 @@ class _LoginSignUpPageState extends State<LoginPage> {
       height: sectionHeight * 1.2,
       decoration: new BoxDecoration(
         color: Colors.white,
-        shape: BoxShape.rectangle,
-        border: new Border.all(
-          color: Colors.black,
-          width: 1.0,
-        ),
+          borderRadius: BorderRadius.circular(3)
+
+        // shape: BoxShape.rectangle,
+        // border: new Border.all(
+        //   color: Colors.black,
+        //   width: 1.0,
+        // ),
       ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: TextField(
-          style: TextStyle(fontSize: textSize),
+          style: TextStyle(fontSize: textSize,color: inputTextColor),
           controller: usernameController,
           maxLines: 1,
           decoration: InputDecoration(
@@ -189,7 +258,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
               disabledBorder: InputBorder.none,
               hintText: "User Name",
               isDense: true,
-              contentPadding: EdgeInsets.all(1)),
+              contentPadding: EdgeInsets.all(4)),
         ),
       ),
     );
@@ -201,21 +270,21 @@ class _LoginSignUpPageState extends State<LoginPage> {
       height: sectionHeight * 1.2,
       decoration: new BoxDecoration(
         color: Colors.white,
-        shape: BoxShape.rectangle,
-        border: new Border.all(
-          color: Colors.black,
-          width: 1.0,
-        ),
+        borderRadius: BorderRadius.circular(3)
+        // shape: BoxShape.rectangle,
+        // border: new Border.all(
+        //   color: Colors.black,
+        //   width: 1.0,
+        // ),
       ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: TextField(
-          style: TextStyle(fontSize: textSize),
+          style: TextStyle(fontSize: textSize,color: inputTextColor),
           controller: passwordController,
           obscureText: true,
           maxLines: 1,
           decoration: InputDecoration(
-
               border: InputBorder.none,
               focusedBorder: InputBorder.none,
               enabledBorder: InputBorder.none,
@@ -223,7 +292,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
               disabledBorder: InputBorder.none,
               hintText: "Password",
               isDense: true,
-              contentPadding: EdgeInsets.all(1)),
+              contentPadding: EdgeInsets.all(4)),
         ),
       ),
     );
@@ -250,15 +319,15 @@ class _LoginSignUpPageState extends State<LoginPage> {
           },
           child: Text(
             "Log-In",
-            style: TextStyle(color: Colors.white, fontSize: textSize),
+            style: TextStyle(color: Colors.white, fontSize: textSize+3),
           ),
           style: TextButton.styleFrom(
             padding: EdgeInsets.all(0),
             backgroundColor: Colors.green,
             shape: RoundedRectangleBorder(
-                side: BorderSide(
-                    color: Colors.black, width: 1, style: BorderStyle.solid),
-                borderRadius: BorderRadius.circular(0)),
+                // side: BorderSide(
+                //     color: Colors.black, width: 1, style: BorderStyle.solid),
+                borderRadius: BorderRadius.circular(4)),
           ),
         ),
       ),
@@ -313,15 +382,36 @@ class _LoginSignUpPageState extends State<LoginPage> {
     //check if the user is logged in and set the appropriate view if they are or are not
     var userList = await helper.queryUser();
     if (userList.length != 0) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => LoadingPage(userList[0])));
+      // var profileLinkResponse =
+      //     await AggressorApi().checkProfileLink(userList[0].userId!);
+      //
+      // if (profileLinkResponse["status"] == "success") {
+      //   Navigator.pushReplacement(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) =>
+      //           ProfileLinkPage(userList[0], profileLinkResponse["messsage"].toString()),
+      //     ),
+      //   );
+      // }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(
+            user: userList[0],
+          ),
+        ),
+      );
+      // Navigator.pushReplacement(context,
+      //     MaterialPageRoute(builder: (context) => LoadingPage(userList[0])));
     }
   }
 
   saveUserData() async {
     //saves user data into the sql database
-    await database.delete("user", where: 'id = ?', whereArgs: [100]);
-    await database.rawInsert(
+    await database!.delete("user", where: 'id = ?', whereArgs: [100]);
+    await database!.rawInsert(
       'INSERT INTO user(id, userId ,nameF ,nameL ,email ,contactId ,OFYContactId ,userType ,contactType) VALUES(?,?,?,?,?,?,?,?,?)',
       [
         100,
@@ -394,12 +484,13 @@ class _LoginSignUpPageState extends State<LoginPage> {
               style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
               onPressed: () {
                 setState(() {
-                  outterDistanceFromLogin ++;
+                  outterDistanceFromLogin++;
                 });
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => RegistrationPage(distanceReduce)));
+                        builder: (context) =>
+                            RegistrationPage(distanceReduce)));
               },
               child: Text(
                 "Create Account",
@@ -433,16 +524,15 @@ class _LoginSignUpPageState extends State<LoginPage> {
     );
   }
 
-  void distanceReduce(){
+  void distanceReduce() {
     setState(() {
-      outterDistanceFromLogin --;
+      outterDistanceFromLogin--;
     });
   }
 
-  void ensureDataReset(){
+  void ensureDataReset() {
     print("resetting data");
     setState(() {
-
       loadedCount = 0;
       loadingLength = 0;
       photosLoaded = false;

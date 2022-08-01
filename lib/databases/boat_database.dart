@@ -17,15 +17,15 @@ class BoatDatabaseHelper {
 
   static final BoatDatabaseHelper instance =
   BoatDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
 
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -83,7 +83,7 @@ class BoatDatabaseHelper {
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM boat WHERE boatId = ?)', [boatId]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
@@ -93,14 +93,14 @@ class BoatDatabaseHelper {
     var result = await db
         .rawQuery('SELECT * FROM boat WHERE boatId = ?', [boatId]);
     return Boat(
-      result[0]['boatId'],
-      result[0]['name'],
-      result[0]['abbreviation'],
-      result[0]['email'],
-      result[0]['active'],
-      result[0]['imageLink'],
-      result[0]['imagePath'],
-      result[0]['kbygLink'],
+      result[0]['boatId'].toString(),
+      result[0]['name'].toString(),
+      result[0]['abbreviation'].toString(),
+      result[0]['email'].toString(),
+      result[0]['active'].toString(),
+      result[0]['imageLink'].toString(),
+      result[0]['imagePath'].toString(),
+      result[0]['kbygLink'].toString(),
     );
   }
 

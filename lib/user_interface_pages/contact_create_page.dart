@@ -25,7 +25,7 @@ class CreateContactState extends State<CreateContact> {
   instance vars
    */
 
-  double textSize, textDisplayWidth;
+  double textSize=0, textDisplayWidth=0;
 
   bool isLoading = false;
   bool stateAndCountryLoaded = false;
@@ -40,8 +40,8 @@ class CreateContactState extends State<CreateContact> {
       homePhone = "",
       mobilePhone = "";
   DateTime dateOfBirth = DateTime.now();
-  Map<String, dynamic> countryDropDownSelection;
-  Map<String, dynamic> stateDropDownSelection;
+  Map<String, dynamic> countryDropDownSelection= <String, dynamic>{};
+  Map<String, dynamic> stateDropDownSelection=<String, dynamic>{};
 
   final formKey = new GlobalKey<FormState>();
 
@@ -92,7 +92,7 @@ class CreateContactState extends State<CreateContact> {
   bool validateAndSave() {
     //
     final form = formKey.currentState;
-    if (form.validate()) {
+    if (form!.validate()) {
       form.save();
       return true;
     }
@@ -147,7 +147,7 @@ class CreateContactState extends State<CreateContact> {
       } catch (e) {
         print('caught Error: $e');
         setState(() {
-          errorMessage = e.message;
+          errorMessage = e.toString();//.message.toString();
           isLoading = false;
         });
       }
@@ -313,9 +313,9 @@ class CreateContactState extends State<CreateContact> {
           child: DropdownButton<String>(
             isExpanded: true,
             value: genderDropDownOption,
-            onChanged: (String newValue) {
+            onChanged: (String? newValue) {
               setState(() {
-                genderDropDownOption = newValue;
+                genderDropDownOption = newValue.toString();
               });
             },
             items: <String>["Male", "Female"]
@@ -342,7 +342,7 @@ class CreateContactState extends State<CreateContact> {
           child: Container(
             decoration: BoxDecoration(
               border: Border(
-                bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+                bottom: BorderSide(width: 1.0, color: Colors.grey[400]!),
               ),
             ),
             child: TextButton(
@@ -376,7 +376,7 @@ class CreateContactState extends State<CreateContact> {
   }
 
   Future<void> selectBirthDay(BuildContext context) async {
-    final DateTime selection = await showDatePicker(
+    final DateTime? selection = await showDatePicker(
         context: context,
         initialDate: dateOfBirth,
         firstDate: DateTime.now().subtract(Duration(days: 365 * 130)),
@@ -399,8 +399,8 @@ class CreateContactState extends State<CreateContact> {
           child: TextFormField(
             decoration: InputDecoration(hintText: "Address line 1"),
             validator: (value) =>
-                value.isEmpty ? 'Address line 1 can\'t be empty' : null,
-            onSaved: (value) => address1 = value.trim(),
+                (value==null||value.isEmpty) ? 'Address line 1 can\'t be empty' : null,
+            onSaved: (value) => address1 = value!.trim(),
           ),
         ),
       ],
@@ -418,7 +418,7 @@ class CreateContactState extends State<CreateContact> {
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "Address line 2"),
-            onSaved: (value) => address2 = value.trim(),
+            onSaved: (value) => address2 = value!.trim(),
           ),
         ),
       ],
@@ -436,8 +436,8 @@ class CreateContactState extends State<CreateContact> {
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "City"),
-            validator: (value) => value.isEmpty ? 'City can\'t be empty' : null,
-            onSaved: (value) => city = value.trim(),
+            validator: (value) => (value==null||value.isEmpty) ? 'City can\'t be empty' : null,
+            onSaved: (value) => city = value!.trim(),
           ),
         )
       ],
@@ -458,9 +458,9 @@ class CreateContactState extends State<CreateContact> {
                 child: DropdownButton<Map<String, dynamic>>(
                   isExpanded: true,
                   value: stateDropDownSelection,
-                  onChanged: (Map<String, dynamic> newValue) {
+                  onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
-                      stateDropDownSelection = newValue;
+                      stateDropDownSelection = newValue!;
                     });
                   },
                   items: stateList
@@ -476,8 +476,8 @@ class CreateContactState extends State<CreateContact> {
                 child: TextFormField(
                   decoration: InputDecoration(hintText: "Province"),
                   validator: (value) =>
-                      value.isEmpty ? 'Province can\'t be empty' : null,
-                  onSaved: (value) => territory = value.trim(),
+                      (value==null||value.isEmpty) ? 'Province can\'t be empty' : null,
+                  onSaved: (value) => territory = value!.trim(),
                 ),
               ),
       ],
@@ -497,8 +497,8 @@ class CreateContactState extends State<CreateContact> {
             maxLength: 5,
             decoration: InputDecoration(hintText: "Zip code"),
             validator: (value) =>
-                value.isEmpty ? 'Zip code can\'t be empty' : null,
-            onSaved: (value) => zip = value.trim(),
+                (value==null||value.isEmpty) ? 'Zip code can\'t be empty' : null,
+            onSaved: (value) => zip = value!.trim(),
           ),
         )
       ],
@@ -516,9 +516,9 @@ class CreateContactState extends State<CreateContact> {
           child: DropdownButton<Map<String, dynamic>>(
             isExpanded: true,
             value: countryDropDownSelection,
-            onChanged: (Map<String, dynamic> newValue) {
+            onChanged: (Map<String, dynamic>? newValue) {
               setState(() {
-                countryDropDownSelection = newValue;
+                countryDropDownSelection = newValue!;
               });
             },
             items: countryList
@@ -535,7 +535,7 @@ class CreateContactState extends State<CreateContact> {
   }
 
   Widget getEmail() {
-    //returns the widget item containing the email
+    // returns the widget item containing the email
     return Row(
       children: [
         Container(
@@ -547,8 +547,8 @@ class CreateContactState extends State<CreateContact> {
             initialValue: widget.email,
             decoration: InputDecoration(hintText: "Email"),
             validator: (value) =>
-                value.isEmpty ? 'Email can\'t be empty' : null,
-            onSaved: (value) => email = value.trim(),
+                (value==null||value.isEmpty) ? 'Email can\'t be empty' : null,
+            onSaved: (value) => email = value!.trim(),
           ),
         )
       ],
@@ -556,7 +556,7 @@ class CreateContactState extends State<CreateContact> {
   }
 
   Widget getHomePhone() {
-    //returns the widget item containing the Home Phone Number
+    // returns the widget item containing the Home Phone Number
     return Row(
       children: [
         Container(
@@ -566,7 +566,7 @@ class CreateContactState extends State<CreateContact> {
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "Home phone"),
-            onSaved: (value) => homePhone = value.trim(),
+            onSaved: (value) => homePhone = value!.trim(),
           ),
         )
       ],
@@ -574,7 +574,7 @@ class CreateContactState extends State<CreateContact> {
   }
 
   Widget getMobilePhone() {
-    //returns the widget item containing the Mobile Phone Number
+    // returns the widget item containing the Mobile Phone Number
     return Row(
       children: [
         Container(
@@ -584,7 +584,7 @@ class CreateContactState extends State<CreateContact> {
         Expanded(
           child: TextFormField(
             decoration: InputDecoration(hintText: "Mobile Phone"),
-            onSaved: (value) => mobilePhone = value.trim(),
+            onSaved: (value) => mobilePhone = value!.trim(),
           ),
         )
       ],
