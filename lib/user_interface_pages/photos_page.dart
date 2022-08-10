@@ -17,7 +17,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+// import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:http/http.dart';
@@ -41,13 +41,23 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   instance vars
    */
 
-  Map<String, dynamic> dropDownValue;
+  Map<String, dynamic>? dropDownValue=boatList.isEmpty?null: boatList[0];
   String departureDate = "", errorMessage = "";
   List<dynamic> galleriesList = [];
   List<Asset> images = <Asset>[];
   bool loading = false;
   List<Trip> dateDropDownList = [];
-  Trip dateDropDownValue;
+  Trip dateDropDownValue=Trip(
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  );
   bool uploading = false;
 
   /*
@@ -68,9 +78,55 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       "",
     );
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
-    dropDownValue = boatList[0];
+    // dropDownValue =boatList.isEmpty?null: boatList[0];
+    if(boatList.isEmpty){
+      getBoatList();
+    }
+    if(tripList.isEmpty){
+      updateTripListList();
+    }
+
+
   }
 
+
+  updateTripListList() async {
+    setState(() {
+      loading=true;
+    });
+    var tempList =
+    await AggressorApi().getReservationList(widget.user.contactId!,(){});
+    tripList = tempList;
+    for (var trip in tripList) {
+      trip.user = widget.user;
+      await trip.initCharterInformation();
+
+      // setState(() {
+      //   if(percent<0.9){
+      //     percent += .05;
+      //   }
+      //   // percent += (loadedCount / (loadingLength));
+      // });
+    }
+
+    await getGalleries();
+    setState(() {
+      loading = false;
+    });
+  }
+
+  void getBoatList() async {
+    //set the initial boat list
+    setState(() {
+      loading=true;
+    });
+    boatList = await AggressorApi().getBoatList();
+    dropDownValue =boatList.isEmpty?null: boatList[0];
+
+    setState(() {
+      loading=false;
+    });
+  }
   /*
   Build
    */
@@ -80,7 +136,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     homePage = true;
 
-    getGalleries();
+    // getGalleries();
 
     return PinchToZoom(
       OrientationBuilder(builder: (context, orientation) {
@@ -118,10 +174,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         children: [
           getBannerImage(),
           showOffline(),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: showLoading(),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(10.0),
+          //   child: showLoading(),
+          // ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: getPageTitle(),
@@ -163,8 +219,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           ),
           Container(
             width: portrait
-                ? MediaQuery.of(context).size.height / 4
-                : MediaQuery.of(context).size.width / 2.5,
+                ? MediaQuery.of(context).size.height / 4.2
+                : MediaQuery.of(context).size.width / 2.6,
             height: portrait
                 ? MediaQuery.of(context).size.height / 35
                 : MediaQuery.of(context).size.width / 35,
@@ -182,10 +238,13 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              onChanged: (Map<String, dynamic> newValue) {
+              onChanged: (Map<String, dynamic>? newValue) async {
+                dropDownValue = newValue!;
+
+                dateDropDownList =await getDateDropDownList(newValue);
+
                 setState(() {
-                  dropDownValue = newValue;
-                  dateDropDownList = getDateDropDownList(newValue);
+
                 });
               },
               items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
@@ -232,7 +291,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           ),
           Container(
             width: portrait
-                ? MediaQuery.of(context).size.height / 4
+                ? MediaQuery.of(context).size.height / 4.2
                 : MediaQuery.of(context).size.width / 2.5,
             height: portrait
                 ? MediaQuery.of(context).size.height / 35
@@ -251,9 +310,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              onChanged: (Trip newValue) {
+              onChanged: (Trip? newValue) {
                 setState(() {
-                  dateDropDownValue = newValue;
+                  dateDropDownValue = newValue!;
                 });
               },
               items: dateDropDownList.map<DropdownMenuItem<Trip>>((Trip value) {
@@ -265,17 +324,17 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                         : MediaQuery.of(context).size.height / 2,
                     child: AutoSizeText(
                       value.charter == null
-                          ? "You have adventures here yet."
+                          ? "You don't have adventures here yet."
                           : DateTime.parse(
-                                      value.charter.startDate)
+                                      value.charter!.startDate!)
                                   .month
                                   .toString() +
                               "/" +
-                              DateTime.parse(value.charter.startDate)
+                              DateTime.parse(value.charter!.startDate!)
                                   .day
                                   .toString() +
                               "/" +
-                              DateTime.parse(value.charter.startDate)
+                              DateTime.parse(value.charter!.startDate!)
                                   .year
                                   .toString(),
                       maxLines: 1,
@@ -292,12 +351,14 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  List<Trip> getDateDropDownList(Map<String, dynamic> boatMap) {
+  Future<List<Trip>> getDateDropDownList(Map<String, dynamic> boatMap) async {
     //generates the list of dates a trip is scheduled on a particular yacht
     List<Trip> tempList = [];
-    tripList.forEach((element) {
-      if (element.boat.boatId.toString() == boatMap["boatid"].toString() ||
-          element.boat.boatId.toString() == boatMap["boatId"].toString()) {
+// Future.forEach(tripList, (element) => null)
+
+   await Future.forEach(tripList,(Trip element) {
+      if (element.boat!=null&&(element.boat!.boatId.toString() == boatMap["boatid"].toString() ||
+          element.boat!.boatId.toString() == boatMap["boatId"].toString())) {
         tempList.add(element);
       }
     });
@@ -327,7 +388,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           ),
           Container(
             width: portrait
-                ? MediaQuery.of(context).size.height / 4
+                ? MediaQuery.of(context).size.height / 4.2
                 : MediaQuery.of(context).size.width / 2.5,
             child: TextButton(
               onPressed: uploading ? () {} : loadAssets,
@@ -364,9 +425,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       // We didn't ask for permission yet or the permission has been denied before but not permanently.
     }
 
-    if (dropDownValue["name"] == " -- SELECT -- " ||
+    if (dropDownValue!["name"] == " -- SELECT -- " ||
         dateDropDownValue.charter == null ||
-        dateDropDownValue.charter.startDate == "") {
+        dateDropDownValue.charter!.startDate == "") {
       setState(() {
         errorMessage = "You must select a trip to create a gallery for.";
       });
@@ -392,23 +453,23 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       if (online) {
         for (var element in resultList) {
           String path = "";
-          if (element.name.toLowerCase().contains(".heic")) {
-            path = await HeicToJpg.convert(
-                await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+          if (element.name!.toLowerCase().contains(".heic")) {
+            // path = (await HeicToJpg.convert(
+            //     await FlutterAbsolutePath.getAbsolutePath(element.identifier)))!;
           } else {
-            path =
-                await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+            // path =
+                // await FlutterAbsolutePath.getAbsolutePath(element.identifier);
           }
           File file = File(path);
 
           String uploadDate = formatDate(
-              DateTime.parse(dateDropDownValue.charter.startDate),
+              DateTime.parse(dateDropDownValue.charter!.startDate!),
               [yyyy, '-', mm, '-', dd]);
 
           var response = await AggressorApi().uploadAwsFile(
               widget.user.userId.toString(),
               "gallery",
-              dateDropDownValue.charter.boatId.toString(),
+              dateDropDownValue.charter!.boatId.toString(),
               file.path,
               uploadDate);
 
@@ -427,26 +488,26 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       } else {
         for (var element in resultList) {
           String path = "";
-          if (element.name.toLowerCase().contains(".heic")) {
-            path = await HeicToJpg.convert(
-                await FlutterAbsolutePath.getAbsolutePath(element.identifier));
+          if (element.name!.toLowerCase().contains(".heic")) {
+            // path = (await HeicToJpg.convert(
+            //     await FlutterAbsolutePath.getAbsolutePath(element.identifier)))!;
           } else {
-            path =
-                await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+            // path =
+            //     await FlutterAbsolutePath.getAbsolutePath(element.identifier);
           }
           File file = File(path);
 
           String uploadDate = formatDate(
-              DateTime.parse(dateDropDownValue.charter.startDate),
+              DateTime.parse(dateDropDownValue.charter!.startDate!),
               [yyyy, '-', mm, '-', dd]);
 
           await PhotoDatabaseHelper.instance.insertPhoto(Photo(
-              element.name,
-              widget.user.userId,
-              file.path,
-              uploadDate,
-              dateDropDownValue.charter.boatId,
-              null));
+              imageName:element.name!,
+              userId:widget.user.userId!,
+              imagePath:file.path,
+              date:uploadDate,
+              boatId:dateDropDownValue.charter!.boatId!,
+              key:null));
           await OfflineDatabaseHelper.instance.insertOffline(
               {'type': "image", 'action': "add", 'id': file.path});
         }
@@ -475,18 +536,26 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Create new gallery",
-            style: TextStyle(
-                color: AggressorColors.secondaryColor,
-                fontSize: portrait
-                    ? MediaQuery.of(context).size.height / 40
-                    : MediaQuery.of(context).size.width / 40,
-                fontWeight: FontWeight.bold),
-          ),
-          getYachtDropDown(boatList),
-          getDateDropDown(),
-          getUploadPhotosButton(),
+
+          (dropDownValue==null||loading)?
+          Center(child: CircularProgressIndicator()):
+          Wrap(
+            // physics: NeverScrollableScrollPhysics(),
+            children: [
+              Text(
+                "Create new gallery",
+                style: TextStyle(
+                    color: AggressorColors.secondaryColor,
+                    fontSize: portrait
+                        ? MediaQuery.of(context).size.height / 40
+                        : MediaQuery.of(context).size.width / 40,
+                    fontWeight: FontWeight.bold),
+              ),
+              getYachtDropDown(boatList),
+              getDateDropDown(),
+              getUploadPhotosButton(),
+            ],
+          )
         ],
       ),
     );
@@ -611,9 +680,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
     int index = 0;
     galleriesMap.forEach((key, value) {
-      if (value.photos.length > 0) {
+      if (value.photos!.length > 0) {
         galleriesList.add(value.getGalleryRow(context, index));
-        galleriesMap[key].setCallback(pageCallback);
+        galleriesMap[key]!.setCallback(pageCallback);
       }
       index++;
     });
@@ -628,9 +697,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   VoidCallback pageCallback() {
-    setState(() {
-      photosLoaded = false;
-    });
+    return (){
+      setState(() {
+        photosLoaded = false;
+      });
+    };
   }
 
   Widget getBackgroundImage() {
@@ -702,11 +773,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           var response;
           try {
             response = await s3client.listObjects(
-                prefix: widget.user.userId +
+                prefix: widget.user.userId! +
                     "/gallery/" +
-                    element.boat.boatId +
+                    element.boat!.boatId! +
                     "/" +
-                    formatDate(DateTime.parse(element.charter.startDate),
+                    formatDate(DateTime.parse(element.charter!.startDate!),
                         [yyyy, '-', mm, '-', dd]).toString() +
                     "/",
                 delimiter: "/");
@@ -719,8 +790,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               var elementJson = await jsonDecode(content.toJson());
               if (elementJson["Size"] != "0") {
                 if (!tempGalleries.containsKey(element.reservationId)) {
-                  tempGalleries[element.reservationId] = Gallery(
-                      widget.user, element.reservationId, <Photo>[], element);
+                  tempGalleries[element.reservationId!] = Gallery(
+                      widget.user, element.reservationId!, <Photo>[], element);
                 }
                 if (!await photoHelper.keyExists(elementJson["Key"])) {
                   StreamedResponse downloadResponse = await AggressorApi()
@@ -730,7 +801,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                       await readByteStream(downloadResponse.stream);
 
                   String fileName =
-                      downloadResponse.headers["content-disposition"];
+                      downloadResponse.headers["content-disposition"]!;
                   int whereIndex = fileName.indexOf("=");
                   fileName = fileName.substring(whereIndex + 1);
                   fileName.replaceAll("\"", "");
@@ -745,12 +816,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   await element.initCharterInformation();
 
                   Photo photo = Photo(
-                      fileName,
-                      widget.user.userId,
-                      imageFile.path,
-                      element.tripDate,
-                      element.boat.boatId,
-                      elementJson["Key"]);
+                      imageName:fileName,
+                      userId: widget.user.userId!,
+                      imagePath:imageFile.path,
+                      date:element.tripDate!,
+                      boatId:element.boat!.boatId!,
+                      key:elementJson["Key"]);
 
                   photoHelper.insertPhoto(photo);
                 }
@@ -772,8 +843,8 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
           //     [yyyy, '-', mm, '-', dd]).toString() + " " +
           //     element.date);
 
-          if (tripList[i].boat.boatId == element.boatId &&
-              formatDate(DateTime.parse(tripList[i].charter.startDate),
+          if (tripList[i].boat!.boatId == element.boatId &&
+              formatDate(DateTime.parse(tripList[i].charter!.startDate!),
                       [yyyy, '-', mm, '-', dd]).toString() ==
                   element.date) {
             tripIndex = i;
@@ -781,13 +852,13 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         }
 
         if (!tempGalleries.containsKey(tripList[tripIndex].reservationId)) {
-          tempGalleries[tripList[tripIndex].reservationId] = Gallery(
-              widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
+          tempGalleries[tripList[tripIndex].reservationId!] = Gallery(
+              widget.user, element.boatId??"", <Photo>[], tripList[tripIndex]);
         } else {
-          if (!tempGalleries[tripList[tripIndex].reservationId]
-              .photos
+          if (!tempGalleries[tripList[tripIndex].reservationId]!
+              .photos!
               .contains(element)) {
-            tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+            tempGalleries[tripList[tripIndex].reservationId]!.addPhoto(element);
           }
         }
       });
@@ -815,7 +886,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showErrorMessage() {
-    //displays an error message if there is one
+    // displays an error message if there is one
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -829,7 +900,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showLoading() {
-    //displays a loading bar if data is being downloaded
+    // displays a loading bar if data is being downloaded
     return loading
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
@@ -842,7 +913,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Widget showOffline() {
-    //displays offline when the application does not have internet connection
+    // displays offline when the application does not have internet connection
     return online
         ? Container()
         : Container(
@@ -859,14 +930,14 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   Future<dynamic> getGalleriesOffline(List<Photo> photos) async {
-    //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
+    // downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
 
     Map<String, Gallery> tempGalleries = <String, Gallery>{};
     photos.forEach((element) {
       int tripIndex = 0;
       for (int i = 0; i < tripList.length - 1; i++) {
-        if (tripList[i].boat.boatId == element.boatId &&
-            formatDate(DateTime.parse(tripList[i].charter.startDate),
+        if (tripList[i].boat!.boatId! == element.boatId &&
+            formatDate(DateTime.parse(tripList[i].charter!.startDate!),
                     [yyyy, '-', mm, '-', dd]) ==
                 element.date) {
           tripIndex = i;
@@ -874,10 +945,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       }
 
       if (!tempGalleries.containsKey(tripList[tripIndex].reservationId)) {
-        tempGalleries[tripList[tripIndex].reservationId] = Gallery(
-            widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
+        tempGalleries[tripList[tripIndex].reservationId!] = Gallery(
+            widget.user, element.boatId!, <Photo>[], tripList[tripIndex]);
       } else {
-        tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+        tempGalleries[tripList[tripIndex].reservationId]!.addPhoto(element);
       }
     });
     return tempGalleries;

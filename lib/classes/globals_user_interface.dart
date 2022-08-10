@@ -1,25 +1,76 @@
 library user_interface;
 
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
+import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/material.dart';
+import 'package:html_editor_enhanced/utils/utils.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../databases/slider_database.dart';
+import 'aggressor_api.dart';
 import 'aggressor_colors.dart';
 import 'globals.dart';
 
 double iconSizePortrait =
-    MediaQuery.of(navigatorKey.currentContext).size.width / 10;
+    MediaQuery.of(navigatorKey.currentContext!).size.width / 10;
 double iconSizeLandscape =
-    MediaQuery.of(navigatorKey.currentContext).size.height / 10;
+    MediaQuery.of(navigatorKey.currentContext!).size.height / 10;
 double iconImageSize =
-    MediaQuery.of(navigatorKey.currentContext).size.width / 15;
+    MediaQuery.of(navigatorKey.currentContext!).size.width / 15;
 
 int popDistance = 0;
 bool portrait = true;
 
-VoidCallback mainPageCallback;
+Color inputTextColor=Color(0xff666666);
+Color inputBorderColor=Color(0xff707070);
 
-VoidCallback mainPageSignOutCallback;
+VoidCallback? mainPageCallback;
+
+VoidCallback? mainPageSignOutCallback;
+
+xyz(int x) async {
+  print(x);
+
+  // if(x==1){
+  //   await updateSliderImages();
+  //
+  //
+  // }
+}
+
+Future<dynamic> updateSliderImages() async {
+  SlidersDatabaseHelper slidersDatabaseHelper = SlidersDatabaseHelper.instance;
+  List<String> fileNames = await AggressorApi().getRewardsSliderList();
+  for (String file in fileNames) {
+    var fileResponse = await AggressorApi()
+        .getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
+    Uint8List bytes = await readByteStream(fileResponse.stream);
+
+    String fileName = file.substring(7);
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String appDocumentsPath = appDocumentsDirectory.path;
+    String filePath = '$appDocumentsPath/$fileName';
+    File tempFile = await File(filePath).writeAsBytes(bytes);
+
+    // try {
+    //   await slidersDatabaseHelper.deleteSliders(fileName);
+    // } catch (e) {
+    //   print("no such file");
+    // }
+
+    await slidersDatabaseHelper
+        .insertSliders({'fileName': fileName, 'filePath': tempFile.path});
+    sliderImageList.add({'filePath': tempFile.path, 'fileName': fileName});
+    // setState(() {
+    //   percent += .01;
+    // });
+  }
+  return "done";
+}
 
 Widget getBottomNavigationBar() {
   return OrientationBuilder(
@@ -32,6 +83,8 @@ Widget getBottomNavigationBar() {
         type: BottomNavigationBarType.fixed,
         onTap: (int index) {
           onTabTapped(index, orientation);
+
+          xyz(index);
         },
         backgroundColor: AggressorColors.primaryColor,
         currentIndex: currentIndex > 4 ? 0 : currentIndex,
@@ -295,17 +348,19 @@ Widget getCouponBottomNavigationBar() {
   );
 }
 
-void onTabTapped(int index, Orientation orientation) {
+void onTabTapped(int index, Orientation? orientation) {
   /*
     set the state of the navigation bar selection to index
      */
 
   if (index != 4) {
+    // if (false) {
+
     if (homePage) {
       currentIndex = index;
-      mainPageCallback();
+      mainPageCallback!();
       int popCount = 0;
-      Navigator.popUntil(navigatorKey.currentContext, (route) {
+      Navigator.popUntil(navigatorKey.currentContext!, (route) {
         return popCount++ == popDistance;
       });
       popDistance = 0;
@@ -314,10 +369,10 @@ void onTabTapped(int index, Orientation orientation) {
     //todo show the more options dialogue
     //add the following my files,my notes,  my profile, signout
     showMenu<String>(
-      context: navigatorKey.currentContext,
+      context: navigatorKey.currentContext!,
       position: RelativeRect.fromLTRB(
           double.infinity,
-          MediaQuery.of(navigatorKey.currentContext).size.height -
+          MediaQuery.of(navigatorKey.currentContext!).size.height -
               (orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape) -
@@ -325,29 +380,71 @@ void onTabTapped(int index, Orientation orientation) {
           0,
           0),
       items: [
-        PopupMenuItem<String>(child: const Text('• Contact us'), value: '0'),
-        PopupMenuItem<String>(child: const Text('• My files'), value: '1'),
-        PopupMenuItem<String>(child: const Text('• My notes'), value: '2'),
-        PopupMenuItem<String>(child: const Text('• My profile'), value: '3'),
-        PopupMenuItem<String>(child: const Text('• Sign Out'), value: '4'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/contact.png",height: 17,width: 17,),
+            ),
+
+            const Text('Contact us'),
+          ],
+        ), value: '0'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/folder.png",height: 17,width: 17,),
+            ),
+            const Text('My files'),
+          ],
+        ), value: '1'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/pencil.png",height: 17,width: 17,),
+            ),
+            const Text('My notes'),
+          ],
+        ), value: '2'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/user.png",height: 17,width: 17,),
+            ),
+            const Text('My profile'),
+          ],
+        ), value: '3'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/signOut.png",height: 17,width: 17,),
+            ),
+            const Text('Sign Out'),
+          ],
+        ), value: '4'),
       ],
       elevation: 8.0,
-    ).then<void>((String itemSelected) {
+    ).then<void>((String? itemSelected) {
       if (itemSelected == null) return;
 
       if (itemSelected == "0") {
         launch("mailto:info@aggressor.com");
+        // Container();
       } else if (itemSelected == "1") {
         currentIndex = 5;
-        mainPageCallback();
+        mainPageCallback!();
       } else if (itemSelected == "2") {
         currentIndex = 6;
-        mainPageCallback();
+        mainPageCallback!();
       } else if (itemSelected == "3") {
         currentIndex = 4;
-        mainPageCallback();
+        mainPageCallback!();
       } else {
-        mainPageSignOutCallback();
+        mainPageSignOutCallback!();
       }
     });
   }
@@ -361,9 +458,9 @@ void onCouponTabTapped(int index, Orientation orientation) {
   if (index != 4) {
     if (homePage) {
       currentIndex = index;
-      mainPageCallback();
+      mainPageCallback!();
       int popCount = 0;
-      Navigator.popUntil(navigatorKey.currentContext, (route) {
+      Navigator.popUntil(navigatorKey.currentContext!, (route) {
         return popCount++ == popDistance;
       });
       popDistance = 0;
@@ -372,10 +469,10 @@ void onCouponTabTapped(int index, Orientation orientation) {
     //todo show the more options dialogue
     //add the following my files,my notes,  my profile, signout
     showMenu<String>(
-      context: navigatorKey.currentContext,
+      context: navigatorKey.currentContext!,
       position: RelativeRect.fromLTRB(
           double.infinity,
-          MediaQuery.of(navigatorKey.currentContext).size.height -
+          MediaQuery.of(navigatorKey.currentContext!).size.height -
               (orientation == Orientation.portrait
                   ? iconSizePortrait
                   : iconSizeLandscape) -
@@ -383,33 +480,80 @@ void onCouponTabTapped(int index, Orientation orientation) {
           0,
           0),
       items: [
-        PopupMenuItem<String>(child: const Text('• Contact us'), value: '0'),
-        PopupMenuItem<String>(child: const Text('• My files'), value: '1'),
-        PopupMenuItem<String>(child: const Text('• My notes'), value: '2'),
-        PopupMenuItem<String>(child: const Text('• My profile'), value: '3'),
-        PopupMenuItem<String>(child: const Text('• Sign Out'), value: '4'),
+        // PopupMenuItem<String>(child: const Text('• Contact us'), value: '0'),
+        // PopupMenuItem<String>(child: const Text('• My files'), value: '1'),
+        // PopupMenuItem<String>(child: const Text('• My notes'), value: '2'),
+        // PopupMenuItem<String>(child: const Text('• My profile'), value: '3'),
+        // PopupMenuItem<String>(child: const Text('• Sign Out'), value: '4'),
+
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/contact.png",height: 17,width: 17,),
+            ),
+
+            const Text('Contact us'),
+          ],
+        ), value: '0'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/folder.png",height: 17,width: 17,),
+            ),
+            const Text('My files'),
+          ],
+        ), value: '1'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/pencil.png",height: 17,width: 17,),
+            ),
+            const Text('My notes'),
+          ],
+        ), value: '2'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/user.png",height: 17,width: 17,),
+            ),
+            const Text('My profile'),
+          ],
+        ), value: '3'),
+        PopupMenuItem<String>(child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 13.0),
+              child: Image.asset("assets/icons/signOut.png",height: 17,width: 17,),
+            ),
+            const Text('Sign Out'),
+          ],
+        ), value: '4'),
       ],
       elevation: 8.0,
-    ).then<void>((String itemSelected) {
+    ).then<void>((String? itemSelected) {
       if (itemSelected == null) return;
 
       if (itemSelected == "0") {
         launch("mailto:info@aggressor.com");
       } else if (itemSelected == "1") {
         currentIndex = 5;
-        mainPageCallback();
+        mainPageCallback!();
       } else if (itemSelected == "2") {
         currentIndex = 6;
-        mainPageCallback();
+        mainPageCallback!();
       } else if (itemSelected == "3") {
         currentIndex = 4;
-        mainPageCallback();
+        mainPageCallback!();
       } else {
-        mainPageSignOutCallback();
+        mainPageSignOutCallback!();
       }
 
       int popCount = 0;
-      Navigator.popUntil(navigatorKey.currentContext, (route) {
+      Navigator.popUntil(navigatorKey.currentContext!, (route) {
         return popCount++ == popDistance;
       });
       popDistance = 0;
@@ -417,7 +561,7 @@ void onCouponTabTapped(int index, Orientation orientation) {
   }
 }
 
-Widget getAppBar() {
+AppBar getAppBar() {
   return AppBar(
     elevation: 0,
     centerTitle: true,
@@ -429,11 +573,11 @@ Widget getAppBar() {
             color: AggressorColors.secondaryColor,
             onPressed: () {
               outterDistanceFromLogin = 0;
-              navigatorKey.currentState.pushReplacement(
+              navigatorKey.currentState!.pushReplacement(
                   MaterialPageRoute(builder: (context) => LoginPage()));
             },
           )
-        : Container(),
+        : SizedBox(),
     title: Padding(
       padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
       child: Image.asset(
@@ -479,14 +623,14 @@ void handlePopupClick(String value) async {
   switch (value) {
     case 'My Profile':
       currentIndex = 4;
-      mainPageCallback();
+      mainPageCallback!();
       break;
     case 'Sign Out':
-      mainPageSignOutCallback();
+      mainPageSignOutCallback!();
       break;
   }
   int popCount = 0;
-  Navigator.popUntil(navigatorKey.currentContext, (route) {
+  Navigator.popUntil(navigatorKey.currentContext!, (route) {
     return popCount++ == popDistance;
   });
   popDistance = 0;
@@ -496,18 +640,18 @@ void handleCouponPopupClick(String value) async {
   switch (value) {
     case 'Home':
       currentIndex = 0;
-      mainPageCallback();
+      mainPageCallback!();
       break;
     case 'My Profile':
       currentIndex = 4;
-      mainPageCallback();
+      mainPageCallback!();
       break;
     case 'Sign Out':
-      mainPageSignOutCallback();
+      mainPageSignOutCallback!();
       break;
   }
   int popCount = 0;
-  Navigator.popUntil(navigatorKey.currentContext, (route) {
+  Navigator.popUntil(navigatorKey.currentContext!, (route) {
     return popCount++ == popDistance;
   });
   popDistance = 0;

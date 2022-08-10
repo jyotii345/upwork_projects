@@ -166,8 +166,8 @@ class MyProfileState extends State<MyProfile> {
   Widget getAddress() {
     //gets the address of the user
     String territory = profileData["country"].toString() == "2"
-        ? profileData["state"]
-        : profileData["province"];
+        ? profileData["state"]??""
+        : profileData["province"]??"";
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Column(
@@ -222,7 +222,7 @@ class MyProfileState extends State<MyProfile> {
               ),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]!),
                 ),
               ),
             ),
@@ -260,7 +260,7 @@ class MyProfileState extends State<MyProfile> {
               ),
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]!),
                 ),
               ),
             ),
@@ -332,7 +332,7 @@ class MyProfileState extends State<MyProfile> {
     //loads the profile details
     if (!profileDataLoaded) {
       var jsonResponse =
-          await AggressorApi().getProfileData(widget.user.userId);
+          await AggressorApi().getProfileData(widget.user.userId!);
       if (jsonResponse["status"] == "success") {
         var jsonResponseCountries = await AggressorApi().getCountries();
         setState(() {
@@ -440,7 +440,7 @@ class MyProfileState extends State<MyProfile> {
     if (!userImageRetreived) {
       try {
         var userImageRes = await AggressorApi()
-            .downloadUserImage(widget.user.userId, profileData["avatar"]);
+            .downloadUserImage(widget.user.userId!, profileData["avatar"]);
 
         var bytes = await readByteStream(userImageRes.stream);
         var dirData = (await getApplicationDocumentsDirectory()).path;

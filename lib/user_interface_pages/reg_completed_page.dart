@@ -18,7 +18,7 @@ class RegistrationCompletedPageState extends State<RegistrationCompletedPage> {
   instance vars
    */
 
-  double textSize;
+  double textSize=0;
 
   bool isLoading = false;
   String errorMessage = "";
@@ -140,7 +140,7 @@ class RegistrationCompletedPageState extends State<RegistrationCompletedPage> {
   }
 
   Widget getBackgroundImage() {
-    //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
+    // this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
@@ -157,7 +157,7 @@ class RegistrationCompletedPageState extends State<RegistrationCompletedPage> {
   }
 
   Widget getBannerImage() {
-    //returns banner image
+    // returns banner image
     return Image.asset(
       "assets/bannerimage.png",
       width: MediaQuery.of(context).size.width,

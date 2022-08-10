@@ -7,9 +7,8 @@
 
    <application
         android:label="Adventure Of A Lifetime"
-        android:icon="@mipmap/ic_launcher">
-
-       android:requestLegacyExternalStorage="true"
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name="io.adventure.aggressor_adventures.MainActivity"
 

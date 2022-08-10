@@ -38,18 +38,18 @@ class FileViewState extends State<FilesTripPage>
 
   String fileName = "";
 
-  Trip dropDownValue, selectionTrip;
+  late Trip dropDownValue, selectionTrip;
 
   bool loading = false;
   bool uploading = false;
 
   List<dynamic> filesList = [];
   List<dynamic> fileNameList = [];
-  List<Trip> sortedTripList;
+  List<Trip> sortedTripList=[];
 
   String errorMessage = "";
 
-  FilePickerResult result;
+  FilePickerResult? result;
 
   TextEditingController fileNameController = TextEditingController();
 
@@ -167,9 +167,9 @@ class FileViewState extends State<FilesTripPage>
               iconSize: portrait
                   ? MediaQuery.of(context).size.height / 35
                   : MediaQuery.of(context).size.width / 35,
-              onChanged: (Trip newValue) {
+              onChanged: (Trip? newValue) {
                 setState(() {
-                  dropDownValue = newValue;
+                  dropDownValue = newValue!;
                 });
               },
               items: sortedTripList.map<DropdownMenuItem<Trip>>((Trip value) {
@@ -181,18 +181,18 @@ class FileViewState extends State<FilesTripPage>
                         : MediaQuery.of(context).size.height / 2,
                     child: Text(
                       value.detailDestination == "General"
-                          ? value.detailDestination
-                          : value.detailDestination +
+                          ? value.detailDestination.toString()
+                          : value.detailDestination.toString() +
                               " - " +
-                              DateTime.parse(value.charter.startDate)
+                              DateTime.parse(value.charter!.startDate!)
                                   .month
                                   .toString() +
                               "/" +
-                              DateTime.parse(value.charter.startDate)
+                              DateTime.parse(value.charter!.startDate!)
                                   .day
                                   .toString() +
                               "/" +
-                              DateTime.parse(value.charter.startDate)
+                              DateTime.parse(value.charter!.startDate!)
                                   .year
                                   .toString(),
                       style: TextStyle(
@@ -214,7 +214,7 @@ class FileViewState extends State<FilesTripPage>
   List<Trip> sortTripList(List<Trip> tripList) {
     List<Trip> tempList = tripList;
     tempList.sort((a, b) =>
-        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+        DateTime.parse(b.tripDate!).compareTo(DateTime.parse(a.tripDate!)));
 
     return tempList;
   }
@@ -541,13 +541,13 @@ class FileViewState extends State<FilesTripPage>
       List<FileData> tempFiles = [];
 
       var mapsList = await s3client.listObjects(
-          prefix: widget.user.userId + "/config/files/nameMaps/",
+          prefix: widget.user.userId.toString() + "/config/files/nameMaps/",
           delimiter: "/");
 
       fileNameList.clear();
-      for (var value in mapsList.contents) {
+      for (var value in mapsList!.contents!) {
         try {
-          if (double.parse(value.size) > 0) {
+          if (double.parse(value.size!) > 0) {
             fileNameList.add(await jsonDecode(value.toJson()));
           }
         } catch (e) {
@@ -595,11 +595,11 @@ class FileViewState extends State<FilesTripPage>
           var response;
           try {
             response = await s3client.listObjects(
-                prefix: widget.user.userId +
+                prefix: widget.user.userId.toString() +
                     "/files/" +
-                    element.charterId +
+                    element.charterId.toString() +
                     "/" +
-                    formatDate(DateTime.parse(element.charter.startDate),
+                    formatDate(DateTime.parse(element.charter!.startDate!),
                         [yyyy, '-', mm, '-', dd]).toString() +
                     "/",
                 delimiter: "/");
@@ -639,7 +639,7 @@ class FileViewState extends State<FilesTripPage>
                         "",
                         element.charter == null
                             ? "general"
-                            : element.charter.charterId);
+                            : element.charter!.charterId!);
                     fileHelper.insertFile(fileData);
                   }
                 }
@@ -649,11 +649,11 @@ class FileViewState extends State<FilesTripPage>
         }
 
         var response = await s3client.listObjects(
-            prefix: widget.user.userId + "/files/general/general/",
+            prefix: widget.user.userId! + "/files/general/general/",
             delimiter: "/");
 
-        if (response.contents != null) {
-          for (var content in response.contents) {
+        if (response!.contents != null) {
+          for (var content in response.contents!) {
             var elementJson = await jsonDecode(content.toJson());
             if (elementJson["Size"] != "0") {
               if (!await FileDatabaseHelper.instance.fileExists(
@@ -695,8 +695,8 @@ class FileViewState extends State<FilesTripPage>
       for (var element in tempFiles) {
         if ((element.displayName == "" || element.displayName == null) &&
             fileDisplayNames.containsKey(element.fileName)) {
-          element.setDisplayName(fileDisplayNames[element.fileName]);
-          await FileDatabaseHelper.instance.deleteFile(element.fileName);
+          element.setDisplayName(fileDisplayNames[element.fileName!]!);
+          await FileDatabaseHelper.instance.deleteFile(element.fileName!);
           await FileDatabaseHelper.instance.insertFile(element);
         }
         element.setUser(widget.user);
@@ -728,8 +728,8 @@ class FileViewState extends State<FilesTripPage>
         for (var element in fileDataList) {
           if (element.displayName == "" &&
               fileDisplayNames.containsKey(element.fileName)) {
-            element.setDisplayName(fileDisplayNames[element.fileName]);
-            await FileDatabaseHelper.instance.deleteFile(element.fileName);
+            element.setDisplayName(fileDisplayNames[element.fileName]!);
+            await FileDatabaseHelper.instance.deleteFile(element.fileName!);
             await FileDatabaseHelper.instance.insertFile(element);
           }
           element.setUser(widget.user);
@@ -745,14 +745,16 @@ class FileViewState extends State<FilesTripPage>
   }
 
   void pickFile() async {
-    result = await FilePicker.platform.pickFiles(
+    result = (await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'txt', 'doc', 'jpg', 'png'],
-    );
+    ))!;
 
-    setState(() {
-      fileName = result.names[0];
-    });
+    if(result!=null){
+      setState(() {
+        fileName = result!.names[0]!;
+      });
+    }
   }
 
   void clearFiles() async {
@@ -766,22 +768,22 @@ class FileViewState extends State<FilesTripPage>
         accessKey: "AKIA43MMI6CI2KP4CUUY",
         secretKey: "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");
 
-    var path = widget.user.userId + "/files/general/general/";
+    var path = widget.user.userId! + "/files/general/general/";
     var resList = await s3client.listObjects(prefix: path, delimiter: "/");
-    for (var value in resList.contents) {
-      if (double.parse(value.size) > 0) {
+    for (var value in resList!.contents!) {
+      if (double.parse(value.size!) > 0) {
         var res = await AggressorApi().deleteAwsFile(
-            widget.user.userId,
+            widget.user.userId!,
             "files",
             "general",
             "general",
-            value.key.substring(value.key.lastIndexOf("/") + 1));
+            value.key!.substring(value.key!.lastIndexOf("/") + 1));
       }
     }
   }
 
   void uploadFile() async {
-    //uploads a file to the aws bucket
+    // uploads a file to the aws bucket
     setState(() {
       loading = true;
       uploading = true;
@@ -791,18 +793,18 @@ class FileViewState extends State<FilesTripPage>
         if (result != null) {
           String uploadDate = dropDownValue.charter == null
               ? "general"
-              : formatDate(DateTime.parse(dropDownValue.charter.startDate),
+              : formatDate(DateTime.parse(dropDownValue.charter!.startDate!),
                   [yyyy, '-', mm, '-', dd]);
 
           var uploadResult = await AggressorApi().uploadAwsFile(
-              widget.user.userId,
+              widget.user.userId!,
               "files",
-              dropDownValue.charterId,
-              result.files.single.path,
+              dropDownValue.charterId!,
+              result!.files.single.path!,
               uploadDate);
 
           if (uploadResult["status"] == "success") {
-            Uint8List bytes = File(result.files.single.path).readAsBytesSync();
+            Uint8List bytes = File(result!.files.single.path!).readAsBytesSync();
             Directory appDocumentsDirectory =
                 await getApplicationDocumentsDirectory(); // 1
             String appDocumentsPath = appDocumentsDirectory.path; // 2
@@ -815,14 +817,14 @@ class FileViewState extends State<FilesTripPage>
                 uploadDate,
                 uploadResult["filename"],
                 fileNameController.text,
-                dropDownValue.charterId));
+                dropDownValue.charterId!));
 
             FileDatabaseHelper.instance.insertFile(FileData(
                 tempFile.path,
                 uploadDate,
                 uploadResult["filename"],
                 fileNameController.text,
-                dropDownValue.charterId));
+                dropDownValue.charterId!));
 
             setState(() {
               fileDisplayNames[uploadResult["filename"].toString()] =
@@ -864,9 +866,9 @@ class FileViewState extends State<FilesTripPage>
     String bucketId = "aggressor.app.user.images";
 
     fileDataList.forEach((element) {
-      //ensures all values are in the new map even if they are loaded from offline
+      // ensures all values are in the new map even if they are loaded from offline
       if (!fileDisplayNames.containsKey(element.fileName)) {
-        fileDisplayNames[element.fileName] = element.displayName;
+        fileDisplayNames[element.fileName!] = element.displayName!;
       }
     });
 
@@ -882,7 +884,7 @@ class FileViewState extends State<FilesTripPage>
       } else {
         try {
           await AggressorApi().deleteAwsFile(
-              widget.user.userId,
+              widget.user.userId!,
               "config",
               "files",
               "nameMaps",
@@ -896,7 +898,7 @@ class FileViewState extends State<FilesTripPage>
     }
 
     try {
-      var uploading = await AggressorApi().uploadAwsFile(widget.user.userId,
+      var uploading = await AggressorApi().uploadAwsFile(widget.user.userId!,
           "config", "files", displayNameFile.path, "nameMaps");
       return true;
     } catch (e) {
@@ -906,7 +908,7 @@ class FileViewState extends State<FilesTripPage>
   }
 
   Widget showErrorMessage() {
-    //displays an error message if there is an error to be shown
+    // displays an error message if there is an error to be shown
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -920,7 +922,7 @@ class FileViewState extends State<FilesTripPage>
   }
 
   Widget showLoading() {
-    //displays a loading bar if data is being downloaded
+    // displays a loading bar if data is being downloaded
     return loading
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
@@ -933,7 +935,7 @@ class FileViewState extends State<FilesTripPage>
   }
 
   Widget showOffline() {
-    //displays offline when the application does not have internet connection
+    // displays offline when the application does not have internet connection
     return online
         ? Container()
         : Container(

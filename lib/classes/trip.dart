@@ -25,35 +25,35 @@ import 'aggressor_colors.dart';
 import 'globals_user_interface.dart';
 
 class Trip {
-  User user;
-  String tripDate;
-  String title;
-  String latitude;
-  String longitude;
-  String destination;
-  String reservationDate;
-  String reservationId;
-  String imageResource;
-  String charterId;
-  String total;
-  String discount;
-  String payments;
-  String due;
-  String dueDate;
-  String passengers;
-  String location;
-  String embark;
-  String disembark;
-  String detailDestination;
-  String loginKey;
-  String passengerId;
-  String errorMessage = "";
-  List<VoidCallback> callBackList;
-  VoidCallback newImageCallBack;
+  User? user;
+  String? tripDate;
+  String? title;
+  String? latitude;
+  String? longitude;
+  String? destination;
+  String? reservationDate;
+  String? reservationId;
+  String? imageResource;
+  String? charterId;
+  String? total;
+  String? discount;
+  String? payments;
+  String? due;
+  String? dueDate;
+  String? passengers;
+  String? location;
+  String? embark;
+  String? disembark;
+  String? detailDestination;
+  String? loginKey;
+  String? passengerId;
+  String? errorMessage = "";
+  List<VoidCallback>? callBackList;
+  VoidCallback? newImageCallBack;
 
-  Note note;
-  Boat boat;
-  Charter charter;
+  Note? note;
+  Boat? boat;
+  Charter? charter;
 
   Trip(
       String tripDate,
@@ -64,7 +64,9 @@ class Trip {
       String reservationDate,
       String reservationId,
       String loginKey,
-      String passengerId) {
+      String passengerId)
+
+  {
     this.tripDate = tripDate;
     this.title = title;
     this.latitude = latitude;
@@ -174,7 +176,7 @@ class Trip {
     };
   }
 
-  factory Trip.fromMap(Map<String, dynamic> map) {
+  factory Trip.fromMap(Map<dynamic, dynamic> map) {
     //create a trip object from a map object
     return Trip.TripWithDetails(
       map['tripDate'].toString(),
@@ -226,12 +228,12 @@ class Trip {
     //gets charter and boat information about this trip
 
     try {
-      charter = await CharterDatabaseHelper.instance.getCharter(charterId);
+      charter = await CharterDatabaseHelper.instance.getCharter(charterId!);
 
-      boat = await BoatDatabaseHelper.instance.getBoat(charter.boatId);
+      boat = await BoatDatabaseHelper.instance.getBoat(charter!.boatId!);
       boatList.forEach((boatObj) {
-        if (boatObj["boatid"].toString() == boat.boatId) {
-          boat.kbygLink = boatObj["kbyg"];
+        if (boatObj["boatid"].toString() == boat!.boatId!) {
+          boat!.kbygLink = boatObj["kbyg"];
         }
       });
     } catch (e) {
@@ -319,7 +321,7 @@ class Trip {
                                                   children: [
                                                     Positioned.fill(
                                                       child: Image.file(
-                                                        File(snapshot.data),
+                                                        File(snapshot.data.toString()),
                                                         fit: BoxFit.fill,
                                                       ),
                                                     ),
@@ -360,7 +362,7 @@ class Trip {
                                             );
                                           },
                                           child: Image.file(
-                                            File(snapshot.data),
+                                            File(snapshot.data.toString()),
                                             fit: BoxFit.fill,
                                           ),
                                         )
@@ -386,7 +388,7 @@ class Trip {
                                 Text(
                                   DateTime.now()
                                       .difference(
-                                          DateTime.parse(charter.startDate))
+                                          DateTime.parse(charter!.startDate!))
                                       .inDays
                                       .abs()
                                       .toString(),
@@ -498,7 +500,7 @@ class Trip {
                                 height: rowSectionHeight,
                                 child: Center(
                                   child: AutoSizeText(
-                                    reservationId,
+                                    reservationId!,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: screenFontSize),
                                   ),
@@ -510,7 +512,7 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  boat.name,
+                                  boat!.name!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: screenFontSize),
                                 ),
@@ -521,16 +523,16 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  months[DateTime.parse(charter.startDate)
+                                  months[DateTime.parse(charter!.startDate!)
                                                   .month -
                                               1]
                                           .substring(0, 3) +
                                       " " +
-                                      DateTime.parse(charter.startDate)
+                                      DateTime.parse(charter!.startDate!)
                                           .day
                                           .toString() +
                                       ", " +
-                                      DateTime.parse(charter.startDate)
+                                      DateTime.parse(charter!.startDate!)
                                           .year
                                           .toString(),
                                   textAlign: TextAlign.center,
@@ -540,7 +542,7 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  charter.nights,
+                                  charter!.nights!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: screenFontSize),
                                 ),
@@ -628,7 +630,7 @@ class Trip {
               errorMessage == ""
                   ? Container()
                   : Text(
-                      errorMessage,
+                      errorMessage!,
                       style: TextStyle(color: Colors.red),
                       textAlign: TextAlign.center,
                     ),
@@ -647,11 +649,11 @@ class Trip {
   }
 
   void launchPayment(VoidCallback refreshState) async {
-    if (double.parse(due) > 0) {
-      navigatorKey.currentState.push(
+    if (double.parse(due!) > 0) {
+      navigatorKey.currentState!.push(
         MaterialPageRoute(
           builder: (context) => MakePayment(
-            user,
+            user!,
             this,
           ),
         ),
@@ -666,7 +668,7 @@ class Trip {
   }
 
   void launchKBYG() async {
-    await launch(this.boat.kbygLink);
+    await launch(this.boat!.kbygLink!);
   }
 
   void launchGIS(VoidCallback refreshState) async {
@@ -690,19 +692,19 @@ class Trip {
 
   void viewTripNotes() {
     if (note != null) {
-      navigatorKey.currentState.push(
+      navigatorKey.currentState!.push(
         MaterialPageRoute(
           builder: (context) => ViewNote(
-            user,
-            note,
+            user!,
+            note!,
           ),
         ),
       );
     } else {
-      navigatorKey.currentState.push(
+      navigatorKey.currentState!.push(
         MaterialPageRoute(
           builder: (context) => AddNotes(
-            user,
+            user!,
             this,
             () {},
           ),
@@ -718,31 +720,31 @@ class Trip {
 
     String path = "";
 
-    if (boat.imagePath == "" || boat.imagePath == null && online) {
-      var imageDetails = await AggressorApi().getBoatImage(boat.imageLink);
+    if (boat!.imagePath == "" || boat!.imagePath == null && online) {
+      var imageDetails = await AggressorApi().getBoatImage(boat!.imageLink!);
       if (imageDetails != null) {
-        var imageName = boat.imageLink
-            .substring(boat.imageLink.toString().lastIndexOf("/") + 1);
+        var imageName = boat!.imageLink!
+            .substring(boat!.imageLink.toString().lastIndexOf("/") + 1);
 
         Directory appDocumentsDirectory =
             await getApplicationDocumentsDirectory();
         String appDocumentsPath = appDocumentsDirectory.path;
         String filePath = '$appDocumentsPath/$imageName';
         File tempFile = await File(filePath).writeAsBytes(imageDetails[0]);
-        boat.imagePath = tempFile.path;
-        path = boat.imagePath;
+        boat!.imagePath = tempFile.path;
+        path = boat!.imagePath!;
       }
-      await boatDatabaseHelper.deleteBoat(boat.boatId);
-      await boatDatabaseHelper.insertBoat(boat);
+      await boatDatabaseHelper.deleteBoat(boat!.boatId!);
+      await boatDatabaseHelper.insertBoat(boat!);
     } else {
-      path = boat.imagePath;
+      path = boat!.imagePath!;
     }
 
     return path;
   }
 
   Widget getPastTripCard(BuildContext context, int index) {
-    //returns the tile view to be placed into the view for the previous trips this user has been engaged in
+    // returns the tile view to be placed into the view for the previous trips this user has been engaged in
     double textBoxSize = MediaQuery.of(context).size.width / 4.3;
     List<String> months = [
       'January',
@@ -773,36 +775,36 @@ class Trip {
             children: [
               SizedBox(
                 width: textBoxSize,
-                child: Text(reservationId, textAlign: TextAlign.center),
+                child: Text(reservationId!, textAlign: TextAlign.center),
               ),
               SizedBox(
                 width: textBoxSize,
                 child: boat == null
-                    ? Text(title, textAlign: TextAlign.center)
-                    : Text(boat.name, textAlign: TextAlign.center),
+                    ? Text(title!, textAlign: TextAlign.center)
+                    : Text(boat!.name!, textAlign: TextAlign.center),
               ),
               charter != null
                   ? SizedBox(
                       width: textBoxSize,
                       child: Text(
-                        months[DateTime.parse(charter.startDate).month - 1]
+                        months[DateTime.parse(charter!.startDate!).month - 1]
                                 .substring(0, 3) +
                             " " +
-                            DateTime.parse(charter.startDate).day.toString() +
+                            DateTime.parse(charter!.startDate!).day.toString() +
                             ", " +
-                            DateTime.parse(charter.startDate).year.toString(),
+                            DateTime.parse(charter!.startDate!).year.toString(),
                         textAlign: TextAlign.center,
                       ),
                     )
                   : SizedBox(
                       width: textBoxSize,
                       child: Text(
-                        months[DateTime.parse(tripDate).month - 1]
+                        months[DateTime.parse(tripDate!).month - 1]
                                 .substring(0, 3) +
                             " " +
-                            DateTime.parse(tripDate).day.toString() +
+                            DateTime.parse(tripDate!).day.toString() +
                             ", " +
-                            DateTime.parse(tripDate).year.toString(),
+                            DateTime.parse(tripDate!).year.toString(),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -823,10 +825,10 @@ class Trip {
                         context,
                         MaterialPageRoute(
                           builder: (pageContext) => GalleryView(
-                            user,
-                            reservationId,
-                            galleriesMap.containsKey(reservationId)
-                                ? galleriesMap[reservationId].photos
+                            user!,
+                            reservationId!,
+                            galleriesMap.containsKey(reservationId!)
+                                ? galleriesMap[reservationId]!.photos!
                                 : [],
                             this,
                           ),
@@ -842,9 +844,9 @@ class Trip {
   }
 
   Future<dynamic> updateTripValues() async {
-    //reloads the payment due for the boat
+    // reloads the payment due for the boat
     var response = await AggressorApi()
-        .getReservationDetails(reservationId, user.contactId);
+        .getReservationDetails(reservationId!, user!.contactId!);
     total = response['total'].toString();
     discount = response['discount'].toString();
     payments = response['payments'].toString();
@@ -854,15 +856,15 @@ class Trip {
     location = response['location'];
     embark = response['embark'];
     disembark = response['disembark'];
-    await TripDatabaseHelper.instance.deleteTrip(reservationId);
+    await TripDatabaseHelper.instance.deleteTrip(reservationId!);
     await TripDatabaseHelper.instance.insertTrip(this);
     return "updated";
   }
 
   void imageExpansionDialogue(Widget content) {
-    //shows the image in a larger view
+    // shows the image in a larger view
     showDialog(
-      context: navigatorKey.currentContext,
+      context: navigatorKey.currentContext!,
       builder: (_) => new AlertDialog(
         content: content,
         contentPadding: EdgeInsets.zero,

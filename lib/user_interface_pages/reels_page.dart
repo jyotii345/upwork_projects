@@ -5,7 +5,9 @@ import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/material.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../classes/aggressor_colors.dart';
 import '../classes/globals.dart';
@@ -31,9 +33,9 @@ class ReelsState extends State<Reels> {
   String errorMessage = "";
   bool loading = false;
 
-  Future reelFuture = AggressorApi().getReelsList();
+  Future? reelFuture = AggressorApi().getReelsList();
 
-  YoutubePlayerController _controller;
+  YoutubePlayerController? _controller;
 
   int loadingIndex = -1;
 
@@ -43,47 +45,89 @@ class ReelsState extends State<Reels> {
   @override
   void initState() {
     super.initState();
+
+    refreshReels();
   }
 
   /*
   Build
    */
 
+
+
+  Future<void> refreshReels()async{
+    await Future.delayed(Duration(seconds: 2));
+    reelFuture = AggressorApi().getReelsList();
+    setState(() {
+
+    });
+    return ;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // const player = YoutubePlayerIFrame();
     return WillPopScope(
       onWillPop: poppingPage,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: PinchToZoom(
-          OrientationBuilder(
-            builder: (context, orientation) {
-              portrait = orientation == Orientation.portrait;
-              return Stack(
-                children: [
-                  getBackgroundImage(),
-                  getPageForm(),
-                  getBannerImage(),
-                  showVideo
-                      ? Container(
-                          height: double.infinity,
-                          width: double.infinity,
-                          color: Colors.black,
+          RefreshIndicator(
+            onRefresh: (){
+
+              // refreshReels();
+              return refreshReels();// Future.delayed(Duration(seconds: 1),(){});
+            },
+            edgeOffset: 100,
+            child: OrientationBuilder(
+              builder: (context, orientation) {
+                portrait = orientation == Orientation.portrait;
+                return Stack(
+                  children: [
+                    getBackgroundImage(),
+                    getPageForm(),
+                    getBannerImage(),
+                    showVideo
+                        ? Container(
+                            height: double.infinity,
+                            width: double.infinity,
+                            color: Colors.black,
+                      child: Center(child: CircularProgressIndicator()),
+                          )
+                        : Container(),
+                    showVideo
+                        ?
+                        Padding(
+                          padding:  EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                          child: YoutubePlayerControllerProvider(
+                              // Provides controller to all the widget below it.
+                              controller: _controller!,
+                              child:
+                              YoutubePlayerIFrame(
+                                aspectRatio: 9 / 16,
+                              ),
+                            ),
                         )
-                      : Container(),
-                  showVideo
-                      ? Center(
-                          child: YoutubePlayerBuilder(
-                              player: YoutubePlayer(
-                                liveUIColor: Colors.pink,
-                                actionsPadding: EdgeInsets.all(5),
-                                controller: _controller,
-                                showVideoProgressIndicator: true,
-                                progressColors: ProgressBarColors(
-                                  playedColor: AggressorColors.primaryColor,
-                                  handleColor: AggressorColors.secondaryColor,
+                        : Container(),
+                    showVideo
+                        ? Align(
+                            alignment: Alignment.topRight,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: AppBar().preferredSize.height,
+                              ),
+                              child: GestureDetector(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(25.0),
+                                  child: Icon(
+                                    Icons.close_rounded,
+                                    color: AggressorColors.primaryColor,
+                                    size: portrait
+                                        ? MediaQuery.of(context).size.width / 15
+                                        : MediaQuery.of(context).size.height / 15,
+                                  ),
                                 ),
-                                onEnded: (metaData) {
+                                onTap: () {
                                   setState(() {
                                     showVideo = false;
                                     widget.hideBars();
@@ -91,59 +135,13 @@ class ReelsState extends State<Reels> {
                                   });
                                 },
                               ),
-                              builder: (context, player) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Stack(
-                                    children: [
-                                      Positioned.fill(
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                            top: AppBar().preferredSize.height,
-                                            bottom:
-                                                AppBar().preferredSize.height,
-                                          ),
-                                          child: player,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                        )
-                      : Container(),
-                  showVideo
-                      ? Align(
-                          alignment: Alignment.topRight,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              top: AppBar().preferredSize.height,
                             ),
-                            child: GestureDetector(
-                              child: Padding(
-                                padding: const EdgeInsets.all(25.0),
-                                child: Icon(
-                                  Icons.close_rounded,
-                                  color: AggressorColors.primaryColor,
-                                  size: portrait
-                                      ? MediaQuery.of(context).size.width / 15
-                                      : MediaQuery.of(context).size.height / 15,
-                                ),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  showVideo = false;
-                                  widget.hideBars();
-                                  _controller = null;
-                                });
-                              },
-                            ),
-                          ),
-                        )
-                      : Container(),
-                ],
-              );
-            },
+                          )
+                        : Container(),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -186,11 +184,18 @@ class ReelsState extends State<Reels> {
   Widget getVideoGrid() {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: FutureBuilder(
+      child:
+      reelFuture==null?
+          Container(
+            width: 20,
+            height: 20,
+            color: Colors.red,
+          ):
+      FutureBuilder(
           future: reelFuture,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              List<dynamic> reels = snapshot.data;
+              List<dynamic> reels = snapshot.data as List;
               if (reels.isEmpty) {
                 return Center(
                   child: Text("No reels to show at this time."),
@@ -204,7 +209,6 @@ class ReelsState extends State<Reels> {
                   if (!snapshot.hasData)
                     return Center(
                       child: CircularProgressIndicator(
-                        color: AggressorColors.secondaryColor,
                       ),
                     );
 
@@ -247,7 +251,7 @@ class ReelsState extends State<Reels> {
                                     )
                             ],
                           );
-                        File imageFile = snapshot.data;
+                        File imageFile = snapshot.data as File;
                         return GestureDetector(
                           onTap: () async {
                             startChewie(
@@ -283,7 +287,7 @@ class ReelsState extends State<Reels> {
                                                 20,
                                       ),
                                       Text(
-                                        reels[index]["views"].toString() ?? "0",
+                                        reels[index]["views"] ?? "0",
                                         style: TextStyle(color: Colors.white),
                                       )
                                     ],
@@ -324,7 +328,7 @@ class ReelsState extends State<Reels> {
             }
             return Center(
               child: CircularProgressIndicator(
-                color: AggressorColors.primaryColor,
+
               ),
             );
           }),
@@ -372,7 +376,7 @@ class ReelsState extends State<Reels> {
   }
 
   Widget getPageTitle() {
-    //returns the title of the page
+    // returns the title of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Container(
@@ -399,7 +403,7 @@ class ReelsState extends State<Reels> {
   }
 
   Widget showLoading() {
-    //displays a loading bar if data is being downloaded
+    // displays a loading bar if data is being downloaded
     return loading
         ? Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 4.0, 0, 0),
@@ -420,30 +424,38 @@ class ReelsState extends State<Reels> {
 
   void startChewie(
       int index, String videoId, String videoName, String youtube) async {
-//shows the image in a larger view
 
-    await AggressorApi().increaseReelCounter(videoId);
+    // await AggressorApi().increaseReelCounter(videoId);
 
-    setState(() {
-      showVideo = true;
+    setState(
+      () {
+        showVideo = true;
 
-      widget.hideBars();
+        widget.hideBars();
+        _controller = YoutubePlayerController(
+          initialVideoId:YoutubePlayerController.convertUrlToId(youtube)!,
+          params: YoutubePlayerParams(
+            playlist: [YoutubePlayerController.convertUrlToId(youtube)!],
+            startAt: Duration(seconds: 1),
+            autoPlay: true,
+            loop: true,
+            mute: false,
+          ),
+        );
 
-      _controller = YoutubePlayerController(
-        initialVideoId: YoutubePlayer.convertUrlToId(youtube),
-        flags: YoutubePlayerFlags(
-          autoPlay: true,
-          loop: true,
-          mute: false,
-        ),
-      );
-    });
+        _controller!.listen((event) {
+          if(!event.hasPlayed){
+            _controller!.play();
+          }
+        });
+      },
+    );
   }
 
   @override
   void dispose() {
     try {
-      _controller.dispose();
+      // _controller.dispose();
     } catch (e) {
       debugPrint("error disposing video controller");
     }

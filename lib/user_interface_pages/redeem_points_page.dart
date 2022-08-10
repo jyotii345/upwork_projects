@@ -26,7 +26,7 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
   instance vars
    */
 
-  double textSize, textDisplayWidth;
+  double textSize=0, textDisplayWidth=0;
 
   bool isLoading = false;
   String errorMessage = "";
@@ -137,7 +137,7 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
       child: Align(
         alignment: Alignment.topLeft,
         child: Text(
-          "Points (" + widget.user.nameF + " " + widget.user.nameL + ")",
+          "Points (" + widget.user.nameF! + " " + widget.user.nameL! + ")",
           style: TextStyle(
               color: AggressorColors.secondaryColor,
               fontSize: portrait
@@ -422,7 +422,7 @@ class RedeemPointsPageState extends State<RedeemPointsPage> {
   }
 
   void updateContact() async {
-    var response = await AggressorApi().getContact(widget.user.contactId);
+    var response = await AggressorApi().getContact(widget.user.contactId!);
     setState(() {
       contact = Contact(
           response["contactid"],

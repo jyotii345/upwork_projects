@@ -15,15 +15,15 @@ class CountriesDatabaseHelper {
 
   static final CountriesDatabaseHelper instance =
   CountriesDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
 
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -81,7 +81,7 @@ class CountriesDatabaseHelper {
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM countries WHERE country = ?)', [country]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 

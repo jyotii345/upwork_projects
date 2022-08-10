@@ -2,15 +2,15 @@
 Charter class to create the contents of a charter objects
  */
 class Charter {
-  String charterId;
-  String startDate;
-  String statusId;
-  String boatId;
-  String nights;
-  String itinerary;
-  String embarkment;
-  String disembarkment;
-  String destination;
+  String? charterId;
+  String? startDate;
+  String? statusId;
+  String? boatId;
+  String? nights;
+  String? itinerary;
+  String? embarkment;
+  String? disembarkment;
+  String? destination;
 
   Charter(
     String charterId,

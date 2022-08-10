@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class StatesDatabaseHelper {
-  //a helper class to drive the database
+  // a helper class to drive the database
 
   static final _databaseName = "statesDatabase.db";
 
@@ -15,15 +15,15 @@ class StatesDatabaseHelper {
 
   static final StatesDatabaseHelper instance =
   StatesDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
 
 
   Future<Database> get database async {
-    //get the database object
-    if (_database != null) return _database;
+    // get the database object
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -37,7 +37,7 @@ class StatesDatabaseHelper {
 
 
   Future _onCreate(Database db, int version) async {
-    //create a new table object in the database
+    // create a new table object in the database
     return db.execute(
       "CREATE TABLE states(state TEXT,stateAbbr TEXT)",
     );
@@ -48,7 +48,7 @@ class StatesDatabaseHelper {
    */
 
   Future<int> insertStates(Map<String, dynamic> state) async {
-    //add a states to the database
+    // add a states to the database
     final Database db = await database;
 
     int id = await db.insert(
@@ -71,17 +71,17 @@ class StatesDatabaseHelper {
   }
 
   Future<void> deleteStatesTable() async {
-    //delete the entire states table in the database
+    // delete the entire states table in the database
     final db = await database;
     await db.delete('states');
   }
 
   Future<bool> statesExists(String state) async {
-    //check if a states exists in the database by the states path and name
+    // check if a states exists in the database by the states path and name
     final db = await database;
     var result = await db
         .rawQuery('SELECT EXISTS(SELECT 1 FROM states WHERE state = ?)', [state]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 

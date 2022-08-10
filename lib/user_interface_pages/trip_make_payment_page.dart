@@ -7,7 +7,7 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
+// import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 class MakePayment extends StatefulWidget {
   final User user;
@@ -32,10 +32,12 @@ class MakePaymentState extends State<MakePayment> {
   String paymentAmount = "";
   String cvv = "";
 
-  final paymentController = MoneyMaskedTextController(
-    thousandSeparator: ",",
-    decimalSeparator: ".",
-  );
+  final paymentController = TextEditingController();
+
+  // MoneyMaskedTextController(
+  //   thousandSeparator: ",",
+  //   decimalSeparator: ".",
+  // );
 
   final formKey = new GlobalKey<FormState>();
 
@@ -158,7 +160,7 @@ class MakePaymentState extends State<MakePayment> {
                       ),
                     ),
                     child: Text(
-                      widget.trip.reservationId,
+                      widget.trip.reservationId!,
                       style: TextStyle(
                           fontSize: portrait
                               ? MediaQuery.of(context).size.height / 40 - 4
@@ -199,7 +201,7 @@ class MakePaymentState extends State<MakePayment> {
                       ),
                     ),
                     child: Text(
-                      widget.trip.charter.destination,
+                      widget.trip.charter!.destination!,
                       style: TextStyle(
                           fontSize: portrait
                               ? MediaQuery.of(context).size.height / 40 - 4
@@ -240,16 +242,16 @@ class MakePaymentState extends State<MakePayment> {
                       ),
                     ),
                     child: Text(
-                      months[DateTime.parse(widget.trip.charter.startDate)
+                      months[DateTime.parse(widget.trip.charter!.startDate!)
                                       .month -
                                   1]
                               .substring(0, 3) +
                           " " +
-                          DateTime.parse(widget.trip.charter.startDate)
+                          DateTime.parse(widget.trip.charter!.startDate!)
                               .day
                               .toString() +
                           ", " +
-                          DateTime.parse(widget.trip.charter.startDate)
+                          DateTime.parse(widget.trip.charter!.startDate!)
                               .year
                               .toString(),
                       style: TextStyle(
@@ -292,12 +294,12 @@ class MakePaymentState extends State<MakePayment> {
                       ),
                     ),
                     child: Text(
-                      months[DateTime.parse(widget.trip.dueDate).month - 1]
+                      months[DateTime.parse(widget.trip.dueDate!).month - 1]
                               .substring(0, 3) +
                           " " +
-                          DateTime.parse(widget.trip.dueDate).day.toString() +
+                          DateTime.parse(widget.trip.dueDate!).day.toString() +
                           ", " +
-                          DateTime.parse(widget.trip.dueDate).year.toString(),
+                          DateTime.parse(widget.trip.dueDate!).year.toString(),
                       style: TextStyle(
                           fontSize: portrait
                               ? MediaQuery.of(context).size.height / 40 - 4
@@ -338,8 +340,8 @@ class MakePaymentState extends State<MakePayment> {
                       ),
                     ),
                     child: Text(
-                      double.parse(widget.trip.due) > 0
-                          ? double.parse(widget.trip.due).toString()
+                      double.parse(widget.trip.due!) > 0
+                          ? double.parse(widget.trip.due!).toString()
                           : "0.00",
                       style: TextStyle(
                           fontSize: portrait
@@ -408,8 +410,8 @@ class MakePaymentState extends State<MakePayment> {
             labelText: "Card Number",
           ),
           validator: (value) =>
-              value.isEmpty ? 'Card Number can\'t be empty' : null,
-          onSaved: (value) => cardNumber = value.trim(),
+              (value==null||value.isEmpty) ? 'Card Number can\'t be empty' : null,
+          onSaved: (value) => cardNumber = value!.trim(),
         ),
       ),
     );
@@ -434,12 +436,12 @@ class MakePaymentState extends State<MakePayment> {
                 hintText: "00/0000",
                 labelText: "Expiration Date",
               ),
-              validator: (value) => value.isEmpty
+              validator: (value) => (value==null||value.isEmpty)
                   ? 'Exp Date can\'t be empty'
                   : value.trim().length != 7
                       ? 'Exp date format incorrect'
                       : null,
-              onSaved: (value) => cardExpirationDate = value.trim(),
+              onSaved: (value) => cardExpirationDate = value!.trim(),
             ),
           ),
           Flexible(
@@ -457,8 +459,8 @@ class MakePaymentState extends State<MakePayment> {
                   labelText: "CVV",
                 ),
                 validator: (value) =>
-                    value.isEmpty ? 'CVV can\'t be empty' : null,
-                onSaved: (value) => cvv = value.trim(),
+                    (value==null||value.isEmpty) ? 'CVV can\'t be empty' : null,
+                onSaved: (value) => cvv = value!.trim(),
               ),
             ),
           ),
@@ -482,8 +484,8 @@ class MakePaymentState extends State<MakePayment> {
           labelText: "Payment Amount",
         ),
         validator: (value) =>
-            value.isEmpty ? 'Payment Amount can\'t be empty' : null,
-        onSaved: (value) => paymentAmount = value.trim(),
+            (value==null||value.isEmpty) ? 'Payment Amount can\'t be empty' : null,
+        onSaved: (value) => paymentAmount = value!.trim(),
       ),
     );
   }
@@ -552,7 +554,7 @@ class MakePaymentState extends State<MakePayment> {
   }
 
   Widget getPageTitle() {
-    //returns the title of the page
+    // returns the title of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Text(
@@ -570,7 +572,7 @@ class MakePaymentState extends State<MakePayment> {
   bool validateAndSave() {
     // Check if form is valid before perform login or signup
     final form = formKey.currentState;
-    if (form.validate()) {
+    if (form!.validate()) {
       form.save();
       return true;
     }
@@ -590,9 +592,9 @@ class MakePaymentState extends State<MakePayment> {
         String paymentMonth = cardExpirationDate.substring(0, 2);
 
         var response = await AggressorApi().makePayment(
-            widget.trip.reservationId,
-            widget.trip.charterId,
-            widget.user.contactId,
+            widget.trip.reservationId!,
+            widget.trip.charterId!,
+            widget.user.contactId!,
             double.parse(paymentAmount).toString(),
             paymentMonth,
             cardExpirationDate.substring(3),
@@ -614,7 +616,7 @@ class MakePaymentState extends State<MakePayment> {
       } catch (e) {
         print('caught Error: $e');
         setState(() {
-          errorMessage = e.message;
+          errorMessage = e.toString();//.message;
           loading = false;
         });
       }
@@ -630,9 +632,9 @@ class MakePaymentState extends State<MakePayment> {
 }
 
 void showSuccessDialogue() {
-  //shows a dialogue confirming the profile was registered and navigates to the home screen
+  // shows a dialogue confirming the profile was registered and navigates to the home screen
   showDialog(
-    context: navigatorKey.currentContext,
+    context: navigatorKey.currentContext!,
     builder: (_) => new AlertDialog(
       title: new Text('Success'),
       content: new Text("Your payment was successful"),
@@ -640,7 +642,7 @@ void showSuccessDialogue() {
         new TextButton(
             onPressed: () {
               int popCount = 0;
-              Navigator.popUntil(navigatorKey.currentContext, (route) {
+              Navigator.popUntil(navigatorKey.currentContext!, (route) {
                 return popCount++ == 2;
               });
             },
@@ -651,7 +653,7 @@ void showSuccessDialogue() {
 }
 
 class CardNumberInputFormatter extends TextInputFormatter {
-  //automatically updates the format to a credit card format
+  // automatically updates the format to a credit card format
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
@@ -678,7 +680,7 @@ class CardNumberInputFormatter extends TextInputFormatter {
 }
 
 class CardDateInputFormatter extends TextInputFormatter {
-  //automatically updates the format to a credit date format
+  // automatically updates the format to a credit date format
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {

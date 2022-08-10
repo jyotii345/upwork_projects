@@ -15,13 +15,13 @@ class CertificateDatabaseHelper {
 
   static final CertificateDatabaseHelper instance =
   CertificateDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -77,7 +77,7 @@ class CertificateDatabaseHelper {
     final db = await database;
     var result = await db.rawQuery(
         'SELECT EXISTS(SELECT 1 FROM certificate WHERE idval = ?)', [idVal]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 

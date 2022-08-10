@@ -5,8 +5,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ContactDatabaseHelper {
-  //a helper class to drive the database
-
+  // a helper class to drive the database
+  //
   static final _databaseName = "contactDatabase.db";
 
   static final _databaseVersion = 1;
@@ -15,13 +15,13 @@ class ContactDatabaseHelper {
 
   static final ContactDatabaseHelper instance =
       ContactDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
-    //get the database object
-    if (_database != null) return _database;
+    // get the database object
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -33,7 +33,7 @@ class ContactDatabaseHelper {
   }
 
   Future _onCreate(Database db, int version) async {
-    //create a new table object in the database
+    // create a new table object in the database
     return db.execute(
       "CREATE TABLE contact(id INTEGER PRIMARY KEY,contactid TEXT, firstname TEXT, middlename TEXT, lastname TEXT, email TEXT, vipcount TEXT, vippluscount TEXT, sevenseascount TEXT, aacount TEXT, boutiquepoints TEXT,vip TEXT, vipPlus TEXT, sevenSeas TEXT, adventuresClub TEXT, memberSince TEXT)",
     );
@@ -59,7 +59,7 @@ class ContactDatabaseHelper {
       String sevenSeas,
       String adventuresClub,
       String memberSince) async {
-    //add a contact to the database
+    // add a contact to the database
     final Database db = await database;
 
     int id = await db.insert(
@@ -109,7 +109,7 @@ class ContactDatabaseHelper {
     var result = await db.rawQuery(
         'SELECT EXISTS(SELECT 1 FROM contact WHERE contactid = ?)',
         [contactId]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 

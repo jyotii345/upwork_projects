@@ -2,17 +2,17 @@
 Boat class to hold the contents of a boat objects
  */
 class Boat {
-  String boatId;
-  String name;
-  String abbreviation;
-  String email;
-  String active;
-  String imageLink;
-  String imagePath;
-  String kbygLink;
+  String? boatId;
+  String? name;
+  String? abbreviation;
+  String? email;
+  String? active;
+  String? imageLink;
+  String? imagePath;
+  String? kbygLink;
 
   Boat(String boatId, String name, String abbreviation, String email, String active, String imageLink, String imagePath, String kbygLink) {
-    //default constructor
+    // default constructor
     this.boatId = boatId;
     this.name = name;
     this.abbreviation = abbreviation;
@@ -24,7 +24,7 @@ class Boat {
   }
 
   Map<String, dynamic> toMap() {
-    //create a map object from boat object
+    // create a map object from boat object
     return {
       'boatId': boatId,
       'name': name,

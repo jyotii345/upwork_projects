@@ -22,7 +22,7 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
   instance vars
    */
 
-  double textSize, textDisplayWidth;
+  double textSize=0, textDisplayWidth=0;
 
   bool isLoading = false;
   String errorMessage = "";
@@ -104,12 +104,19 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
         future: AggressorApi().getCoupons(widget.userId),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            List data=[];
+            try{
+              data=snapshot.data as List;
+            }
+            catch(e){
+              data=[];
+            }
             return ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: snapshot.data.length + 1,
+                itemCount: data.length + 1,
                 itemBuilder: (context, index) {
-                  if (index == snapshot.data.length) {
+                  if (index == data.length) {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,7 +169,7 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
                     );
                   }
                   return ListTile(
-                      tileColor: snapshot.data[index]['codeUsed'] == true
+                      tileColor: data[index]['codeUsed'] == true
                           ? Colors.red
                           : Colors.green,
                       title: Row(
@@ -171,27 +178,27 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text("\$ " +
-                                  (double.parse(snapshot.data[index]
+                                  (double.parse(data[index]
                                                   ["pointsUsed"]
                                               .toString()) *
                                           .05)
                                       .toStringAsFixed(2)),
                               Text(
-                                snapshot.data[index]['dateIssued'],
+                                data[index]['dateIssued'],
                               ),
                             ],
                           ),
                           Expanded(
                             child: Center(
                               child: Text(
-                                snapshot.data[index]['codeIssued'],
+                                data[index]['codeIssued'],
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      trailing: Text(snapshot.data[index]['codeUsed'] == true
+                      trailing: Text(data[index]['codeUsed'] == true
                           ? "Redeemed"
                           : "Unused"));
                 });

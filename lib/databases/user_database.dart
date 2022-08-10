@@ -16,13 +16,13 @@ class UserDatabaseHelper {
 
   static final UserDatabaseHelper instance = UserDatabaseHelper._privateConstructor();
 
-  static Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {

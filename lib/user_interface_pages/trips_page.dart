@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
@@ -6,10 +7,28 @@ import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:chunked_stream/chunked_stream.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
+
+import '../classes/aggressor_api.dart';
+import '../classes/contact.dart';
+import '../databases/boat_database.dart';
+import '../databases/certificate_database.dart';
+import '../databases/contact_database.dart';
+import '../databases/countries_database.dart';
+import '../databases/iron_diver_database.dart';
+import '../databases/notes_database.dart';
+import '../databases/photo_database.dart';
+import '../databases/profile_database.dart';
+import '../databases/slider_database.dart';
+import '../databases/states_database.dart';
+import '../databases/trip_database.dart';
 
 class MyTrips extends StatefulWidget {
   MyTrips(this.user);
@@ -26,11 +45,14 @@ class MyTripsState extends State<MyTrips>
   instance vars
    */
 
-  List<Widget> pastTripsList;
-  List<Widget> upcomingTripsList;
+  List<Widget> pastTripsList = [];
+  List<Widget> upcomingTripsList = [];
 
   bool timerStarted = false;
   int sliderIndex = 0;
+
+
+  bool loading = true;
 
 // coordinates for a center location
 
@@ -40,14 +62,217 @@ class MyTripsState extends State<MyTrips>
   @override
   void initState() {
     super.initState();
-    sliderImageTimer();
     pastTripsList = [];
     upcomingTripsList = [];
+    updateSliderImagesList();
+  }
+
+
+  Future<dynamic> getOfflineLoad() async {
+    //load data from the device if the application is offline
+
+    var tempTripList = await TripDatabaseHelper.instance.queryTrip();
+    setState(() {
+      tripList = tempTripList;
+      loadedCount++;
+    });
+
+    setState(() {
+      loadingLength = (tripList.length + 12.toDouble()) * 2;
+    });
+
+    var tempSliderImageList =
+    await SlidersDatabaseHelper.instance.querySliders();
+    setState(() {
+      loadedCount++;
+    });
+    var contactList = await ContactDatabaseHelper.instance.queryContact();
+    setState(() {
+      loadedCount++;
+    });
+    // var contactResponse = contactList[0];
+    setState(() {
+      loadedCount++;
+    });
+    var tempBoatList = await BoatDatabaseHelper.instance.queryBoat();
+    setState(() {
+      loadedCount++;
+    });
+    var tempIronDiverList =
+    await IronDiverDatabaseHelper.instance.queryIronDiver();
+    setState(() {
+      loadedCount++;
+    });
+    var tempCertificationList =
+    await CertificateDatabaseHelper.instance.queryCertificate();
+    setState(() {
+      loadedCount++;
+    });
+    var tempCountriesList =
+    await CountriesDatabaseHelper.instance.queryCountries();
+    setState(() {
+      loadedCount++;
+    });
+    var tempStatesList = await StatesDatabaseHelper.instance.queryStates();
+    setState(() {
+      loadedCount++;
+    });
+    var tempProfileData = await ProfileDatabaseHelper.instance.queryProfile();
+    // getUserProfileImageData(tempProfileData);
+    setState(() {
+      loadedCount++;
+    });
+
+    var tempNotesList = await NotesDatabaseHelper.instance.queryNotes();
+    setState(() {
+      loadedCount++;
+    });
+
+    for (var trip in tripList) {
+      trip.user = widget.user;
+      await trip.initCharterInformation();
+      setState(() {
+        loadedCount++;
+        percent += (loadedCount / (loadingLength));
+      });
+    }
+
+    var photosList = await PhotoDatabaseHelper.instance.queryPhoto();
+    // var tempGalleriesMap = await getGalleries(photosList);
+
+    setState(() {
+      loadedCount++;
+    });
+
+    setState(() {
+      sliderImageList = tempSliderImageList;
+      // contact = Contact(
+      //     contactResponse["contactId"].toString(),
+      //     contactResponse["firstName"],
+      //     contactResponse["middleName"],
+      //     contactResponse["lastName"],
+      //     contactResponse["email"],
+      //     contactResponse["vipCount"].toString(),
+      //     contactResponse["vipPlusCount"].toString(),
+      //     contactResponse["sevenSeasCount"].toString(),
+      //     contactResponse["aaCount"].toString(),
+      //     contactResponse["boutiquePoints"].toString(),
+      //     contactResponse["vip"],
+      //     contactResponse["vipPlus"],
+      //     contactResponse["sevenSeas"],
+      //     contactResponse["adventuresClub"],
+      //     contactResponse["memberSince"].toString());
+      tempBoatList.forEach((element) {
+        boatList.add(element.toMap());
+      });
+      Map<String, dynamic> selectionTrip = {
+        "boatid": -1,
+        "name": " -- SELECT -- ",
+        "abbreviation": "SEL"
+      };
+      boatList.insert(0, selectionTrip);
+      ironDiverList = tempIronDiverList;
+      certificationList = tempCertificationList;
+      countriesList = tempCountriesList;
+      statesList = tempStatesList;
+      // profileData = tempProfileData[0];
+      notesList = tempNotesList;
+      galleriesMap ={};// tempGalleriesMap;
+      loading = false;
+
+    });
+
+    if (tripList == null) {
+      tripList = [];
+    }
+
+    return "done";
+  }
+
+
+  // tripList
+
+  updateSliderImagesList() async {
+    try {
+
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      online =(connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi);
+      // if (online == false)
+      if (false)
+        {
+        await getOfflineLoad();
+      } else {
+        if (tripList.isEmpty || tripList == null) {
+          await updateSliderImages();
+
+          percent = 0.3;
+          setState(() {
+
+          });
+          sliderImageTimer();
+
+          percent = 0.5;
+          setState(() {
+
+          });
+          await updateTripListList();
+        }
+        else {
+          setState(() {
+            loading = false;
+          });
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+    // setState(() {
+    //
+    // });
+  }
+
+  VoidCallback loadingCallBack() {
+
+    return (){
+      setState(() {
+        loadedCount++;
+        if(percent<0.9){
+          percent += .05;
+        }
+      });
+    };
+  }
+
+  updateTripListList() async {
+    var tempList =
+        await AggressorApi().getReservationList(widget.user.contactId!,loadingCallBack);
+    tripList = tempList;
+    for (var trip in tripList) {
+      trip.user = widget.user;
+      await trip.initCharterInformation();
+
+      setState(() {
+        if(percent<0.9){
+          percent += .05;
+        }
+        // percent += (loadedCount / (loadingLength));
+      });
+    }
+
+    setState(() {
+      loading = false;
+    });
   }
 
   /*
   Build
    */
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +285,35 @@ class MyTripsState extends State<MyTrips>
           return Stack(
             children: [
               getBackGroundImage(),
-              getForegroundView(),
+              loading
+                  ?  Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularPercentIndicator(
+                            radius: portrait
+                                ? MediaQuery.of(context).size.width / 3
+                                : MediaQuery.of(context).size.height / 3,
+                            percent: ( percent >1.0)?1:percent,
+                            animateFromLastPercent: true,
+                            backgroundColor: AggressorColors.secondaryColor,
+                            progressColor: AggressorColors.primaryColor,
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.only(top:10.0),
+                            child: Text(
+                              "${((( percent >0.90)?0.95:percent)*100).roundToDouble()} %",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  : getForegroundView(),
             ],
           );
         },
@@ -70,6 +323,40 @@ class MyTripsState extends State<MyTrips>
 
   @override
   bool get wantKeepAlive => true;
+
+  Future<dynamic> updateSliderImages() async {
+    SlidersDatabaseHelper slidersDatabaseHelper =
+        SlidersDatabaseHelper.instance;
+    List<String> fileNames = await AggressorApi().getRewardsSliderList();
+    // for (String file in fileNames) {
+
+    await Future.forEach(fileNames, (String file) async {
+      var fileResponse = await AggressorApi()
+          .getRewardsSliderImage(file.substring(file.indexOf("/") + 1));
+      Uint8List bytes = await readByteStream(fileResponse.stream);
+
+      String fileName = file.substring(7);
+      Directory appDocumentsDirectory =
+          await getApplicationDocumentsDirectory();
+      String appDocumentsPath = appDocumentsDirectory.path;
+      String filePath = '$appDocumentsPath/$fileName';
+      File tempFile = await File(filePath).writeAsBytes(bytes);
+
+      // try {
+      //   await slidersDatabaseHelper.deleteSliders(fileName);
+      // } catch (e) {
+      //   print("no such file");
+      // }
+
+      await slidersDatabaseHelper
+          .insertSliders({'fileName': fileName, 'filePath': tempFile.path});
+      sliderImageList.add({'filePath': tempFile.path, 'fileName': fileName});
+      // setState(() {
+      //   percent += .01;
+      // });
+    });
+    return "done";
+  }
 
 /*
   self implemented
@@ -276,7 +563,9 @@ class MyTripsState extends State<MyTrips>
   }
 
   VoidCallback refresh() {
-    setState(() {});
+    return () {
+      setState(() {});
+    };
   }
 
   Widget getPastTripListViews(List<Trip> pastTrips) {
@@ -384,10 +673,10 @@ class MyTripsState extends State<MyTrips>
     List<Trip> pastList = [];
     List<Trip> upcomingList = [];
     tripList.sort((a, b) =>
-        DateTime.parse(b.tripDate).compareTo(DateTime.parse(a.tripDate)));
+        DateTime.parse(b.tripDate!).compareTo(DateTime.parse(a.tripDate!)));
 
     tripList.forEach((element) {
-      if (DateTime.parse(element.tripDate).isBefore(DateTime.now())) {
+      if (DateTime.parse(element.tripDate!).isBefore(DateTime.now())) {
         pastList.add(element);
       } else {
         upcomingList.add(element);
@@ -398,7 +687,7 @@ class MyTripsState extends State<MyTrips>
   }
 
   Widget getSectionUpcomingTitle() {
-    //returns the upcoming trips title and divider
+    // returns the upcoming trips title and divider
     return Column(
       children: [
         Padding(
@@ -451,7 +740,7 @@ class MyTripsState extends State<MyTrips>
   }
 
   Widget getPageTitle() {
-    //returns the the text label for the overall page
+    // returns the the text label for the overall page
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
@@ -470,7 +759,7 @@ class MyTripsState extends State<MyTrips>
   }
 
   Widget getBackGroundImage() {
-    //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
+    // this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
@@ -487,7 +776,7 @@ class MyTripsState extends State<MyTrips>
   }
 
   Widget showOffline() {
-    //displays offline when the application does not have internet connection
+    // displays offline when the application does not have internet connection
     return online
         ? Container()
         : Container(

@@ -28,7 +28,7 @@ class AddCertificationState extends State<AddCertification> {
   int pageIndex = 3;
   String errorMessage = "";
 
-  String dropDownValue;
+  String dropDownValue="";
 
   bool loading = false;
 
@@ -215,9 +215,9 @@ class AddCertificationState extends State<AddCertification> {
                 iconSize: portrait
                     ? MediaQuery.of(context).size.height / 35
                     : MediaQuery.of(context).size.width / 35,
-                onChanged: (String newValue) {
+                onChanged: (String? newValue) {
                   setState(() {
-                    dropDownValue = newValue;
+                    dropDownValue = newValue!;
                   });
                 },
                 items: certificationOptionList
@@ -246,7 +246,7 @@ class AddCertificationState extends State<AddCertification> {
   }
 
   Widget getBackgroundImage() {
-    //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
+    // this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
@@ -263,7 +263,7 @@ class AddCertificationState extends State<AddCertification> {
   }
 
    Widget getBannerImage() {
-    //returns banner image
+    // returns banner image
     return Image.asset(
         "assets/bannerimage.png",
         width: MediaQuery.of(context).size.width,
@@ -273,7 +273,7 @@ class AddCertificationState extends State<AddCertification> {
   }
 
   Widget showLoading() {
-    //displays a loading bar if data is being downloaded
+    // displays a loading bar if data is being downloaded
     return loading
         ? Center(
             child: CircularProgressIndicator(),
@@ -282,7 +282,7 @@ class AddCertificationState extends State<AddCertification> {
   }
 
   Widget showErrorMessage() {
-    //displays an error message if there is one
+    // displays an error message if there is one
     return errorMessage == ""
         ? Container()
         : Padding(
@@ -296,7 +296,7 @@ class AddCertificationState extends State<AddCertification> {
   }
 
   Widget getPageTitle() {
-    //returns the title of the page
+    // returns the title of the page
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Text(

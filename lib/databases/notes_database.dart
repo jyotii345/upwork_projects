@@ -16,13 +16,13 @@ class NotesDatabaseHelper {
 
   static final NotesDatabaseHelper instance =
       NotesDatabaseHelper._privateConstructor();
-  static Database _database;
+  static Database? _database;
 
   Future<Database> get database async {
     //get the database object
-    if (_database != null) return _database;
+    if (_database != null) return _database!;
     _database = await _initDatabase();
-    return _database;
+    return _database!;
   }
 
   _initDatabase() async {
@@ -34,7 +34,7 @@ class NotesDatabaseHelper {
   }
 
   Future _onCreate(Database db, int version) async {
-    //create a new table object in the database
+    // create a new table object in the database
     return db.execute(
       "CREATE TABLE notes(id TEXT,boatId TEXT,destination TEXT,startDate TEXT,endDate TEXT,preTripNotes TEXT,postTripNotes TEXT,miscNotes TEXT)",
     );
@@ -45,7 +45,7 @@ class NotesDatabaseHelper {
    */
 
   Future<int> insertNotes(Note note) async {
-    //add a notes to the database
+    // add a notes to the database
     final Database db = await database;
 
     int id = await db.insert(
@@ -68,34 +68,34 @@ class NotesDatabaseHelper {
   }
 
   Future<void> deleteNotesTable() async {
-    //delete the entire notes table in the database
+    // delete the entire notes table in the database
     final db = await database;
     await db.delete('notes');
   }
 
   Future<bool> notesExists(String notesId) async {
-    //check if a notes exists based on its notes id
+    // check if a notes exists based on its notes id
     final db = await database;
     var result = await db.rawQuery(
         'SELECT EXISTS(SELECT 1 FROM notes WHERE id = ?)', [notesId]);
-    int exists = Sqflite.firstIntValue(result);
+    int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
 
   Future<Note> getNotes(String notesId) async {
-    //get a notes from the database based on its notesId
+    // get a notes from the database based on its notesId
     final db = await database;
     var result =
         await db.rawQuery('SELECT * FROM notes WHERE id = ?', [notesId]);
     return Note(
-      result[0]['id'],
-      result[0]['boatId'],
-      result[0]['destination'],
-      result[0]['startDate'],
-      result[0]['endDate'],
-      result[0]['preTripNotes'],
-      result[0]['postTripNotes'],
-      result[0]['miscNotes'],
+      result[0]['id'].toString(),
+      result[0]['boatId'].toString(),
+      result[0]['destination'].toString(),
+      result[0]['startDate'].toString(),
+      result[0]['endDate'].toString(),
+      result[0]['preTripNotes'].toString(),
+      result[0]['postTripNotes'].toString(),
+      result[0]['miscNotes'].toString(),
         null,
         null,
         null,
@@ -124,5 +124,5 @@ class NotesDatabaseHelper {
       );
     });
   }
-  //TODO note there must be a callback, context, and user set on pull from database
+  // TODO note there must be a callback, context, and user set on pull from database
 }

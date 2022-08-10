@@ -2,21 +2,21 @@
 creates a contact class to hold the contents of a contact class
  */
 class Contact {
-  String contactId;
-  String nameF;
-  String nameM;
-  String nameL;
-  String email;
-  String vipCount;
-  String vipPlusCount;
-  String sevenSeasCount;
-  String aaCount;
-  String boutiquePoints;
-  String vip;
-  String vipPlus;
-  String sevenSeas;
-  String adventuresClub;
-  String memberSince;
+  String? contactId;
+  String? nameF;
+  String? nameM;
+  String? nameL;
+  String? email;
+  String? vipCount;
+  String? vipPlusCount;
+  String? sevenSeasCount;
+  String? aaCount;
+  String? boutiquePoints;
+  String? vip;
+  String? vipPlus;
+  String? sevenSeas;
+  String? adventuresClub;
+  String? memberSince;
 
   Contact(
     String contactId,

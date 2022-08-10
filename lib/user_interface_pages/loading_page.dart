@@ -26,7 +26,8 @@ import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/user_interface_pages/main_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/profile_link_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -119,7 +120,9 @@ class LoadingPageState extends State<LoadingPage> {
       Wakelock.enable();
     });
 
-    online = await DataConnectionChecker().hasConnection;
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    online =(connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi);
+    // await DataConnectionChecker().hasConnection;
     if (online == true) {
       await updateOffline();
       await getOnlineLoad();
@@ -293,23 +296,24 @@ class LoadingPageState extends State<LoadingPage> {
       print("no sliders");
     }
 
-    getContactDetails();
-    getBoatList();
-    getIronDiverList();
-    getCountriesList();
-    getStatesList();
-    getCertificationList();
-    loadProfileDetails();
+    // getContactDetails();
+    // getBoatList();
+    // getIronDiverList();
+    // getCountriesList();
+    // getStatesList();
+    // getCertificationList();
+    // loadProfileDetails();
 
     setState(() {
       loadingMessage = "Loading images";
     });
-    await updateSliderImages();
+    //todo used on trip screen
+    //  await updateSliderImages();
     setState(() {
       loadingMessage = "Loading profile Data";
     });
     var profileLinkResponse =
-        await AggressorApi().checkProfileLink(widget.user.userId);
+        await AggressorApi().checkProfileLink(widget.user.userId!);
 
     if (profileLinkResponse["status"] != "success") {
       Navigator.pushReplacement(
@@ -325,25 +329,25 @@ class LoadingPageState extends State<LoadingPage> {
       loadingMessage = "Loading your adventure information";
     });
 
-    var tempList = await AggressorApi()
-        .getReservationList(widget.user.contactId, loadingCallBack);
-    setState(() {
-      tripList = tempList;
-      loadingMessage = "Initializing your adventures";
-    });
+    // var tempList = await AggressorApi()
+    //     .getReservationList(widget.user.contactId!, loadingCallBack);
+    // setState(() {
+    //   tripList = tempList;
+    //   loadingMessage = "Initializing your adventures";
+    // });
 
     if (tripList == null) {
       tripList = [];
     }
 
-    for (var trip in tripList) {
-      trip.user = widget.user;
-      await trip.initCharterInformation();
-      setState(() {
-        loadedCount++;
-        percent += .01;
-      });
-    }
+    // for (var trip in tripList) {
+    //   trip.user = widget.user;
+    //   await trip.initCharterInformation();
+    //   setState(() {
+    //     loadedCount++;
+    //     percent += .01;
+    //   });
+    // }
 
     setState(() {
       loadingMessage = "loading your files";
@@ -406,32 +410,35 @@ class LoadingPageState extends State<LoadingPage> {
   }
 
   VoidCallback loadingCallBack() {
-    setState(() {
-      loadedCount++;
-      percent += .01;
-    });
+
+    return (){
+      setState(() {
+        loadedCount++;
+        percent += .01;
+      });
+    };
   }
 
   void getContactDetails() async {
     //initialize the contact details needed for the page
-    var response = await AggressorApi().getContact(widget.user.contactId);
+    var response = await AggressorApi().getContact(widget.user.contactId!);
     setState(() {
       contact = Contact(
-          response["contactid"],
-          response["first_name"],
-          response["middle_name"],
-          response["last_name"],
-          response["email"],
-          response["vipcount"],
-          response["vippluscount"],
-          response["sevenseascount"],
-          response["aacount"],
-          response["boutique_points"],
-          response["vip"],
-          response["vipPlus"],
-          response["sevenSeas"],
-          response["adventuresClub"],
-          response["memberSince"]);
+          response["contactid"]??"",
+          response["first_name"]??"",
+          response["middle_name"]??"",
+          response["last_name"]??"",
+          response["email"]??"",
+          response["vipcount"]??"",
+          response["vippluscount"]??"",
+          response["sevenseascount"]??"",
+          response["aacount"]??"",
+          response["boutique_points"]??"",
+          response["vip"]??"",
+          response["vipPlus"]??"",
+          response["sevenSeas"]??"",
+          response["adventuresClub"]??"",
+          response["memberSince"]??"");
     });
     updateContactCache(response);
   }
@@ -443,7 +450,7 @@ class LoadingPageState extends State<LoadingPage> {
 
   void getIronDiverList() async {
     //set the initial iron diver awards
-    ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId);
+    ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId!);
     updateIronDiversCache();
   }
 
@@ -462,7 +469,7 @@ class LoadingPageState extends State<LoadingPage> {
   void getCertificationList() async {
     //set the initial certification lists
     certificationList =
-        await AggressorApi().getCertificationList(widget.user.userId);
+        await AggressorApi().getCertificationList(widget.user.userId!);
     updateCertificationCache();
   }
 
@@ -477,21 +484,21 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     await contactDatabaseHelper.insertContact(
-        response["contactid"],
-        response["first_name"],
-        response["middle_name"],
-        response["last_name"],
-        response["email"],
-        response["vipcount"],
-        response["vippluscount"],
-        response["sevenseascount"],
-        response["aacount"],
-        response["boutique_points"],
-        response["vip"],
-        response["vipPlus"],
-        response["sevenSeas"],
-        response["adventuresClub"],
-        response["memberSince"]);
+        response["contactid"]??"",
+        response["first_name"]??"",
+        response["middle_name"]??"",
+        response["last_name"]??"",
+        response["email"]??"",
+        response["vipcount"]??"",
+        response["vippluscount"]??"",
+        response["sevenseascount"]??"",
+        response["aacount"]??"",
+        response["boutique_points"]??"",
+        response["vip"]??"",
+        response["vipPlus"]??"",
+        response["sevenSeas"]??"",
+        response["adventuresClub"]??"",
+        response["memberSince"]??"");
   }
 
   void updateCertificationCache() async {
@@ -567,21 +574,21 @@ class LoadingPageState extends State<LoadingPage> {
 
     await profileDatabaseHelper.insertProfile(
       response['userId'],
-      response['first'],
-      response['last'],
-      response['email'],
-      response['address1'],
-      response['address2'],
-      response['address2'],
-      response['state'],
-      response['province'],
-      response['country'].toString(),
-      response['zip'],
-      response['username'],
-      response['password'],
-      response['homePhone'],
-      response['workPhone'],
-      response['mobilePhone'],
+      response['first']??"",
+      response['last']??"",
+      response['email']??"",
+      response['address1']??"",
+      response['address2']??"",
+      response['address2']??"",
+      response['state']??"",
+      response['province']??"",
+      response['country'].toString()??"",
+      response['zip']??"",
+      response['username']??"",
+      response['password']??"",
+      response['homePhone']??"",
+      response['workPhone']??"",
+      response['mobilePhone']??"",
     );
   }
 
@@ -589,7 +596,7 @@ class LoadingPageState extends State<LoadingPage> {
     //loads the initial value of the users profile data
     if (!profileDataLoaded) {
       var jsonResponse =
-          await AggressorApi().getProfileData(widget.user.userId);
+          await AggressorApi().getProfileData(widget.user.userId!);
       if (jsonResponse["status"] == "success") {
         setState(() {
           profileData = jsonResponse;
@@ -604,15 +611,15 @@ class LoadingPageState extends State<LoadingPage> {
   }
 
   Future<dynamic> getGalleries(List<Photo> photos) async {
-    //downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
+    // downloads images from aws. If the image is not already in storage, it will be stored on the device. Images are then added to a map based on their charterId that is used to display the images of the gallery.
 
     Map<String, Gallery> tempGalleries = <String, Gallery>{};
     photos.forEach((element) {
       int tripIndex = 0;
       for (int i = 0; i < tripList.length - 1; i++) {
         try {
-          if (tripList[i].boat.boatId == element.boatId &&
-              formatDate(DateTime.parse(tripList[i].charter.startDate),
+          if (tripList[i].boat!.boatId! == element.boatId &&
+              formatDate(DateTime.parse(tripList[i].charter!.startDate!),
                       [yyyy, '-', mm, '-', dd]) ==
                   element.date) {
             tripIndex = i;
@@ -623,10 +630,10 @@ class LoadingPageState extends State<LoadingPage> {
       }
 
       if (!tempGalleries.containsKey(tripList[tripIndex].reservationId)) {
-        tempGalleries[tripList[tripIndex].reservationId] = Gallery(
-            widget.user, element.boatId, <Photo>[], tripList[tripIndex]);
+        tempGalleries[tripList[tripIndex].reservationId!] = Gallery(
+            widget.user, element.boatId.toString(), <Photo>[], tripList[tripIndex]);
       } else {
-        tempGalleries[tripList[tripIndex].reservationId].addPhoto(element);
+        tempGalleries[tripList[tripIndex].reservationId]!.addPhoto(element);
       }
     });
     return tempGalleries;
@@ -642,52 +649,55 @@ class LoadingPageState extends State<LoadingPage> {
             Note uploadNote =
                 await NotesDatabaseHelper.instance.getNotes(offlineItem["id"]);
             var response = await AggressorApi().saveNote(
-                uploadNote.startDate,
-                uploadNote.endDate,
-                uploadNote.preTripNotes,
-                uploadNote.postTripNotes,
-                uploadNote.boatId,
-                widget.user.userId);
-            if (response["status"] == "success") {
-              NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
-              OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
-            }
-          } else if (offlineItem["action"] == "delete") {
-            var response = await AggressorApi()
-                .deleteNote(widget.user.userId, offlineItem["id"]);
-            if (response["status"] == "success") {
-              NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
-              OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
-            }
-          } else {
-            Note uploadNote =
-                await NotesDatabaseHelper.instance.getNotes(offlineItem["id"]);
-            var response = await AggressorApi().updateNote(
-                uploadNote.startDate,
-                uploadNote.endDate,
-                uploadNote.preTripNotes,
-                uploadNote.postTripNotes,
-                uploadNote.boatId,
-                widget.user.userId,
-                uploadNote.id);
+                uploadNote.startDate!,
+                uploadNote.endDate!,
+                uploadNote.preTripNotes!,
+                uploadNote.postTripNotes!,
+                uploadNote.boatId!,
+                widget.user.userId!);
             if (response["status"] == "success") {
               NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
               OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
             }
           }
-        } else if (offlineItem['type'] == 'image') {
+          else if (offlineItem["action"] == "delete") {
+            var response = await AggressorApi()
+                .deleteNote(widget.user.userId!, offlineItem["id"]);
+            if (response["status"] == "success") {
+              NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
+              OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
+            }
+          }
+          else {
+            Note uploadNote =
+                await NotesDatabaseHelper.instance.getNotes(offlineItem["id"]);
+            var response = await AggressorApi().updateNote(
+                uploadNote.startDate!,
+                uploadNote.endDate!,
+                uploadNote.preTripNotes!,
+                uploadNote.postTripNotes!,
+                uploadNote.boatId!,
+                widget.user.userId!,
+                uploadNote.id!);
+            if (response["status"] == "success") {
+              NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
+              OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
+            }
+          }
+        }
+        else if (offlineItem['type'] == 'image') {
           if (offlineItem['action'] == 'add') {
             Photo photo =
                 await PhotoDatabaseHelper.instance.getPhoto(offlineItem['id']);
             var response = await AggressorApi().uploadAwsFile(
-                widget.user.userId,
+                widget.user.userId!,
                 "gallery",
-                photo.boatId,
-                photo.imagePath,
-                photo.date);
+                photo.boatId!,
+                photo.imagePath!,
+                photo.date!);
             if (response["status"] == "success") {
               OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
-              PhotoDatabaseHelper.instance.deletePhoto(photo.imagePath);
+              PhotoDatabaseHelper.instance.deletePhoto(photo.imagePath!);
             }
           } else if (offlineItem['action'] == 'delete') {
             Photo photo =
@@ -696,14 +706,14 @@ class LoadingPageState extends State<LoadingPage> {
                 widget.user.userId.toString(),
                 "gallery",
                 photo.boatId.toString(),
-                photo.date,
-                photo.imagePath
-                    .substring(photo.imagePath.lastIndexOf("/"))
+                photo.date!,
+                photo.imagePath!
+                    .substring(photo.imagePath!.lastIndexOf("/"))
                     .toString());
             if (res["status"] == "success") {
               await OfflineDatabaseHelper.instance
                   .deleteOffline(offlineItem["id"]);
-              await PhotoDatabaseHelper.instance.deletePhoto(photo.imagePath);
+              await PhotoDatabaseHelper.instance.deletePhoto(photo.imagePath!);
             }
           }
         }
@@ -717,7 +727,7 @@ class LoadingPageState extends State<LoadingPage> {
     if (!userImageRetreived) {
       try {
         var userImageRes = await AggressorApi()
-            .downloadUserImage(widget.user.userId, profileData["avatar"]);
+            .downloadUserImage(widget.user.userId!, profileData["avatar"]);
 
         var bytes = await readByteStream(userImageRes.stream);
         var dirData = (await getApplicationDocumentsDirectory()).path;

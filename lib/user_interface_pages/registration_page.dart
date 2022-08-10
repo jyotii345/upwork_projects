@@ -29,7 +29,7 @@ class RegistrationPageState extends State<RegistrationPage> {
       passwordConfirmation = "",
       errorMessage = "";
 
-  double textSize;
+  double textSize=0;
 
   DateTime dateOfBirth = DateTime.now();
 
@@ -131,8 +131,8 @@ class RegistrationPageState extends State<RegistrationPage> {
           ),
         ),
         validator: (value) =>
-            value.isEmpty ? 'First Name can\'t be empty' : null,
-        onSaved: (value) => firstName = value.trim(),
+            (value==null||(value==null||value.isEmpty)) ? 'First Name can\'t be empty' : null,
+        onSaved: (value) => firstName = value!.trim(),
       ),
     );
   }
@@ -154,8 +154,8 @@ class RegistrationPageState extends State<RegistrationPage> {
           ),
         ),
         validator: (value) =>
-            value.isEmpty ? 'Last Name can\'t be empty' : null,
-        onSaved: (value) => lastName = value.trim(),
+            (value==null||value.isEmpty) ? 'Last Name can\'t be empty' : null,
+        onSaved: (value) => lastName = value!.trim(),
       ),
     );
   }
@@ -176,8 +176,8 @@ class RegistrationPageState extends State<RegistrationPage> {
             color: AggressorColors.secondaryColor,
           ),
         ),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => email = value.trim(),
+        validator: (value) => (value==null||value.isEmpty) ? 'Email can\'t be empty' : null,
+        onSaved: (value) => email = value!.trim(),
       ),
     );
   }
@@ -199,7 +199,7 @@ class RegistrationPageState extends State<RegistrationPage> {
             child: Container(
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]),
+                  bottom: BorderSide(width: 1.0, color: Colors.grey[400]!),
                 ),
               ),
               child: TextButton(
@@ -236,7 +236,7 @@ class RegistrationPageState extends State<RegistrationPage> {
 
   Future<void> selectBirthDay(BuildContext context) async {
     //calls the date picker to open and prompts for the users birthday
-    final DateTime selection = await showDatePicker(
+    final DateTime? selection = await showDatePicker(
         context: context,
         initialDate: dateOfBirth,
         firstDate: DateTime.now().subtract(Duration(days: 365 * 130)),
@@ -264,8 +264,8 @@ class RegistrationPageState extends State<RegistrationPage> {
             color: AggressorColors.secondaryColor,
           ),
         ),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
-        onSaved: (value) => password = value.trim(),
+        validator: (value) => (value==null||value.isEmpty) ? 'Password can\'t be empty' : null,
+        onSaved: (value) => password = value!.trim(),
       ),
     );
   }
@@ -288,8 +288,8 @@ class RegistrationPageState extends State<RegistrationPage> {
           ),
         ),
         validator: (value) =>
-            value.isEmpty ? 'Password confirmation can\'t be empty' : null,
-        onSaved: (value) => passwordConfirmation = value.trim(),
+            (value==null||value.isEmpty) ? 'Password confirmation can\'t be empty' : null,
+        onSaved: (value) => passwordConfirmation = value!.trim(),
       ),
     );
   }
@@ -380,7 +380,7 @@ class RegistrationPageState extends State<RegistrationPage> {
   bool validateAndSave() {
     // Check if form is valid before perform login or signup
     final form = formKey.currentState;
-    if (form.validate()) {
+    if (form!.validate()) {
       form.save();
       return true;
     } else {
@@ -392,7 +392,7 @@ class RegistrationPageState extends State<RegistrationPage> {
   }
 
   void showSuccessDialogue() {
-    //shows a dialogue confirming the profile was registered and navigates to the home screen
+    // shows a dialogue confirming the profile was registered and navigates to the home screen
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
@@ -450,7 +450,7 @@ class RegistrationPageState extends State<RegistrationPage> {
       } catch (e) {
         print('caught Error: $e');
         setState(() {
-          errorMessage = e.message;
+          errorMessage = e.toString();//.message;
           isLoading = false;
         });
       }
@@ -458,7 +458,7 @@ class RegistrationPageState extends State<RegistrationPage> {
   }
 
   bool validatePassword(String password) {
-    //used to ensure the password is valid
+    // used to ensure the password is valid
     String pattern =
         r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
     RegExp regExp = new RegExp(pattern);
@@ -466,7 +466,7 @@ class RegistrationPageState extends State<RegistrationPage> {
   }
 
   Widget getBackgroundImage() {
-    //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
+    // this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: ColorFiltered(
@@ -483,7 +483,7 @@ class RegistrationPageState extends State<RegistrationPage> {
   }
 
   Widget getBannerImage() {
-    //returns banner image
+    // returns banner image
     return Image.asset(
       "assets/bannerimage.png",
       width: MediaQuery.of(context).size.width,
@@ -492,7 +492,7 @@ class RegistrationPageState extends State<RegistrationPage> {
   }
 
   Widget getPageTitle() {
-    //returns the page title
+    // returns the page title
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
       child: Align(
@@ -511,7 +511,7 @@ class RegistrationPageState extends State<RegistrationPage> {
   }
 
   Widget getLoadingWheel() {
-    //shows loading wheel if the page is loading data
+    // shows loading wheel if the page is loading data
     return isLoading ? Center(child: CircularProgressIndicator()) : Container();
   }
 }

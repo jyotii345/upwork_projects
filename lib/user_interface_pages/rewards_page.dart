@@ -21,6 +21,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../classes/aggressor_colors.dart';
 import 'dart:io';
 
+import '../databases/states_database.dart';
+
 class Rewards extends StatefulWidget {
   Rewards(this.user);
 
@@ -43,6 +45,20 @@ class RewardsState extends State<Rewards> {
   @override
   void initState() {
     super.initState();
+
+    if(contact==null){
+      getContactDetails();
+    }
+    if(ironDiverList.isEmpty){
+      getIronDiverList();
+    }
+
+  }
+
+  void getIronDiverList() async {
+    //set the initial iron diver awards
+    ironDiverList = await AggressorApi().getIronDiverList(widget.user.userId!);
+    updateIronDiversCache();
   }
 
   /*
@@ -60,6 +76,8 @@ class RewardsState extends State<Rewards> {
             children: [
               getBackgroundImage(),
               getWhiteOverlay(),
+              (contact==null||loading)?
+              Center(child: CircularProgressIndicator()):
               getPageForm(),
             ],
           );
@@ -87,7 +105,10 @@ class RewardsState extends State<Rewards> {
     return Container(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0.0, 0, 0, 10),
-        child: ListView(
+        child:
+
+
+        ListView(
           children: [
             getSliderImages(),
             showOffline(),
@@ -183,28 +204,28 @@ class RewardsState extends State<Rewards> {
                       fontSize: MediaQuery.of(context).size.width / 27,
                       fontWeight: FontWeight.bold),
                 ),
-                contact.vip == null
+                contact!.vip == null
                     ? Container()
                     : Image.asset(
                         "assets/vipclub.png",
                         height: MediaQuery.of(context).size.width / 10,
                         width: MediaQuery.of(context).size.width / 9,
                       ),
-                contact.vipPlus == null
+                contact!.vipPlus == null
                     ? Container()
                     : Image.asset(
                         "assets/vipplusclub.png",
                         height: MediaQuery.of(context).size.width / 10,
                         width: MediaQuery.of(context).size.width / 9,
                       ),
-                contact.sevenSeas == null
+                contact!.sevenSeas == null
                     ? Container()
                     : Image.asset(
                         "assets/sevenseasclub.png",
                         height: MediaQuery.of(context).size.width / 10,
                         width: MediaQuery.of(context).size.width / 9,
                       ),
-                contact.adventuresClub == null
+                contact!.adventuresClub == null
                     ? Container()
                     : Image.asset(
                         "assets/adventureclub.png",
@@ -261,7 +282,9 @@ class RewardsState extends State<Rewards> {
   }
 
   VoidCallback refreshState() {
-    setState(() {});
+    return (){
+      setState(() {});
+    };
   }
 
   void showBoutiqueDialogue() {
@@ -377,11 +400,11 @@ class RewardsState extends State<Rewards> {
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: LinearPercentIndicator(
-              percent: contact.vipCount == null
+              percent: (contact!.vipCount == null||contact!.vipCount=="")
                   ? 0
-                  : (double.parse(contact.vipCount) * 6.67) / 100 > 1.0
+                  : (double.parse(contact!.vipCount!) * 6.67) / 100 > 1.0
                       ? 1.0
-                      : (double.parse(contact.vipCount) * 6.67) / 100,
+                      : (double.parse(contact!.vipCount!) * 6.67) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -396,11 +419,11 @@ class RewardsState extends State<Rewards> {
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: LinearPercentIndicator(
-              percent: contact.vipPlusCount == null
+              percent: (contact!.vipPlusCount == null||contact!.vipPlusCount == "")
                   ? 0
-                  : (double.parse(contact.vipPlusCount) * 4.0) / 100 > 1.0
+                  : (double.parse(contact!.vipPlusCount!) * 4.0) / 100 > 1.0
                       ? 1.0
-                      : (double.parse(contact.vipPlusCount) * 4.0) / 100,
+                      : (double.parse(contact!.vipPlusCount!) * 4.0) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -415,11 +438,11 @@ class RewardsState extends State<Rewards> {
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: LinearPercentIndicator(
-              percent: contact.sevenSeasCount == null
+              percent: (contact!.sevenSeasCount == null||contact!.sevenSeasCount == "")
                   ? 0
-                  : (double.parse(contact.sevenSeasCount) * 14.29) / 100 > 1.0
+                  : (double.parse(contact!.sevenSeasCount!) * 14.29) / 100 > 1.0
                       ? 1.0
-                      : (double.parse(contact.sevenSeasCount) * 14.29) / 100,
+                      : (double.parse(contact!.sevenSeasCount!) * 14.29) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -434,11 +457,11 @@ class RewardsState extends State<Rewards> {
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: LinearPercentIndicator(
-              percent: contact.aaCount == null
+              percent: (contact!.aaCount == null||contact!.aaCount == "")
                   ? 0
-                  : (double.parse(contact.aaCount) * 33.34) / 100 > 1.0
+                  : (double.parse(contact!.aaCount!) * 33.34) / 100 > 1.0
                       ? 1.0
-                      : (double.parse(contact.aaCount) * 33.34) / 100,
+                      : (double.parse(contact!.aaCount!) * 33.34) / 100,
               progressColor: Colors.green,
               lineHeight: barHeight,
             ),
@@ -486,13 +509,13 @@ class RewardsState extends State<Rewards> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  contact != null || contact.nameF == null
+                  (contact != null && contact!.nameF == null)
                       ? Text(
-                          contact.nameF.toString() +
+                          contact!.nameF.toString() +
                               " " +
-                              contact.nameL +
+                              contact!.nameL! +
                               "\nGuest since " +
-                              contact.memberSince +
+                              contact!.memberSince! +
                               "\nTotal Adventures - " +
                               profileData["totalAdventures"].toString(),
                           textAlign: TextAlign.center,
@@ -506,7 +529,13 @@ class RewardsState extends State<Rewards> {
                       width: double.infinity,
                       child: TextButton(
                         onPressed: () {
+                          // setState(() {
+                          //   loading=true;
+                          // });
                           online ? openEditProfile() : openProfileView();
+                          // setState(() {
+                          //   loading=false;
+                          // });
                         },
                         style: TextButton.styleFrom(
                             backgroundColor: AggressorColors.secondaryColor),
@@ -561,7 +590,7 @@ class RewardsState extends State<Rewards> {
                     ],
                   ),
                   Text(
-                    contact.boutiquePoints,
+                    contact!.boutiquePoints!,
                     maxLines: 1,
                     style: TextStyle(
                         fontSize: sectionHeight / 5,
@@ -576,12 +605,12 @@ class RewardsState extends State<Rewards> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => RedeemPointsPage(
-                                contact.contactId,
+                                contact!.contactId!,
                                 widget.user,
                                 contact != null &&
-                                        contact.boutiquePoints != null &&
-                                        contact.boutiquePoints.isNotEmpty
-                                    ? int.parse(contact.boutiquePoints)
+                                        contact!.boutiquePoints != null &&
+                                        contact!.boutiquePoints!.isNotEmpty
+                                    ? int.parse(contact!.boutiquePoints!)
                                     : 0,
                               ),
                             ),
@@ -619,10 +648,16 @@ class RewardsState extends State<Rewards> {
 
   Future<dynamic> openEditProfile() async {
     //loads the profile details
+
+    setState(() {
+      loading=true;
+    });
+
     if (online) {
       if (!profileDataLoaded) {
         var jsonResponse =
-            await AggressorApi().getProfileData(widget.user.userId);
+            await AggressorApi().getProfileData(widget.user.userId!);
+        statesList = await AggressorApi().getStates();
         if (jsonResponse["status"] == "success") {
           var jsonResponseCountries = await AggressorApi().getCountries();
           setState(() {
@@ -630,8 +665,13 @@ class RewardsState extends State<Rewards> {
             profileData = jsonResponse;
             profileDataLoaded = true;
           });
+          updateStatesCache();
           getUserProfileImageData();
         }
+
+        // getStatesList();
+
+
       }
       Navigator.push(
           context,
@@ -639,8 +679,35 @@ class RewardsState extends State<Rewards> {
               builder: (context) =>
                   EditMyProfile(widget.user, updateCallback, profileData)));
     }
+    setState(() {
+      loading=false;
+    });
     return "finished";
   }
+
+
+  // void getStatesList() async {
+  //   //set the initial states list
+  //   statesList = await AggressorApi().getStates();
+  //   updateStatesCache();
+  // }
+
+  void updateStatesCache() async {
+    //cleans and saves the states to the database
+    StatesDatabaseHelper statesDatabaseHelper = StatesDatabaseHelper.instance;
+    try {
+      await statesDatabaseHelper.deleteStatesTable();
+    } catch (e) {
+      print("no notes in the table");
+    }
+
+    for (var state in statesList) {
+      await statesDatabaseHelper.insertStates(state);
+    }
+
+
+  }
+
 
   Widget getBackgroundImage() {
     //this method return the blue background globe image that is lightly shown under the application, this also return the slightly tinted overview for it.
@@ -720,7 +787,7 @@ class RewardsState extends State<Rewards> {
 
   void deleteCertificate(var certificate) async {
     var response = await AggressorApi()
-        .deleteCertification(widget.user.userId, certificate["id"].toString());
+        .deleteCertification(widget.user.userId!, certificate["id"].toString());
     if (response["status"].toString().toLowerCase() == "success") {
       setState(() {
         certificationList.remove(certificate);
@@ -778,7 +845,7 @@ class RewardsState extends State<Rewards> {
 
   void deleteIronDiver(var ironDiver) async {
     var response = await AggressorApi()
-        .deleteIronDiver(widget.user.userId, ironDiver["id"].toString());
+        .deleteIronDiver(widget.user.userId!, ironDiver["id"].toString());
     if (response["status"].toString().toLowerCase() == "success") {
       setState(() {
         ironDiverList.remove(ironDiver);
@@ -786,7 +853,6 @@ class RewardsState extends State<Rewards> {
       });
     } else {
       setState(() {
-        //TODO show error message
       });
     }
   }
@@ -823,7 +889,7 @@ class RewardsState extends State<Rewards> {
 
     if (!certificateLoaded && online) {
       List<dynamic> tempList =
-          await AggressorApi().getCertificationList(widget.user.userId);
+          await AggressorApi().getCertificationList(widget.user.userId!);
       setState(() {
         certificationList = tempList;
         certificateLoaded = true;
@@ -859,7 +925,7 @@ class RewardsState extends State<Rewards> {
     } catch (e) {}
     if (!ironDiversLoaded && online) {
       List<dynamic> tempList =
-          await AggressorApi().getIronDiverList(widget.user.userId);
+          await AggressorApi().getIronDiverList(widget.user.userId!);
       setState(() {
         ironDiverList = tempList;
         ironDiversLoaded = true;
@@ -882,30 +948,30 @@ class RewardsState extends State<Rewards> {
 
     for (var ironDiver in ironDiverList) {
       await ironDiverDatabaseHelper.insertIronDiver(
-          ironDiver['id'], ironDiver['name']);
+          ironDiver['id'].toString(), ironDiver['name'].toString());
     }
   }
 
   void getContactDetails() async {
     if (!contactLoaded && online) {
-      var response = await AggressorApi().getContact(widget.user.contactId);
+      var response = await AggressorApi().getContact(widget.user.contactId!);
       setState(() {
         contact = Contact(
-            response["contactid"],
-            response["first_name"],
-            response["middle_name"],
-            response["last_name"],
-            response["email"],
-            response["vipcount"],
-            response["vippluscount"],
-            response["sevenseascount"],
-            response["aacount"],
-            response["boutique_points"],
-            response["vip"],
-            response["vipPlus"],
-            response["sevenSeas"],
-            response["adventuresClub"],
-            response["memberSince"]);
+            response["contactid"]??"",
+            response["first_name"]??"",
+            response["middle_name"]??"",
+            response["last_name"]??"",
+            response["email"]??"",
+            response["vipcount"]??"",
+            response["vippluscount"]??"",
+            response["sevenseascount"]??"",
+            response["aacount"]??"",
+            response["boutique_points"]??"",
+            response["vip"]??"",
+            response["vipPlus"]??"",
+            response["sevenSeas"]??"",
+            response["adventuresClub"]??"",
+            response["memberSince"]??"",);
         contactLoaded = true;
       });
       updateContactCache(response);
@@ -921,21 +987,21 @@ class RewardsState extends State<Rewards> {
     } catch (e) {}
 
     await contactDatabaseHelper.insertContact(
-        response["contactid"],
-        response["first_name"],
-        response["middle_name"],
-        response["last_name"],
-        response["email"],
-        response["vipcount"],
-        response["vippluscount"],
-        response["sevenseascount"],
-        response["aacount"],
-        response["boutique_points"],
-        response["vip"],
-        response["vipPlus"],
-        response["sevenSeas"],
-        response["adventuresClub"],
-        response["memberSince"]);
+        response["contactid"]??"",
+        response["first_name"]??"",
+        response["middle_name"]??"",
+        response["last_name"]??"",
+        response["email"]??"",
+        response["vipcount"]??"",
+        response["vippluscount"]??"",
+        response["sevenseascount"]??"",
+        response["aacount"]??"",
+        response["boutique_points"]??"",
+        response["vip"]??"",
+        response["vipPlus"]??"",
+        response["sevenSeas"]??"",
+        response["adventuresClub"]??"",
+        response["memberSince"]??"",);
   }
 
   Widget showLoading() {
@@ -952,7 +1018,7 @@ class RewardsState extends State<Rewards> {
   }
 
   void updateCallback() {
-    //update to show profile data should be reloaded
+    // update to show profile data should be reloaded
     setState(() {
       profileDataLoaded = false;
       userImageRetreived = false;
@@ -960,7 +1026,7 @@ class RewardsState extends State<Rewards> {
   }
 
   Widget showOffline() {
-    //displays offline when the application does not have internet connection
+    // displays offline when the application does not have internet connection
     return online
         ? Container()
         : Padding(
@@ -980,7 +1046,7 @@ class RewardsState extends State<Rewards> {
   }
 
   Widget getAllStarListView() {
-    //returns the list view of the awards the user has earned
+    // returns the list view of the awards the user has earned
     getAllStars();
     return Padding(
       padding: const EdgeInsets.fromLTRB(15.0, 5, 15.0, 0.0),
@@ -1038,7 +1104,7 @@ class RewardsState extends State<Rewards> {
 
   Future<dynamic> getAllStars() async {
     if (!allStarLoaded) {
-      var allStarJson = await AggressorApi().getAllStar(widget.user.contactId);
+      var allStarJson = await AggressorApi().getAllStar(widget.user.contactId!);
 
       List<dynamic> tempList = [];
       for (var element in allStarJson) {
@@ -1055,7 +1121,7 @@ class RewardsState extends State<Rewards> {
     if (!userImageRetreived) {
       try {
         var userImageRes = await AggressorApi()
-            .downloadUserImage(widget.user.userId, profileData["avatar"]);
+            .downloadUserImage(widget.user.userId!, profileData["avatar"]);
 
         var bytes = await readByteStream(userImageRes.stream);
         var dirData = (await getApplicationDocumentsDirectory()).path;

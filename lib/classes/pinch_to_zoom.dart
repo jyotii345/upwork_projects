@@ -15,9 +15,9 @@ class PinchToZoomState extends State<PinchToZoom>
     with TickerProviderStateMixin {
   final TransformationController _transformationController =
       TransformationController();
-  Animation<Matrix4> animationReset;
-  AnimationController controllerReset;
-  Timer timer;
+  Animation<Matrix4>? animationReset;
+  AnimationController? controllerReset;
+  Timer? timer;
 
   @override
   void initState() {
@@ -52,55 +52,55 @@ class PinchToZoomState extends State<PinchToZoom>
     //animation reset for pnich to zoom
 
     timer = Timer(Duration(seconds: 3), () {
-      controllerReset.reset();
+      controllerReset!.reset();
       animationReset = Matrix4Tween(
         begin: _transformationController.value,
         end: Matrix4.identity(),
-      ).animate(controllerReset);
-      animationReset.addListener(_onAnimateReset);
-      controllerReset.forward();
+      ).animate(controllerReset!);
+      animationReset!.addListener(_onAnimateReset);
+      controllerReset!.forward();
     });
 
   }
 
   void _onAnimateReset() {
-    //notifies when the animation is resetting on pinch to zoom
+    // notifies when the animation is resetting on pinch to zoom
     try {
-      _transformationController.value = animationReset.value;
-      if (!controllerReset.isAnimating) {
+      _transformationController.value = animationReset!.value;
+      if (!controllerReset!.isAnimating) {
         animationReset?.removeListener(_onAnimateReset);
         animationReset = null;
-        controllerReset.reset();
+        controllerReset!.reset();
       }
     } catch (e) {
     }
   }
 
   void _onInteractionStart(ScaleStartDetails details) {
-    //cancels the reset if a user clicks again
+    // cancels the reset if a user clicks again
 
     if(timer != null ){
-      if(timer.isActive){
-        timer.cancel();
+      if(timer!.isActive){
+        timer!.cancel();
         timer = null;
       }
     }
 
-    if (controllerReset.status == AnimationStatus.forward) {
+    if (controllerReset!.status == AnimationStatus.forward) {
       _animateResetStop();
     }
   }
 
   void _animateResetStop() {
-    //cancel the reset for the pinch to zoom
-    controllerReset.stop();
+    // cancel the reset for the pinch to zoom
+    controllerReset!.stop();
     animationReset?.removeListener(_onAnimateReset);
     animationReset = null;
-    controllerReset.reset();
+    controllerReset!.reset();
   }
 
   void _onInteractionEnd(ScaleEndDetails details) {
-    //called when zoom ends for pinch to zoom
+    // called when zoom ends for pinch to zoom
     _animateResetInitialize();
   }
 }
