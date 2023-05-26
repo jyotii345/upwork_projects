@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
@@ -12,7 +11,6 @@ import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:chunked_stream/chunked_stream.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:html_editor_enhanced/utils/utils.dart';
@@ -20,6 +18,8 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'messages.dart';
 
 class AggressorApi {
   final String apiKey = "pwBL1rik1hyi5JWPid";
@@ -130,7 +130,7 @@ class AggressorApi {
         }
 
         // percent+=0.01;
-        percent=i/loadingLength;
+        percent = i / loadingLength;
         // loadingCallBack();
         i++;
       }
@@ -138,7 +138,7 @@ class AggressorApi {
       Database db = await tripDatabaseHelper.database;
       List<Map> queryList = await db.rawQuery('SELECT * FROM trip');
       if (queryList.length > 0) {
-        tripList = queryList.map(( data) => Trip.fromMap(data)).toList();
+        tripList = queryList.map((data) => Trip.fromMap(data)).toList();
       } else {
         tripList = [];
       }
@@ -359,6 +359,34 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
+  Future<dynamic> sendEmail(
+    String fName,
+    String lName,
+    String email,
+    String body,
+  ) async {
+    try {
+      Response response = await post(
+          Uri.https('app.aggressor.com', 'api/app/contactus/'),
+          headers: <String, String>{
+            'apikey': apiKey,
+          },
+          body: jsonEncode({
+            "first": "$fName",
+            "last": "$lName",
+            "email": "$email",
+            "body": "$body"
+          }));
+
+      var data = jsonDecode(response.body);
+      print(data);
+      return data;
+      // return {"status":"success"};
+    } catch (e) {
+      return "Error sending mail, please try again.";
+    }
+  }
+
   Future<dynamic> saveProfileData(
     String userId,
     String first,
@@ -370,6 +398,7 @@ class AggressorApi {
     String state,
     String province,
     String country,
+    String timeZone,
     String zip,
     String username,
     String? password,
@@ -396,6 +425,7 @@ class AggressorApi {
               'state': state,
               'province': province,
               'country': int.parse(country),
+              'time_zone': timeZone,
               'zip': zip,
               'username': username,
               'home_phone': homePhone,
@@ -412,6 +442,7 @@ class AggressorApi {
               'state': state,
               'province': province,
               'country': int.parse(country),
+              'time_zone': timeZone,
               'zip': int.parse(zip),
               'username': username,
               'password': password,
@@ -740,6 +771,21 @@ class AggressorApi {
     return pageJson;
   }
 
+  Future<dynamic> storeFCMToken(String contactID, String fcmToken) async {
+    String deviceType = (Platform.isAndroid) ? "Android" : "IOS";
+
+    Response response = await post(
+      Uri.https('app.aggressor.com', '/api/app/fcmtoken/save/' + contactID),
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({"deviceType": deviceType, "fcmToken": fcmToken}),
+    );
+
+    return jsonDecode(response.body);
+  }
+
   Future<dynamic> saveIronDiver(String userId, String boatId) async {
     //Save a new iron diver award to a specific boat
     Response response = await post(
@@ -968,7 +1014,6 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-
   Future<File> getReelImage(String imageId, String imageName) async {
     // allows a user to link user to a contact
     String url = 'https://app.aggressor.com/api/app/reels/image/' + imageId;
@@ -1038,6 +1083,117 @@ class AggressorApi {
     );
 
     return response.body;
+  }
+
+  Future<bool> sendMessage(String uId) async {
+    try {
+      Response response = await post(
+          Uri.https('app.aggressor.com', 'api/notifications/new/27'),
+          headers: <String, String>{
+            'apikey': apiKey,
+          },
+          body: {
+            "title": "$uId",
+            "sub_title": "$uId",
+            "body": "$uId",
+            "show_in_app": "yes",
+            "message_body": "$uId",
+          });
+
+      var data = jsonDecode(response.body);
+      print(data);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<List<Message>> getAllMessages(String contactId) async {
+    try {
+      List<Message> message = [];
+      Response response = await get(
+        Uri.https('app.aggressor.com', 'api/app/inbox/list/$contactId'),
+        headers: <String, String>{
+          'apikey': apiKey,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      var data = jsonDecode(response.body);
+      await Future.forEach(
+          data, (element) => message.add(Message.fromJson(element)));
+      return message;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<bool> flagMessages(int id, String contactId) async {
+    try {
+      Response response = await put(
+        Uri.https('app.aggressor.com', 'api/app/inbox/flag/$contactId/$id'),
+        headers: <String, String>{
+          'apikey': apiKey,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      var data = jsonDecode(response.body);
+      return data["status"] == "success";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> unFlagMessages(int id, String contactId) async {
+    try {
+      Response response = await put(
+        Uri.https('app.aggressor.com', 'api/app/inbox/unflag/$contactId/$id'),
+        headers: <String, String>{
+          'apikey': apiKey,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      var data = jsonDecode(response.body);
+      return data["status"] == "success";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> viewMessage(String contactId, int messageId) async {
+    try {
+      List<Message> message = [];
+      Response response = await get(
+        Uri.https(
+            'app.aggressor.com', 'api/app/inbox/view/$contactId/$messageId'),
+        headers: <String, String>{
+          'apikey': apiKey,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      var data = jsonDecode(response.body);
+      await Future.forEach(
+          data, (element) => message.add(Message.fromJson(element)));
+      return message.length > 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteMessage(String contactId, int messageId) async {
+    try {
+      Response response = await delete(
+        Uri.https(
+            'app.aggressor.com', 'api/app/inbox/delete/$contactId/$messageId'),
+        headers: <String, String>{
+          'apikey': apiKey,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      var data = jsonDecode(response.body);
+      return data["status"] == "success";
+    } catch (e) {
+      return false;
+    }
   }
 
   String generateRandomString(int len) {

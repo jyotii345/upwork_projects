@@ -1,20 +1,17 @@
-import 'dart:io';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
+import 'package:aggressor_adventures/classes/fcm_helper.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/user_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/contact_us_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/registration_page.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../classes/aggressor_colors.dart';
-import 'loading_page.dart';
 import 'main_page.dart';
-import 'profile_link_page.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage();
@@ -50,6 +47,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
   String OFYContactId = "";
   String userType = "";
   String contactType = "";
+  // String timeZone = "";
+
 
   UserDatabaseHelper helper = UserDatabaseHelper.instance;
 
@@ -106,7 +105,14 @@ class _LoginSignUpPageState extends State<LoginPage> {
                           ],
                         ),
                         onPressed: () {
-                          launch("mailto:info@aggressor.com");
+                          // launchUrl(Uri.parse("mailto:info@aggressor.com"));
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ContactUsPage()));
+                          // sendMail();
                         },
                       ),
                     ),
@@ -364,9 +370,24 @@ class _LoginSignUpPageState extends State<LoginPage> {
       OFYContactId = loginResponse["OFYcontactID"].toString();
       userType = loginResponse["user_type"];
       contactType = loginResponse["contact_type"];
+      // timeZone=loginResponse["time_zone"];
 
       await initDatabase();
       await saveUserData();
+
+      String? token=await FCMHelper.generateFCMToken();
+      // String deviceType=(Platform.isAndroid)?"Android":"IOS";
+      //
+      // var data={
+      //   "contactId":contactId,
+      //   "deviceType":deviceType,
+      //   "fcmToken":token,
+      // };
+
+      if(token!=null){
+        await storeToken(contactId, token);
+      }
+
 
       checkLoginStatus();
     } else {
@@ -376,6 +397,12 @@ class _LoginSignUpPageState extends State<LoginPage> {
             "username or password do not match any items in our records";
       });
     }
+  }
+
+  Future<void> storeToken(String contactID,String fcmToken) async {
+    //set the initial iron diver awards
+    var res = await AggressorApi().storeFCMToken(contactID, fcmToken);
+    print(res);
   }
 
   void checkLoginStatus() async {

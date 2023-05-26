@@ -20,6 +20,8 @@ class UserDatabaseHelper {
 
   Future<Database> get database async {
     //get the database object
+    // await _database?.close();
+    // _database=null;
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;

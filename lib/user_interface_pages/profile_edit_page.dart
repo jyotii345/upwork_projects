@@ -8,16 +8,15 @@ import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/profile_database.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_absolute_path/flutter_absolute_path.dart';
-import 'package:heic_to_jpg/heic_to_jpg.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../databases/states_database.dart';
+import 'package:timezone/timezone.dart' as tz;
+// import 'package:timezone/data/latest.dart' as tz;
 
+import 'package:timezone/data/latest_10y.dart' as tz;
 class EditMyProfile extends StatefulWidget {
   EditMyProfile(this.user, this.updateCallback, this.profileData);
 
@@ -46,6 +45,8 @@ class EditMyProfileState extends State<EditMyProfile> {
   Map<String, dynamic> stateDropDownSelection = {};
 
   bool stateAndCountryLoaded = false;
+  String timeZoneDropDownValue = "";
+  // List<String> timeZonesList = [];
 
 
 
@@ -77,6 +78,7 @@ class EditMyProfileState extends State<EditMyProfile> {
       territory ,
       zip ,
       country,
+      timeZone,
       email ,
       homePhone ,
       workPhone,
@@ -95,6 +97,14 @@ class EditMyProfileState extends State<EditMyProfile> {
   @override
   void initState() {
     super.initState();
+
+    tz.initializeTimeZones();
+    // timeZoneFsList=[];
+    // tz.timeZoneDatabase.locations.forEach((key, value) {
+    //   timeZonesList.add(value.name);
+    // });
+    // timeZoneDropDownValue = timeZonesList.first;
+    // print(tz.timeZoneDatabase.locations.length);
 
     // getStatesList();
     popDistance = 1;
@@ -206,7 +216,7 @@ class EditMyProfileState extends State<EditMyProfile> {
         }
 
         if (selectionFile != null) {
-          var response = await AggressorApi()
+           await AggressorApi()
               .uploadUserImage(widget.user.userId!, selectionFile!.path);
 
           var dirData = (await getApplicationDocumentsDirectory()).path;
@@ -226,6 +236,7 @@ class EditMyProfileState extends State<EditMyProfile> {
             country == "2" ? territory??"" : "",
             country != "2" ? territory??"" : "",
             country!,
+            timeZone!,
             zip!,
             username!,
             password != "" ? password : null,
@@ -303,6 +314,7 @@ class EditMyProfileState extends State<EditMyProfile> {
       response['state'],
       response['province'],
       response['country'].toString(),
+      response['time_zone'],
       response['zip'],
       response['username'],
       response['password'],
@@ -340,49 +352,58 @@ class EditMyProfileState extends State<EditMyProfile> {
     return FutureBuilder(
         future: getCountryAndState(),
         builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            return Padding(
-              padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-              child: Container(
-                width: MediaQuery.of(context).size.width - 20,
-                color: Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                  child: Form(
-                    key: formKey,
-                    child: ListView(
-                      children: [
-                        Opacity(
-                          opacity: 0,
-                          child: getBannerImage(),
-                        ),
-                        getPageTitle(),
-                        getName(),
-                        getProfilePicture(),
-                        getAddress1(),
-                        getAddress2(),
-                        getCity(),
-                        getTerritory(),
-                        getZip(),
-                        getCountry(),
-                        getEmail(),
-                        getHomePhone(),
-                        getWorkPhone(),
-                        getMobilePhone(),
-                        getUsername(),
-                        getPassword(),
-                        getTotalNumberOfDives(),
-                        getTotalAdventures(),
-                        //getAccountType(),
-                        getUpdateButton(),
-                        showErrorMessage(),
-                      ],
+          try{
+            if (snapshot.hasData && snapshot.data != null) {
+              return Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                child: Container(
+                  width: MediaQuery.of(context).size.width - 20,
+                  color: Colors.white,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                    child: Form(
+                      key: formKey,
+                      child: ListView(
+                        children: [
+                          Opacity(
+                            opacity: 0,
+                            child: getBannerImage(),
+                          ),
+                          getPageTitle(),
+                          getName(),
+                          getProfilePicture(),
+                          getAddress1(),
+                          getAddress2(),
+                          getCity(),
+                          getTerritory(),
+                          getZip(),
+                          getCountry(),
+                          getTimeZone(),
+                          getEmail(),
+                          getHomePhone(),
+                          getWorkPhone(),
+                          getMobilePhone(),
+                          getUsername(),
+                          getPassword(),
+                          getTotalNumberOfDives(),
+                          getTotalAdventures(),
+                          //getAccountType(),
+                          getUpdateButton(),
+                          showErrorMessage(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
-          } else {
+              );
+            }
+            else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          }
+          catch(e){
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -517,7 +538,7 @@ class EditMyProfileState extends State<EditMyProfile> {
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
                     validator: (value) =>
-                        (value==null||(value==null||value.isEmpty)) ? 'Address 1 can\'t be empty' : null,
+                        (value==null||value.isEmpty) ? 'Address 1 can\'t be empty' : null,
                     onSaved: (value) => address1 = value!.trim(),
                   ),
                 ),
@@ -609,7 +630,7 @@ class EditMyProfileState extends State<EditMyProfile> {
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
                     validator: (value) =>
-                        (value==null||(value==null||value.isEmpty)) ? 'City can\'t be empty' : null,
+                        (value==null||(value.isEmpty)) ? 'City can\'t be empty' : null,
                     onSaved: (value) => city = value!.trim(),
                   ),
                 ),
@@ -678,7 +699,7 @@ class EditMyProfileState extends State<EditMyProfile> {
                           EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     ),
                     validator: (value) =>
-                       (value==null|| (value==null||value.isEmpty)) ? 'Zip code can\'t be empty' : null,
+                       (value==null|| (value.isEmpty)) ? 'Zip code can\'t be empty' : null,
                     onSaved: (value) => zip = value.toString().trim(),
                   ),
                 ),
@@ -705,6 +726,50 @@ class EditMyProfileState extends State<EditMyProfile> {
       ],
     );
   }
+  Widget getTimeZone() {
+    //returns the widget item containing the country
+    return Row(
+      children: [
+        Container(
+          width: textDisplayWidth,
+          child: Text(
+            "TimeZone: ",
+            style: TextStyle(fontSize: textSize),
+          ),
+        ),
+        getTimeZoneDropDown(),
+      ],
+    );
+  }
+
+  // Widget getTimeZone() {
+  //   //returns the field prompting for the email
+  //   return Container(
+  //     padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
+  //     child: DropdownButtonFormField<String>(
+  //       decoration: new InputDecoration(
+  //         icon: Icon(
+  //           Icons.more_time,
+  //           color: AggressorColors.secondaryColor,
+  //         ),
+  //       ),
+  //       value: dropDownValue,
+  //       // hint: Text('Please choose account type'),
+  //       items: timeZones.map((String value) {
+  //         return DropdownMenuItem<String>(
+  //           value: value,
+  //           child: new Text(value),
+  //         );
+  //       }).toList(),
+  //       onChanged: (newValue) {
+  //         setState(() {
+  //           dropDownValue = newValue.toString();
+  //         });
+  //       },
+  //     ),
+  //   );
+  // }
+
 
   Widget getEmail() {
     //returns the widget item containing the email
@@ -1167,9 +1232,10 @@ class EditMyProfileState extends State<EditMyProfile> {
                   onChanged: (Map<String, dynamic>? newValue) {
                     setState(() {
                       stateDropDownSelection = newValue!;
-                      country == "2"
-                          ? territory = newValue["stateAbbr"]
-                          : () {};
+                      if
+                      (country == "2"){
+                           territory = newValue["stateAbbr"];}
+
                     });
                   },
                   items: statesList
@@ -1258,6 +1324,46 @@ class EditMyProfileState extends State<EditMyProfile> {
       ),
     );
   }
+  Widget getTimeZoneDropDown() {
+    //returns a dropdown of all countries
+
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Container(
+          decoration: ShapeDecoration(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1.0, style: BorderStyle.solid,color:inputBorderColor),
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+          ),
+          child: DropdownButton<String>(
+            isExpanded: true,
+            value: timeZone,
+            onChanged: ( newValue) {
+              setState(() {
+                timeZoneDropDownValue = newValue.toString();
+                timeZone = newValue.toString();
+              });
+            },
+            items: timeZones.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0,horizontal: 12),
+                  child: Text(
+                    value,
+                    style: TextStyle(fontSize: textSizeInputField,color: inputTextColor),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+  }
 
   Future<dynamic> getCountryAndState() async {
     // load the initial data for the page
@@ -1281,8 +1387,10 @@ class EditMyProfileState extends State<EditMyProfile> {
       totalDives = widget.profileData["dives"].toString();
       totalAdventures = widget.profileData["totalAdventures"].toString();
       accountType = widget.profileData["account_type"];
+      timeZone=widget.profileData["time_zone"];
 
       countryDropDownSelection = countriesList[0];
+
       stateDropDownSelection =statesList.isEmpty?{}: statesList[0];
 
       countriesList.forEach((element) {
@@ -1331,7 +1439,7 @@ class EditMyProfileState extends State<EditMyProfile> {
 
   Future<void> loadAssets() async {
     // loads the asset objects from the image picker
-    List<Asset> resultList = <Asset>[];
+    // List<Asset> resultList = <Asset>[];
     String error = '';
 
     if (await Permission.photos.status.isDenied ||

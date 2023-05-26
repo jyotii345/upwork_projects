@@ -87,7 +87,7 @@ class TripDatabaseHelper {
     final db = await database;
     var result = await db
         .rawQuery('SELECT * FROM trip WHERE reservationId = ?', [reservationId]);
-    return Trip.TripWithDetails(
+    return Trip.tripWithDetails(
       result[0]['tripDate'].toString(),
       result[0]['title'].toString(),
       result[0]['latitude'].toString(),
@@ -119,7 +119,7 @@ class TripDatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query('trip');
 
     return List.generate(maps.length, (i) {
-      return Trip.TripWithDetails(
+      return Trip.tripWithDetails(
         maps[i]['tripDate'],
         maps[i]['title'],
         maps[i]['latitude'],

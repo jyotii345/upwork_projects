@@ -277,9 +277,9 @@ class LoadingPageState extends State<LoadingPage> {
       galleriesMap = tempGalleriesMap;
     });
 
-    if (tripList == null) {
-      tripList = [];
-    }
+    // if (tripList == null) {
+    //   tripList = [];
+    // }
 
     return "done";
   }
@@ -336,9 +336,9 @@ class LoadingPageState extends State<LoadingPage> {
     //   loadingMessage = "Initializing your adventures";
     // });
 
-    if (tripList == null) {
-      tripList = [];
-    }
+    // if (tripList == null) {
+    //   tripList = [];
+    // }
 
     // for (var trip in tripList) {
     //   trip.user = widget.user;
@@ -582,7 +582,8 @@ class LoadingPageState extends State<LoadingPage> {
       response['address2']??"",
       response['state']??"",
       response['province']??"",
-      response['country'].toString()??"",
+      response['country'].toString(),
+      response['time_zone'],
       response['zip']??"",
       response['username']??"",
       response['password']??"",

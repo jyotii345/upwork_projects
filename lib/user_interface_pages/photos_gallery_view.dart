@@ -10,8 +10,6 @@ import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_absolute_path/flutter_absolute_path.dart';
-import 'package:heic_to_jpg/heic_to_jpg.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';

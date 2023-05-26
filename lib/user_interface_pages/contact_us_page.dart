@@ -1,32 +1,31 @@
+import 'package:aggressor_adventures/bloc/user_cubit/user_cubit.dart';
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
-import 'package:aggressor_adventures/user_interface_pages/reg_completed_page.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RegistrationPage extends StatefulWidget {
-  RegistrationPage(this.callback);
 
-  final VoidCallback callback;
+class ContactUsPage extends StatefulWidget {
+  ContactUsPage();
+
 
   @override
-  State<StatefulWidget> createState() => new RegistrationPageState();
+  State<StatefulWidget> createState() => new ContactUsPageState();
 }
 
-class RegistrationPageState extends State<RegistrationPage> {
+class ContactUsPageState extends State<ContactUsPage> {
   /*
   instance vars
    */
 
-  String firstName = "",
-      lastName = "",
-      email = "",
-      password = "",
-      passwordConfirmation = "",
-      errorMessage = "";
+  TextEditingController firstName = TextEditingController(),
+      lastName = TextEditingController(),
+      email = TextEditingController();
+  String messageBody = "", errorMessage = "";
 
   double textSize = 0;
 
@@ -34,18 +33,34 @@ class RegistrationPageState extends State<RegistrationPage> {
 
   bool isLoading = false;
 
-
   final formKey = new GlobalKey<FormState>();
-
 
   /*
   initState
    */
   @override
   void initState() {
-    backButton = true;
     super.initState();
+    showBackBtn();
+  }
 
+  showBackBtn() {
+    backButton = true;
+
+    UserState userState = BlocProvider.of<UserCubit>(context).state;
+    if (userState is UserInitial && userState.currentUser != null) {
+      outterDistanceFromLogin++;
+      // popDistance=1;
+      homePage = true;
+      firstName.text = userState.currentUser!.nameF.toString();
+      lastName.text = userState.currentUser!.nameL.toString();
+      email.text = userState.currentUser!.email.toString();
+    }
+    else{
+      outterDistanceFromLogin++;
+      homePage = false;
+    }
+    setState(() {});
   }
 
   /*
@@ -55,7 +70,7 @@ class RegistrationPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
     textSize = MediaQuery.of(context).size.width / 25;
 
-    homePage = false;
+
 
     return Scaffold(
       appBar: getAppBar(),
@@ -101,16 +116,12 @@ class RegistrationPageState extends State<RegistrationPage> {
                   getFirstName(),
                   getLastName(),
                   getEmail(),
-                  // getTimeZone(),
-                  //getDateOfBirth(),
-
-                  getPassword(),
-                  getConfirmPassword(),
+                  getMessageBody(),
                 ],
               ),
             ),
-            showPasswordRequirements(),
-            showRegisterButton(),
+            // showPasswordRequirements(),
+            showSendMailButton(),
             showErrorMessage(),
           ],
         ),
@@ -123,6 +134,7 @@ class RegistrationPageState extends State<RegistrationPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
+        controller: firstName,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
@@ -137,7 +149,7 @@ class RegistrationPageState extends State<RegistrationPage> {
         validator: (value) => (value == null || (value.isEmpty))
             ? 'First Name can\'t be empty'
             : null,
-        onSaved: (value) => firstName = value!.trim(),
+        onSaved: (value) => firstName.text = value!.trim(),
       ),
     );
   }
@@ -147,6 +159,7 @@ class RegistrationPageState extends State<RegistrationPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
+        controller: lastName,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
@@ -161,7 +174,7 @@ class RegistrationPageState extends State<RegistrationPage> {
         validator: (value) => (value == null || value.isEmpty)
             ? 'Last Name can\'t be empty'
             : null,
-        onSaved: (value) => lastName = value!.trim(),
+        onSaved: (value) => lastName.text = value!.trim(),
       ),
     );
   }
@@ -171,6 +184,7 @@ class RegistrationPageState extends State<RegistrationPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
+        controller: email,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
@@ -184,11 +198,10 @@ class RegistrationPageState extends State<RegistrationPage> {
         ),
         validator: (value) =>
             (value == null || value.isEmpty) ? 'Email can\'t be empty' : null,
-        onSaved: (value) => email = value!.trim(),
+        onSaved: (value) => email.text = value!.trim(),
       ),
     );
   }
-
 
   Widget getDateOfBirth() {
     //returns the date picker for the user's date of birth
@@ -255,106 +268,33 @@ class RegistrationPageState extends State<RegistrationPage> {
       });
   }
 
-  Widget getPassword() {
+  Widget getMessageBody() {
     //prompts for the password
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
       child: new TextFormField(
-        obscureText: true,
-        maxLines: 1,
+        // obscureText: true,
+        minLines: 5,
+        maxLines: 5,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
         style: TextStyle(fontSize: textSize),
         decoration: new InputDecoration(
-          hintText: 'Password',
-          icon: Icon(
-            Icons.lock,
-            color: AggressorColors.secondaryColor,
-          ),
-        ),
-        validator: (value) => (value == null || value.isEmpty)
-            ? 'Password can\'t be empty'
-            : null,
-        onSaved: (value) => password = value!.trim(),
+            hintText: 'Type message here',
+            icon: Icon(
+              Icons.message,
+              color: AggressorColors.secondaryColor,
+            ),
+            alignLabelWithHint: true,
+            border: OutlineInputBorder()),
+        validator: (value) =>
+            (value == null || value.isEmpty) ? 'Message can\'t be empty' : null,
+        onSaved: (value) => messageBody = value!.trim(),
       ),
     );
   }
 
-  Widget getConfirmPassword() {
-    //prompts for the password confirmation
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-      child: new TextFormField(
-        obscureText: true,
-        maxLines: 1,
-        keyboardType: TextInputType.emailAddress,
-        autofocus: false,
-        style: TextStyle(fontSize: textSize),
-        decoration: new InputDecoration(
-          hintText: 'Confirm Password',
-          icon: Icon(
-            Icons.lock_outline,
-            color: AggressorColors.secondaryColor,
-          ),
-        ),
-        validator: (value) => (value == null || value.isEmpty)
-            ? 'Password confirmation can\'t be empty'
-            : null,
-        onSaved: (value) => passwordConfirmation = value!.trim(),
-      ),
-    );
-  }
-
-  Widget showPasswordRequirements() {
-    //displays the criteria of a valid password
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
-      child: ListView(
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        children: [
-          Text(
-            "• Password must be 8 characters long or larger",
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 60
-                  : MediaQuery.of(context).size.width / 60,
-            ),
-          ),
-          Text(
-            "• Password must contain at least one numerical digit",
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 60
-                  : MediaQuery.of(context).size.width / 60,
-            ),
-          ),
-          Text(
-            "• Password must contain at least one capital letter",
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 60
-                  : MediaQuery.of(context).size.width / 60,
-            ),
-          ),
-          Text(
-            "• Password must contain one special character",
-            style: TextStyle(
-              color: Colors.grey[400],
-              fontSize: portrait
-                  ? MediaQuery.of(context).size.height / 60
-                  : MediaQuery.of(context).size.width / 60,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget showRegisterButton() {
+  Widget showSendMailButton() {
     //returns the registration button
     return Padding(
         padding: EdgeInsets.fromLTRB(20.0, 5.0, 20.0, 5.0),
@@ -367,7 +307,7 @@ class RegistrationPageState extends State<RegistrationPage> {
                   borderRadius: new BorderRadius.circular(30.0)),
               backgroundColor: AggressorColors.secondaryColor,
             ),
-            child: Text('Register',
+            child: Text('Send',
                 style: TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: validateAndSubmit,
           ),
@@ -402,28 +342,6 @@ class RegistrationPageState extends State<RegistrationPage> {
     return false;
   }
 
-  void showSuccessDialogue() {
-    // shows a dialogue confirming the profile was registered and navigates to the home screen
-    showDialog(
-        context: context,
-        builder: (_) => new AlertDialog(
-              title: new Text('Success'),
-              content: new Text(
-                  "Account was successfully registered. You can now log in with this information"),
-              actions: <Widget>[
-                new TextButton(
-                    onPressed: () {
-                      widget.callback();
-                      int popCount = 0;
-                      Navigator.popUntil(context, (route) {
-                        return popCount++ == 2;
-                      });
-                    },
-                    child: new Text('Continue')),
-              ],
-            ));
-  }
-
   void validateAndSubmit() async {
     // Perform login or signup
     setState(() {
@@ -433,35 +351,48 @@ class RegistrationPageState extends State<RegistrationPage> {
 
     if (validateAndSave()) {
       try {
-        if (password != passwordConfirmation) {
-          if (!validatePassword(password)) {
-            throw Exception("Password does not meet security requirements");
-          }
-        } else {
-          // String birthday = formatDate(dateOfBirth, [yyyy, '-', mm, '-', dd]);
-          var jsonResponse = await AggressorApi().sendRegistrationCondensed(
-            firstName,
-            lastName,
-            email,
-            password,
+        // String birthday = formatDate(dateOfBirth, [yyyy, '-', mm, '-', dd]);
+        var jsonResponse = await AggressorApi().sendEmail(
+          firstName.text,
+          lastName.text,
+          email.text,
+          messageBody,
+        );
+        if (jsonResponse["status"] == "success") {
+          outterDistanceFromLogin--;
+          // popDistance--;
+
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Message send successfully"),
+            ),
           );
-          if (jsonResponse["status"] == "success") {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => RegistrationCompletedPage()));
-          } else {
-            throw Exception("Error creating account, please try again.");
-          }
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Error sending mail, please try again."),
+            ),
+          );
+          throw Exception("Error sending mail, please try again.");
         }
 
         setState(() {
           isLoading = false;
         });
       } catch (e) {
-        print('caught Error: $e');
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error sending mail, please try again."),
+          ),
+        );
+
+        // print('caught Error: $e');
         setState(() {
-          errorMessage = e.toString(); //.message;
+          //   errorMessage = e.toString(); //.message;
           isLoading = false;
         });
       }
@@ -509,7 +440,7 @@ class RegistrationPageState extends State<RegistrationPage> {
       child: Align(
         alignment: Alignment.topLeft,
         child: Text(
-          "Registration",
+          "Contact Us",
           style: TextStyle(
               color: AggressorColors.primaryColor,
               fontSize: portrait

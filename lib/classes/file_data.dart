@@ -115,7 +115,7 @@ class FileData {
 
   Future<void> openFile() async {
     //opens the contents of a file on the defualt application for the native device
-    final _result = await OpenFile.open(filePath);
+     await OpenFile.open(filePath);
   }
 
   void setUser(User user) {

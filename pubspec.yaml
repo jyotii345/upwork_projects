@@ -2,11 +2,11 @@ name: aggressor_adventures
 description: A flutter application for the Aggressor Adventures
 
 publish_to: 'none'
-version: 2.0.1+39
+version: 4.0.2+43
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
-  flutter: ^3.0.0
+  flutter: ^3.3.10
 
 dependencies:
   flutter:
@@ -19,7 +19,8 @@ dependencies:
   date_format: ^2.0.2
   url_launcher: ^6.0.6
   multi_image_picker: ^4.8.0
-  permission_handler: ^9.2.0
+#  permission_handler: ^9.2.0
+  permission_handler: ^10.2.0
   flutter_aws_s3_client: ^0.6.0
 #  flutter_absolute_path: ^1.0.6
   chunked_stream: ^1.4.1
@@ -55,6 +56,14 @@ dependencies:
   firebase_core: ^1.19.2
 
   flutter_app_badger: ^1.4.0
+  firebase_core_platform_interface: 4.5.1
+
+  open_mail_app: ^0.4.5
+
+  flutter_bloc: ^8.1.2
+  bloc: ^8.1.1
+
+  timezone: ^0.9.1
 
 flutter_icons:
 

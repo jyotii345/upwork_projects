@@ -11,9 +11,7 @@ import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:date_format/date_format.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -94,7 +92,7 @@ class AddNotesState extends State<AddNotes> {
   makeCall() async {
     const url = 'tel:7069932531';
     try {
-      await launch(url);
+      await launchUrl(Uri.parse(url));
     } catch (e) {
       print(e.toString());
     }
@@ -196,7 +194,7 @@ class AddNotesState extends State<AddNotes> {
               .add(Duration(days: int.parse(widget.noteTrip.charter!.nights!))),
           [yyyy, '-', mm, '-', dd]);
 
-      var res = await AggressorApi().saveNote(
+       await AggressorApi().saveNote(
           startDate,
           endDate,
           await preNotesController.getText(),

@@ -33,16 +33,19 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 31
-
+    compileSdkVersion 33
+    lintOptions {
+        checkReleaseBuilds false
+    }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+
     defaultConfig {
         multiDexEnabled true
         applicationId "io.adventure.aggressor_adventures"
-        minSdkVersion 19
+        minSdkVersion 23
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

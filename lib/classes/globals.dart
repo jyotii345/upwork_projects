@@ -15,7 +15,7 @@ final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
 double loadedCount = 0;
 double loadingLength = 0;
-double percent=0.0;
+double percent = 0.0;
 bool photosLoaded = false;
 bool notesLoaded = false;
 bool certificateLoaded = false;
@@ -53,7 +53,7 @@ List<dynamic> allStarsList = [];
 
 File userImage = File("");
 
-Contact? contact = null;
+Contact? contact;
 
 List<String> certificationOptionList = [
   'Non-Diver',
@@ -67,4 +67,83 @@ List<String> certificationOptionList = [
   'Instructor',
   'Instructor Trainer',
   'Nitrox',
+];
+
+const List<String> timeZones = [
+  'Africa/Abidjan',
+  'Africa/Algiers',
+  'Africa/Cairo',
+  'America/Adak',
+  'America/Araguaina',
+  'America/Cancun',
+  'America/Cuiaba',
+  'America/Danmarkshavn',
+  'America/Los_Angeles',
+  'America/Maceio',
+  'America/New_York',
+  'America/Noronha',
+  'America/Phoenix',
+  'America/Regina',
+  'America/Santiago',
+  'America/Scoresbysund',
+  'America/Sitka',
+  'America/St_Johns',
+  'Antarctica/Casey',
+  'Antarctica/Davis',
+  'Antarctica/Macquarie',
+  'Antarctica/Mawson',
+  'Antarctica/McMurdo',
+  'Antarctica/Palmer',
+  'Antarctica/Troll',
+  'Asia/Bangkok',
+  'Asia/Dhaka',
+  'Asia/Dubai',
+  'Asia/Gaza',
+  'Asia/Hong_Kong',
+  'Asia/Jerusalem',
+  'Asia/Kabul',
+  'Asia/Kamchatka',
+  'Asia/Karachi',
+  'Asia/Kathmandu',
+  'Asia/Kolkata',
+  'Asia/Qatar',
+  'Asia/Srednekolymsk',
+  'Asia/Tehran',
+  'Asia/Tokyo',
+  'Asia/Vladivostok',
+  'Asia/Yangon',
+  'Atlantic/Azores',
+  'Atlantic/Bermuda',
+  'Atlantic/Canary',
+  'Atlantic/South_Georgia',
+  'Atlantic/Stanley',
+  'Australia/Darwin',
+  'Australia/Eucla',
+  'Australia/Lord_Howe',
+  'Australia/Perth',
+  'Australia/Sydney',
+  'Europe/Istanbul',
+  'Europe/London',
+  'Europe/Madrid',
+  'Europe/Moscow',
+  'Europe/Paris',
+  'Europe/Rome',
+  'Europe/Samara',
+  'Europe/Sofia',
+  'Indian/Chagos',
+  'Indian/Maldives',
+  'Indian/Mauritius',
+  'Pacific/Auckland',
+  'Pacific/Bougainville',
+  'Pacific/Chatham',
+  'Pacific/Easter',
+  'Pacific/Gambier',
+  'Pacific/Kanton',
+  'Pacific/Kiritimati',
+  'Pacific/Marquesas',
+  'Pacific/Pago_Pago',
+  'Pacific/Palau',
+  'Pacific/Pitcairn',
+  'Pacific/Port_Moresby',
+  'Pacific/Tahiti',
 ];

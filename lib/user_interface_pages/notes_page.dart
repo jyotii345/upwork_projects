@@ -9,7 +9,6 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'notes_add_page.dart';
 
@@ -590,7 +589,6 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       ));
       index++;
     }
-    ;
 
     return ListView.builder(
         physics: NeverScrollableScrollPhysics(),

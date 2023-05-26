@@ -5,14 +5,11 @@ import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/note.dart';
-import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/notes_database.dart';
 import 'package:aggressor_adventures/databases/offline_database.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -86,7 +83,7 @@ class EditNoteState extends State<EditNote> {
   makeCall() async {
     const url = 'tel:7069932531';
     try {
-      await launch(url);
+      await launchUrl(Uri.parse(url));
     } catch (e) {
       print(e.toString());
     }
@@ -186,7 +183,7 @@ class EditNoteState extends State<EditNote> {
         loading = true;
       });
 
-      var res = await AggressorApi().updateNote(
+      await AggressorApi().updateNote(
         widget.note.startDate!,
         widget.note.endDate!,
         await preNotesController.getText(),

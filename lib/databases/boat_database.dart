@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:aggressor_adventures/classes/boat.dart';
-import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
