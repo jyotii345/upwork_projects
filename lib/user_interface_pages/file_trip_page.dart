@@ -14,7 +14,6 @@ import 'package:aggressor_adventures/databases/files_database.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:date_format/date_format.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
@@ -772,7 +771,7 @@ class FileViewState extends State<FilesTripPage>
     var resList = await s3client.listObjects(prefix: path, delimiter: "/");
     for (var value in resList!.contents!) {
       if (double.parse(value.size!) > 0) {
-        var res = await AggressorApi().deleteAwsFile(
+        await AggressorApi().deleteAwsFile(
             widget.user.userId!,
             "files",
             "general",
@@ -862,8 +861,8 @@ class FileViewState extends State<FilesTripPage>
   }
 
   Future<bool> updateDisplayNameStorage() async {
-    String region = "us-east-1";
-    String bucketId = "aggressor.app.user.images";
+    // String region = "us-east-1";
+    // String bucketId = "aggressor.app.user.images";
 
     fileDataList.forEach((element) {
       // ensures all values are in the new map even if they are loaded from offline
@@ -898,7 +897,7 @@ class FileViewState extends State<FilesTripPage>
     }
 
     try {
-      var uploading = await AggressorApi().uploadAwsFile(widget.user.userId!,
+       await AggressorApi().uploadAwsFile(widget.user.userId!,
           "config", "files", displayNameFile.path, "nameMaps");
       return true;
     } catch (e) {

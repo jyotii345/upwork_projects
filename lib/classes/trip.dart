@@ -2,7 +2,6 @@
 creates a trip class to hold the contents of a trip object
  */
 import 'dart:io';
-import 'dart:ui';
 import 'package:aggressor_adventures/classes/boat.dart';
 import 'package:aggressor_adventures/classes/charter.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
@@ -16,13 +15,11 @@ import 'package:aggressor_adventures/user_interface_pages/notes_add_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/trip_make_payment_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'aggressor_api.dart';
 import 'aggressor_colors.dart';
-import 'globals_user_interface.dart';
 
 class Trip {
   User? user;
@@ -64,9 +61,7 @@ class Trip {
       String reservationDate,
       String reservationId,
       String loginKey,
-      String passengerId)
-
-  {
+      String passengerId) {
     this.tripDate = tripDate;
     this.title = title;
     this.latitude = latitude;
@@ -78,7 +73,7 @@ class Trip {
     this.passengerId = passengerId;
   }
 
-  Trip.TripWithDetails(
+  Trip.tripWithDetails(
       String tripDate,
       String title,
       String latitude,
@@ -178,7 +173,7 @@ class Trip {
 
   factory Trip.fromMap(Map<dynamic, dynamic> map) {
     //create a trip object from a map object
-    return Trip.TripWithDetails(
+    return Trip.tripWithDetails(
       map['tripDate'].toString(),
       map['title'].toString(),
       map['latitude'].toString(),
@@ -321,7 +316,8 @@ class Trip {
                                                   children: [
                                                     Positioned.fill(
                                                       child: Image.file(
-                                                        File(snapshot.data.toString()),
+                                                        File(snapshot.data
+                                                            .toString()),
                                                         fit: BoxFit.fill,
                                                       ),
                                                     ),
@@ -386,12 +382,14 @@ class Trip {
                                       TextStyle(fontSize: screenFontSize * 1.5),
                                 ),
                                 Text(
-                                  DateTime.now()
-                                      .difference(
-                                          DateTime.parse(charter!.startDate!))
-                                      .inDays
-                                      .abs()
-                                      .toString(),
+                                  charter == null
+                                      ? ""
+                                      : DateTime.now()
+                                          .difference(DateTime.parse(
+                                              charter!.startDate!))
+                                          .inDays
+                                          .abs()
+                                          .toString(),
                                   style: TextStyle(
                                       color: Colors.red,
                                       fontSize: screenFontSize * 1.5),
@@ -512,7 +510,7 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  boat!.name!,
+                                  boat == null ? "" : boat!.name!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: screenFontSize),
                                 ),
@@ -523,18 +521,21 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  months[DateTime.parse(charter!.startDate!)
-                                                  .month -
-                                              1]
-                                          .substring(0, 3) +
-                                      " " +
-                                      DateTime.parse(charter!.startDate!)
-                                          .day
-                                          .toString() +
-                                      ", " +
-                                      DateTime.parse(charter!.startDate!)
-                                          .year
-                                          .toString(),
+                                  charter == null
+                                      ? ""
+                                      : months[DateTime.parse(
+                                                          charter!.startDate!)
+                                                      .month -
+                                                  1]
+                                              .substring(0, 3) +
+                                          " " +
+                                          DateTime.parse(charter!.startDate!)
+                                              .day
+                                              .toString() +
+                                          ", " +
+                                          DateTime.parse(charter!.startDate!)
+                                              .year
+                                              .toString(),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: screenFontSize),
                                 ),
@@ -542,7 +543,8 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  charter!.nights!,
+                                  charter == null
+                                      ? "":charter!.nights!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: screenFontSize),
                                 ),
@@ -668,19 +670,19 @@ class Trip {
   }
 
   void launchKBYG() async {
-    await launch(this.boat!.kbygLink!);
+    await launchUrl(Uri.parse(this.boat!.kbygLink!));
   }
 
   void launchGIS(VoidCallback refreshState) async {
     if (loginKey != null && loginKey != "null") {
-      await launch("https://gis.liveaboardfleet.com/gis/index.php/" +
+      await launchUrl(Uri.parse("https://gis.liveaboardfleet.com/gis/index.php/" +
           passengerId.toString() +
           "/" +
           reservationId.toString() +
           "/" +
           charterId.toString() +
           "/" +
-          loginKey.toString());
+          loginKey.toString()));
     } else {
       errorMessage = "Contact your agent to have a GIS link sent.";
       refreshState();
@@ -720,7 +722,8 @@ class Trip {
 
     String path = "";
 
-    if (boat!.imagePath == "" || boat!.imagePath == null && online) {
+    if (boat != null && boat!.imagePath == "" ||
+        boat!.imagePath == null && online) {
       var imageDetails = await AggressorApi().getBoatImage(boat!.imageLink!);
       if (imageDetails != null) {
         var imageName = boat!.imageLink!

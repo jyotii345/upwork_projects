@@ -80,7 +80,7 @@ class ViewNoteState extends State<ViewNote> {
     //calls the given number from the application
     const url = 'tel:7069932531';
     try {
-      await launch(url);
+      await launchUrl(Uri.parse(url));
     } catch (e) {
       print(e.toString());
     }

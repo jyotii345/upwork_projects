@@ -35,7 +35,7 @@ class ProfileDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE profile(id INTEGER PRIMARY KEY,userId TEXT, first TEXT, last TEXT, email TEXT, address1 TEXT, address2 TEXT, city TEXT, state TEXT, province TEXT, country TEXT, zip TEXT, username TEXT, password TEXT, homePhone TEXT, workPhone TEXT, mobilePhone TEXT)",
+      "CREATE TABLE profile(id INTEGER PRIMARY KEY,userId TEXT, first TEXT, last TEXT, email TEXT, address1 TEXT, address2 TEXT, city TEXT, state TEXT, province TEXT, country TEXT, time_zone TEXT, zip TEXT, username TEXT, password TEXT, homePhone TEXT, workPhone TEXT, mobilePhone TEXT)",
     );
   }
 
@@ -54,6 +54,7 @@ class ProfileDatabaseHelper {
     String? state,
     String? province,
     String? country,
+    String? timeZone,
     String? zip,
     String? username,
     String? password,
@@ -77,6 +78,7 @@ class ProfileDatabaseHelper {
         'state': state,
         'province': province,
         'country': country,
+        'time_zone':timeZone,
         'zip': zip,
         'username': username,
         'password': password,
@@ -123,21 +125,22 @@ class ProfileDatabaseHelper {
 
     return List.generate(maps.length, (i) {
       return {
-        'userId' : maps[i]['userId'],
+        'userId': maps[i]['userId'],
         'first': maps[i]['first'],
         'last': maps[i]['last'],
         'email': maps[i]['email'],
-        'address1' : maps[i]['address1'],
-        'address2' : maps[i]['address2'],
-        'state' : maps[i]['state'],
+        'address1': maps[i]['address1'],
+        'address2': maps[i]['address2'],
+        'state': maps[i]['state'],
         'province': maps[i]['province'],
-        'country' : maps[i]['country'],
-        'zip' : maps[i]['zip'],
-        'username' : maps[i]['username'],
-        'password' : maps[i]['password'],
-        'homePhone' : maps[i]['homePhone'],
-        'workPhone' : maps[i]['workPhone'],
-        'mobilePhone' : maps[i]['mobilePhone'],
+        'country': maps[i]['country'],
+        'time_zone': maps[i]['time_zone'],
+        'zip': maps[i]['zip'],
+        'username': maps[i]['username'],
+        'password': maps[i]['password'],
+        'homePhone': maps[i]['homePhone'],
+        'workPhone': maps[i]['workPhone'],
+        'mobilePhone': maps[i]['mobilePhone'],
       };
     });
   }

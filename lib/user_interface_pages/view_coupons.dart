@@ -2,10 +2,8 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ViewCouponsPage extends StatefulWidget {
@@ -135,7 +133,7 @@ class ViewCouponsPageState extends State<ViewCouponsPage> {
                                     style: TextStyle(color: Colors.blue),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
-                                        launch("https://aggressorboutique.com");
+                                        launchUrl(Uri.parse("https://aggressorboutique.com"));
                                       })
                               ])),
                         ),

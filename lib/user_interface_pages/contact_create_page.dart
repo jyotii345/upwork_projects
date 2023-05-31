@@ -111,22 +111,8 @@ class CreateContactState extends State<CreateContact> {
           territory = stateDropDownSelection["stateAbbr"];
         }
 
-        String birthday = formatDate(dateOfBirth, [yyyy, mm, dd]);
+        formatDate(dateOfBirth, [yyyy, mm, dd]);
 
-        // var jsonResponse = await AggressorApi().sendNewContact(
-        //     widget.userId,
-        //     address1,
-        //     address2,
-        //     city,
-        //     countryDropDownSelection["country"] == "USA" ? territory : "",
-        //     countryDropDownSelection["country"] != "USA" ? territory : "",
-        //     countryDropDownSelection["countryid"].toString(),
-        //     zip,
-        //     email,
-        //     homePhone,
-        //     mobilePhone,
-        //     birthday,
-        //     genderDropDownOption.toLowerCase());
 
         var jsonResponse = await AggressorApi().sendNewContactCondensed(
             widget.userId, widget.name, widget.email, widget.password);

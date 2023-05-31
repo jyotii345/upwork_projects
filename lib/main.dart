@@ -1,20 +1,28 @@
 import 'dart:io';
 
+import 'package:aggressor_adventures/bloc/user_cubit/user_cubit.dart';
 import 'package:aggressor_adventures/classes/aggressor_colors.dart';
 import 'package:firebase_core/firebase_core.dart';
-// import 'package:aggressor_adventures/testScreenn.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'bloc/message_bloc/message_bloc.dart';
 import 'classes/globals.dart';
 import 'user_interface_pages/login_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/standalone.dart' as tz;
 
 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
+
+
   await Firebase.initializeApp();
-  print('Handling a background message ${message.messageId} from top level function');
+
+  print("Handling a background message: ${message.messageId}");
 }
 
 Future<void> main() async {
@@ -25,6 +33,13 @@ Future<void> main() async {
    FlutterAppBadger.removeBadge();
 
    HttpOverrides.global = MyHttpOverrides();
+   tz.initializeTimeZones();
+   // final detroit = tz.getLocation('America/New_York');
+   // tz.setLocalLocation(detroit);
+
+   tz.initializeTimeZones();
+   final String locationName = 'America/New_York';
+   tz.setLocalLocation(tz.getLocation(locationName));
 
    runApp(MyApp());
 }
@@ -34,15 +49,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Adventure Of A Lifetime',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: AggressorColors.primaryColor,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context)=>MessageBloc()),
+        BlocProvider(create: (context)=>UserCubit()),
+      ],
+      child: MaterialApp(
+        title: 'Adventure Of A Lifetime',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: AggressorColors.primaryColor,
+        ),
+        navigatorKey: navigatorKey,
+        home:
+        LoginPage()
       ),
-      navigatorKey: navigatorKey,
-      home:
-      LoginPage()
     );
   }
 }

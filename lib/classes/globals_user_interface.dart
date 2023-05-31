@@ -3,10 +3,11 @@ library user_interface;
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:aggressor_adventures/user_interface_pages/contact_us_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/material.dart';
-import 'package:html_editor_enhanced/utils/utils.dart';
+import 'package:open_mail_app/open_mail_app.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,8 +26,8 @@ double iconImageSize =
 int popDistance = 0;
 bool portrait = true;
 
-Color inputTextColor=Color(0xff666666);
-Color inputBorderColor=Color(0xff707070);
+Color inputTextColor = Color(0xff666666);
+Color inputBorderColor = Color(0xff707070);
 
 VoidCallback? mainPageCallback;
 
@@ -348,6 +349,28 @@ Widget getCouponBottomNavigationBar() {
   );
 }
 
+Future<void> sendMail() async {
+  if (Platform.isAndroid) {
+    launchUrl(Uri.parse("mailto:info@aggressor.com"));
+  } else {
+    var result = await OpenMailApp.openMailApp();
+
+    if (!result.didOpen && !result.canOpen) {
+      launchUrl(Uri.parse("mailto:info@aggressor.com"));
+    } else {
+      showDialog(
+        context: navigatorKey.currentContext!,
+        builder: (_) {
+          return MailAppPickerDialog(
+            mailApps: result.options,
+            emailContent: EmailContent(to: ["info@aggressor.com"]),
+          );
+        },
+      );
+    }
+  }
+}
+
 void onTabTapped(int index, Orientation? orientation) {
   /*
     set the state of the navigation bar selection to index
@@ -380,60 +403,103 @@ void onTabTapped(int index, Orientation? orientation) {
           0,
           0),
       items: [
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/contact.png",height: 17,width: 17,),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/contact.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('Contact us'),
+              ],
             ),
-
-            const Text('Contact us'),
-          ],
-        ), value: '0'),
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/folder.png",height: 17,width: 17,),
+            value: '0'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/folder.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('My files'),
+              ],
             ),
-            const Text('My files'),
-          ],
-        ), value: '1'),
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/pencil.png",height: 17,width: 17,),
+            value: '1'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/pencil.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('My notes'),
+              ],
             ),
-            const Text('My notes'),
-          ],
-        ), value: '2'),
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/user.png",height: 17,width: 17,),
+            value: '2'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/user.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('My profile'),
+              ],
             ),
-            const Text('My profile'),
-          ],
-        ), value: '3'),
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/signOut.png",height: 17,width: 17,),
+            value: '3'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Icon(
+                    Icons.notifications_none_outlined,
+                    size: 18,
+                  ), //Image.asset("assets/icons/user.png",height: 17,width: 17,),
+                ),
+                const Text('Inbox'),
+              ],
             ),
-            const Text('Sign Out'),
-          ],
-        ), value: '4'),
+            value: '4'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/signOut.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('Sign Out'),
+              ],
+            ),
+            value: '5'),
       ],
       elevation: 8.0,
-    ).then<void>((String? itemSelected) {
+    ).then<void>((String? itemSelected) async {
       if (itemSelected == null) return;
 
       if (itemSelected == "0") {
-        launch("mailto:info@aggressor.com");
-        // Container();
+        Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>ContactUsPage()));
+        // mainPageCallback!();
       } else if (itemSelected == "1") {
         currentIndex = 5;
         mainPageCallback!();
@@ -442,6 +508,9 @@ void onTabTapped(int index, Orientation? orientation) {
         mainPageCallback!();
       } else if (itemSelected == "3") {
         currentIndex = 4;
+        mainPageCallback!();
+      } else if (itemSelected == "4") {
+        currentIndex = 7;
         mainPageCallback!();
       } else {
         mainPageSignOutCallback!();
@@ -486,59 +555,110 @@ void onCouponTabTapped(int index, Orientation orientation) {
         // PopupMenuItem<String>(child: const Text('• My profile'), value: '3'),
         // PopupMenuItem<String>(child: const Text('• Sign Out'), value: '4'),
 
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/contact.png",height: 17,width: 17,),
+        PopupMenuItem<String>(
+            child: InkWell(
+              onTap: (){
+                Navigator.pop(navigatorKey.currentContext!);
+                Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>ContactUsPage()));
+              },
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 13.0),
+                    child: Image.asset(
+                      "assets/icons/contact.png",
+                      height: 17,
+                      width: 17,
+                    ),
+                  ),
+                  const Text('Contact us'),
+                ],
+              ),
             ),
-
-            const Text('Contact us'),
-          ],
-        ), value: '0'),
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/folder.png",height: 17,width: 17,),
+            value: '0'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/folder.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('My files'),
+              ],
             ),
-            const Text('My files'),
-          ],
-        ), value: '1'),
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/pencil.png",height: 17,width: 17,),
+            value: '1'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/pencil.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('My notes'),
+              ],
             ),
-            const Text('My notes'),
-          ],
-        ), value: '2'),
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/user.png",height: 17,width: 17,),
+            value: '2'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/user.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('My profile'),
+              ],
             ),
-            const Text('My profile'),
-          ],
-        ), value: '3'),
-        PopupMenuItem<String>(child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 13.0),
-              child: Image.asset("assets/icons/signOut.png",height: 17,width: 17,),
+            value: '3'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Icon(
+                    Icons.notifications_none_outlined,
+                    size: 18,
+                  ), //Image.asset("assets/icons/user.png",height: 17,width: 17,),
+                ),
+                const Text('Inbox'),
+              ],
             ),
-            const Text('Sign Out'),
-          ],
-        ), value: '4'),
+            value: '4'),
+        PopupMenuItem<String>(
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 13.0),
+                  child: Image.asset(
+                    "assets/icons/signOut.png",
+                    height: 17,
+                    width: 17,
+                  ),
+                ),
+                const Text('Sign Out'),
+              ],
+            ),
+            value: '5'),
       ],
       elevation: 8.0,
     ).then<void>((String? itemSelected) {
       if (itemSelected == null) return;
 
       if (itemSelected == "0") {
-        launch("mailto:info@aggressor.com");
+
+        // Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>ContactUsPage()));
+
       } else if (itemSelected == "1") {
         currentIndex = 5;
         mainPageCallback!();
@@ -547,6 +667,9 @@ void onCouponTabTapped(int index, Orientation orientation) {
         mainPageCallback!();
       } else if (itemSelected == "3") {
         currentIndex = 4;
+        mainPageCallback!();
+      } else if (itemSelected == "4") {
+        currentIndex = 7;
         mainPageCallback!();
       } else {
         mainPageSignOutCallback!();
@@ -572,9 +695,10 @@ AppBar getAppBar() {
             icon: Icon(Icons.arrow_back),
             color: AggressorColors.secondaryColor,
             onPressed: () {
-              outterDistanceFromLogin = 0;
-              navigatorKey.currentState!.pushReplacement(
-                  MaterialPageRoute(builder: (context) => LoginPage()));
+              outterDistanceFromLogin=0;
+              navigatorKey.currentState!.pop();
+              // navigatorKey.currentState!.pushReplacement(
+              //     MaterialPageRoute(builder: (context) => LoginPage()));
             },
           )
         : SizedBox(),
@@ -611,9 +735,9 @@ AppBar getAppBar() {
 }
 
 makeCall() async {
-  const url = 'tel:7069932531';
+  final url = 'tel:7069932531';
   try {
-    await launch(url);
+    await launchUrl(Uri.parse(url));
   } catch (e) {
     print(e.toString());
   }

@@ -9,15 +9,11 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import '../classes/aggressor_api.dart';
-import '../classes/contact.dart';
 import '../databases/boat_database.dart';
 import '../databases/certificate_database.dart';
 import '../databases/contact_database.dart';
@@ -182,9 +178,9 @@ class MyTripsState extends State<MyTrips>
 
     });
 
-    if (tripList == null) {
-      tripList = [];
-    }
+    // if (tripList == null) {
+    //   tripList = [];
+    // }
 
     return "done";
   }
@@ -197,12 +193,11 @@ class MyTripsState extends State<MyTrips>
 
       var connectivityResult = await (Connectivity().checkConnectivity());
       online =(connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi);
-      // if (online == false)
-      if (false)
+      if (online == false)
         {
         await getOfflineLoad();
       } else {
-        if (tripList.isEmpty || tripList == null) {
+        if (tripList.isEmpty ) {
           await updateSliderImages();
 
           percent = 0.3;
@@ -257,6 +252,10 @@ class MyTripsState extends State<MyTrips>
         }
         // percent += (loadedCount / (loadingLength));
       });
+    }
+
+    if(tempList.length==0){
+      percent=0.95;
     }
 
     setState(() {
