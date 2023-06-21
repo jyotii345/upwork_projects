@@ -1014,7 +1014,8 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
-  Future<File> getReelImage(String imageId, String imageName) async {
+  Future<Uint8List> getReelImage(String imageId, String imageName) async {
+
     // allows a user to link user to a contact
     String url = 'https://app.aggressor.com/api/app/reels/image/' + imageId;
 
@@ -1023,6 +1024,7 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
 
+    // var byte = await pageResponse.stream;
     var bytes = await readByteStream(pageResponse.stream);
 
     imageName = imageName.toLowerCase();
@@ -1030,15 +1032,15 @@ class AggressorApi {
     print(imageName);
     print("getting image^");
 
-    File imageFile = File((await getApplicationDocumentsDirectory()).path +
-        "/$imageName" +
-        "_" +
-        getRandString(10));
+    // File imageFile = File((await getApplicationDocumentsDirectory()).path +
+    //     "/$imageName" +
+    //     "_" +
+    //     getRandString(10));
 
-    await imageFile.writeAsBytes(bytes);
-    print(imageFile.lengthSync());
+    // await imageFile.writeAsBytes(bytes);
+    // print(imageFile.lengthSync());
 
-    return imageFile;
+    return bytes;
   }
 
   Future<File> getReelVideo(String videoId, String videoName) async {
@@ -1054,6 +1056,7 @@ class AggressorApi {
       if (file.lengthSync() != 0) {
         return file;
       }
+
     } catch (e) {}
     print("loading video stream");
     String url = 'https://app.aggressor.com/api/app/reels/stream/' + videoId;

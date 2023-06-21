@@ -108,7 +108,7 @@ class FCMHelper {
             : message.notification!.apple!.imageUrl
         : message.notification!.android!.imageUrl;
 
-    Dialogues.notificationDialog(message.notification!.body ?? "",
+    CustomDialogues.notificationDialog(message.notification!.body ?? "",
         message.notification!.title ?? "", context,
         imageUrl: imgUrl, callBack,contactId,userId);
   }

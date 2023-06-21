@@ -1,10 +1,14 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:flutter/material.dart';
+
+// import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
+import 'package:vimeo_video_player/vimeo_video_player.dart';
 
 // import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
@@ -30,9 +34,9 @@ class ReelsState extends State<Reels> {
   instance vars
    */
 
+
   String errorMessage = "";
   bool loading = false;
-
   Future? reelFuture = AggressorApi().getReelsList();
 
   YoutubePlayerController? _controller;
@@ -47,21 +51,22 @@ class ReelsState extends State<Reels> {
     super.initState();
 
     refreshReels();
+
+    // AggressorApi().getReelImage(
+    //   "24",
+    //   "",
+    // );
   }
 
   /*
   Build
    */
 
-
-
-  Future<void> refreshReels()async{
+  Future<void> refreshReels() async {
     await Future.delayed(Duration(seconds: 2));
     reelFuture = AggressorApi().getReelsList();
-    setState(() {
-
-    });
-    return ;
+    setState(() {});
+    return;
   }
 
   @override
@@ -73,10 +78,9 @@ class ReelsState extends State<Reels> {
         resizeToAvoidBottomInset: false,
         body: PinchToZoom(
           RefreshIndicator(
-            onRefresh: (){
-
+            onRefresh: () {
               // refreshReels();
-              return refreshReels();// Future.delayed(Duration(seconds: 1),(){});
+              return refreshReels(); // Future.delayed(Duration(seconds: 1),(){});
             },
             edgeOffset: 100,
             child: OrientationBuilder(
@@ -92,22 +96,21 @@ class ReelsState extends State<Reels> {
                             height: double.infinity,
                             width: double.infinity,
                             color: Colors.black,
-                      child: Center(child: CircularProgressIndicator()),
+                            child: Center(child: CircularProgressIndicator()),
                           )
                         : Container(),
                     showVideo
-                        ?
-                        Padding(
-                          padding:  EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                          child: YoutubePlayerControllerProvider(
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).padding.top),
+                            child: YoutubePlayerControllerProvider(
                               // Provides controller to all the widget below it.
                               controller: _controller!,
-                              child:
-                              YoutubePlayerIFrame(
+                              child: YoutubePlayerIFrame(
                                 aspectRatio: 9 / 16,
                               ),
                             ),
-                        )
+                          )
                         : Container(),
                     showVideo
                         ? Align(
@@ -124,7 +127,8 @@ class ReelsState extends State<Reels> {
                                     color: AggressorColors.primaryColor,
                                     size: portrait
                                         ? MediaQuery.of(context).size.width / 15
-                                        : MediaQuery.of(context).size.height / 15,
+                                        : MediaQuery.of(context).size.height /
+                                            15,
                                   ),
                                 ),
                                 onTap: () {
@@ -184,154 +188,171 @@ class ReelsState extends State<Reels> {
   Widget getVideoGrid() {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child:
-      reelFuture==null?
-          Container(
-            width: 20,
-            height: 20,
-            color: Colors.red,
-          ):
-      FutureBuilder(
-          future: reelFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<dynamic> reels = snapshot.data as List;
-              if (reels.isEmpty) {
-                return Center(
-                  child: Text("No reels to show at this time."),
-                );
-              }
-              return GridView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: reels.length,
-                itemBuilder: (context, index) {
-                  if (!snapshot.hasData)
-                    return Center(
-                      child: CircularProgressIndicator(
-                      ),
+      child: reelFuture == null
+          ? Container(
+              width: 20,
+              height: 20,
+              color: Colors.red,
+            )
+          : FutureBuilder(
+              future: reelFuture,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<dynamic> reels = snapshot.data as List;
+                  if (reels.isEmpty) {
+                    Center(
+                      child: Text("No reels to show at this time."),
                     );
+                  }
+                  return GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: reels.length,
+                    itemBuilder: (context, index) {
+                      if (!snapshot.hasData)
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
 
-                  Future imageFuture = AggressorApi().getReelImage(
-                      reels[index]["id"].toString(),
-                      reels[index]["image"].toString());
+                      Future imageFuture = AggressorApi().getReelImage(
+                        reels[index]["id"].toString(),
+                        reels[index]["image"].toString(),
+                      );
 
-                  return FutureBuilder(
-                      future: imageFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasError) {
-                          print(snapshot.error.toString());
-                        }
+                      return FutureBuilder(
+                          future: imageFuture,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              print(snapshot.error.toString());
+                            }
 
-                        if (!snapshot.hasData)
-                          return Stack(
-                            children: [
-                              Container(
-                                height: double.infinity,
-                                color: Colors.black26,
-                              ),
-                              Center(
-                                child: Icon(
-                                  snapshot.hasError
-                                      ? Icons.error
-                                      : Icons.video_library_sharp,
-                                  color: snapshot.hasError
-                                      ? Colors.red
-                                      : Colors.white,
-                                ),
-                              ),
-                              snapshot.hasError
-                                  ? Container()
-                                  : Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: LinearProgressIndicator(
-                                        backgroundColor:
-                                            AggressorColors.secondaryColor,
-                                      ),
-                                    )
-                            ],
-                          );
-                        File imageFile = snapshot.data as File;
-                        return GestureDetector(
-                          onTap: () async {
-                            startChewie(
-                                index,
-                                reels[index]["id"].toString(),
-                                reels[index]["video"].toString(),
-                                reels[index]["youtube"].toString());
-                          },
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                child: Image.file(
-                                  imageFile,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              Positioned.fill(
-                                child: Align(
-                                  alignment: Alignment.bottomLeft,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.play_arrow_rounded,
-                                        color: Colors.white,
-                                        size: portrait
-                                            ? MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                20
-                                            : MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                20,
-                                      ),
-                                      Text(
-                                        reels[index]["views"] ?? "0",
-                                        style: TextStyle(color: Colors.white),
-                                      )
-                                    ],
+                            if (!snapshot.hasData)
+                              return Stack(
+                                children: [
+                                  Container(
+                                    height: double.infinity,
+                                    color: Colors.black26,
                                   ),
-                                ),
-                              ),
-                              loadingIndex != index
-                                  ? Container()
-                                  : Positioned.fill(
-                                      child: Align(
-                                        alignment: Alignment.topCenter,
-                                        child: SizedBox(
-                                          height: 3,
+                                  Center(
+                                    child: Icon(
+                                      snapshot.hasError
+                                          ? Icons.error
+                                          : Icons.video_library_sharp,
+                                      color: snapshot.hasError
+                                          ? Colors.red
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                  snapshot.hasError
+                                      ? Container()
+                                      : Align(
+                                          alignment: Alignment.bottomCenter,
                                           child: LinearProgressIndicator(
-                                            color:
-                                                AggressorColors.secondaryColor,
                                             backgroundColor:
-                                                AggressorColors.primaryColor,
+                                                AggressorColors.secondaryColor,
                                           ),
-                                        ),
+                                        )
+                                ],
+                              );
+                            Uint8List imageFile = snapshot.data as Uint8List;
+                            return GestureDetector(
+                              onTap: () async {
+                                try {
+                                  AggressorApi().increaseReelCounter(
+                                      reels[index]["id"].toString());
+
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VideoPlayer(
+                                        videoUrl:
+                                            reels[index]["vimeo"].toString(),
+                                        reelTitle:
+                                        reels[index]["title"].toString(),
                                       ),
                                     ),
-                            ],
-                          ),
-                        );
-                      });
-                },
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  mainAxisExtent: portrait
-                      ? MediaQuery.of(context).size.width / 3
-                      : MediaQuery.of(context).size.height / 2,
-                  crossAxisCount: 4,
-                  childAspectRatio: 1 / 1.6,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                ),
-              );
-            }
-            return Center(
-              child: CircularProgressIndicator(
+                                  );
+                                } catch (e) {
+                                  print(e.toString());
+                                }
 
-              ),
-            );
-          }),
+                                // startChewie(
+                                //     index,
+                                //     reels[index]["id"].toString(),
+                                //     reels[index]["video"].toString(),
+                                //     reels[index]["youtube"].toString());
+                              },
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Image.memory(
+                                      imageFile,
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                  Positioned.fill(
+                                    child: Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.play_arrow_rounded,
+                                            color: Colors.white,
+                                            size: portrait
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    20
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    20,
+                                          ),
+                                          Text(
+                                            reels[index]["views"] ?? "0",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  loadingIndex != index
+                                      ? Container()
+                                      : Positioned.fill(
+                                          child: Align(
+                                            alignment: Alignment.topCenter,
+                                            child: SizedBox(
+                                              height: 3,
+                                              child: LinearProgressIndicator(
+                                                color: AggressorColors
+                                                    .secondaryColor,
+                                                backgroundColor: AggressorColors
+                                                    .primaryColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            );
+                          });
+                    },
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      mainAxisExtent: portrait
+                          ? MediaQuery.of(context).size.width / 3
+                          : MediaQuery.of(context).size.height / 2,
+                      crossAxisCount: 4,
+                      childAspectRatio: 1 / 1.6,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                    ),
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
     );
   }
 
@@ -422,35 +443,34 @@ class ReelsState extends State<Reels> {
     return new Future.value(true);
   }
 
-  void startChewie(
-      int index, String videoId, String videoName, String youtube) async {
-
-    // await AggressorApi().increaseReelCounter(videoId);
-
-    setState(
-      () {
-        showVideo = true;
-
-        widget.hideBars();
-        _controller = YoutubePlayerController(
-          initialVideoId:YoutubePlayerController.convertUrlToId(youtube)!,
-          params: YoutubePlayerParams(
-            playlist: [YoutubePlayerController.convertUrlToId(youtube)!],
-            startAt: Duration(seconds: 1),
-            autoPlay: true,
-            loop: true,
-            mute: false,
-          ),
-        );
-
-        _controller!.listen((event) {
-          if(!event.hasPlayed){
-            _controller!.play();
-          }
-        });
-      },
-    );
-  }
+  // void startChewie(
+  //     int index, String videoId, String videoName, String youtube) async {
+  //   // await AggressorApi().increaseReelCounter(videoId);
+  //
+  //   setState(
+  //     () {
+  //       showVideo = true;
+  //
+  //       widget.hideBars();
+  //       _controller = YoutubePlayerController(
+  //         initialVideoId: YoutubePlayerController.convertUrlToId(youtube)!,
+  //         params: YoutubePlayerParams(
+  //           playlist: [YoutubePlayerController.convertUrlToId(youtube)!],
+  //           startAt: Duration(seconds: 1),
+  //           autoPlay: true,
+  //           loop: true,
+  //           mute: false,
+  //         ),
+  //       );
+  //
+  //       _controller!.listen((event) {
+  //         if (!event.hasPlayed) {
+  //           _controller!.play();
+  //         }
+  //       });
+  //     },
+  //   );
+  // }
 
   @override
   void dispose() {
@@ -461,5 +481,42 @@ class ReelsState extends State<Reels> {
     }
 
     super.dispose();
+  }
+}
+
+class VideoPlayer extends StatelessWidget {
+  const VideoPlayer({Key? key, required this.videoUrl, required this.reelTitle}) : super(key: key);
+
+  final String videoUrl;
+  final String reelTitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+
+        title: Text(reelTitle),
+      ),
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Container(
+          color: Colors.transparent,
+          // height: (MediaQuery.of(context).size.width * 6) / 9,
+          child: VimeoVideoPlayer(
+            url:
+                // "https://vimeo.com/833775057",//1
+                // "https://vimeo.com/833774618",//2
+                // "https://vimeo.com/833774404", //12
+
+            videoUrl, //"https://vimeo.com/722603174",
+            autoPlay: true,
+          ),
+
+          // VimeoPlayer(
+          //   videoId: "70591644",
+          // ),
+        ),
+      ),
+    );
   }
 }
