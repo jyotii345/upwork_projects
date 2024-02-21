@@ -65,6 +65,10 @@ dependencies:
 
   timezone: ^0.9.1
 
+#  vimeo_player_flutter: ^0.0.3+1
+
+  vimeo_video_player: ^0.0.9
+
 flutter_icons:
 
   ios: true

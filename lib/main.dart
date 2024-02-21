@@ -22,6 +22,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   await Firebase.initializeApp();
 
+
   print("Handling a background message: ${message.messageId}");
 }
 
@@ -40,6 +41,18 @@ Future<void> main() async {
    tz.initializeTimeZones();
    final String locationName = 'America/New_York';
    tz.setLocalLocation(tz.getLocation(locationName));
+
+   ErrorWidget.builder = (FlutterErrorDetails details) {
+     return Container(
+       alignment: Alignment.center,
+       child: Text(
+         'Error!\n${details.exception}',
+         style: const TextStyle(color: Colors.yellow),
+         textAlign: TextAlign.center,
+         textDirection: TextDirection.ltr,
+       ),
+     );
+   };
 
    runApp(MyApp());
 }
