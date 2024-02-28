@@ -13,7 +13,6 @@ import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
-import 'package:html_editor_enhanced/utils/utils.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -1015,7 +1014,6 @@ class AggressorApi {
   }
 
   Future<Uint8List> getReelImage(String imageId, String imageName) async {
-
     // allows a user to link user to a contact
     String url = 'https://app.aggressor.com/api/app/reels/image/' + imageId;
 
@@ -1056,7 +1054,6 @@ class AggressorApi {
       if (file.lengthSync() != 0) {
         return file;
       }
-
     } catch (e) {}
     print("loading video stream");
     String url = 'https://app.aggressor.com/api/app/reels/stream/' + videoId;

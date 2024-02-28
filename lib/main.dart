@@ -13,48 +13,45 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/standalone.dart' as tz;
 
-
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
 
-
   await Firebase.initializeApp();
-
 
   print("Handling a background message: ${message.messageId}");
 }
 
 Future<void> main() async {
-   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-   FlutterAppBadger.removeBadge();
+  FlutterAppBadger.removeBadge();
 
-   HttpOverrides.global = MyHttpOverrides();
-   tz.initializeTimeZones();
-   // final detroit = tz.getLocation('America/New_York');
-   // tz.setLocalLocation(detroit);
+  HttpOverrides.global = MyHttpOverrides();
+  tz.initializeTimeZones();
+  // final detroit = tz.getLocation('America/New_York');
+  // tz.setLocalLocation(detroit);
 
-   tz.initializeTimeZones();
-   final String locationName = 'America/New_York';
-   tz.setLocalLocation(tz.getLocation(locationName));
+  tz.initializeTimeZones();
+  final String locationName = 'America/New_York';
+  tz.setLocalLocation(tz.getLocation(locationName));
 
-   ErrorWidget.builder = (FlutterErrorDetails details) {
-     return Container(
-       alignment: Alignment.center,
-       child: Text(
-         'Error!\n${details.exception}',
-         style: const TextStyle(color: Colors.yellow),
-         textAlign: TextAlign.center,
-         textDirection: TextDirection.ltr,
-       ),
-     );
-   };
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Container(
+      alignment: Alignment.center,
+      child: Text(
+        'Error!\n${details.exception}',
+        style: const TextStyle(color: Colors.yellow),
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      ),
+    );
+  };
 
-   runApp(MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -64,8 +61,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context)=>MessageBloc()),
-        BlocProvider(create: (context)=>UserCubit()),
+        BlocProvider(create: (context) => MessageBloc()),
+        BlocProvider(create: (context) => UserCubit()),
       ],
       child: MaterialApp(
         title: 'Adventure Of A Lifetime',
@@ -74,18 +71,17 @@ class MyApp extends StatelessWidget {
           primarySwatch: AggressorColors.primaryColor,
         ),
         navigatorKey: navigatorKey,
-        home:
-        LoginPage()
+        home: LoginPage(),
       ),
     );
   }
 }
 
-
-class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext? context){
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }

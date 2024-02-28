@@ -20,7 +20,8 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:image_picker/image_picker.dart';
+// import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -40,13 +41,13 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   instance vars
    */
 
-  Map<String, dynamic>? dropDownValue=boatList.isEmpty?null: boatList[0];
+  Map<String, dynamic>? dropDownValue = boatList.isEmpty ? null : boatList[0];
   String departureDate = "", errorMessage = "";
   List<dynamic> galleriesList = [];
-  List<Asset> images = <Asset>[];
+  List<XFile> images = <XFile>[];
   bool loading = false;
   List<Trip> dateDropDownList = [];
-  Trip dateDropDownValue=Trip(
+  Trip dateDropDownValue = Trip(
     "",
     "",
     "",
@@ -78,23 +79,20 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     );
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
     // dropDownValue =boatList.isEmpty?null: boatList[0];
-    if(boatList.isEmpty){
+    if (boatList.isEmpty) {
       getBoatList();
     }
-    if(tripList.isEmpty){
+    if (tripList.isEmpty) {
       updateTripListList();
     }
-
-
   }
-
 
   updateTripListList() async {
     setState(() {
-      loading=true;
+      loading = true;
     });
     var tempList =
-    await AggressorApi().getReservationList(widget.user.contactId!,(){});
+        await AggressorApi().getReservationList(widget.user.contactId!, () {});
     tripList = tempList;
     for (var trip in tripList) {
       trip.user = widget.user;
@@ -117,15 +115,16 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   void getBoatList() async {
     //set the initial boat list
     setState(() {
-      loading=true;
+      loading = true;
     });
     boatList = await AggressorApi().getBoatList();
-    dropDownValue =boatList.isEmpty?null: boatList[0];
+    dropDownValue = boatList.isEmpty ? null : boatList[0];
 
     setState(() {
-      loading=false;
+      loading = false;
     });
   }
+
   /*
   Build
    */
@@ -240,11 +239,9 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               onChanged: (Map<String, dynamic>? newValue) async {
                 dropDownValue = newValue!;
 
-                dateDropDownList =await getDateDropDownList(newValue);
+                dateDropDownList = await getDateDropDownList(newValue);
 
-                setState(() {
-
-                });
+                setState(() {});
               },
               items: boatList.map<DropdownMenuItem<Map<String, dynamic>>>(
                   (Map<String, dynamic> value) {
@@ -355,9 +352,11 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     List<Trip> tempList = [];
 // Future.forEach(tripList, (element) => null)
 
-   await Future.forEach(tripList,(Trip element) {
-      if (element.boat!=null&&(element.boat!.boatId.toString() == boatMap["boatid"].toString() ||
-          element.boat!.boatId.toString() == boatMap["boatId"].toString())) {
+    await Future.forEach(tripList, (Trip element) {
+      if (element.boat != null &&
+          (element.boat!.boatId.toString() == boatMap["boatid"].toString() ||
+              element.boat!.boatId.toString() ==
+                  boatMap["boatId"].toString())) {
         tempList.add(element);
       }
     });
@@ -408,7 +407,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
   Future<void> loadAssets() async {
     //loads images as an asset object that are selected from an image picker
-    List<Asset> resultList = <Asset>[];
+    List<XFile> resultList = <XFile>[];
     String error = '';
 
     setState(() {
@@ -431,20 +430,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
         errorMessage = "You must select a trip to create a gallery for.";
       });
     } else {
-      //try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
-        enableCamera: true,
-        selectedAssets: images,
-        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-        materialOptions: MaterialOptions(
-          actionBarColor: "#ff428cc7",
-          actionBarTitle: "Adventure Of A Lifetime",
-          allViewTitle: "All Photos",
-          useDetailsView: false,
-          selectCircleStrokeColor: "#ff428cc7",
-        ),
-      );
+      resultList = await ImagePicker().pickMultiImage();
       setState(() {
         loading = true;
       });
@@ -452,12 +438,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       if (online) {
         for (var element in resultList) {
           String path = "";
-          if (element.name!.toLowerCase().contains(".heic")) {
+          if (element.name.toLowerCase().contains(".heic")) {
             // path = (await HeicToJpg.convert(
             //     await FlutterAbsolutePath.getAbsolutePath(element.identifier)))!;
           } else {
             // path =
-                // await FlutterAbsolutePath.getAbsolutePath(element.identifier);
+            // await FlutterAbsolutePath.getAbsolutePath(element.identifier);
           }
           File file = File(path);
 
@@ -465,7 +451,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               DateTime.parse(dateDropDownValue.charter!.startDate!),
               [yyyy, '-', mm, '-', dd]);
 
-           await AggressorApi().uploadAwsFile(
+          await AggressorApi().uploadAwsFile(
               widget.user.userId.toString(),
               "gallery",
               dateDropDownValue.charter!.boatId.toString(),
@@ -487,7 +473,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       } else {
         for (var element in resultList) {
           String path = "";
-          if (element.name!.toLowerCase().contains(".heic")) {
+          if (element.name.toLowerCase().contains(".heic")) {
             // path = (await HeicToJpg.convert(
             //     await FlutterAbsolutePath.getAbsolutePath(element.identifier)))!;
           } else {
@@ -501,12 +487,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
               [yyyy, '-', mm, '-', dd]);
 
           await PhotoDatabaseHelper.instance.insertPhoto(Photo(
-              imageName:element.name!,
-              userId:widget.user.userId!,
-              imagePath:file.path,
-              date:uploadDate,
-              boatId:dateDropDownValue.charter!.boatId!,
-              key:null));
+              imageName: element.name,
+              userId: widget.user.userId!,
+              imagePath: file.path,
+              date: uploadDate,
+              boatId: dateDropDownValue.charter!.boatId!,
+              key: null));
           await OfflineDatabaseHelper.instance.insertOffline(
               {'type': "image", 'action': "add", 'id': file.path});
         }
@@ -535,26 +521,25 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          (dropDownValue==null||loading)?
-          Center(child: CircularProgressIndicator()):
-          Wrap(
-            // physics: NeverScrollableScrollPhysics(),
-            children: [
-              Text(
-                "Create new gallery",
-                style: TextStyle(
-                    color: AggressorColors.secondaryColor,
-                    fontSize: portrait
-                        ? MediaQuery.of(context).size.height / 40
-                        : MediaQuery.of(context).size.width / 40,
-                    fontWeight: FontWeight.bold),
-              ),
-              getYachtDropDown(boatList),
-              getDateDropDown(),
-              getUploadPhotosButton(),
-            ],
-          )
+          (dropDownValue == null || loading)
+              ? Center(child: CircularProgressIndicator())
+              : Wrap(
+                  // physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    Text(
+                      "Create new gallery",
+                      style: TextStyle(
+                          color: AggressorColors.secondaryColor,
+                          fontSize: portrait
+                              ? MediaQuery.of(context).size.height / 40
+                              : MediaQuery.of(context).size.width / 40,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    getYachtDropDown(boatList),
+                    getDateDropDown(),
+                    getUploadPhotosButton(),
+                  ],
+                )
         ],
       ),
     );
@@ -696,7 +681,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   }
 
   VoidCallback pageCallback() {
-    return (){
+    return () {
       setState(() {
         photosLoaded = false;
       });
@@ -815,12 +800,12 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
                   await element.initCharterInformation();
 
                   Photo photo = Photo(
-                      imageName:fileName,
+                      imageName: fileName,
                       userId: widget.user.userId!,
-                      imagePath:imageFile.path,
-                      date:element.tripDate!,
-                      boatId:element.boat!.boatId!,
-                      key:elementJson["Key"]);
+                      imagePath: imageFile.path,
+                      date: element.tripDate!,
+                      boatId: element.boat!.boatId!,
+                      key: elementJson["Key"]);
 
                   photoHelper.insertPhoto(photo);
                 }
@@ -852,7 +837,10 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
 
         if (!tempGalleries.containsKey(tripList[tripIndex].reservationId)) {
           tempGalleries[tripList[tripIndex].reservationId!] = Gallery(
-              widget.user, element.boatId??"", <Photo>[], tripList[tripIndex]);
+              widget.user,
+              element.boatId ?? "",
+              <Photo>[],
+              tripList[tripIndex]);
         } else {
           if (!tempGalleries[tripList[tripIndex].reservationId]!
               .photos!

@@ -210,8 +210,6 @@ class InboxPageState extends State<InboxPage>
           }
 
           return Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: .25,
             child: Container(
               width: double.infinity,
               color: AggressorColors.accentYellow,
@@ -333,38 +331,42 @@ class InboxPageState extends State<InboxPage>
                 ],
               ),
             ),
-            secondaryActions: <Widget>[
-              IconSlideAction(
-                color: AggressorColors.primaryColor,
-                icon: messageList[position].flagged
-                    ? Icons.flag
-                    : Icons.flag_outlined,
-                onTap: () {
-                  messageList[position].flagged
-                      ? BlocProvider.of<MessageBloc>(context).add(
-                          UnFlaggedMessagesEvent(
-                              contactId: widget.user.contactId!,
-                              messageId: messageList[position].id,
-                              messageIndex: position))
-                      : BlocProvider.of<MessageBloc>(context).add(
-                          FlaggedMessagesEvent(
-                              contactId: widget.user.contactId!,
-                              messageId: messageList[position].id,
-                              messageIndex: position));
-                },
-              ),
-              IconSlideAction(
-                color: Colors.red,
-                icon: Icons.delete,
-                onTap: () {
-                  BlocProvider.of<MessageBloc>(context).add(DeleteMessagesEvent(
-                    contactId: widget.user.contactId!,
-                    messageId: messageList[position].id,
-                    messageIndex: position,
-                  ));
-                },
-              ),
-            ],
+            endActionPane: ActionPane(
+              motion: ScrollMotion(),
+              children: [
+                SlidableAction(
+                  backgroundColor: AggressorColors.primaryColor,
+                  icon: messageList[position].flagged
+                      ? Icons.flag
+                      : Icons.flag_outlined,
+                  onPressed: (BuildContext? context) {
+                    messageList[position].flagged
+                        ? BlocProvider.of<MessageBloc>(this.context).add(
+                            UnFlaggedMessagesEvent(
+                                contactId: widget.user.contactId!,
+                                messageId: messageList[position].id,
+                                messageIndex: position))
+                        : BlocProvider.of<MessageBloc>(this.context).add(
+                            FlaggedMessagesEvent(
+                                contactId: widget.user.contactId!,
+                                messageId: messageList[position].id,
+                                messageIndex: position));
+                  },
+                ),
+                SlidableAction(
+                  backgroundColor: Colors.red,
+                  icon: Icons.delete,
+                  onPressed: (BuildContext? context) {
+                    BlocProvider.of<MessageBloc>(this.context)
+                        .add(DeleteMessagesEvent(
+                      contactId: widget.user.contactId!,
+                      messageId: messageList[position].id,
+                      messageIndex: position,
+                    ));
+                  },
+                ),
+              ],
+            ),
           );
         });
   }
@@ -419,5 +421,4 @@ class InboxPageState extends State<InboxPage>
 /*
   self implemented
    */
-
 }

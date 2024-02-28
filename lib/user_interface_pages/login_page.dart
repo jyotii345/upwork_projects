@@ -1,4 +1,3 @@
-
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/fcm_helper.dart';
 import 'package:aggressor_adventures/classes/gallery.dart';
@@ -49,7 +48,6 @@ class _LoginSignUpPageState extends State<LoginPage> {
   String contactType = "";
   // String timeZone = "";
 
-
   UserDatabaseHelper helper = UserDatabaseHelper.instance;
 
   User? currentUser;
@@ -65,7 +63,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
     super.initState();
     helper = UserDatabaseHelper.instance;
     checkLoginStatus();
-    ensureDataReset();
+    // ensureDataReset();
   }
 
   @override
@@ -82,40 +80,39 @@ class _LoginSignUpPageState extends State<LoginPage> {
               backgroundColor: Colors.white,
               automaticallyImplyLeading: false,
               leading: SizedBox(
-                      child: IconButton(
-                        icon: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Icon(
-                              Icons.mail,
-                              size: 24,
-                              color: Color(0xff418CC7),
-                            ),
-                            Text(
-                              "MAIL",
-                              style: TextStyle(
-                                  color: Color(0xff418CC7),
-                                  fontSize: 9,
-                                  letterSpacing: 1,
-                                  fontWeight: FontWeight.w600),
-                            )
-                          ],
-                        ),
-                        onPressed: () {
-                          // launchUrl(Uri.parse("mailto:info@aggressor.com"));
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ContactUsPage()));
-                          // sendMail();
-                        },
+                child: IconButton(
+                  icon: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 5,
                       ),
-                    ),
+                      Icon(
+                        Icons.mail,
+                        size: 24,
+                        color: Color(0xff418CC7),
+                      ),
+                      Text(
+                        "MAIL",
+                        style: TextStyle(
+                            color: Color(0xff418CC7),
+                            fontSize: 9,
+                            letterSpacing: 1,
+                            fontWeight: FontWeight.w600),
+                      )
+                    ],
+                  ),
+                  onPressed: () {
+                    // launchUrl(Uri.parse("mailto:info@aggressor.com"));
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ContactUsPage()));
+                    // sendMail();
+                  },
+                ),
+              ),
               leadingWidth: 60,
               title: Padding(
                 padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -241,19 +238,18 @@ class _LoginSignUpPageState extends State<LoginPage> {
       width: sectionWidth,
       height: sectionHeight * 1.2,
       decoration: new BoxDecoration(
-        color: Colors.white,
-          borderRadius: BorderRadius.circular(3)
+          color: Colors.white, borderRadius: BorderRadius.circular(3)
 
-        // shape: BoxShape.rectangle,
-        // border: new Border.all(
-        //   color: Colors.black,
-        //   width: 1.0,
-        // ),
-      ),
+          // shape: BoxShape.rectangle,
+          // border: new Border.all(
+          //   color: Colors.black,
+          //   width: 1.0,
+          // ),
+          ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: TextField(
-          style: TextStyle(fontSize: textSize,color: inputTextColor),
+          style: TextStyle(fontSize: textSize, color: inputTextColor),
           controller: usernameController,
           maxLines: 1,
           decoration: InputDecoration(
@@ -275,18 +271,17 @@ class _LoginSignUpPageState extends State<LoginPage> {
       width: sectionWidth,
       height: sectionHeight * 1.2,
       decoration: new BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(3)
-        // shape: BoxShape.rectangle,
-        // border: new Border.all(
-        //   color: Colors.black,
-        //   width: 1.0,
-        // ),
-      ),
+          color: Colors.white, borderRadius: BorderRadius.circular(3)
+          // shape: BoxShape.rectangle,
+          // border: new Border.all(
+          //   color: Colors.black,
+          //   width: 1.0,
+          // ),
+          ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
         child: TextField(
-          style: TextStyle(fontSize: textSize,color: inputTextColor),
+          style: TextStyle(fontSize: textSize, color: inputTextColor),
           controller: passwordController,
           obscureText: true,
           maxLines: 1,
@@ -325,7 +320,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
           },
           child: Text(
             "Log-In",
-            style: TextStyle(color: Colors.white, fontSize: textSize+3),
+            style: TextStyle(color: Colors.white, fontSize: textSize + 3),
           ),
           style: TextButton.styleFrom(
             padding: EdgeInsets.all(0),
@@ -375,7 +370,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
       await initDatabase();
       await saveUserData();
 
-      String? token=await FCMHelper.generateFCMToken();
+      String? token = await FCMHelper.generateFCMToken();
       // String deviceType=(Platform.isAndroid)?"Android":"IOS";
       //
       // var data={
@@ -384,10 +379,9 @@ class _LoginSignUpPageState extends State<LoginPage> {
       //   "fcmToken":token,
       // };
 
-      if(token!=null){
+      if (token != null) {
         await storeToken(contactId, token);
       }
-
 
       checkLoginStatus();
     } else {
@@ -399,7 +393,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> storeToken(String contactID,String fcmToken) async {
+  Future<void> storeToken(String contactID, String fcmToken) async {
     //set the initial iron diver awards
     var res = await AggressorApi().storeFCMToken(contactID, fcmToken);
     print(res);

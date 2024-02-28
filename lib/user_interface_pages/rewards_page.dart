@@ -1,6 +1,5 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/contact.dart';
-import 'package:aggressor_adventures/classes/fcm_helper.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
@@ -528,12 +527,10 @@ class RewardsState extends State<Rewards> {
                       width: double.infinity,
                       child: TextButton(
                         onPressed: () {
-
                           // FCMHelper.
                           // sendNotification();
 
                           online ? openEditProfile() : openProfileView();
-
                         },
                         style: TextButton.styleFrom(
                             backgroundColor: AggressorColors.secondaryColor),
@@ -643,7 +640,8 @@ class RewardsState extends State<Rewards> {
   }
 
   void launchRedeem() async {
-    await launchUrl(Uri.parse("https://www.aggressor.com/pages/aggressor-rewards"));
+    await launchUrl(
+        Uri.parse("https://www.aggressor.com/pages/aggressor-rewards"));
   }
 
   Future<dynamic> openEditProfile() async {
@@ -670,7 +668,6 @@ class RewardsState extends State<Rewards> {
         }
 
         // getStatesList();
-
       }
       Navigator.push(
           context,
@@ -746,8 +743,6 @@ class RewardsState extends State<Rewards> {
               return Padding(
                 padding: const EdgeInsets.all(2.0),
                 child: Slidable(
-                  actionPane: SlidableDrawerActionPane(),
-                  actionExtentRatio: .25,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -766,15 +761,18 @@ class RewardsState extends State<Rewards> {
                       )
                     ],
                   ),
-                  secondaryActions: <Widget>[
-                    IconSlideAction(
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () {
-                        deleteCertificate(certificationList[position]);
-                      },
-                    ),
-                  ],
+                  endActionPane: ActionPane(
+                    motion: ScrollMotion(),
+                    children: [
+                      SlidableAction(
+                        backgroundColor: Colors.red,
+                        icon: Icons.delete,
+                        onPressed: (BuildContext? context) {
+                          deleteCertificate(certificationList[position]);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             });
@@ -807,8 +805,8 @@ class RewardsState extends State<Rewards> {
               return Padding(
                 padding: const EdgeInsets.all(2.0),
                 child: Slidable(
-                  actionPane: SlidableDrawerActionPane(),
-                  actionExtentRatio: .25,
+                  // actionPane: SlidableDrawerActionPane(),
+                  // actionExtentRatio: .25,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -824,15 +822,15 @@ class RewardsState extends State<Rewards> {
                       )
                     ],
                   ),
-                  secondaryActions: <Widget>[
-                    IconSlideAction(
-                      color: Colors.red,
-                      icon: Icons.delete,
-                      onTap: () {
-                        deleteIronDiver(ironDiverList[position]);
-                      },
-                    ),
-                  ],
+                  // secondaryActions: <Widget>[
+                  //   IconSlideAction(
+                  //     color: Colors.red,
+                  //     icon: Icons.delete,
+                  //     onTap: () {
+                  //       deleteIronDiver(ironDiverList[position]);
+                  //     },
+                  //   ),
+                  // ],
                 ),
               );
             });

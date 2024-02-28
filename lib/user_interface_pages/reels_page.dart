@@ -1,11 +1,11 @@
-import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:aggressor_adventures/classes/user.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 // import 'package:vimeo_player_flutter/vimeo_player_flutter.dart';
 import 'package:vimeo_video_player/vimeo_video_player.dart';
@@ -33,7 +33,6 @@ class ReelsState extends State<Reels> {
   /*
   instance vars
    */
-
 
   String errorMessage = "";
   bool loading = false;
@@ -103,12 +102,9 @@ class ReelsState extends State<Reels> {
                         ? Padding(
                             padding: EdgeInsets.only(
                                 top: MediaQuery.of(context).padding.top),
-                            child: YoutubePlayerControllerProvider(
-                              // Provides controller to all the widget below it.
+                            child: YoutubePlayer(
                               controller: _controller!,
-                              child: YoutubePlayerIFrame(
-                                aspectRatio: 9 / 16,
-                              ),
+                              aspectRatio: 9 / 16,
                             ),
                           )
                         : Container(),
@@ -268,7 +264,7 @@ class ReelsState extends State<Reels> {
                                         videoUrl:
                                             reels[index]["vimeo"].toString(),
                                         reelTitle:
-                                        reels[index]["title"].toString(),
+                                            reels[index]["title"].toString(),
                                       ),
                                     ),
                                   );
@@ -484,33 +480,67 @@ class ReelsState extends State<Reels> {
   }
 }
 
-class VideoPlayer extends StatelessWidget {
-  const VideoPlayer({Key? key, required this.videoUrl, required this.reelTitle}) : super(key: key);
+class VideoPlayer extends StatefulWidget {
+  const VideoPlayer({Key? key, required this.videoUrl, required this.reelTitle})
+      : super(key: key);
 
   final String videoUrl;
   final String reelTitle;
 
   @override
+  State<VideoPlayer> createState() => _VideoPlayerState();
+}
+
+class _VideoPlayerState extends State<VideoPlayer> {
+  late VideoPlayerController controller;
+  late FlickManager flickManager;
+
+  Future<void> initializeVideo() async {
+    try {
+      controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.videoUrl),
+      );
+
+      flickManager = FlickManager(
+          videoPlayerController: controller,
+          autoPlay: true,
+          autoInitialize: true);
+    } catch (e) {
+      print("Video Load Error");
+    }
+  }
+
+  bool get _isVimeoVideo {
+    var regExp = RegExp(
+      r"^((https?)://)?(www.)?vimeo\.com/(\d+).*$",
+      caseSensitive: false,
+      multiLine: false,
+    );
+    final match = regExp.firstMatch(widget.videoUrl);
+    if (match != null && match.groupCount >= 1) return true;
+    return false;
+  }
+
+  @override
+  void initState() {
+    initializeVideo();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-        title: Text(reelTitle),
+        title: Text(widget.reelTitle),
       ),
       backgroundColor: Colors.black,
       body: Center(
         child: Container(
           color: Colors.transparent,
-          // height: (MediaQuery.of(context).size.width * 6) / 9,
-          child: VimeoVideoPlayer(
-            url:
-                // "https://vimeo.com/833775057",//1
-                // "https://vimeo.com/833774618",//2
-                // "https://vimeo.com/833774404", //12
 
-            videoUrl, //"https://vimeo.com/722603174",
-            autoPlay: true,
-          ),
+          child: _isVimeoVideo
+              ? VimeoVideoPlayer(url: widget.videoUrl, autoPlay: true)
+              : FlickVideoPlayer(flickManager: flickManager),
 
           // VimeoPlayer(
           //   videoId: "70591644",

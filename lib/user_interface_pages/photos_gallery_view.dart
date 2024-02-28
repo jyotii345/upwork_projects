@@ -11,7 +11,7 @@ import 'package:aggressor_adventures/databases/photo_database.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../classes/aggressor_colors.dart';
 
@@ -40,7 +40,7 @@ class GalleryViewState extends State<GalleryView> {
   int pageIndex = 2;
   int indexMultiplier = 1;
   String errorMessage = "";
-  List<Asset> images = <Asset>[];
+  List<XFile> images = <XFile>[];
   List<Photo> selectedList = [];
   bool loading = false;
   bool editing = false;
@@ -603,7 +603,7 @@ class GalleryViewState extends State<GalleryView> {
       loading = true;
       errorMessage = '';
     });
-    List<Asset> resultList = <Asset>[];
+    List<XFile> resultList = [];
     String error = '';
 
     if (await Permission.photos.status.isDenied ||
@@ -612,26 +612,13 @@ class GalleryViewState extends State<GalleryView> {
       await Permission.camera.request();
     }
 
-    //try {
-    resultList = await MultiImagePicker.pickImages(
-      maxImages: 300,
-      enableCamera: true,
-      selectedAssets: images,
-      cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-      materialOptions: MaterialOptions(
-        actionBarColor: "#ff428cc7",
-        actionBarTitle: "Aggressor Adventures",
-        allViewTitle: "All Photos",
-        useDetailsView: false,
-        selectCircleStrokeColor: "#ff428cc7",
-      ),
-    );
+    resultList = await ImagePicker().pickMultiImage();
 
     if (online) {
-      for (Asset element in resultList) {
+      for (var element in resultList) {
         String path = "";
 
-        if (element.name!.toLowerCase().contains(".heic")) {
+        if (element.name.toLowerCase().contains(".heic")) {
           // path = (await HeicToJpg.convert(
           //     await FlutterAbsolutePath.getAbsolutePath(element.identifier)))!;
         } else {
@@ -653,7 +640,7 @@ class GalleryViewState extends State<GalleryView> {
         if (response["status"] == "success") {
           widget.photos.add(
             Photo(
-              imageName: element.name!,
+              imageName: element.name,
               userId: widget.user.userId!,
               imagePath: file.path,
               date: uploadDate,
@@ -663,12 +650,12 @@ class GalleryViewState extends State<GalleryView> {
           );
           galleriesMap[widget.trip.reservationId]!.addPhoto(
             Photo(
-              imageName:element.name!,
+              imageName: element.name,
               userId: widget.user.userId!,
-              imagePath:file.path,
-              date:uploadDate,
-              boatId:widget.trip.charter!.boatId!,
-              key:null,
+              imagePath: file.path,
+              date: uploadDate,
+              boatId: widget.trip.charter!.boatId!,
+              key: null,
             ),
           );
         }
@@ -687,7 +674,7 @@ class GalleryViewState extends State<GalleryView> {
     } else {
       for (var element in resultList) {
         String path = "";
-        if (element.name!.toLowerCase().contains(".heic")) {
+        if (element.name.toLowerCase().contains(".heic")) {
           // path = (await HeicToJpg.convert(
           //     await FlutterAbsolutePath.getAbsolutePath(element.identifier)))!;
         } else {
@@ -700,22 +687,22 @@ class GalleryViewState extends State<GalleryView> {
             [yyyy, '-', mm, '-', dd]);
 
         await PhotoDatabaseHelper.instance.insertPhoto(Photo(
-            imageName:element.name!,
-            userId:widget.user.userId!,
-            imagePath:file.path,
-            date:uploadDate,
-            boatId:widget.trip.charter!.boatId!,
-            key:null));
+            imageName: element.name,
+            userId: widget.user.userId!,
+            imagePath: file.path,
+            date: uploadDate,
+            boatId: widget.trip.charter!.boatId!,
+            key: null));
         await OfflineDatabaseHelper.instance
             .insertOffline({'type': "image", 'action': "add", 'id': file.path});
 
         galleriesMap[widget.trip.reservationId]!.addPhoto(Photo(
-            imageName:element.name!,
-            userId:widget.user.userId!,
-            imagePath:file.path,
-            date:uploadDate,
-            boatId:widget.trip.charter!.boatId!,
-            key:null));
+            imageName: element.name,
+            userId: widget.user.userId!,
+            imagePath: file.path,
+            date: uploadDate,
+            boatId: widget.trip.charter!.boatId!,
+            key: null));
       }
       setState(() {
         photosLoaded = false;
