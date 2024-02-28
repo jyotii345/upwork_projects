@@ -102,7 +102,7 @@ class ReelsState extends State<Reels> {
                         ? Padding(
                             padding: EdgeInsets.only(
                                 top: MediaQuery.of(context).padding.top),
-                            child: YoutubePlayer(
+                            child: YoutubePlayerIFrame(
                               controller: _controller!,
                               aspectRatio: 9 / 16,
                             ),
@@ -497,8 +497,8 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   Future<void> initializeVideo() async {
     try {
-      controller = VideoPlayerController.networkUrl(
-        Uri.parse(widget.videoUrl),
+      controller = VideoPlayerController.network(
+        widget.videoUrl,
       );
 
       flickManager = FlickManager(
