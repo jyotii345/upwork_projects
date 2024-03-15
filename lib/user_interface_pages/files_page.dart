@@ -48,7 +48,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   List<dynamic> filesList = [];
   List<dynamic> fileNameList = [];
-  List<Trip> sortedTripList=[];
+  List<Trip> sortedTripList = [];
 
   String errorMessage = "";
 
@@ -237,7 +237,9 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                                       .day
                                       .toString() +
                                   "/" +
-                                  DateTime.parse(value.tripDate!).year.toString()
+                                  DateTime.parse(value.tripDate!)
+                                      .year
+                                      .toString()
                               : value.detailDestination! +
                                   " - " +
                                   DateTime.parse(value.charter!.startDate!)
@@ -384,7 +386,11 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 ? MediaQuery.of(context).size.height / 4
                 : MediaQuery.of(context).size.width / 2.5,
             child: TextButton(
-              onPressed: uploading || !photosLoaded ? () {} : uploadFile,
+              onPressed: () {
+                if (!uploading && photosLoaded) {
+                  uploadFile();
+                }
+              },
               child: AutoSizeText(
                 uploading ? "Uploading, please wait..." : "Upload File",
                 style: TextStyle(color: Colors.white),
@@ -810,6 +816,7 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
     setState(() {
       fileName = result!.names[0]!;
+      photosLoaded = true;
     });
   }
 
@@ -860,7 +867,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
               uploadDate);
 
           if (uploadResult["status"] == "success") {
-            Uint8List bytes = File(result!.files.single.path!).readAsBytesSync();
+            Uint8List bytes =
+                File(result!.files.single.path!).readAsBytesSync();
             Directory appDocumentsDirectory =
                 await getApplicationDocumentsDirectory(); // 1
             String appDocumentsPath = appDocumentsDirectory.path; // 2
@@ -881,13 +889,14 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
                 uploadResult["filename"],
                 fileNameController.text,
                 dropDownValue.charterId!));
-
+            // Clear fields after upload
             setState(() {
+              result = null;
+              fileName = "";
               fileDisplayNames[uploadResult["filename"].toString()] =
                   fileNameController.text.toString();
               filesLoaded = false;
-              fileName = "";
-              result = null;
+              photosLoaded = false;
             });
           } else {
             setState(() {
@@ -954,8 +963,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
     }
 
     try {
-       await AggressorApi().uploadAwsFile(widget.user.userId!,
-          "config", "files", displayNameFile.path, "nameMaps");
+      await AggressorApi().uploadAwsFile(widget.user.userId!, "config", "files",
+          displayNameFile.path, "nameMaps");
       return true;
     } catch (e) {
       print("error");
@@ -1013,5 +1022,4 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 /*
   self implemented
    */
-
 }

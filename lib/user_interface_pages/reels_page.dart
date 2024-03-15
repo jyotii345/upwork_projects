@@ -528,6 +528,12 @@ class _VideoPlayerState extends State<VideoPlayer> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

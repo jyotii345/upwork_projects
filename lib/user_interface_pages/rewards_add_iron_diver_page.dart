@@ -25,19 +25,19 @@ class AddIronDiverState extends State<AddIronDiver> {
   int pageIndex = 3;
   String errorMessage = "";
 
-  Map<String, dynamic> dropDownValue={};
+  Map<String, dynamic> dropDownValue = {};
 
   List<Trip> dateDropDownList = [];
-  Trip dateDropDownValue= Trip(
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
-  "",
+  Trip dateDropDownValue = Trip(
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
   );
   bool loading = false;
 

@@ -8,10 +8,8 @@ import 'package:aggressor_adventures/classes/pinch_to_zoom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class ContactUsPage extends StatefulWidget {
   ContactUsPage();
-
 
   @override
   State<StatefulWidget> createState() => new ContactUsPageState();
@@ -55,8 +53,7 @@ class ContactUsPageState extends State<ContactUsPage> {
       firstName.text = userState.currentUser!.nameF.toString();
       lastName.text = userState.currentUser!.nameL.toString();
       email.text = userState.currentUser!.email.toString();
-    }
-    else{
+    } else {
       outterDistanceFromLogin++;
       homePage = false;
     }
@@ -69,8 +66,6 @@ class ContactUsPageState extends State<ContactUsPage> {
   @override
   Widget build(BuildContext context) {
     textSize = MediaQuery.of(context).size.width / 25;
-
-
 
     return Scaffold(
       appBar: getAppBar(),
@@ -365,7 +360,7 @@ class ContactUsPageState extends State<ContactUsPage> {
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text("Message send successfully"),
+              content: Text("Message sent successfully"),
             ),
           );
           Navigator.pop(context);

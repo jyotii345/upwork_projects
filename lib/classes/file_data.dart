@@ -66,11 +66,15 @@ class FileData {
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: GestureDetector(
-                    onTap: openFile,
+                    onTap: () {
+                      openFile();
+                    },
                     child: SizedBox(
                       width: textBoxSize,
                       child: Text(
-                        displayName == "" ? fileName.toString() : displayName.toString(),
+                        displayName == ""
+                            ? fileName.toString()
+                            : displayName.toString(),
                         textAlign: TextAlign.left,
                         style: TextStyle(color: AggressorColors.secondaryColor),
                       ),
@@ -115,7 +119,7 @@ class FileData {
 
   Future<void> openFile() async {
     //opens the contents of a file on the defualt application for the native device
-     await OpenFile.open(filePath);
+    await OpenFile.open(filePath);
   }
 
   void setUser(User user) {

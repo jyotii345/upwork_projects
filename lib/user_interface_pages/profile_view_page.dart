@@ -166,8 +166,8 @@ class MyProfileState extends State<MyProfile> {
   Widget getAddress() {
     //gets the address of the user
     String territory = profileData["country"].toString() == "2"
-        ? profileData["state"]??""
-        : profileData["province"]??"";
+        ? profileData["state"] ?? ""
+        : profileData["province"] ?? "";
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Column(
@@ -255,7 +255,7 @@ class MyProfileState extends State<MyProfile> {
             child: Container(
               width: double.infinity,
               child: Text(
-                profileData["dives"],
+                profileData["dives"] ?? '0',
                 textAlign: TextAlign.center,
               ),
               decoration: BoxDecoration(
@@ -295,8 +295,8 @@ class MyProfileState extends State<MyProfile> {
         ),
         Container(
           height: portrait
-              ? MediaQuery.of(context).size.width / 4
-              : MediaQuery.of(context).size.height / 4,
+              ? MediaQuery.of(context).size.width / 3.5
+              : MediaQuery.of(context).size.height / 3.5,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,19 +308,15 @@ class MyProfileState extends State<MyProfile> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(profileData["email"]),
-              profileData.containsKey("home_phone")
+              !profileData.containsKey("home_phone")
                   ? Text("Home Phone: ")
                   : Text("Home Phone: " + profileData["home_phone"]),
-              profileData.containsKey("home_phone")
+              !profileData.containsKey("work_phone")
                   ? Text("Work Phone: ")
-                  : Text("Work Phone: " + profileData["work_phone"] == null
-                      ? ""
-                      : profileData["work_phone"]),
-              profileData.containsKey("home_phone")
+                  : Text("Work Phone: " + profileData["work_phone"]),
+              !profileData.containsKey("mobile_phone")
                   ? Text("Mobile Phone: ")
-                  : Text("Mobile Phone: " + profileData["mobile_phone"] == null
-                      ? ""
-                      : profileData["mobile_phone"]),
+                  : Text("Mobile Phone: " + profileData["mobile_phone"])
             ],
           ),
         ),

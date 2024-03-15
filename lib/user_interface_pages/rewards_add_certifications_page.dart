@@ -26,7 +26,7 @@ class AddCertificationState extends State<AddCertification> {
   int pageIndex = 3;
   String errorMessage = "";
 
-  String dropDownValue="";
+  String dropDownValue = "";
 
   bool loading = false;
 
@@ -37,11 +37,11 @@ class AddCertificationState extends State<AddCertification> {
   void initState() {
     super.initState();
 
-    if(certificationOptionList[0] != " -- SELECT --"){
+    if (certificationOptionList[0] != " -- SELECT -- ") {
       certificationOptionList.insert(0, " -- SELECT -- ");
     }
     dropDownValue = " -- SELECT -- ";
-   // dropDownValue = certificationOptionList[0];
+    // dropDownValue = certificationOptionList[0];
     popDistance = 1;
   }
 
@@ -91,28 +91,27 @@ class AddCertificationState extends State<AddCertification> {
   Widget getPageForm() {
     //returns the main contents of the page
     return Padding(
-      padding: EdgeInsets.fromLTRB(0,0,0, 10),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: ListView(
-          children: [ getBannerImage(),
-
-
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: getPageTitle(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: getCertificateDropDown(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: getAddButton(),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: showErrorMessage(),
-            ),
-          ],
+        children: [
+          getBannerImage(),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: getPageTitle(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: getCertificateDropDown(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: getAddButton(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: showErrorMessage(),
+          ),
+        ],
       ),
     );
   }
@@ -151,7 +150,7 @@ class AddCertificationState extends State<AddCertification> {
       loading = true;
     });
 
-    if(dropDownValue != " -- SELECT -- ") {
+    if (dropDownValue != " -- SELECT -- ") {
       var response = await AggressorApi()
           .saveCertification(widget.user.userId.toString(), dropDownValue);
 
@@ -260,13 +259,12 @@ class AddCertificationState extends State<AddCertification> {
     );
   }
 
-   Widget getBannerImage() {
+  Widget getBannerImage() {
     // returns banner image
     return Image.asset(
-        "assets/bannerimage.png",
-        width: MediaQuery.of(context).size.width,
-        fit: BoxFit.scaleDown,
-
+      "assets/bannerimage.png",
+      width: MediaQuery.of(context).size.width,
+      fit: BoxFit.scaleDown,
     );
   }
 
@@ -316,4 +314,3 @@ class AddCertificationState extends State<AddCertification> {
     return new Future.value(true);
   }
 }
-
