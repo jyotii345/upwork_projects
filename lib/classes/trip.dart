@@ -10,6 +10,7 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/guest_information.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_add_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
@@ -543,8 +544,7 @@ class Trip {
                               SizedBox(
                                 width: textBoxSize,
                                 child: Text(
-                                  charter == null
-                                      ? "":charter!.nights!,
+                                  charter == null ? "" : charter!.nights!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: screenFontSize),
                                 ),
@@ -576,7 +576,12 @@ class Trip {
                                   style: TextButton.styleFrom(
                                       padding: EdgeInsets.all(0)),
                                   onPressed: () {
-                                    launchGIS(refreshState);
+                                    Navigator.push(
+                                        navigatorKey.currentContext!,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                GuestInformation()));
+                                    // launchGIS(refreshState);
                                   },
                                   child: Text("Guest Information System (GIS)",
                                       textAlign: TextAlign.center,
@@ -675,14 +680,15 @@ class Trip {
 
   void launchGIS(VoidCallback refreshState) async {
     if (loginKey != null && loginKey != "null") {
-      await launchUrl(Uri.parse("https://gis.liveaboardfleet.com/gis/index.php/" +
-          passengerId.toString() +
-          "/" +
-          reservationId.toString() +
-          "/" +
-          charterId.toString() +
-          "/" +
-          loginKey.toString()));
+      await launchUrl(Uri.parse(
+          "https://gis.aggressoradventures.com/start/AF/" +
+              passengerId.toString() +
+              "/" +
+              reservationId.toString() +
+              "/" +
+              charterId.toString() +
+              "/" +
+              loginKey.toString()));
     } else {
       errorMessage = "Contact your agent to have a GIS link sent.";
       refreshState();

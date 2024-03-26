@@ -21,7 +21,7 @@ import 'package:sqflite/sqflite.dart';
 import 'messages.dart';
 
 class AggressorApi {
-  final String apiKey = "pwBL1rik1hyi5JWPid";
+  final String apiKey = "L9F6ZJ00CKFJ4Z!";
 
   AggressorApi();
 

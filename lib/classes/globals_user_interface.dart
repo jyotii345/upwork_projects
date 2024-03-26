@@ -498,7 +498,8 @@ void onTabTapped(int index, Orientation? orientation) {
       if (itemSelected == null) return;
 
       if (itemSelected == "0") {
-        Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>ContactUsPage()));
+        Navigator.push(navigatorKey.currentContext!,
+            MaterialPageRoute(builder: (context) => ContactUsPage()));
         // mainPageCallback!();
       } else if (itemSelected == "1") {
         currentIndex = 5;
@@ -557,9 +558,10 @@ void onCouponTabTapped(int index, Orientation orientation) {
 
         PopupMenuItem<String>(
             child: InkWell(
-              onTap: (){
+              onTap: () {
                 Navigator.pop(navigatorKey.currentContext!);
-                Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>ContactUsPage()));
+                Navigator.push(navigatorKey.currentContext!,
+                    MaterialPageRoute(builder: (context) => ContactUsPage()));
               },
               child: Row(
                 children: [
@@ -656,9 +658,7 @@ void onCouponTabTapped(int index, Orientation orientation) {
       if (itemSelected == null) return;
 
       if (itemSelected == "0") {
-
         // Navigator.push(navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>ContactUsPage()));
-
       } else if (itemSelected == "1") {
         currentIndex = 5;
         mainPageCallback!();
@@ -695,7 +695,7 @@ AppBar getAppBar() {
             icon: Icon(Icons.arrow_back),
             color: AggressorColors.secondaryColor,
             onPressed: () {
-              outterDistanceFromLogin=0;
+              outterDistanceFromLogin = 0;
               navigatorKey.currentState!.pop();
               // navigatorKey.currentState!.pushReplacement(
               //     MaterialPageRoute(builder: (context) => LoginPage()));
@@ -732,6 +732,10 @@ AppBar getAppBar() {
             ),
     ],
   );
+}
+
+Drawer getGISAppDrawer() {
+  return Drawer();
 }
 
 makeCall() async {

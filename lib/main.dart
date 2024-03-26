@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Adventure Of A Lifetime',
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner:  false,
         theme: ThemeData(
           primarySwatch: AggressorColors.primaryColor,
         ),
