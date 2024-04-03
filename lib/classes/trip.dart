@@ -575,12 +575,17 @@ class Trip {
                                 child: TextButton(
                                   style: TextButton.styleFrom(
                                       padding: EdgeInsets.all(0)),
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    await AggressorApi().getBasicDetails(
+                                        contactId: user!.contactId!);
                                     Navigator.push(
                                         navigatorKey.currentContext!,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                GuestInformation()));
+                                                GuestInformation(
+                                                  currentTrip: charterId!,
+                                                  reservationID: reservationId!,
+                                                )));
                                     // launchGIS(refreshState);
                                   },
                                   child: Text("Guest Information System (GIS)",

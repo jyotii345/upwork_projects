@@ -3,6 +3,7 @@ library user_interface;
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/navbar_items.dart';
 import 'package:aggressor_adventures/user_interface_pages/contact_us_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
@@ -734,8 +735,33 @@ AppBar getAppBar() {
   );
 }
 
-Drawer getGISAppDrawer() {
-  return Drawer();
+Drawer getGISAppDrawer(
+    {required String charterID, required String reservationID}) {
+  return Drawer(
+    backgroundColor: Colors.white,
+    child: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 50.0),
+          child: Image.asset(
+            "assets/logo.png",
+            height: AppBar().preferredSize.height,
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 5.0, left: 20, right: 20),
+          child: Divider(
+            thickness: 1,
+          ),
+        ),
+        AppBarItems(
+          charterID: charterID,
+          reservationID: reservationID,
+        )
+      ],
+    ),
+  );
 }
 
 makeCall() async {

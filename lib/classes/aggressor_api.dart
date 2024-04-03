@@ -10,6 +10,9 @@ import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
+import 'package:aggressor_adventures/model/countries.dart';
+import 'package:aggressor_adventures/model/userModel.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/masterModel.dart';
 import 'package:chunked_stream/chunked_stream.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
@@ -18,6 +21,9 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../model/basicInfoModel.dart';
+import '../user_interface_pages/widgets/download.dart';
+import '../user_interface_pages/widgets/toaster.dart';
 import 'messages.dart';
 
 class AggressorApi {
@@ -275,6 +281,86 @@ class AggressorApi {
     return jsonDecode(await pageResponse.stream.bytesToString());
   }
 
+  Future<List<MasterModel>> getCountriesList() async {
+    //returns a list of all countries and their country codes
+    List<MasterModel> countriesList = [];
+    String url = "https://app.aggressor.com/api/app/registration/countries";
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+    var response = jsonDecode(await pageResponse.stream.bytesToString());
+    for (var country in response) {
+      countriesList.add(
+          MasterModel(id: country['countryid'], title: country['country']));
+    }
+    return countriesList;
+  }
+
+  Future postGuestInformation(
+      {required String contactId, required BasicInfoModel userInfo}) async {
+    String url =
+        "https://app.aggressor.com/api/gis/guestinformation/AF/$contactId";
+
+    var userJson = userInfo.toJson();
+    print(userJson);
+    Response response = await post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'apikey': apiKey,
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: userInfo.toJson(),
+    );
+    print(response);
+  }
+
+  Future postWaiverForm(
+      {required String contactId,
+      required String reservationID,
+      String? charID,
+      var ipAddress}) async {
+    String url =
+        "https://app.aggressor.com/api/gis/waiverv2/$contactId/$reservationID/$charID";
+
+    try {
+      Response response = await post(Uri.parse(url), headers: <String, String>{
+        'apikey': apiKey,
+      }, body: {
+        "ip_address": ipAddress
+      });
+      print(response);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future downloadWaiver({required String contactId, String? charID}) async {
+    String url =
+        "https://app.aggressor.com/api/gis/artifact/AF/$contactId/$charID/waiver";
+
+    try {
+      // Response response = await get(
+      //   Uri.parse(url),
+      //   headers: <String, String>{
+      //     'apikey': apiKey,
+      //     'Content-Type': 'application/json'
+      //   },
+      // );
+      // print(response);
+      String filePath =
+          await Download().downloadFile(fileURL: url, fileName: "File");
+      if (filePath.isNotEmpty) {
+        Toaster.showSuccess("Download completed");
+      } else {
+        Toaster.showError("Unable to download PDF, please try again.");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<dynamic> getStates() async {
     //returns a list of all states and their country codes
     String url = "https://app.aggressor.com/api/app/registration/states";
@@ -284,6 +370,24 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
     return jsonDecode(await pageResponse.stream.bytesToString());
+  }
+
+  Future<List<MasterModel>> getStatesList() async {
+    //returns a list of all countries and their country codes
+    List<MasterModel> statesList = [];
+    String url = "https://app.aggressor.com/api/app/registration/states";
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+    var response = jsonDecode(await pageResponse.stream.bytesToString());
+
+    for (var states in response) {
+      statesList
+          .add(MasterModel(title: states['state'], abbv: states['stateAbbr']));
+    }
+    return statesList;
   }
 
   Future<dynamic> sendNewContact(
@@ -355,7 +459,22 @@ class AggressorApi {
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
     StreamedResponse pageResponse = await request.send();
-    return jsonDecode(await pageResponse.stream.bytesToString());
+    var userJson = jsonDecode(await pageResponse.stream.bytesToString());
+    userModel = UserModel.fromJson(userJson);
+    return userJson;
+  }
+
+  Future<BasicInfoModel> getBasicDetails({required String contactId}) async {
+    //returns the profile data for the userId provided
+    String url = "https://app.aggressor.com/api/gis/contacts/" + contactId;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+    var userJson = jsonDecode(await pageResponse.stream.bytesToString());
+    basicInfoModel = BasicInfoModel.fromJson(userJson);
+    return basicInfoModel;
   }
 
   Future<dynamic> sendEmail(

@@ -10,10 +10,10 @@
    <application
         android:label="Adventure Of A Lifetime"
         android:icon="@mipmap/ic_launcher"
+        android:name="${applicationName}"
         android:requestLegacyExternalStorage="true">
         <activity
-            android:name="io.adventure.aggressor_adventures.MainActivity"
-
+            android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

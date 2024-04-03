@@ -1,3 +1,4 @@
+import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
@@ -26,12 +27,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/user_cubit/user_cubit.dart';
 import '../classes/fcm_helper.dart';
+import '../model/userModel.dart';
 import 'login_page.dart';
 import 'files_page.dart';
 import 'profile_view_page.dart';
 import 'trips_page.dart';
 import 'notes_page.dart';
-
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.user, this.tripList}) : super(key: key);
@@ -59,7 +60,10 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void initState() {
+    loadProfileDetails();
+    getCountriesList();
     super.initState();
+
     BlocProvider.of<UserCubit>(context).setCurrentUser(widget.user);
     pageList = [
       MyTrips(
@@ -101,6 +105,15 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   var pageList = [];
+
+  Future<dynamic> loadProfileDetails() async {
+    //loads the initial value of the users profile data
+    await AggressorApi().getProfileData(widget.user.userId!);
+  }
+  void getCountriesList() async {
+    //set the initial countries list
+    countriesList = await AggressorApi().getCountries();
+  }
 
   @override
   Widget build(BuildContext context) {

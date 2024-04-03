@@ -9,7 +9,13 @@ import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
+import '../model/basicInfoModel.dart';
+import '../model/countries.dart';
+import '../model/userModel.dart';
+import 'charter.dart';
 import 'gallery.dart';
+import 'user.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
 
@@ -36,6 +42,9 @@ bool userImageRetreived = false;
 
 Map<String, Gallery> galleriesMap = <String, Gallery>{};
 Map<String, dynamic> profileData = <String, dynamic>{};
+UserModel userModel = UserModel();
+BasicInfoModel basicInfoModel = BasicInfoModel();
+Countries countries = Countries();
 Map<String, String> fileDisplayNames = <String, String>{};
 
 List<Trip> notLoadedList = [];
@@ -50,6 +59,8 @@ List<dynamic> notesList = [];
 List<dynamic> ironDiverList = [];
 List<dynamic> certificationList = [];
 List<dynamic> allStarsList = [];
+DateFormat defaultDateFormat = DateFormat.yMMMMd();
+DateFormat defaultDateFormatForBackend = DateFormat('yyyy-MM-dd');
 
 File userImage = File("");
 

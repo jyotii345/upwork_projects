@@ -40,13 +40,11 @@ class MyTripsState extends State<MyTrips>
   /*
   instance vars
    */
-
   List<Widget> pastTripsList = [];
   List<Widget> upcomingTripsList = [];
 
   bool timerStarted = false;
   int sliderIndex = 0;
-
 
   bool loading = true;
 
@@ -63,7 +61,6 @@ class MyTripsState extends State<MyTrips>
     updateSliderImagesList();
   }
 
-
   Future<dynamic> getOfflineLoad() async {
     //load data from the device if the application is offline
 
@@ -78,7 +75,7 @@ class MyTripsState extends State<MyTrips>
     });
 
     var tempSliderImageList =
-    await SlidersDatabaseHelper.instance.querySliders();
+        await SlidersDatabaseHelper.instance.querySliders();
     setState(() {
       loadedCount++;
     });
@@ -95,17 +92,17 @@ class MyTripsState extends State<MyTrips>
       loadedCount++;
     });
     var tempIronDiverList =
-    await IronDiverDatabaseHelper.instance.queryIronDiver();
+        await IronDiverDatabaseHelper.instance.queryIronDiver();
     setState(() {
       loadedCount++;
     });
     var tempCertificationList =
-    await CertificateDatabaseHelper.instance.queryCertificate();
+        await CertificateDatabaseHelper.instance.queryCertificate();
     setState(() {
       loadedCount++;
     });
     var tempCountriesList =
-    await CountriesDatabaseHelper.instance.queryCountries();
+        await CountriesDatabaseHelper.instance.queryCountries();
     setState(() {
       loadedCount++;
     });
@@ -173,9 +170,8 @@ class MyTripsState extends State<MyTrips>
       statesList = tempStatesList;
       // profileData = tempProfileData[0];
       notesList = tempNotesList;
-      galleriesMap ={};// tempGalleriesMap;
+      galleriesMap = {}; // tempGalleriesMap;
       loading = false;
-
     });
 
     // if (tripList == null) {
@@ -185,34 +181,27 @@ class MyTripsState extends State<MyTrips>
     return "done";
   }
 
-
   // tripList
 
   updateSliderImagesList() async {
     try {
-
       var connectivityResult = await (Connectivity().checkConnectivity());
-      online =(connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi);
-      if (online == false)
-        {
+      online = (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi);
+      if (online == false) {
         await getOfflineLoad();
       } else {
-        if (tripList.isEmpty ) {
+        if (tripList.isEmpty) {
           await updateSliderImages();
 
           percent = 0.3;
-          setState(() {
-
-          });
+          setState(() {});
           sliderImageTimer();
 
           percent = 0.5;
-          setState(() {
-
-          });
+          setState(() {});
           await updateTripListList();
-        }
-        else {
+        } else {
           setState(() {
             loading = false;
           });
@@ -227,11 +216,10 @@ class MyTripsState extends State<MyTrips>
   }
 
   VoidCallback loadingCallBack() {
-
-    return (){
+    return () {
       setState(() {
         loadedCount++;
-        if(percent<0.9){
+        if (percent < 0.9) {
           percent += .05;
         }
       });
@@ -239,23 +227,23 @@ class MyTripsState extends State<MyTrips>
   }
 
   updateTripListList() async {
-    var tempList =
-        await AggressorApi().getReservationList(widget.user.contactId!,loadingCallBack);
+    var tempList = await AggressorApi()
+        .getReservationList(widget.user.contactId!, loadingCallBack);
     tripList = tempList;
     for (var trip in tripList) {
       trip.user = widget.user;
       await trip.initCharterInformation();
 
       setState(() {
-        if(percent<0.9){
+        if (percent < 0.9) {
           percent += .05;
         }
         // percent += (loadedCount / (loadingLength));
       });
     }
 
-    if(tempList.length==0){
-      percent=0.95;
+    if (tempList.length == 0) {
+      percent = 0.95;
     }
 
     setState(() {
@@ -285,7 +273,7 @@ class MyTripsState extends State<MyTrips>
             children: [
               getBackGroundImage(),
               loading
-                  ?  Center(
+                  ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -293,20 +281,17 @@ class MyTripsState extends State<MyTrips>
                             radius: portrait
                                 ? MediaQuery.of(context).size.width / 3
                                 : MediaQuery.of(context).size.height / 3,
-                            percent: ( percent >1.0)?1:percent,
+                            percent: (percent > 1.0) ? 1 : percent,
                             animateFromLastPercent: true,
                             backgroundColor: AggressorColors.secondaryColor,
                             progressColor: AggressorColors.primaryColor,
                           ),
-
                           Padding(
-                            padding: const EdgeInsets.only(top:10.0),
+                            padding: const EdgeInsets.only(top: 10.0),
                             child: Text(
-                              "${((( percent >0.90)?0.95:percent)*100).roundToDouble()} %",
+                              "${(((percent > 0.90) ? 0.95 : percent) * 100).roundToDouble()} %",
                               style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16
-                              ),
+                                  fontWeight: FontWeight.w500, fontSize: 16),
                             ),
                           )
                         ],
