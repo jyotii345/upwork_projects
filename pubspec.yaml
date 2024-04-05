@@ -19,7 +19,7 @@ dependencies:
   date_format: ^2.0.7
   url_launcher: ^6.1.14
   # multi_image_picker: any
-  permission_handler: ^11.0.1
+  permission_handler: ^11.3.1
   flutter_aws_s3_client:
   chunked_stream: ^1.4.2
   file_picker:

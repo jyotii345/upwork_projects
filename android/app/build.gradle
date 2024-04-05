@@ -40,8 +40,6 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-
-
     defaultConfig {
         multiDexEnabled true
         applicationId "io.adventure.aggressor_adventures"
@@ -72,6 +70,7 @@ flutter {
 }
 
 dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.firebase:firebase-analytics'
     implementation platform('com.google.firebase:firebase-bom:30.2.0')

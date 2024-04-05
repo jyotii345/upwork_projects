@@ -11,6 +11,7 @@ import 'classes/globals.dart';
 import 'user_interface_pages/login_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/standalone.dart' as tz;
 
 @pragma('vm:entry-point')
@@ -38,6 +39,7 @@ Future<void> main() async {
   tz.initializeTimeZones();
   final String locationName = 'America/New_York';
   tz.setLocalLocation(tz.getLocation(locationName));
+  requestPermission();
 
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Container(
@@ -66,7 +68,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Adventure Of A Lifetime',
-        debugShowCheckedModeBanner:  false,
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: AggressorColors.primaryColor,
         ),
@@ -83,5 +85,12 @@ class MyHttpOverrides extends HttpOverrides {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
+  }
+}
+
+Future<void> requestPermission() async {
+  final permission = Permission.storage;
+  if (await permission.isDenied) {
+    await permission.request();
   }
 }

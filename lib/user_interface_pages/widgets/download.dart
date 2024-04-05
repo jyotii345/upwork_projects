@@ -7,8 +7,8 @@ class Download {
       {required String fileURL, required String fileName}) async {
     try {
       Dio dio = Dio();
-      var dir = await getApplicationDocumentsDirectory();
-      var filePath = '${dir.path}/$fileName.pdf';
+      var dir = await getExternalStorageDirectory();
+      var filePath = '${dir!.path}/$fileName.pdf';
       await dio.download(fileURL, filePath,
           options: Options(
             headers: {'apikey': apiKey, 'Content-Type': 'application/json'},

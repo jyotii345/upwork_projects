@@ -5,10 +5,13 @@ import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/classes/utils.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/masterModel.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/waiver.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/text_field.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/text_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../../../classes/aggressor_colors.dart';
 import '../../../model/basicInfoModel.dart';
 import '../../../model/userModel.dart';
 import '../model/genderModel.dart';
@@ -17,7 +20,10 @@ import '../widgets/dropDown.dart';
 import 'package:intl/intl.dart';
 
 class GuestInformationPage extends StatefulWidget {
-  const GuestInformationPage();
+  GuestInformationPage({this.charID, this.currentTrip, this.reservationID});
+  String? charID;
+  String? currentTrip;
+  String? reservationID;
   @override
   State<GuestInformationPage> createState() => _GuestInformationPageState();
 }
@@ -35,6 +41,7 @@ String? currentCountry;
 int selectedOption = 1;
 bool isTravelPackageChecked = false;
 bool isTCAgreed = false;
+String? charID;
 User? user;
 MasterModel? selectedCountry;
 MasterModel? selectedCitizenship;
@@ -152,6 +159,46 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: getGISAppDrawer(
+          charterID: widget.charID!, reservationID: widget.reservationID!),
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leading: Builder(builder: (context) {
+          return IconButton(
+            icon: Icon(
+              Icons.menu_outlined,
+              color: Color(0xff418cc7),
+              size: 22,
+            ),
+            color: AggressorColors.secondaryColor,
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          );
+        }),
+        title: Padding(
+          padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+          child: Image.asset(
+            "assets/logo.png",
+            height: AppBar().preferredSize.height,
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        actions: <Widget>[
+          SizedBox(
+            height: AppBar().preferredSize.height,
+            child: IconButton(
+              icon: Container(
+                child: Image.asset("assets/callicon.png"),
+              ),
+              onPressed: makeCall,
+            ),
+          ),
+        ],
+      ),
       backgroundColor: Color(0xfff4f3ef),
       body: SingleChildScrollView(
         child: Container(
@@ -160,7 +207,7 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 40.0, left: 30),
+                  padding: const EdgeInsets.only(top: 10.0, left: 30),
                   child: Text(
                     "Online Application And Waiver Form - Guest Information.",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
@@ -407,8 +454,7 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                       SizedBox(
                         height: 50,
                         child: CheckboxListTile(
-                          fillColor: MaterialStatePropertyAll(
-                              AggressorColors.lightOrange),
+                          activeColor: AggressorColors.lightOrange,
                           title: Text(
                             "Check if you WOULD like to receive a travel gift package.",
                             style: TextStyle(
@@ -485,8 +531,7 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                 SizedBox(
                   height: 200,
                   child: CheckboxListTile(
-                    fillColor:
-                        MaterialStatePropertyAll(AggressorColors.lightOrange),
+                    activeColor: AggressorColors.lightOrange,
                     title: Text(
                       "I Agree. I understand my passport must be valid for at least 6 months beyond the period of my stay. It is my responsibility to ensure I have the proper passport and visa to travel into each country on my itinerary as well as the return. I understand I should check with a consulate in my country of citizenship to ensure proper passport and visa requirements are met.",
                       style:
@@ -573,6 +618,13 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                                     await AggressorApi().postGuestInformation(
                                         contactId: basicInfoModel.contactID!,
                                         userInfo: saveData);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Waiver(
+                                                  charterID: widget.charID!,
+                                                  reservationID: '',
+                                                )));
                                   }
                                 }
                               : null,

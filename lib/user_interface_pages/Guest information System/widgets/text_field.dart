@@ -3,6 +3,7 @@ import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20
 import 'package:flutter/material.dart';
 import 'package:aggressor_adventures/classes/colors.dart';
 
+import '../../../classes/aggressor_colors.dart';
 import '../model/masterModel.dart';
 
 class AdventureFormField extends StatelessWidget {

@@ -60,7 +60,7 @@ class FileViewState extends State<FilesTripPage>
     super.initState();
     popDistance = 2;
     selectionTrip =
-        Trip(DateTime.now().toString(), "", "", "", "General", "", "", "", "");
+        Trip(DateTime.now().toString(), "", "", "", "General", "", "", "" , ""," ");
     selectionTrip.detailDestination = "General";
     selectionTrip.charterId = "General";
     dropDownValue = selectionTrip;

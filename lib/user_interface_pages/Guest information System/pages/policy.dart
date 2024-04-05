@@ -1,6 +1,5 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
-import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/policy.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -11,24 +10,20 @@ import '../../../classes/globals_user_interface.dart';
 import '../../../classes/trip.dart';
 import '../widgets/aggressor_button.dart';
 
-class Waiver extends StatefulWidget {
-  Waiver({required this.charterID, required this.reservationID});
+class Policy extends StatefulWidget {
+  Policy({required this.charterID,required this.reservationID});
   String charterID;
   String reservationID;
   @override
-  State<Waiver> createState() => _WaiverState();
+  State<Policy> createState() => _PolicyState();
 }
 
-class _WaiverState extends State<Waiver> {
+class _PolicyState extends State<Policy> {
   WebViewController controller = WebViewController();
   bool isLoading = true;
-  Trip firstTrip = tripList[0];
-  var tempList;
   var hostAddress;
   @override
   void initState() {
-    getTripInfo();
-    gettingIP();
     super.initState();
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -50,7 +45,7 @@ class _WaiverState extends State<Waiver> {
         ),
       )
       ..loadRequest(
-          Uri.parse("https://gis.aggressoradventures.com/templates/waiver"));
+          Uri.parse("https://gis.aggressoradventures.com/templates/policy"));
   }
 
   gettingIP() async {
@@ -59,15 +54,9 @@ class _WaiverState extends State<Waiver> {
     return hostAddress;
   }
 
-  getTripInfo() async {
-    tempList = await AggressorApi()
-        .getReservationList(basicInfoModel.contactID!, () {});
-    Trip firstTrip = tripList[0];
-    print("Charter ID of first trip: ${firstTrip.charterId}");
-  }
-
   @override
   Widget build(BuildContext context) {
+    // print(tempList['contactID']);
     return Scaffold(
       drawer: getGISAppDrawer(
           charterID: widget.charterID, reservationID: widget.reservationID!),
@@ -109,13 +98,12 @@ class _WaiverState extends State<Waiver> {
           ),
         ],
       ),
-      backgroundColor: Color(0xfff4f3ef),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10.0, left: 30),
             child: Text(
-              "Online Application And Waiver Form - Waiver.",
+              "Online Application And Waiver Form - Payment & Cancellation Policy.",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -126,33 +114,12 @@ class _WaiverState extends State<Waiver> {
             thickness: 1,
           ),
           Padding(
-            padding: EdgeInsets.only(top: 2.0, left: 25, right: 25),
-            child: Text(
-                'Online Application and Waiver Form - Release of Liability & Assumption of Risk',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xfff1926e))),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 25, right: 25),
-            child: Text(
-                "Guest who fail to complete this form prior to departure *WILL BE* denied boarding",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xfff1926e))),
-          ),
-          Padding(
             padding: const EdgeInsets.only(top: 15.0, left: 20, right: 20),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
-              height: 350,
+              height: 450,
               child: Stack(
                 children: [
                   WebViewWidget(controller: controller),
@@ -184,7 +151,7 @@ class _WaiverState extends State<Waiver> {
           Padding(
             padding: const EdgeInsets.only(top: 15.0, left: 10, right: 10),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 AggressorButton(
                   buttonName: "CANCEL",
@@ -193,36 +160,18 @@ class _WaiverState extends State<Waiver> {
                   AggressorButtonColor: AggressorColors.chromeYellow,
                   AggressorTextColor: AggressorColors.white,
                 ),
+                SizedBox(width: 25),
                 AggressorButton(
                     onPressed: () async {
-                      await AggressorApi().postWaiverForm(
-                          contactId: basicInfoModel.contactID!,
-                          reservationID: widget.reservationID,
+                      await AggressorApi().updatingStatus(
                           charID: widget.charterID,
-                          ipAddress: hostAddress);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Policy(
-                                    charterID: widget.charterID,
-                                    reservationID: widget.reservationID
-                                  )));
+                          contactID: basicInfoModel.contactID!,
+                          column: "policy");
                     },
                     buttonName: "SAVE AND CONTINUE",
                     fontSize: 12,
                     width: 150,
                     AggressorButtonColor: AggressorColors.ceruleanBlue,
-                    AggressorTextColor: AggressorColors.white),
-                AggressorButton(
-                    onPressed: () async {
-                      await AggressorApi().downloadWaiver(
-                          contactId: basicInfoModel.contactID!,
-                          charID: widget.charterID);
-                    },
-                    buttonName: "DOWNLOAD WAIVER",
-                    fontSize: 12,
-                    width: 140,
-                    AggressorButtonColor: AggressorColors.dimGrey,
                     AggressorTextColor: AggressorColors.white),
               ],
             ),

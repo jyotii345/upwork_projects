@@ -2,6 +2,7 @@ import 'package:aggressor_adventures/model/basicInfoModel.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
+import '../../../classes/aggressor_colors.dart';
 import '../../../classes/colors.dart';
 import '../model/genderModel.dart';
 import '../model/masterModel.dart';

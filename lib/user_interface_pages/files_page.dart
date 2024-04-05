@@ -38,10 +38,10 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
 
   String fileName = "";
 
-  Trip dropDownValue = Trip(
-          DateTime.now().toString(), "", "", "", "General", "", "", "", ""),
-      selectionTrip = Trip(
-          DateTime.now().toString(), "", "", "", "General", "", "", "", "");
+  Trip dropDownValue = Trip(DateTime.now().toString(), "", "", "", "General",
+          "", "", "" , "", ""),
+      selectionTrip = Trip(DateTime.now().toString(), "", "", "", "General", "",
+          "", "" , "", "");
 
   bool loading = false;
   bool uploading = false;
@@ -63,8 +63,8 @@ class MyFilesState extends State<MyFiles> with AutomaticKeepAliveClientMixin {
   void initState() {
     super.initState();
     filesLoaded = false;
-    selectionTrip =
-        Trip(DateTime.now().toString(), "", "", "", "General", "", "", "", "");
+    selectionTrip = Trip(DateTime.now().toString(), "", "", "", "General", "",
+        "", "" , "","");
     selectionTrip.detailDestination = "General";
     selectionTrip.charterId = "General";
     dropDownValue = selectionTrip;

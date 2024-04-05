@@ -43,6 +43,7 @@ class Trip {
   String? embark;
   String? disembark;
   String? detailDestination;
+  String? boatid;
   String? loginKey;
   String? passengerId;
   String? errorMessage = "";
@@ -61,6 +62,7 @@ class Trip {
       String destination,
       String reservationDate,
       String reservationId,
+      String boatid,
       String loginKey,
       String passengerId) {
     this.tripDate = tripDate;
@@ -70,6 +72,7 @@ class Trip {
     this.destination = destination;
     this.reservationDate = reservationDate;
     this.reservationId = reservationId;
+    this.boatid = boatid;
     this.loginKey = loginKey;
     this.passengerId = passengerId;
   }
@@ -93,6 +96,7 @@ class Trip {
       String embark,
       String disembark,
       String detailDestination,
+      // String boatid,
       String loginKey,
       String passengerId) {
     //default constructor
@@ -114,6 +118,7 @@ class Trip {
     this.embark = embark;
     this.disembark = disembark;
     this.detailDestination = detailDestination;
+    // this.boatid = boatid;
     this.loginKey = loginKey;
     this.passengerId = passengerId;
   }
@@ -128,6 +133,7 @@ class Trip {
       json['destination'].toString(),
       json['reservationDate'].toString(),
       json['reservationid'].toString(),
+      json['boatid'].toString(),
       json['loginKey'].toString(),
       json['passengerid'].toString(),
     );
@@ -143,6 +149,7 @@ class Trip {
       'destination': destination,
       'reservationDate': reservationDate,
       'reservationId': reservationId,
+      'boatid': boatid
     };
   }
 
@@ -167,6 +174,7 @@ class Trip {
       'embark': embark,
       'disembark': disembark,
       'detailDestination': detailDestination,
+      'boatid': boatid,
       'loginKey': loginKey,
       'passengerId': passengerId,
     };
@@ -193,6 +201,7 @@ class Trip {
       map['embark'].toString(),
       map['disembark'].toString(),
       map['detailDestination'].toString(),
+      // map['boatid'].toString(),
       map['loginKey'].toString(),
       map['passengerId'].toString(),
     );

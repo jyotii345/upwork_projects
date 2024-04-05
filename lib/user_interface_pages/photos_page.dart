@@ -47,17 +47,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   List<XFile> images = <XFile>[];
   bool loading = false;
   List<Trip> dateDropDownList = [];
-  Trip dateDropDownValue = Trip(
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  );
+  Trip dateDropDownValue = Trip("", "", "", "", "", "", "", "" , "", "");
   bool uploading = false;
 
   /*
@@ -66,17 +56,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    dateDropDownValue = Trip(
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    );
+    dateDropDownValue = Trip("", "", "", "", "", "", "", "" , "", "");
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
     // dropDownValue =boatList.isEmpty?null: boatList[0];
     if (boatList.isEmpty) {
@@ -362,7 +342,7 @@ class PhotosState extends State<Photos> with AutomaticKeepAliveClientMixin {
     });
 
     if (tempList.length == 0) {
-      tempList = [Trip("", "", "", "", "", "", "", "", "")];
+      tempList = [Trip("", "", "", "", "", "", "", "" , "", "")];
     }
 
     setState(() {

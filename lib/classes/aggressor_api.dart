@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_aws_s3_client/flutter_aws_s3_client.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -305,15 +306,16 @@ class AggressorApi {
 
     var userJson = userInfo.toJson();
     print(userJson);
-    Response response = await post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'apikey': apiKey,
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: userInfo.toJson(),
-    );
-    print(response);
+    try {
+      Response response = await post(Uri.parse(url),
+          headers: <String, String>{
+            'apikey': apiKey,
+          },
+          body: userJson);
+      print(response);
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future postWaiverForm(
@@ -341,21 +343,30 @@ class AggressorApi {
         "https://app.aggressor.com/api/gis/artifact/AF/$contactId/$charID/waiver";
 
     try {
-      // Response response = await get(
-      //   Uri.parse(url),
-      //   headers: <String, String>{
-      //     'apikey': apiKey,
-      //     'Content-Type': 'application/json'
-      //   },
-      // );
-      // print(response);
       String filePath =
           await Download().downloadFile(fileURL: url, fileName: "File");
       if (filePath.isNotEmpty) {
         Toaster.showSuccess("Download completed");
+        OpenFile.open(filePath);
       } else {
         Toaster.showError("Unable to download PDF, please try again.");
       }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future updatingStatus(
+      {required String column,
+      required String contactID,
+      required String? charID}) async {
+    String url =
+        "https://app.aggressor.com/api/gis/updatestatus/AF/$contactID/$charID/$column";
+    try {
+      Response response = await get(Uri.parse(url), headers: <String, String>{
+        'apikey': apiKey,
+      });
+      print(response);
     } catch (e) {
       print(e);
     }

@@ -2,6 +2,8 @@
 import 'package:aggressor_adventures/classes/colors.dart';
 import 'package:flutter/material.dart';
 
+import '../../../classes/aggressor_colors.dart';
+
 class AdventureTextStyle {
   static TextStyle textPrimaryColor({
     double? fontSize,

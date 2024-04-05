@@ -106,6 +106,7 @@ class TripDatabaseHelper {
       result[0]['embark'].toString(),
       result[0]['disembark'].toString(),
       result[0]['detailDestination'].toString(),
+      // result[0]['boatid'].toString(),
       result[0]['loginKey'].toString(),
       result[0]['passengerId'].toString()
     );
@@ -140,6 +141,7 @@ class TripDatabaseHelper {
         maps[i]['detailDestination'],
         maps[i]['loginKey'],
         maps[i]['passengerId'],
+        // maps[i]['boatid']
       );
     });
   }

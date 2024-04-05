@@ -28,17 +28,7 @@ class AddIronDiverState extends State<AddIronDiver> {
   Map<String, dynamic> dropDownValue = {};
 
   List<Trip> dateDropDownList = [];
-  Trip dateDropDownValue = Trip(
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-  );
+  Trip dateDropDownValue = Trip("", "", "", "", "", "", "", "", "", "");
   bool loading = false;
 
   /*
@@ -48,17 +38,7 @@ class AddIronDiverState extends State<AddIronDiver> {
   void initState() {
     super.initState();
     dropDownValue = boatList[0];
-    dateDropDownValue = Trip(
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-    );
+    dateDropDownValue = Trip("", "", "", "", "", "", "", "", "", "");
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
 
     popDistance = 1;
@@ -380,7 +360,7 @@ class AddIronDiverState extends State<AddIronDiver> {
     });
 
     if (tempList.length == 0) {
-      tempList = [Trip("", "", "", "", "", "", "", "", "")];
+      tempList = [Trip("", "", "", "", "", "", "", "", "", "")];
     }
 
     setState(() {

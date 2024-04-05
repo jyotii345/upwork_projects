@@ -45,8 +45,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     "",
     "",
     "",
+    "" ,
     "",
-    "",
+    ""
   );
 
   BuildContext? pageContext;
@@ -68,8 +69,9 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
       "",
       "",
       "",
+      "" ,
       "",
-      "",
+      ""
     );
     dateDropDownValue.charter = Charter("", "", "", "", "", "", "", "", "");
     if(boatList.isEmpty){
@@ -374,7 +376,7 @@ class NotesState extends State<Notes> with AutomaticKeepAliveClientMixin {
     });
 
     if (tempList.length == 0) {
-      tempList = [Trip("", "", "", "", "", "", "", "", "")];
+      tempList = [Trip("", "", "", "", "", "", "", "" , "","")];
     }
 
     setState(() {

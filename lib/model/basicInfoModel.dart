@@ -175,64 +175,225 @@ class BasicInfoModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['title'] = this.title;
-    data['contactID'] = this.contactID;
-    data['first_name'] = this.firstName;
-    data['middle_name'] = this.middleName;
-    data['last_name'] = this.lastName;
+    if (this.title != null) {
+      data['title'] = this.title;
+    }
+
+    if (this.contactID != null) {
+      data['contactID'] = this.contactID;
+    }
+
+    if (this.firstName != null) {
+      data['first_name'] = this.firstName;
+    }
+
+    if (this.middleName != null) {
+      data['middle_name'] = this.middleName;
+    }
+
+    if (this.lastName != null) {
+      data['last_name'] = this.lastName;
+    }
+
     if (this.preferredName != null) {
       data['preferred_name'] = this.preferredName;
     }
-    data['gender'] = this.gender;
-    data['dob'] = this.dob;
-    data['occupation'] = this.occupation;
-    data['phone1'] = this.phone1;
-    data['phone1_type'] = this.phone1Type;
-    data['phone2'] = this.phone2;
-    data['phone2_type'] = this.phone2Type;
-    data['phone3'] = this.phone3;
-    data['phone3_type'] = this.phone3Type;
-    data['phone4'] = this.phone4;
-    data['phone4_type'] = this.phone4Type;
-    data['email'] = this.email;
-    data['travel_package'] = this.travelPackage;
-    data['address1'] = this.address1;
-    data['address2'] = this.address2;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['province'] = this.province;
-    data['zip'] = this.zip;
-    data['country'] = this.country;
-    data['nationality_countryID'] = this.nationalityCountryID;
-    data['passport_expiration'] = this.passportExpiration;
-    data['passport_number'] = this.passportNumber;
-    data['emergency_first'] = this.emergencyFirst;
-    data['emergency_last'] = this.emergencyLast;
-    data['emergency_relationship'] = this.emergencyRelationship;
-    data['emergency_ph_home'] = this.emergencyPhHome;
-    data['emergency_ph_work'] = this.emergencyPhWork;
-    data['emergency_ph_mobile'] = this.emergencyPhMobile;
-    data['emergency_email'] = this.emergencyEmail;
-    data['emergency_address1'] = this.emergencyAddress1;
-    data['emergency_address2'] = this.emergencyAddress2;
-    data['emergency_city'] = this.emergencyCity;
-    data['emergency_state'] = this.emergencyState;
-    data['emergency_zip'] = this.emergencyZip;
-    data['emergency_countryID'] = this.emergencyCountryID;
-    data['emergency2_first'] = this.emergency2First;
-    data['emergency2_last'] = this.emergency2Last;
-    data['emergency2_relationship'] = this.emergency2Relationship;
-    data['emergency2_ph_home'] = this.emergency2PhHome;
-    data['emergency2_ph_work'] = this.emergency2PhWork;
-    data['emergency2_ph_mobile'] = this.emergency2PhMobile;
-    data['emergency2_email'] = this.emergency2Email;
-    data['emergency2_address1'] = this.emergency2Address1;
-    data['emergency2_address2'] = this.emergency2Address2;
-    data['emergency2_city'] = this.emergency2City;
-    data['emergency2_state'] = this.emergency2State;
-    data['emergency2_zip'] = this.emergency2Zip;
-    data['emergency2_countryID'] = this.emergency2CountryID;
+
+    if (this.gender != null) {
+      data['gender'] = this.gender;
+    }
+
+    if (this.dob != null) {
+      data['dob'] = this.dob;
+    }
+
+    if (this.occupation != null) {
+      data['occupation'] = this.occupation;
+    }
+
+    if (this.phone1 != null) {
+      data['phone1'] = this.phone1;
+    }
+
+    if (this.phone1Type != null) {
+      data['phone1_type'] = this.phone1Type;
+    }
+
+    if (this.phone2 != null) {
+      data['phone2'] = this.phone2;
+    }
+
+    if (this.phone2Type != null) {
+      data['phone2_type'] = this.phone2Type;
+    }
+
+    if (this.phone3 != null) {
+      data['phone3'] = this.phone3;
+    }
+
+    if (this.phone3Type != null) {
+      data['phone3_type'] = this.phone3Type;
+    }
+
+    if (this.phone4 != null) {
+      data['phone4'] = this.phone4;
+    }
+
+    if (this.phone4Type != null) {
+      data['phone4_type'] = this.phone4Type;
+    }
+
+    if (this.email != null) {
+      data['email'] = this.email;
+    }
+
+    if (this.travelPackage != null) {
+      data['travel_package'] = this.travelPackage.toString();
+    }
+
+    if (this.address1 != null) {
+      data['address1'] = this.address1;
+    }
+
+    if (this.address2 != null) {
+      data['address2'] = this.address2;
+    }
+
+    if (this.city != null) {
+      data['city'] = this.city;
+    }
+
+    if (this.state != null) {
+      data['state'] = this.state;
+    }
+
+    if (this.province != null) {
+      data['province'] = this.province;
+    }
+
+    if (this.zip != null) {
+      data['zip'] = this.zip;
+    }
+
+    if (this.country != null) {
+      data['country'] = this.country.toString();
+    }
+
+    if (this.nationalityCountryID != null) {
+      data['nationality_countryID'] = this.nationalityCountryID.toString();
+    }
+
+    if (this.passportExpiration != null) {
+      data['passport_expiration'] = this.passportExpiration;
+    }
+
+    if (this.passportNumber != null) {
+      data['passport_number'] = this.passportNumber.toString();
+    }
+
+    if (this.emergencyFirst != null) {
+      data['emergency_first'] = this.emergencyFirst;
+    }
+
+    if (this.emergencyLast != null) {
+      data['emergency_last'] = this.emergencyLast;
+    }
+
+    if (this.emergencyRelationship != null) {
+      data['emergency_relationship'] = this.emergencyRelationship;
+    }
+
+    if (this.emergencyPhHome != null) {
+      data['emergency_ph_home'] = this.emergencyPhHome;
+    }
+
+    if (this.emergencyPhWork != null) {
+      data['emergency_ph_work'] = this.emergencyPhWork;
+    }
+
+    if (this.emergencyPhMobile != null) {
+      data['emergency_ph_mobile'] = this.emergencyPhMobile;
+    }
+
+    if (this.emergencyEmail != null) {
+      data['emergency_email'] = this.emergencyEmail;
+    }
+
+    if (this.emergencyAddress1 != null) {
+      data['emergency_address1'] = this.emergencyAddress1;
+    }
+
+    if (this.emergencyAddress2 != null) {
+      data['emergency_address2'] = this.emergencyAddress2;
+    }
+
+    if (this.emergencyCity != null) {
+      data['emergency_city'] = this.emergencyCity;
+    }
+
+    if (this.emergencyState != null) {
+      data['emergency_state'] = this.emergencyState;
+    }
+
+    if (this.emergencyZip != null) {
+      data['emergency_zip'] = this.emergencyZip;
+    }
+
+    if (this.emergencyCountryID != null) {
+      data['emergency_countryID'] = this.emergencyCountryID.toString();
+    }
+
+    if (this.emergency2First != null) {
+      data['emergency2_first'] = this.emergency2First;
+    }
+
+    if (this.emergency2Last != null) {
+      data['emergency2_last'] = this.emergency2Last;
+    }
+
+    if (this.emergency2Relationship != null) {
+      data['emergency2_relationship'] = this.emergency2Relationship;
+    }
+
+    if (this.emergency2PhHome != null) {
+      data['emergency2_ph_home'] = this.emergency2PhHome;
+    }
+
+    if (this.emergency2PhWork != null) {
+      data['emergency2_ph_work'] = this.emergency2PhWork;
+    }
+
+    if (this.emergency2PhMobile != null) {
+      data['emergency2_ph_mobile'] = this.emergency2PhMobile;
+    }
+
+    if (this.emergency2Email != null) {
+      data['emergency2_email'] = this.emergency2Email;
+    }
+
+    if (this.emergency2Address1 != null) {
+      data['emergency2_address1'] = this.emergency2Address1;
+    }
+
+    if (this.emergency2Address2 != null) {
+      data['emergency2_address2'] = this.emergency2Address2;
+    }
+
+    if (this.emergency2City != null) {
+      data['emergency2_city'] = this.emergency2City;
+    }
+
+    if (this.emergency2State != null) {
+      data['emergency2_state'] = this.emergency2State;
+    }
+
+    if (this.emergency2Zip != null) {
+      data['emergency2_zip'] = this.emergency2Zip;
+    }
+
+    if (this.emergency2CountryID != null) {
+      data['emergency2_countryID'] = this.emergency2CountryID.toString();
+    }
     return data;
   }
 }
