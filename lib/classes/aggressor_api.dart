@@ -11,6 +11,7 @@ import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/model/countries.dart';
+import 'package:aggressor_adventures/model/emergencyContactModel.dart';
 import 'package:aggressor_adventures/model/userModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/masterModel.dart';
 import 'package:chunked_stream/chunked_stream.dart';
@@ -303,6 +304,26 @@ class AggressorApi {
       {required String contactId, required BasicInfoModel userInfo}) async {
     String url =
         "https://app.aggressor.com/api/gis/guestinformation/AF/$contactId";
+
+    var userJson = userInfo.toJson();
+    print(userJson);
+    try {
+      Response response = await post(Uri.parse(url),
+          headers: <String, String>{
+            'apikey': apiKey,
+          },
+          body: userJson);
+      print(response);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future postEmergencyContact(
+      {required String contactId,
+      required EmergencyContactModel userInfo}) async {
+    String url =
+        "https://app.aggressor.com/api/gis/emergencycontact/AF/$contactId";
 
     var userJson = userInfo.toJson();
     print(userJson);

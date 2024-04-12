@@ -1,3 +1,4 @@
+import 'package:aggressor_adventures/model/emergencyContactModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/aggressor_button.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/text_style.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../classes/aggressor_api.dart';
 import '../../../classes/aggressor_colors.dart';
+import '../../../classes/globals.dart';
 import '../../../classes/globals_user_interface.dart';
 import '../../widgets/info_banner_container.dart';
 import '../model/masterModel.dart';
@@ -71,10 +73,10 @@ getStatesList() async {
 }
 
 getMasterData() async {
-  isMasterDataLoading = true;
+  // isMasterDataLoading = true;
   await getCountriesList();
   await getStatesList();
-  isMasterDataLoading = false;
+  // isMasterDataLoading = false;
 }
 
 class _EmergencyContactState extends State<EmergencyContact> {
@@ -393,6 +395,54 @@ class _EmergencyContactState extends State<EmergencyContact> {
                       SizedBox(width: 20.w),
                       Expanded(
                         child: AggressorButton(
+                          onPressed: () async {
+                            EmergencyContactModel saveData =
+                                EmergencyContactModel(
+                              emergency2_address1:
+                                  primaryAddressController.text,
+                              emergency2_city: secondaryCityController.text,
+                              emergency2_countryID:
+                                  secondarySelectedCountry!.title,
+                              emergency2_email: secondaryEmailController.text,
+                              emergency2_first: primaryFirstNameController.text,
+                              emergency2_last: secondaryLastNameController.text,
+                              emergency2_ph_home:
+                                  secondaryHomePhoneController.text,
+                              emergency2_ph_mobile:
+                                  secondaryMobilePhoneController.text,
+                              emergency2_ph_work:
+                                  secondaryWorkPhoneController.text,
+                              emergency2_relationship:
+                                  secondaryRelationshipController.text,
+                              emergency2_state:
+                                  secondarySelectedCountry?.id == 2
+                                      ? secondarySelectedState!.title
+                                      : null,
+                              emergency2_zip: secondaryZipController.text,
+                              emergency_address1: primaryAddressController.text,
+                              emergency_city: primaryCityController.text,
+                              emergency_countryID:
+                                  primarySelectedCountry!.title,
+                              emergency_email: primaryEmailController.text,
+                              emergency_first: primaryFirstNameController.text,
+                              emergency_last: primaryLastNameController.text,
+                              emergency_ph_home:
+                                  primaryHomePhoneController.text,
+                              emergency_ph_mobile:
+                                  primaryMobilePhoneController.text,
+                              emergency_ph_work:
+                                  primaryWorkPhoneController.text,
+                              emergency_relationship:
+                                  primaryRelationshipController.text,
+                              emergency_state: primarySelectedCountry?.id == 2
+                                  ? primarySelectedState!.title
+                                  : null,
+                              emergency_zip: primaryZipController.text,
+                            );
+                            await AggressorApi().postEmergencyContact(
+                                contactId: basicInfoModel.contactID!,
+                                userInfo: saveData);
+                          },
                           buttonName: 'Save & Continue',
                           AggressorButtonColor: AggressorColors.aero,
                           AggressorTextColor: AggressorColors.white,
