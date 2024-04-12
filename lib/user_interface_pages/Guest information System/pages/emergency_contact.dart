@@ -73,10 +73,10 @@ getStatesList() async {
 }
 
 getMasterData() async {
-  // isMasterDataLoading = true;
+  isMasterDataLoading = true;
   await getCountriesList();
   await getStatesList();
-  // isMasterDataLoading = false;
+  isMasterDataLoading = false;
 }
 
 class _EmergencyContactState extends State<EmergencyContact> {
