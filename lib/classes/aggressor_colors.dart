@@ -47,6 +47,7 @@ class AggressorColors {
   static const Color chromeYellow = Color(0xfffbc658);
   static const Color ceruleanBlue = Color(0xffa2dfde);
   static const Color dimGrey = Color(0xff66615b);
+  static const Color aero = Color(0xff66C4DE);
 
   static Map<int, Color> primaryColorMap = {
     50: Color.fromRGBO(199, 143, 38, .1),

@@ -96,7 +96,7 @@ class Trip {
       String embark,
       String disembark,
       String detailDestination,
-      // String boatid,
+      String boatid,
       String loginKey,
       String passengerId) {
     //default constructor
@@ -118,7 +118,7 @@ class Trip {
     this.embark = embark;
     this.disembark = disembark;
     this.detailDestination = detailDestination;
-    // this.boatid = boatid;
+    this.boatid = boatid;
     this.loginKey = loginKey;
     this.passengerId = passengerId;
   }
@@ -133,7 +133,7 @@ class Trip {
       json['destination'].toString(),
       json['reservationDate'].toString(),
       json['reservationid'].toString(),
-      json['boatid'].toString(),
+      json['boatid'] != null ? json['boatid'].toString() : '',
       json['loginKey'].toString(),
       json['passengerid'].toString(),
     );
@@ -201,7 +201,7 @@ class Trip {
       map['embark'].toString(),
       map['disembark'].toString(),
       map['detailDestination'].toString(),
-      // map['boatid'].toString(),
+      map['boatid'] != null ? map['boatid'].toString() : '',
       map['loginKey'].toString(),
       map['passengerId'].toString(),
     );

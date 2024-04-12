@@ -3,7 +3,6 @@ library user_interface;
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/navbar_items.dart';
 import 'package:aggressor_adventures/user_interface_pages/contact_us_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/login_page.dart';
 import 'package:chunked_stream/chunked_stream.dart';
@@ -13,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../databases/slider_database.dart';
+import '../user_interface_pages/Guest information System/widgets/navbar_items.dart';
 import 'aggressor_api.dart';
 import 'aggressor_colors.dart';
 import 'globals.dart';
@@ -738,7 +738,6 @@ AppBar getAppBar() {
 Drawer getGISAppDrawer(
     {required String charterID, required String reservationID}) {
   return Drawer(
-    backgroundColor: Colors.white,
     child: Column(
       children: [
         Padding(

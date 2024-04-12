@@ -66,7 +66,7 @@ class AggressorApi {
 
     StreamedResponse pageResponse = await request.send();
     var response = json.decode(await pageResponse.stream.bytesToString());
-
+    print(response);
     int length = 0;
     while (response[length.toString()] != null) {
       length++;
@@ -394,10 +394,15 @@ class AggressorApi {
     StreamedResponse pageResponse = await request.send();
     var response = jsonDecode(await pageResponse.stream.bytesToString());
 
-    for (var states in response) {
-      statesList
-          .add(MasterModel(title: states['state'], abbv: states['stateAbbr']));
+    for (var i = 0; i < response.length; i++) {
+      statesList.add(MasterModel(
+          title: response[i]['state'], abbv: response[i]['stateAbbr'], id: i));
     }
+
+    // for (var states in response) {
+    //   statesList
+    //       .add(MasterModel(title: states['state'], abbv: states['stateAbbr'], id: ));
+    // }
     return statesList;
   }
 

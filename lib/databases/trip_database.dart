@@ -18,7 +18,6 @@ class TripDatabaseHelper {
       TripDatabaseHelper._privateConstructor();
   static Database? _database;
 
-
   Future<Database> get database async {
     //get the database object
     if (_database != null) return _database!;
@@ -37,7 +36,7 @@ class TripDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
-      "CREATE TABLE trip(tripDate TEXT,title TEXT,latitude TEXT,longitude TEXT,destination TEXT,reservationDate TEXT,reservationId TEXT, charterId TEXT,total TEXT,discount TEXT,payments TEXT,due TEXT, dueDate TEXT,passengers TEXT,location TEXT,embark TEXT,disembark TEXT,detailDestination TEXT, loginKey TEXT, passengerId TEXT)",
+      "CREATE TABLE trip(tripDate TEXT,title TEXT,latitude TEXT,longitude TEXT,destination TEXT,reservationDate TEXT,reservationId TEXT, charterId TEXT,total TEXT,discount TEXT,payments TEXT,due TEXT, dueDate TEXT,passengers TEXT,location TEXT,embark TEXT,disembark TEXT,detailDestination TEXT,boatid TEXT,loginKey TEXT, passengerId TEXT)",
     );
   }
 
@@ -76,8 +75,9 @@ class TripDatabaseHelper {
   Future<bool> tripExists(String reservationId) async {
     //check if a trip exists in the database based on the trip id
     final db = await database;
-    var result = await db
-        .rawQuery('SELECT EXISTS(SELECT 1 FROM trip WHERE reservationId = ?)', [reservationId]);
+    var result = await db.rawQuery(
+        'SELECT EXISTS(SELECT 1 FROM trip WHERE reservationId = ?)',
+        [reservationId]);
     int? exists = Sqflite.firstIntValue(result);
     return exists == 1;
   }
@@ -85,32 +85,30 @@ class TripDatabaseHelper {
   Future<Trip> getTrip(String reservationId) async {
     //get a specific trip from the database by the reservationId
     final db = await database;
-    var result = await db
-        .rawQuery('SELECT * FROM trip WHERE reservationId = ?', [reservationId]);
+    var result = await db.rawQuery(
+        'SELECT * FROM trip WHERE reservationId = ?', [reservationId]);
     return Trip.tripWithDetails(
-      result[0]['tripDate'].toString(),
-      result[0]['title'].toString(),
-      result[0]['latitude'].toString(),
-      result[0]['longitude'].toString(),
-      result[0]['destination'].toString(),
-      result[0]['reservationDate'].toString(),
-      result[0]['reservationId'].toString(),
-      result[0]['charterId'].toString(),
-      result[0]['total'].toString(),
-      result[0]['discount'].toString(),
-      result[0]['payments'].toString(),
-      result[0]['due'].toString(),
-      result[0]['dueDate'].toString(),
-      result[0]['passengers'].toString(),
-      result[0]['location'].toString(),
-      result[0]['embark'].toString(),
-      result[0]['disembark'].toString(),
-      result[0]['detailDestination'].toString(),
-      // result[0]['boatid'].toString(),
-      result[0]['loginKey'].toString(),
-      result[0]['passengerId'].toString()
-    );
-
+        result[0]['tripDate'].toString(),
+        result[0]['title'].toString(),
+        result[0]['latitude'].toString(),
+        result[0]['longitude'].toString(),
+        result[0]['destination'].toString(),
+        result[0]['reservationDate'].toString(),
+        result[0]['reservationId'].toString(),
+        result[0]['charterId'].toString(),
+        result[0]['total'].toString(),
+        result[0]['discount'].toString(),
+        result[0]['payments'].toString(),
+        result[0]['due'].toString(),
+        result[0]['dueDate'].toString(),
+        result[0]['passengers'].toString(),
+        result[0]['location'].toString(),
+        result[0]['embark'].toString(),
+        result[0]['disembark'].toString(),
+        result[0]['detailDestination'].toString(),
+        result[0]['boatid'].toString(),
+        result[0]['loginKey'].toString(),
+        result[0]['passengerId'].toString());
   }
 
   Future<List<Trip>> queryTrip() async {
@@ -141,7 +139,7 @@ class TripDatabaseHelper {
         maps[i]['detailDestination'],
         maps[i]['loginKey'],
         maps[i]['passengerId'],
-        // maps[i]['boatid']
+        maps[i]['boatid'],
       );
     });
   }

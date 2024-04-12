@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'bloc/message_bloc/message_bloc.dart';
 import 'classes/globals.dart';
 import 'user_interface_pages/login_page.dart';
@@ -66,14 +67,19 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => MessageBloc()),
         BlocProvider(create: (context) => UserCubit()),
       ],
-      child: MaterialApp(
-        title: 'Adventure Of A Lifetime',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: AggressorColors.primaryColor,
+      child: ScreenUtilInit(
+        designSize: const Size(428, 926),
+        minTextAdapt: true,
+        splitScreenMode: false,
+        child: MaterialApp(
+          title: 'Adventure Of A Lifetime',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: AggressorColors.primaryColor,
+          ),
+          navigatorKey: navigatorKey,
+          home: LoginPage(),
         ),
-        navigatorKey: navigatorKey,
-        home: LoginPage(),
       ),
     );
   }

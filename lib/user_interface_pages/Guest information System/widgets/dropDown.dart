@@ -64,7 +64,7 @@ class AdventureDropDown extends StatelessWidget {
                 counterText: '',
                 fillColor: AggressorColors.textFieldBG,
                 filled: true,
-                hintText: hintText,
+                hintText: 'Search',
                 // labelStyle: TextStyle.textHintColor(),
                 // hintStyle: TextStyle.textHintColor(fontSize: 14),
                 focusedBorder: const OutlineInputBorder(

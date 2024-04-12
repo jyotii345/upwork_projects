@@ -6,6 +6,7 @@ import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/utils/shims/dart_ui.dart';
 
+import '../pages/emergency_contact.dart';
 import '../pages/policy.dart';
 
 class AppBarItems extends StatefulWidget {
@@ -34,7 +35,11 @@ class _AppBarItemsState extends State<AppBarItems> {
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
-                    builder: (context) => GuestInformationPage(charID: widget.charterID,reservationID: widget.reservationID,currentTrip: widget.charterID,)));
+                    builder: (context) => GuestInformationPage(
+                          charID: widget.charterID,
+                          reservationID: widget.reservationID,
+                          currentTrip: widget.charterID,
+                        )));
           },
           id: 0),
       AppDrawerModel(
@@ -60,16 +65,24 @@ class _AppBarItemsState extends State<AppBarItems> {
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
                     builder: (context) => Policy(
-                          charterID: widget.charterID,
-                          reservationID: widget.reservationID
-                        )));
+                        charterID: widget.charterID,
+                        reservationID: widget.reservationID)));
           },
           id: 2),
       AppDrawerModel(
           title: 'Emergency Contact',
           isSaved: false,
           isSelected: false,
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => EmergencyContact(
+                          charID: widget.charterID,
+                          reservationID: widget.reservationID,
+                          currentTrip: widget.charterID,
+                        )));
+          },
           id: 3),
       AppDrawerModel(
           title: 'Requests',
