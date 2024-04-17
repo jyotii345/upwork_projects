@@ -2,11 +2,14 @@ import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:flutter/material.dart';
 
 import '../../classes/aggressor_colors.dart';
+import '../../classes/user.dart';
 
 class GuestInformation extends StatefulWidget {
-  GuestInformation({required this.currentTrip, required this.reservationID});
+  GuestInformation(
+      {required this.currentTrip, required this.reservationID, this.user});
   final String currentTrip;
   final String reservationID;
+  User? user;
   @override
   State<GuestInformation> createState() => _GuestInformationState();
 }
@@ -16,7 +19,9 @@ class _GuestInformationState extends State<GuestInformation> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getGISAppDrawer(
-          charterID: widget.currentTrip, reservationID: widget.reservationID),
+          user: widget.user!,
+          charterID: widget.currentTrip,
+          reservationID: widget.reservationID),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,

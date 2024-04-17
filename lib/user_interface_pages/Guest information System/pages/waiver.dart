@@ -9,12 +9,14 @@ import '../../../classes/aggressor_colors.dart';
 import '../../../classes/colors.dart';
 import '../../../classes/globals_user_interface.dart';
 import '../../../classes/trip.dart';
+import '../../../classes/user.dart';
 import '../widgets/aggressor_button.dart';
 
 class Waiver extends StatefulWidget {
-  Waiver({required this.charterID, required this.reservationID});
+  Waiver({required this.charterID, required this.reservationID, this.user});
   String charterID;
   String reservationID;
+  User? user;
   @override
   State<Waiver> createState() => _WaiverState();
 }
@@ -187,6 +189,9 @@ class _WaiverState extends State<Waiver> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AggressorButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   buttonName: "CANCEL",
                   fontSize: 12,
                   width: 70,
@@ -204,9 +209,8 @@ class _WaiverState extends State<Waiver> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => Policy(
-                                    charterID: widget.charterID,
-                                    reservationID: widget.reservationID
-                                  )));
+                                  charterID: widget.charterID,
+                                  reservationID: widget.reservationID)));
                     },
                     buttonName: "SAVE AND CONTINUE",
                     fontSize: 12,

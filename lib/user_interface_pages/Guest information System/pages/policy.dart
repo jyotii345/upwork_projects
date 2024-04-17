@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/emergency_contact.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -8,12 +9,14 @@ import '../../../classes/aggressor_colors.dart';
 import '../../../classes/colors.dart';
 import '../../../classes/globals_user_interface.dart';
 import '../../../classes/trip.dart';
+import '../../../classes/user.dart';
 import '../widgets/aggressor_button.dart';
 
 class Policy extends StatefulWidget {
-  Policy({required this.charterID,required this.reservationID});
+  Policy({required this.charterID, required this.reservationID, this.user});
   String charterID;
   String reservationID;
+  User? user;
   @override
   State<Policy> createState() => _PolicyState();
 }
@@ -154,6 +157,9 @@ class _PolicyState extends State<Policy> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 AggressorButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   buttonName: "CANCEL",
                   fontSize: 12,
                   width: 70,
@@ -167,6 +173,13 @@ class _PolicyState extends State<Policy> {
                           charID: widget.charterID,
                           contactID: basicInfoModel.contactID!,
                           column: "policy");
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EmergencyContact(
+                                  charID: widget.charterID,
+                                  currentTrip: widget.charterID,
+                                  reservationID: widget.reservationID)));
                     },
                     buttonName: "SAVE AND CONTINUE",
                     fontSize: 12,

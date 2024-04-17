@@ -5,9 +5,11 @@ import 'package:aggressor_adventures/classes/globals_user_interface.dart';
 import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/classes/utils.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/masterModel.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/emergency_contact.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/waiver.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/text_field.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/text_style.dart';
+import 'package:aggressor_adventures/user_interface_pages/trips_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,10 +22,12 @@ import '../widgets/dropDown.dart';
 import 'package:intl/intl.dart';
 
 class GuestInformationPage extends StatefulWidget {
-  GuestInformationPage({this.charID, this.currentTrip, this.reservationID});
+  GuestInformationPage(
+      {this.charID, this.currentTrip, this.reservationID, this.user});
   String? charID;
   String? currentTrip;
   String? reservationID;
+  User? user;
   @override
   State<GuestInformationPage> createState() => _GuestInformationPageState();
 }
@@ -42,7 +46,6 @@ int selectedOption = 1;
 bool isTravelPackageChecked = false;
 bool isTCAgreed = false;
 String? charID;
-User? user;
 MasterModel? selectedCountry;
 MasterModel? selectedCitizenship;
 MasterModel? selectedTitle;
@@ -160,7 +163,9 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getGISAppDrawer(
-          charterID: widget.charID!, reservationID: widget.reservationID!),
+          charterID: widget.charID!,
+          reservationID: widget.reservationID!,
+          user: widget.user),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -569,6 +574,9 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       AggressorButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         buttonName: "CANCEL",
                         fontSize: 12,
                         width: 70,

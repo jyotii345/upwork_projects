@@ -6,20 +6,26 @@ import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/utils/shims/dart_ui.dart';
 
+import '../../../classes/user.dart';
 import '../pages/emergency_contact.dart';
 import '../pages/policy.dart';
+import '../pages/travel_information.dart';
 
 class AppBarItems extends StatefulWidget {
-  AppBarItems({Key? key, required this.charterID, required this.reservationID})
+  AppBarItems(
+      {Key? key,
+      required this.charterID,
+      required this.reservationID,
+      this.user})
       : super(key: key);
   final String charterID;
   final String reservationID;
+  User? user;
   @override
   State<AppBarItems> createState() => _AppBarItemsState();
 }
 
 AppDrawerModel model = AppDrawerModel();
-
 int selectedIndex = -1;
 
 class _AppBarItemsState extends State<AppBarItems> {
@@ -32,10 +38,12 @@ class _AppBarItemsState extends State<AppBarItems> {
           isSaved: true,
           isSelected: false,
           onTap: () {
+            // Scaffold.of(context).closeDrawer();
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
                     builder: (context) => GuestInformationPage(
+                          user: widget.user,
                           charID: widget.charterID,
                           reservationID: widget.reservationID,
                           currentTrip: widget.charterID,
@@ -47,6 +55,7 @@ class _AppBarItemsState extends State<AppBarItems> {
           isSaved: false,
           isSelected: false,
           onTap: () {
+            // Scaffold.of(context).closeDrawer();
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
@@ -57,23 +66,26 @@ class _AppBarItemsState extends State<AppBarItems> {
           },
           id: 1),
       AppDrawerModel(
-          title: 'Policies',
-          isSaved: false,
-          isSelected: false,
-          onTap: () {
-            Navigator.push(
-                navigatorKey.currentContext!,
-                MaterialPageRoute(
-                    builder: (context) => Policy(
-                        charterID: widget.charterID,
-                        reservationID: widget.reservationID)));
-          },
-          id: 2),
+        title: 'Policies',
+        isSaved: false,
+        isSelected: false,
+        onTap: () {
+          // Scaffold.of(context).closeDrawer();
+          Navigator.push(
+              navigatorKey.currentContext!,
+              MaterialPageRoute(
+                  builder: (context) => Policy(
+                      charterID: widget.charterID,
+                      reservationID: widget.reservationID)));
+        },
+        id: 2,
+      ),
       AppDrawerModel(
           title: 'Emergency Contact',
           isSaved: false,
           isSelected: false,
           onTap: () {
+            // Scaffold.of(context).closeDrawer();
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
@@ -118,7 +130,17 @@ class _AppBarItemsState extends State<AppBarItems> {
           title: 'Travel Inforamtion',
           isSaved: false,
           isSelected: false,
-          onTap: () {},
+          onTap: () {
+            // Scaffold.of(context).closeDrawer();
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => TravelInformation(
+                          charID: widget.charterID,
+                          reservationID: widget.reservationID,
+                          currentTrip: widget.charterID,
+                        )));
+          },
           id: 9),
       AppDrawerModel(
           title: 'Logout',

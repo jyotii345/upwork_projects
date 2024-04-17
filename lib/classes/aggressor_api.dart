@@ -30,6 +30,7 @@ import 'messages.dart';
 
 class AggressorApi {
   final String apiKey = "L9F6ZJ00CKFJ4Z!";
+  final AggressorApi aggressorApi = AggressorApi();
 
   AggressorApi();
 

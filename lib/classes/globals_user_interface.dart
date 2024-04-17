@@ -16,6 +16,7 @@ import '../user_interface_pages/Guest information System/widgets/navbar_items.da
 import 'aggressor_api.dart';
 import 'aggressor_colors.dart';
 import 'globals.dart';
+import 'user.dart';
 
 double iconSizePortrait =
     MediaQuery.of(navigatorKey.currentContext!).size.width / 10;
@@ -736,7 +737,7 @@ AppBar getAppBar() {
 }
 
 Drawer getGISAppDrawer(
-    {required String charterID, required String reservationID}) {
+    {required String charterID, required String reservationID, User? user}) {
   return Drawer(
     child: Column(
       children: [
