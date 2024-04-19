@@ -23,6 +23,7 @@ class Waiver extends StatefulWidget {
 
 class _WaiverState extends State<Waiver> {
   WebViewController controller = WebViewController();
+  AggressorApi aggressorApi = AggressorApi();
   bool isLoading = true;
   Trip firstTrip = tripList[0];
   var tempList;
@@ -31,6 +32,8 @@ class _WaiverState extends State<Waiver> {
   void initState() {
     getTripInfo();
     gettingIP();
+    formStatus(
+        contactId: basicInfoModel.contactID!, charterId: widget.charterID);
     super.initState();
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -53,6 +56,11 @@ class _WaiverState extends State<Waiver> {
       )
       ..loadRequest(
           Uri.parse("https://gis.aggressoradventures.com/templates/waiver"));
+  }
+
+  formStatus({required String contactId, required String charterId}) async {
+    await aggressorApi.getFormStatus(
+        charterId: charterId, contactId: contactId);
   }
 
   gettingIP() async {
@@ -205,6 +213,10 @@ class _WaiverState extends State<Waiver> {
                           reservationID: widget.reservationID,
                           charID: widget.charterID,
                           ipAddress: hostAddress);
+                      await AggressorApi().updatingStatus(
+                          charID: widget.charterID,
+                          contactID: basicInfoModel.contactID!,
+                          column: "waiver");
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -215,7 +227,7 @@ class _WaiverState extends State<Waiver> {
                     buttonName: "SAVE AND CONTINUE",
                     fontSize: 12,
                     width: 150,
-                    AggressorButtonColor: AggressorColors.ceruleanBlue,
+                    AggressorButtonColor: Color(0xff57ddda),
                     AggressorTextColor: AggressorColors.white),
                 AggressorButton(
                     onPressed: () async {

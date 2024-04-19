@@ -50,6 +50,26 @@ final primaryFormKey = GlobalKey<FormState>();
 final secondaryFormKey = GlobalKey<FormState>();
 
 class _TravelInformationState extends State<TravelInformation> {
+  @override
+  void initState() {
+    formStatus(
+        contactId: basicInfoModel.contactID!, charterId: widget.currentTrip);
+    getUserData();
+    statesList();
+    super.initState();
+  }
+
+  formStatus({required String contactId, required String charterId}) async {
+    await aggressorApi.getFormStatus(
+        charterId: charterId, contactId: contactId);
+  }
+
+  statesList() async {
+    listOfStates = await AggressorApi().getStatesList();
+    selectedState =
+        listOfStates.firstWhere((state) => state.title == basicInfoModel.state);
+  }
+
   Future<void> _selectDepartureDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -297,7 +317,12 @@ class _TravelInformationState extends State<TravelInformation> {
                       SizedBox(width: 20.w),
                       Expanded(
                         child: AggressorButton(
-                          onPressed: () async {},
+                          onPressed: () async {
+                            await AggressorApi().updatingStatus(
+                                charID: widget.charID,
+                                contactID: basicInfoModel.contactID!,
+                                column: "travel");
+                          },
                           buttonName:
                               'I HAVE COMPLETED ALL OF MY TRAVEL PLANS.',
                           leftPadding: 10.w,

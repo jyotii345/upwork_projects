@@ -86,8 +86,15 @@ getMasterData() async {
 class _EmergencyContactState extends State<EmergencyContact> {
   @override
   void initState() {
+    formStatus(
+        contactId: basicInfoModel.contactID!, charterId: widget.currentTrip);
     getMasterData();
     super.initState();
+  }
+
+  formStatus({required String contactId, required String charterId}) async {
+    await aggressorApi.getFormStatus(
+        charterId: charterId, contactId: contactId);
   }
 
   @override
@@ -449,6 +456,10 @@ class _EmergencyContactState extends State<EmergencyContact> {
                             await AggressorApi().postEmergencyContact(
                                 contactId: basicInfoModel.contactID!,
                                 userInfo: saveData);
+                            await AggressorApi().updatingStatus(
+                                charID: widget.charID,
+                                contactID: basicInfoModel.contactID!,
+                                column: "emcontact");
                           },
                           buttonName: 'Save & Continue',
                           AggressorButtonColor: AggressorColors.aero,

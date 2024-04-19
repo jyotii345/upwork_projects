@@ -9,6 +9,7 @@ import 'package:html_editor_enhanced/utils/shims/dart_ui.dart';
 import '../../../classes/user.dart';
 import '../pages/emergency_contact.dart';
 import '../pages/policy.dart';
+import '../pages/requests.dart';
 import '../pages/travel_information.dart';
 
 class AppBarItems extends StatefulWidget {
@@ -38,12 +39,11 @@ class _AppBarItemsState extends State<AppBarItems> {
           isSaved: true,
           isSelected: false,
           onTap: () {
-            // Scaffold.of(context).closeDrawer();
+            Scaffold.of(context).closeDrawer();
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
                     builder: (context) => GuestInformationPage(
-                          user: widget.user,
                           charID: widget.charterID,
                           reservationID: widget.reservationID,
                           currentTrip: widget.charterID,
@@ -55,7 +55,7 @@ class _AppBarItemsState extends State<AppBarItems> {
           isSaved: false,
           isSelected: false,
           onTap: () {
-            // Scaffold.of(context).closeDrawer();
+            Scaffold.of(context).closeDrawer();
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
@@ -70,7 +70,7 @@ class _AppBarItemsState extends State<AppBarItems> {
         isSaved: false,
         isSelected: false,
         onTap: () {
-          // Scaffold.of(context).closeDrawer();
+          Scaffold.of(context).closeDrawer();
           Navigator.push(
               navigatorKey.currentContext!,
               MaterialPageRoute(
@@ -85,7 +85,7 @@ class _AppBarItemsState extends State<AppBarItems> {
           isSaved: false,
           isSelected: false,
           onTap: () {
-            // Scaffold.of(context).closeDrawer();
+            Scaffold.of(context).closeDrawer();
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
@@ -100,7 +100,16 @@ class _AppBarItemsState extends State<AppBarItems> {
           title: 'Requests',
           isSaved: false,
           isSelected: false,
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => Requests(
+                          charID: widget.charterID,
+                          reservationID: widget.reservationID,
+                          currentTrip: widget.charterID,
+                        )));
+          },
           id: 4),
       AppDrawerModel(
           title: 'Rentals & Courses',
@@ -177,11 +186,15 @@ class _AppBarItemsState extends State<AppBarItems> {
     Color blendedColor = Color.alphaBlend(color1.withOpacity(0.1), color2);
     return GestureDetector(
       onTap: () {
-        setState(() {
-          selectedIndex = index;
-          drawersList[index].isSelected = !drawersList[index].isSelected!;
-        });
-        drawersList[index].onTap!();
+        if (selectedIndex == index) {
+          Scaffold.of(context).closeDrawer();
+        } else {
+          setState(() {
+            selectedIndex = index;
+            drawersList[index].isSelected = !drawersList[index].isSelected!;
+          });
+          drawersList[index].onTap!();
+        }
       },
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20.0),

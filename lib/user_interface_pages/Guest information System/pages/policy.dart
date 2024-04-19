@@ -27,6 +27,8 @@ class _PolicyState extends State<Policy> {
   var hostAddress;
   @override
   void initState() {
+    formStatus(
+        contactId: basicInfoModel.contactID!, charterId: widget.charterID);
     super.initState();
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -55,6 +57,11 @@ class _PolicyState extends State<Policy> {
     final info = NetworkInfo();
     hostAddress = await info.getWifiIP();
     return hostAddress;
+  }
+
+  formStatus({required String contactId, required String charterId}) async {
+    await aggressorApi.getFormStatus(
+        charterId: charterId, contactId: contactId);
   }
 
   @override
@@ -184,7 +191,7 @@ class _PolicyState extends State<Policy> {
                     buttonName: "SAVE AND CONTINUE",
                     fontSize: 12,
                     width: 150,
-                    AggressorButtonColor: AggressorColors.ceruleanBlue,
+                    AggressorButtonColor: Color(0xff57ddda),
                     AggressorTextColor: AggressorColors.white),
               ],
             ),

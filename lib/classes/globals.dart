@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/formStatusModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import '../model/basicInfoModel.dart';
@@ -44,6 +45,7 @@ Map<String, Gallery> galleriesMap = <String, Gallery>{};
 Map<String, dynamic> profileData = <String, dynamic>{};
 UserModel userModel = UserModel();
 BasicInfoModel basicInfoModel = BasicInfoModel();
+FormStatusModel formStatus = FormStatusModel();
 Countries countries = Countries();
 Map<String, String> fileDisplayNames = <String, String>{};
 

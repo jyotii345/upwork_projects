@@ -24,15 +24,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../model/basicInfoModel.dart';
+import '../user_interface_pages/Guest information System/model/formStatusModel.dart';
 import '../user_interface_pages/widgets/download.dart';
 import '../user_interface_pages/widgets/toaster.dart';
 import 'messages.dart';
 
 class AggressorApi {
   final String apiKey = "L9F6ZJ00CKFJ4Z!";
-  final AggressorApi aggressorApi = AggressorApi();
-
-  AggressorApi();
 
   Future<dynamic> getUserLogin(String username, String password) async {
     //create and send a login request to the Aggressor Api and return the current user
@@ -394,6 +392,22 @@ class AggressorApi {
     }
   }
 
+  getFormStatus({required String contactId, required String charterId}) async {
+    String url =
+        'https://app.aggressor.com/api/gis/getformstatus/AF/$contactId/$charterId';
+    try {
+      Response response = await get(Uri.parse(url), headers: <String, String>{
+        'apikey': apiKey,
+      });
+      if (response.statusCode == 200) {
+        List decodedResponse = json.decode(response.body);
+        formStatus = FormStatusModel.fromJson(decodedResponse[0]);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<dynamic> getStates() async {
     //returns a list of all states and their country codes
     String url = "https://app.aggressor.com/api/app/registration/states";
@@ -513,6 +527,46 @@ class AggressorApi {
     var userJson = jsonDecode(await pageResponse.stream.bytesToString());
     basicInfoModel = BasicInfoModel.fromJson(userJson);
     return basicInfoModel;
+  }
+
+  Future<String?> getDietaryRestrictions({required String contactId}) async {
+    String url =
+        'https://app.aggressor.com/api/gis/dietaryrestrictions/$contactId';
+    String? dietaryInformation;
+    try {
+      Response response = await get(Uri.parse(url), headers: <String, String>{
+        'apikey': apiKey,
+      });
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> decodedResponse = json.decode(response.body);
+        print(decodedResponse);
+        dietaryInformation = decodedResponse['0']['specialPassengerDetails'];
+      }
+    } catch (e) {
+      print(e);
+    }
+    return dietaryInformation;
+  }
+
+  Future<bool> savingDietaryRestrictions(
+      {required String contactId, required String information}) async {
+    bool isDietaryInformationSaved = false;
+    String url =
+        'https://app.aggressor.com/api/gis/dietaryrestrictions/AF/$contactId';
+    try {
+      Response response = await post(Uri.parse(url), headers: <String, String>{
+        'apikey': apiKey,
+      }, body: {
+        'special_passenger_details': information
+      });
+      if (response.statusCode == 200) {
+        isDietaryInformationSaved = true;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return isDietaryInformationSaved;
   }
 
   Future<dynamic> sendEmail(

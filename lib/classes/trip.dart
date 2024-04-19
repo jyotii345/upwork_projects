@@ -592,6 +592,7 @@ class Trip {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 GuestInformation(
+                                                  contactId: user!.contactId!,
                                                   user: user,
                                                   currentTrip: charterId!,
                                                   reservationID: reservationId!,

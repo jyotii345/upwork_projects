@@ -22,12 +22,14 @@ import '../widgets/dropDown.dart';
 import 'package:intl/intl.dart';
 
 class GuestInformationPage extends StatefulWidget {
-  GuestInformationPage(
-      {this.charID, this.currentTrip, this.reservationID, this.user});
+  GuestInformationPage({
+    this.charID,
+    this.currentTrip,
+    this.reservationID,
+  });
   String? charID;
   String? currentTrip;
   String? reservationID;
-  User? user;
   @override
   State<GuestInformationPage> createState() => _GuestInformationPageState();
 }
@@ -96,6 +98,7 @@ TextEditingController passportExpiration =
 DateTime? selectedPassportDate;
 DateTime? selectedDob;
 MasterModel? selectedTitleValue;
+// BasicInfoModel basicInfoModel = BasicInfoModel();
 
 countryList() async {
   listOfCountries = await AggressorApi().getCountriesList();
@@ -140,9 +143,16 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
+    formStatus(
+        contactId: basicInfoModel.contactID!, charterId: widget.currentTrip!);
     getUserData();
     statesList();
     super.initState();
+  }
+
+  formStatus({required String contactId, required String charterId}) async {
+    await aggressorApi.getFormStatus(
+        charterId: charterId, contactId: contactId);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -163,9 +173,7 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getGISAppDrawer(
-          charterID: widget.charID!,
-          reservationID: widget.reservationID!,
-          user: widget.user),
+          charterID: widget.charID!, reservationID: widget.reservationID!),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -626,6 +634,10 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                                     await AggressorApi().postGuestInformation(
                                         contactId: basicInfoModel.contactID!,
                                         userInfo: saveData);
+                                    await AggressorApi().updatingStatus(
+                                        charID: widget.charID,
+                                        contactID: basicInfoModel.contactID!,
+                                        column: "general");
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -640,8 +652,8 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                           fontSize: 12,
                           width: 150,
                           AggressorButtonColor: isTCAgreed
-                              ? const Color.fromARGB(255, 162, 223, 169)
-                              : AggressorColors.ceruleanBlue,
+                              ? Color(0xff57ddda)
+                              : const Color.fromARGB(255, 162, 223, 169),
                           AggressorTextColor: AggressorColors.white),
                     ],
                   ),
