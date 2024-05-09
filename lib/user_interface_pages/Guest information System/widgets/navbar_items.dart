@@ -1,16 +1,20 @@
 import 'package:aggressor_adventures/classes/globals.dart';
-import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/guest_information.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/guest_information_welcome_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/AppBarModel.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/divingInsurance.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/guest_information.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/waiver.dart';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/utils/shims/dart_ui.dart';
 
 import '../../../classes/user.dart';
+import '../pages/confirmation.dart';
 import '../pages/emergency_contact.dart';
 import '../pages/policy.dart';
+import '../pages/rental_and_courses.dart';
 import '../pages/requests.dart';
 import '../pages/travel_information.dart';
+import '../pages/tripInsurance.dart';
 
 class AppBarItems extends StatefulWidget {
   AppBarItems(
@@ -115,25 +119,57 @@ class _AppBarItemsState extends State<AppBarItems> {
           title: 'Rentals & Courses',
           isSaved: false,
           isSelected: false,
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => RentalAndCourses(
+                          charterID: widget.charterID,
+                          reservationID: widget.reservationID,
+                        )));
+          },
           id: 5),
       AppDrawerModel(
           title: 'Diving Insurance',
           isSaved: false,
           isSelected: false,
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => DivingInsurance(
+                          charterID: widget.charterID,
+                          reservationID: widget.reservationID,
+                        )));
+          },
           id: 6),
       AppDrawerModel(
           title: 'Trip Insurance',
           isSaved: false,
           isSelected: false,
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => TripInsurance(
+                          charterID: widget.charterID,
+                          reservationID: widget.reservationID,
+                        )));
+          },
           id: 7),
       AppDrawerModel(
           title: 'Confirmation',
           isSaved: false,
           isSelected: false,
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => Confirmation(
+                          charterID: widget.charterID,
+                          reservationID: widget.reservationID,
+                        )));
+          },
           id: 8),
       AppDrawerModel(
           title: 'Travel Inforamtion',

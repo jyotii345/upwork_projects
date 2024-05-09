@@ -12,6 +12,8 @@ import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/model/countries.dart';
 import 'package:aggressor_adventures/model/emergencyContactModel.dart';
+import 'package:aggressor_adventures/model/inventoryDetails.dart';
+import 'package:aggressor_adventures/model/travelInformationModel.dart';
 import 'package:aggressor_adventures/model/userModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/masterModel.dart';
 import 'package:chunked_stream/chunked_stream.dart';
@@ -24,6 +26,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../model/basicInfoModel.dart';
+import '../model/divingInsurance.dart';
+import '../model/tripInsuranceModel.dart';
+import '../model/welcomePageModel.dart';
 import '../user_interface_pages/Guest information System/model/formStatusModel.dart';
 import '../user_interface_pages/widgets/download.dart';
 import '../user_interface_pages/widgets/toaster.dart';
@@ -180,7 +185,7 @@ class AggressorApi {
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
 
     StreamedResponse pageResponse = await request.send();
-    return jsonDecode(await pageResponse.stream.bytesToString());
+    jsonDecode(await pageResponse.stream.bytesToString());
   }
 
   Future<dynamic> getContact(String contactId) async {
@@ -547,6 +552,176 @@ class AggressorApi {
       print(e);
     }
     return dietaryInformation;
+  }
+
+  getInventoryDetail({required String? reservationId}) async {
+    String url = "https://app.aggressor.com/api/app/reservations/inventory/" +
+        reservationId!;
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+    var response = jsonDecode(await pageResponse.stream.bytesToString());
+    inventoryDetails = InventoryDetails.fromJson(response['0']);
+    print(inventoryDetails);
+    return inventoryDetails;
+  }
+
+  getRentalAndCoursesDetails({required int? inventoryId}) async {
+    String url =
+        'https://app.aggressor.com/api/gis/rentalscourses/$inventoryId';
+    Response response = await get(Uri.parse(url), headers: <String, String>{
+      'apikey': apiKey,
+      "Content-Type": "application/x-www-form-urlencoded"
+    });
+    try {
+      if (response.statusCode == 200) {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Future<List<TravelInformationModel>> getTravelInformation(
+  Future getTravelInformation(
+      {required String contactId, required charterId}) async {
+    // List<TravelInformationModel> travelInformation = [];
+    String url =
+        'https://app.aggressor.com/api/gis/flightsv2/$contactId/$charterId';
+    try {
+      Response response = await get(Uri.parse(url), headers: <String, String>{
+        'apikey': apiKey,
+      });
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        var decodedResponse = json.decode(response.body);
+        TravelInformationModel.fromJson(decodedResponse);
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    // return travelInformation;
+  }
+
+  getWelcomePageInfo(
+      {required String contactId,
+      required charterId,
+      required String reservationId}) async {
+    String url =
+        'https://app.aggressor.com/api/gis/authenticate/AF/$contactId/$reservationId/$charterId/f082784c136c6b565a88184e3689413a';
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+    try {
+      StreamedResponse pageResponse = await request.send();
+      var response = jsonDecode(await pageResponse.stream.bytesToString());
+      welcomePageDetails = WelcomePageModel.fromJson(response);
+      print(welcomePageDetails);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  postTravelInformation(
+      {required String contactId,
+      required charterId,
+      required TravelInformationModel travelInfo}) async {
+    String url =
+        'https://app.aggressor.com/api/gis/saveflight/AF/$contactId/$charterId';
+    var userJson = travelInfo.toJson();
+    print(userJson);
+    try {
+      Response response = await post(Uri.parse(url),
+          headers: <String, String>{
+            'apikey': apiKey,
+          },
+          body: userJson);
+      print(response);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  postRentalAndCoursesDetails(
+      {required int? inventoryId,
+      required String? courses,
+      required String? rentals,
+      required String? otherText}) async {
+    String url =
+        'https://app.aggressor.com/api/gis/rentalscourses/AF/$inventoryId';
+
+    try {
+      Response response = await post(Uri.parse(url), headers: <String, String>{
+        'apikey': apiKey,
+      }, body: {
+        'rental_equipment[]': rentals,
+        'course[]': courses,
+        'other_rental': otherText
+      });
+      if (response.statusCode == 200) {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future postDivingInsuranceDetails(
+      {required int? inventoryId,
+      required DivingInsuranceModel divingInfo}) async {
+    String url =
+        "https://app.aggressor.com/api/gis/diveinsurance/AF/$inventoryId";
+
+    var userJson = divingInfo.toJson();
+    print(userJson);
+    try {
+      Response response = await post(Uri.parse(url),
+          headers: <String, String>{
+            'apikey': apiKey,
+          },
+          body: userJson);
+      print(response);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future postTripInsuranceDetails(
+      {required int? inventoryId,
+      required TripInsuranceModel insuranceData}) async {
+    String url =
+        "https://app.aggressor.com/api/gis/tripinsurance/AF/$inventoryId";
+    var userJson = insuranceData.toJson();
+    print(userJson);
+    try {
+      Response response = await post(Uri.parse(url),
+          headers: <String, String>{
+            'apikey': apiKey,
+          },
+          body: userJson);
+      print(response);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  getDivingInsuranceDetails({required int inventoryId}) async {
+    String url =
+        "https://app.aggressor.com/api/gis/divinginsurance/$inventoryId";
+    Response response = await get(Uri.parse(url), headers: <String, String>{
+      'apikey': apiKey,
+      "Content-Type": "application/json"
+    });
+    try {
+      if (response.statusCode == 200) {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<bool> savingDietaryRestrictions(

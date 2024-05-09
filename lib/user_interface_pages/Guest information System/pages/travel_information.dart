@@ -1,4 +1,5 @@
 import 'package:aggressor_adventures/model/emergencyContactModel.dart';
+import 'package:aggressor_adventures/model/travelInformationModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/guest_information.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/aggressor_button.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/text_style.dart';
@@ -35,39 +36,54 @@ class TravelInformation extends StatefulWidget {
 
 final AggressorApi aggressorApi = AggressorApi();
 
-TextEditingController ArrivalAirportController = TextEditingController();
-TextEditingController ArrivalFlightNumberController = TextEditingController();
-TextEditingController ArrivalAirlineController = TextEditingController();
-TextEditingController ArrivalDateAndTimeController = TextEditingController();
-
-TextEditingController DepartureAirportController = TextEditingController();
-TextEditingController DepartureFlightNumberController = TextEditingController();
-TextEditingController DepartureAirlineController = TextEditingController();
-TextEditingController DepartureDateAndTimeController = TextEditingController();
 DateTime? arrivalDateAndTime;
 DateTime? departureDateAndTime;
 final primaryFormKey = GlobalKey<FormState>();
 final secondaryFormKey = GlobalKey<FormState>();
+bool isSaved = false;
+TravelInformationModel arrivalInformationModel = TravelInformationModel(
+    airlineController: TextEditingController(),
+    flightNumberController: TextEditingController(),
+    flightDateController: TextEditingController(),
+    flightTypeController: TextEditingController(),
+    airportController: TextEditingController());
+TravelInformationModel departureInformationModel = TravelInformationModel(
+    airlineController: TextEditingController(),
+    flightNumberController: TextEditingController(),
+    flightDateController: TextEditingController(),
+    flightTypeController: TextEditingController(),
+    airportController: TextEditingController());
+
+List<TravelInformationModel> inboundFlightsList = [];
+List<TravelInformationModel> outboundFlightsList = [];
 
 class _TravelInformationState extends State<TravelInformation> {
   @override
   void initState() {
+    getUserTravelInformation(
+        contactId: basicInfoModel.contactID!, charterId: widget.currentTrip);
     formStatus(
         contactId: basicInfoModel.contactID!, charterId: widget.currentTrip);
-    getUserData();
-    statesList();
     super.initState();
+  }
+
+  getUserTravelInformation(
+      {required String contactId, required String charterId}) async {
+    List<TravelInformationModel> travelInformationList = await aggressorApi
+        .getTravelInformation(charterId: charterId, contactId: contactId);
+
+    for (var travelInfo in travelInformationList) {
+      if (travelInfo.flightType == 'inbound') {
+        inboundFlightsList.add(travelInfo);
+      } else {
+        outboundFlightsList.add(travelInfo);
+      }
+    }
   }
 
   formStatus({required String contactId, required String charterId}) async {
     await aggressorApi.getFormStatus(
         charterId: charterId, contactId: contactId);
-  }
-
-  statesList() async {
-    listOfStates = await AggressorApi().getStatesList();
-    selectedState =
-        listOfStates.firstWhere((state) => state.title == basicInfoModel.state);
   }
 
   Future<void> _selectDepartureDate(BuildContext context) async {
@@ -96,6 +112,107 @@ class _TravelInformationState extends State<TravelInformation> {
         arrivalDateAndTime = picked;
       });
     }
+  }
+
+  newFlightWidget({
+    bool isArrivalFlight = true,
+    bool isNewFlight = false,
+    required TravelInformationModel? travelInformation,
+  }) {
+    return Container(
+        width: double.infinity,
+        height: 470.h,
+        decoration: BoxDecoration(
+            color: Colors.white, borderRadius: BorderRadius.circular(8)),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.h, vertical: 10.h),
+                  child: Text(
+                    isArrivalFlight
+                        ? "ARRIVAL INFORMATION (Before your trip)"
+                        : "DEPARTURE INFORMATION (After your trip)",
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+              AdventureFormField(
+                  validator: (value) =>
+                      travelInformation.airportController.text.isNotEmpty
+                          ? null
+                          : " ",
+                  labelText: "Arrival Airport",
+                  controller: travelInformation!.airportController),
+              AdventureFormField(
+                  validator: (value) =>
+                      travelInformation.flightNumberController.text.isNotEmpty
+                          ? null
+                          : " ",
+                  labelText: "Flight Number",
+                  controller: travelInformation.flightNumberController),
+              AdventureFormField(
+                  validator: (value) =>
+                      travelInformation.airlineController.text.isNotEmpty
+                          ? null
+                          : " ",
+                  labelText: "Airline",
+                  controller: travelInformation.airlineController),
+              AdventureFormField(
+                  onTap: () {},
+                  readOnly: true,
+                  validator: (value) =>
+                      travelInformation.flightDateController.text.isNotEmpty
+                          ? null
+                          : " ",
+                  labelText: arrivalDateAndTime != null
+                      ? Utils.getFormattedDate(date: arrivalDateAndTime!)
+                      : "Arrival date & time",
+                  controller: travelInformation.flightDateController),
+              Padding(
+                padding: EdgeInsets.only(top: 10.h, bottom: 8.h),
+                child: Column(
+                  children: [
+                    AggressorButton(
+                      onPressed: () async {
+                        if (isNewFlight) {
+                          setState(() {
+                            isSaved = true;
+                          });
+                        }
+                        // TravelInformationModel travelInfo = TravelInformationModel();
+                      },
+                      buttonName:
+                          isNewFlight ? 'SAVE NEW FLIGHT' : 'UPDATE FLIGHT',
+                      AggressorButtonColor: AggressorColors.seaGreen,
+                      AggressorTextColor: AggressorColors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    isNewFlight == false
+                        ? Padding(
+                            padding: EdgeInsets.only(top: 10.h),
+                            child: AggressorButton(
+                              onPressed: () async {},
+                              buttonName: 'DELETE FLIGHT',
+                              AggressorButtonColor: AggressorColors.red,
+                              AggressorTextColor: AggressorColors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                        : SizedBox(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 
   @override
@@ -156,148 +273,27 @@ class _TravelInformationState extends State<TravelInformation> {
                 SizedBox(
                   height: 30.h,
                 ),
-                Container(
-                    width: double.infinity,
-                    height: 410.h,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.h, vertical: 10.h),
-                              child: Text(
-                                "ARRIVAL INFORMATION (before your trip)",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ),
-                          AdventureFormField(
-                              validator: (value) =>
-                                  ArrivalAirportController.text.isNotEmpty
-                                      ? null
-                                      : " ",
-                              labelText: "Arrival Airport",
-                              controller: ArrivalAirportController),
-                          AdventureFormField(
-                              validator: (value) =>
-                                  ArrivalFlightNumberController.text.isNotEmpty
-                                      ? null
-                                      : " ",
-                              labelText: "Flight Number",
-                              controller: ArrivalFlightNumberController),
-                          AdventureFormField(
-                              validator: (value) =>
-                                  ArrivalAirlineController.text.isNotEmpty
-                                      ? null
-                                      : " ",
-                              labelText: "Airline",
-                              controller: ArrivalAirlineController),
-                          AdventureFormField(
-                              readOnly: true,
-                              validator: (value) =>
-                                  ArrivalDateAndTimeController.text.isNotEmpty
-                                      ? null
-                                      : " ",
-                              labelText: arrivalDateAndTime != null
-                                  ? Utils.getFormattedDate(
-                                      date: arrivalDateAndTime!)
-                                  : "Arrival date & time",
-                              controller: ArrivalDateAndTimeController),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.h, bottom: 8.h),
-                            child: AggressorButton(
-                              onPressed: () async {},
-                              buttonName: 'SAVE NEW FLIGHT',
-                              AggressorButtonColor: AggressorColors.seaGreen,
-                              AggressorTextColor: AggressorColors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                newFlightWidget(
+                    isNewFlight: true,
+                    travelInformation: arrivalInformationModel),
+                isSaved
+                    ? SizedBox(
+                        height: 450.h,
+                        child: ListView.builder(
+                          itemCount: 2,
+                          itemBuilder: (context, index) {
+                            return newFlightWidget(
+                                isNewFlight: false,
+                                travelInformation: departureInformationModel);
+                          },
+                        ),
+                      )
+                    : SizedBox(),
                 SizedBox(height: 25.h),
-                Container(
-                    width: double.infinity,
-                    height: 410.h,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10.h, vertical: 10.h),
-                              child: Text(
-                                "DEPARTURE INFORMATION (after your trip)",
-                                style: TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ),
-                          AdventureFormField(
-                              validator: (value) =>
-                                  DepartureAirportController.text.isNotEmpty
-                                      ? null
-                                      : " ",
-                              labelText: "Departure Airport:",
-                              controller: DepartureFlightNumberController),
-                          AdventureFormField(
-                              validator: (value) =>
-                                  DepartureFlightNumberController
-                                          .text.isNotEmpty
-                                      ? null
-                                      : " ",
-                              labelText: "Flight Number",
-                              controller: DepartureFlightNumberController),
-                          AdventureFormField(
-                              validator: (value) =>
-                                  DepartureAirlineController.text.isNotEmpty
-                                      ? null
-                                      : " ",
-                              labelText: "Airline",
-                              controller: DepartureAirlineController),
-                          AdventureFormField(
-                              onTap: () => _selectDepartureDate(
-                                    context,
-                                  ),
-                              validator: (value) =>
-                                  DepartureDateAndTimeController.text.isNotEmpty
-                                      ? null
-                                      : " ",
-                              labelText: departureDateAndTime != null
-                                  ? Utils.getFormattedDate(
-                                      date: departureDateAndTime!)
-                                  : "Arrival date & time",
-                              controller: DepartureDateAndTimeController),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.h, bottom: 8.h),
-                            child: AggressorButton(
-                              onPressed: () async {},
-                              buttonName: 'SAVE NEW FLIGHT',
-                              AggressorButtonColor: AggressorColors.seaGreen,
-                              AggressorTextColor: AggressorColors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                newFlightWidget(
+                    isArrivalFlight: false,
+                    isNewFlight: true,
+                    travelInformation: departureInformationModel),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   child: Row(

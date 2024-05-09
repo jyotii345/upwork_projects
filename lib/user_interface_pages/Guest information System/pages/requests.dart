@@ -1,5 +1,6 @@
 import 'package:aggressor_adventures/model/emergencyContactModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/guest_information.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/rental_and_courses.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/aggressor_button.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/text_style.dart';
 import 'package:aggressor_adventures/user_interface_pages/trips_page.dart';
@@ -202,6 +203,14 @@ class _RequestsState extends State<Requests> {
                                         contactID: basicInfoModel.contactID!,
                                         column: "requests");
                                   }
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              RentalAndCourses(
+                                                charterID: widget.charID!,
+                                                reservationID: '',
+                                              )));
                                 }
                               : null,
                           buttonName: "SAVE AND CONTINUE",

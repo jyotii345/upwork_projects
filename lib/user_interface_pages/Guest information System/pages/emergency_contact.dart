@@ -1,4 +1,5 @@
 import 'package:aggressor_adventures/model/emergencyContactModel.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/requests.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/aggressor_button.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/text_style.dart';
 import 'package:aggressor_adventures/user_interface_pages/trips_page.dart';
@@ -460,6 +461,13 @@ class _EmergencyContactState extends State<EmergencyContact> {
                                 charID: widget.charID,
                                 contactID: basicInfoModel.contactID!,
                                 column: "emcontact");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Requests(
+                                          charID: widget.charID!,
+                                          reservationID: '',
+                                        )));
                           },
                           buttonName: 'Save & Continue',
                           AggressorButtonColor: AggressorColors.aero,

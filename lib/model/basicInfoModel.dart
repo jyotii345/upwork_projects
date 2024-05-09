@@ -1,3 +1,5 @@
+import '../user_interface_pages/Guest information System/model/masterModel.dart';
+
 class BasicInfoModel {
   String? status;
   String? title;

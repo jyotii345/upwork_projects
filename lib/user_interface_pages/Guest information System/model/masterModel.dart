@@ -2,7 +2,8 @@ class MasterModel {
   int? id;
   String? title;
   String? abbv;
-  MasterModel({this.id, this.title, this.abbv});
+  bool isChecked;
+  MasterModel({this.id, this.title, this.abbv, this.isChecked = false});
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

@@ -53,6 +53,7 @@ MasterModel? selectedCitizenship;
 MasterModel? selectedTitle;
 MasterModel? selectedGender;
 MasterModel? selectedState;
+
 UserModel saveData = UserModel();
 List<MasterModel> listOfCountries = [];
 List<MasterModel> listOfStates = [];

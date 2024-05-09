@@ -10,7 +10,7 @@ import 'package:aggressor_adventures/classes/user.dart';
 import 'package:aggressor_adventures/databases/boat_database.dart';
 import 'package:aggressor_adventures/databases/charter_database.dart';
 import 'package:aggressor_adventures/databases/trip_database.dart';
-import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/guest_information.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/guest_information_welcome_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/photos_gallery_view.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_add_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
@@ -591,7 +591,7 @@ class Trip {
                                         navigatorKey.currentContext!,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                GuestInformation(
+                                                GuestInformationWelcomePage(
                                                   contactId: user!.contactId!,
                                                   user: user,
                                                   currentTrip: charterId!,
