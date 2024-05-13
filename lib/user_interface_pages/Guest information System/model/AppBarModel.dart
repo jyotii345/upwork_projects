@@ -7,8 +7,14 @@ class AppDrawerModel {
   String? title;
   bool? isSaved;
   bool? isSelected;
+  String? taskStatus;
   void Function()? onTap;
 
   AppDrawerModel(
-      {this.title, this.isSaved, this.onTap, this.isSelected, this.id});
+      {this.taskStatus,
+      this.title,
+      this.isSaved,
+      this.onTap,
+      this.isSelected,
+      this.id});
 }

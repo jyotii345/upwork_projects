@@ -398,6 +398,7 @@ class AggressorApi {
   }
 
   getFormStatus({required String contactId, required String charterId}) async {
+    List statusList = [];
     String url =
         'https://app.aggressor.com/api/gis/getformstatus/AF/$contactId/$charterId';
     try {
@@ -406,7 +407,11 @@ class AggressorApi {
       });
       if (response.statusCode == 200) {
         List decodedResponse = json.decode(response.body);
-        formStatus = FormStatusModel.fromJson(decodedResponse[0]);
+        form_status = FormStatusModel.fromJson(decodedResponse[0]);
+        for (var data in decodedResponse) {
+          statusList.add(data);
+        }
+        return statusList;
       }
     } catch (e) {
       print(e);
@@ -584,10 +589,9 @@ class AggressorApi {
     }
   }
 
-  // Future<List<TravelInformationModel>> getTravelInformation(
   Future getTravelInformation(
       {required String contactId, required charterId}) async {
-    // List<TravelInformationModel> travelInformation = [];
+    List<TravelInformationModel> travelInformation = [];
     String url =
         'https://app.aggressor.com/api/gis/flightsv2/$contactId/$charterId';
     try {
@@ -598,13 +602,14 @@ class AggressorApi {
       if (response.statusCode == 200) {
         print(response.body);
         var decodedResponse = json.decode(response.body);
-        TravelInformationModel.fromJson(decodedResponse);
+        for (var data in decodedResponse) {
+          travelInformation.add(TravelInformationModel.fromJson(data));
+        }
       }
     } catch (e) {
       print(e);
     }
-
-    // return travelInformation;
+    return travelInformation;
   }
 
   getWelcomePageInfo(
@@ -620,6 +625,23 @@ class AggressorApi {
       var response = jsonDecode(await pageResponse.stream.bytesToString());
       welcomePageDetails = WelcomePageModel.fromJson(response);
       print(welcomePageDetails);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  deleteTravelInformation(
+      {required String contactId, required int flightId}) async {
+    String url = 'https://app.aggressor.com/api/gis/deleteflight/AF/$contactId';
+    try {
+      Response response = await post(Uri.parse(url), headers: <String, String>{
+        'apikey': apiKey,
+      }, body: {
+        'flightID': flightId.toString()
+      });
+      if (response.statusCode == 200) {
+        print(response.body);
+      }
     } catch (e) {
       print(e);
     }

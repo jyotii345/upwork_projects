@@ -50,7 +50,7 @@ UserModel userModel = UserModel();
 BasicInfoModel basicInfoModel = BasicInfoModel();
 InventoryDetails inventoryDetails = InventoryDetails();
 WelcomePageModel welcomePageDetails = WelcomePageModel();
-FormStatusModel formStatus = FormStatusModel();
+FormStatusModel form_status = FormStatusModel();
 Countries countries = Countries();
 Map<String, String> fileDisplayNames = <String, String>{};
 
