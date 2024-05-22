@@ -104,126 +104,132 @@ class _RequestsState extends State<Requests> {
       ),
       backgroundColor: Color(0xfff4f3ef),
       body: SingleChildScrollView(
-        child: Container(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0, left: 15),
-                  child: Text(
-                    "Online Application And Waiver Form - Special Requests.",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                  ),
-                ),
-                Divider(
-                  thickness: 1,
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 15.0),
+        child: AbsorbPointer(
+          absorbing: form_status.requests == "1" || form_status.requests == "2"
+              ? true
+              : false,
+          child: Container(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0, left: 15),
                     child: Text(
-                      "Dietary Restrictions",
+                      "Online Application And Waiver Form - Special Requests.",
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Checkbox(
-                      // checkColor: Color(0xfff1926e),
-                      value: allergyCheckbox,
-                      onChanged: (newValue) {
-                        setState(() {
-                          allergyCheckbox = newValue!;
-                        });
-                      },
-                    ),
-                    Expanded(
+                  Divider(
+                    thickness: 1,
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15.0),
                       child: Text(
-                        "If you have a food allergy or extremely strict dietary regimen please list it below, however, it may be necessary for you to bring them food items with you. Many of the destinations Aggressor Adventures are located are unable to accommodate special diets. I understand and agree that due to the unavailability of certain foods, special dietary restrictions or food allergies may not be able to be complied with. This area is NOT for personal preference such as brand name products or other non health threatening issues.",
+                        "Dietary Restrictions",
                         style: TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.w400),
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(
-                  height: 30.h,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                    color: Colors.white,
                   ),
-                  child: TextField(
-                    controller: dietaryController,
-                    maxLines: 5,
-                    decoration: InputDecoration(border: InputBorder.none),
+                  SizedBox(
+                    height: 20.h,
                   ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.only(top: 20.0, left: 10, right: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AggressorButton(
-                        onPressed: () {
-                          Navigator.pop(context);
+                      Checkbox(
+                        // checkColor: Color(0xfff1926e),
+                        value: allergyCheckbox,
+                        onChanged: (newValue) {
+                          setState(() {
+                            allergyCheckbox = newValue!;
+                          });
                         },
-                        buttonName: "CANCEL",
-                        fontSize: 12,
-                        width: 70,
-                        AggressorButtonColor: AggressorColors.chromeYellow,
-                        AggressorTextColor: AggressorColors.white,
                       ),
-                      AggressorButton(
-                          onPressed: (allergyCheckbox)
-                              ? () async {
-                                  bool isDietaryInformationSaved =
-                                      await AggressorApi()
-                                          .savingDietaryRestrictions(
-                                              contactId:
-                                                  basicInfoModel.contactID!,
-                                              information:
-                                                  dietaryController.text);
-                                  if (isDietaryInformationSaved) {
-                                    await AggressorApi().updatingStatus(
-                                        charID: widget.charID,
-                                        contactID: basicInfoModel.contactID!,
-                                        column: "requests");
-                                  }
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              RentalAndCourses(
-                                                charterID: widget.charID!,
-                                                reservationID: '',
-                                              )));
-                                }
-                              : null,
-                          buttonName: "SAVE AND CONTINUE",
-                          fontSize: 12,
-                          width: 150,
-                          AggressorButtonColor: allergyCheckbox
-                              ? Color(0xff57ddda)
-                              : const Color.fromARGB(255, 162, 223, 169),
-                          AggressorTextColor: AggressorColors.white),
+                      Expanded(
+                        child: Text(
+                          "If you have a food allergy or extremely strict dietary regimen please list it below, however, it may be necessary for you to bring them food items with you. Many of the destinations Aggressor Adventures are located are unable to accommodate special diets. I understand and agree that due to the unavailability of certain foods, special dietary restrictions or food allergies may not be able to be complied with. This area is NOT for personal preference such as brand name products or other non health threatening issues.",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        ),
+                      ),
                     ],
                   ),
-                )
-              ],
+                  SizedBox(
+                    height: 30.h,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade400),
+                      color: Colors.white,
+                    ),
+                    child: TextField(
+                      controller: dietaryController,
+                      maxLines: 5,
+                      decoration: InputDecoration(border: InputBorder.none),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 20.0, left: 10, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        AggressorButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          buttonName: "CANCEL",
+                          fontSize: 12,
+                          width: 70,
+                          AggressorButtonColor: AggressorColors.chromeYellow,
+                          AggressorTextColor: AggressorColors.white,
+                        ),
+                        AggressorButton(
+                            onPressed: (allergyCheckbox)
+                                ? () async {
+                                    bool isDietaryInformationSaved =
+                                        await AggressorApi()
+                                            .savingDietaryRestrictions(
+                                                contactId:
+                                                    basicInfoModel.contactID!,
+                                                information:
+                                                    dietaryController.text);
+                                    if (isDietaryInformationSaved) {
+                                      await AggressorApi().updatingStatus(
+                                          charID: widget.charID,
+                                          contactID: basicInfoModel.contactID!,
+                                          column: "requests");
+                                    }
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                RentalAndCourses(
+                                                  charterID: widget.charID!,
+                                                  reservationID: '',
+                                                )));
+                                  }
+                                : null,
+                            buttonName: "SAVE AND CONTINUE",
+                            fontSize: 12,
+                            width: 150,
+                            AggressorButtonColor: allergyCheckbox
+                                ? Color(0xff57ddda)
+                                : const Color.fromARGB(255, 162, 223, 169),
+                            AggressorTextColor: AggressorColors.white),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

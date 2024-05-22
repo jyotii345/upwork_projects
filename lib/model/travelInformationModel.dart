@@ -1,3 +1,4 @@
+import 'package:aggressor_adventures/classes/utils.dart';
 import 'package:flutter/material.dart';
 
 class TravelInformationModel {
@@ -12,7 +13,7 @@ class TravelInformationModel {
   late TextEditingController? flightNumberController;
   late TextEditingController? flightTypeController;
   late TextEditingController? flightDateController;
-
+  GlobalKey<FormState>? formKey;
   TravelInformationModel({
     this.airline,
     this.airport,
@@ -25,14 +26,15 @@ class TravelInformationModel {
     this.flightDateController,
     this.flightTypeController,
     this.airportController,
+    this.formKey,
   });
 
   TravelInformationModel.fromJson(Map<String, dynamic> json) {
     airportController = TextEditingController(text: json['airport']);
     airlineController = TextEditingController(text: json['airline']);
-    flightNumberController = TextEditingController(text: json['flight_num']);
-    flightTypeController = TextEditingController(text: json['flight_type']);
-    flightDateController = TextEditingController(text: json['flight_time']);
+    flightNumberController = TextEditingController(text: json['flightNum']);
+    flightTypeController = TextEditingController(text: json['flightType']);
+    
 
     airport = json['airport'];
     airline = json['airline'];
@@ -41,7 +43,11 @@ class TravelInformationModel {
     flightId = json['flightId'];
     flightDate =
         json['flightDate'] != null ? DateTime.parse(json['flightDate']) : null;
-    ;
+    flightDateController = TextEditingController(
+    text: flightDate != null ?  Utils.getFormattedDateWithTime(
+                              date: flightDate!) : null
+    ) ;
+    formKey=  GlobalKey<FormState>(debugLabel: flightNum);
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -58,7 +64,9 @@ class TravelInformationModel {
       data['flight_type'] = this.flightType;
     }
     if (this.flightDate != null) {
-      data['flight_time'] = this.flightDate;
+      print(Utils.getFormattedDateForTravelInformation(date: this.flightDate!));
+      data['flight_time'] =
+          Utils.getFormattedDateForTravelInformation(date: this.flightDate!);
     }
     if (this.flightId != null) {
       data['flightId'] = this.flightId;

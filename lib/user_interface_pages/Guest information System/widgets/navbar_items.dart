@@ -7,8 +7,10 @@ import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/guest_information.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/waiver.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:html_editor_enhanced/utils/shims/dart_ui.dart';
-
+import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
+    as picker;
 import '../../../classes/user.dart';
 import '../pages/confirmation.dart';
 import '../pages/emergency_contact.dart';
@@ -189,7 +191,7 @@ class _AppBarItemsState extends State<AppBarItems> {
           isSelected: false,
           taskStatus: form_status.travel,
           onTap: () {
-            // Scaffold.of(context).closeDrawer();
+            Scaffold.of(context).closeDrawer();
             Navigator.push(
                 navigatorKey.currentContext!,
                 MaterialPageRoute(
@@ -225,17 +227,18 @@ class _AppBarItemsState extends State<AppBarItems> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 670,
+      height: 765.h,
       child: ListView.builder(
         itemCount: drawersList.length,
         itemBuilder: (context, index) {
-          return ItemBuilder(index: index, status: form_status);
+          return ItemBuilder(
+              index: index, status: drawersList[index].taskStatus);
         },
       ),
     );
   }
 
-  ItemBuilder({required int index, required FormStatusModel? status}) {
+  ItemBuilder({required int index, required String? status}) {
     Color color2 = Colors.grey; // Second color
     Color color1 = Colors.red; // First color
 
@@ -253,23 +256,23 @@ class _AppBarItemsState extends State<AppBarItems> {
         }
       },
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 20.0),
+        padding: EdgeInsets.only(bottom: 20.h),
         child: Container(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 20.0),
+                padding: EdgeInsets.only(left: 20.w),
                 child: CircleAvatar(
-                    backgroundColor: status == "0" || status == "2"
+                    backgroundColor: status == "1" || status == "2"
                         ? Colors.green
                         : Colors.grey
                     // selectedIndex == index ? Colors.green : blendedColor
                     ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 25.0,
+                padding: EdgeInsets.only(
+                  left: 25.w,
                 ),
                 child: Text(
                   drawersList[index].title!,
@@ -284,5 +287,80 @@ class _AppBarItemsState extends State<AppBarItems> {
         ),
       ),
     );
+  }
+}
+
+class CustomPicker extends picker.CommonPickerModel {
+  String digits(int value, int length) {
+    return '$value'.padLeft(length, "0");
+  }
+
+  CustomPicker({DateTime? currentTime, picker.LocaleType? locale})
+      : super(locale: locale) {
+    this.currentTime = currentTime ?? DateTime.now();
+    this.setLeftIndex(this.currentTime.hour);
+    this.setMiddleIndex(this.currentTime.minute);
+    this.setRightIndex(this.currentTime.second);
+  }
+
+  @override
+  String? leftStringAtIndex(int index) {
+    if (index >= 0 && index < 24) {
+      return this.digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String? middleStringAtIndex(int index) {
+    if (index >= 0 && index < 60) {
+      return this.digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String? rightStringAtIndex(int index) {
+    if (index >= 0 && index < 60) {
+      return this.digits(index, 2);
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  String leftDivider() {
+    return "|";
+  }
+
+  @override
+  String rightDivider() {
+    return "|";
+  }
+
+  @override
+  List<int> layoutProportions() {
+    return [1, 2, 1];
+  }
+
+  @override
+  DateTime finalTime() {
+    return currentTime.isUtc
+        ? DateTime.utc(
+            currentTime.year,
+            currentTime.month,
+            currentTime.day,
+            this.currentLeftIndex(),
+            this.currentMiddleIndex(),
+            this.currentRightIndex())
+        : DateTime(
+            currentTime.year,
+            currentTime.month,
+            currentTime.day,
+            this.currentLeftIndex(),
+            this.currentMiddleIndex(),
+            this.currentRightIndex());
   }
 }

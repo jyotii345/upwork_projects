@@ -257,342 +257,349 @@ class _DivingInsuranceState extends State<DivingInsurance> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0, left: 13),
-                child: Text(
-                  "Online Application And Waiver Form - Diving Insurance.",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
+        child: AbsorbPointer(
+          absorbing: form_status.diving == "1" || form_status.diving == "2"
+              ? true
+              : false,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0, left: 13),
+                  child: Text(
+                    "Online Application And Waiver Form - Diving Insurance.",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
-              Divider(
-                thickness: 1,
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 10.w),
-                child: Row(
-                  children: [
-                    Text(
-                      "Diving Certification Information",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        launchUrlSite(
-                            url: "https://www.aggressor.com/pages/insurance");
-                      },
-                      child: Text(
-                        "See more",
+                Divider(
+                  thickness: 1,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10.w),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Diving Certification Information",
                         style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xff51cbd5)),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          launchUrlSite(
+                              url: "https://www.aggressor.com/pages/insurance");
+                        },
+                        child: Text(
+                          "See more",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xff51cbd5)),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 25.0, right: 25, top: 15),
-                child: AdventureDropDown(
-                  hintText: 'Certification Level',
-                  selectedItem: selectedCertificateLevel,
-                  item: certificateList,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCertificateLevel = value;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 15.h, right: 25.w, left: 25.w),
-                child: AdventureFormField(
-                    onTap: () => _selectCertificationDate(context),
-                    readOnly: true,
-                    labelText: certificationDate != null
-                        ? Utils.getFormattedDate(date: certificationDate!)
-                        : "Certification date & time",
-                    controller: certificationDateController),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
-                child: AdventureDropDown(
-                  hintText: 'Certification Agency',
-                  selectedItem: selectedCertificateAgency,
-                  item: selectedCertificateAgencyList,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedCertificateAgency = value;
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
-                child: AdventureFormField(
-                    validator: (value) {
-                      return certificationNumberController.text.isNotEmpty
-                          ? null
-                          : "Please enter certificate number";
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 25.0, right: 25, top: 15),
+                  child: AdventureDropDown(
+                    hintText: 'Certification Level',
+                    selectedItem: selectedCertificateLevel,
+                    item: certificateList,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCertificateLevel = value;
+                      });
                     },
-                    labelText: "Certification Number",
-                    controller: certificationNumberController),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 10.w, top: 20.h),
-                child: Row(
-                  children: [
-                    Text(
-                      "Nitrox Certification Information",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
-                child: AdventureFormField(
-                    // validator: (value) => nitroxAgencyController.text.isNotEmpty
-                    //     ? null
-                    //     : "Please enter nitrox agency",
-                    labelText: "Nitrox Agency",
-                    controller: nitroxAgencyController),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
-                child: AdventureFormField(
-                    // validator: (value) => nitroxHashController.text.isNotEmpty
-                    //     ? null
-                    //     : "Please enter nitrox value",
-                    labelText: "Nitrox #",
-                    controller: nitroxNumberController),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
-                child: AdventureFormField(
-                    onTap: () => _selectNitroxDate(context),
-                    readOnly: true,
-                    // validator: (value) => nitroxDateController.text.isNotEmpty
-                    //     ? null
-                    //     : "Please select nitrox date",
-                    labelText: nitroxDate != null
-                        ? Utils.getFormattedDate(date: nitroxDate!)
-                        : "Nitrox Date",
-                    controller: nitroxDateController),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              Divider(
-                thickness: 1,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 5.0, left: 10),
-                child: Text(
-                  "Dive Insurance Information",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
-                child: Text(
-                  "Dive Insurance provides financial protection for divers in the event of a diving related accident. In the event of a dive accident, this insurance typically provides medical coverage, chamber treatment, and air evacuations. Some policies are primary, while others are secondary. Please research and understand the details of the policies you purchase.",
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                Padding(
+                  padding: EdgeInsets.only(top: 15.h, right: 25.w, left: 25.w),
+                  child: AdventureFormField(
+                      onTap: () => _selectCertificationDate(context),
+                      readOnly: true,
+                      labelText: certificationDate != null
+                          ? Utils.getFormattedDate(date: certificationDate!)
+                          : "Certification date & time",
+                      controller: certificationDateController),
                 ),
-              ),
-              SizedBox(
-                height: 120.h,
-                child: ListView.builder(
-                  itemCount: selectedDiveInsuranceList.length,
-                  itemBuilder: (context, index) {
-                    return RadioListTile<MasterModel>(
-                      title: Text(
-                        selectedDiveInsuranceList[index].title!,
-                        style: TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.w400),
-                      ),
-                      value: selectedDiveInsuranceList[index],
-                      selected: selectedDiveInsurance!.id ==
-                          selectedDiveInsuranceList[index].id,
-                      onChanged: (value) {
-                        setState(() {
-                          if (selectedDiveInsurance!.id == 0) {
-                            selectedDiveInsurance!.abbv = "true";
-                          } else {
-                            selectedDiveInsurance!.abbv = "false";
-                          }
-                          selectedDiveInsurance = value;
-                        });
-                        print(selectedDiveInsurance!.id);
-                        print(selectedDiveInsurance!.isChecked);
-                      },
-                      groupValue: selectedDiveInsurance,
-                    );
-                  },
-                ),
-              ),
-              selectedDiveInsurance!.id == 0
-                  ? driveInsuranceSubOptions()
-                  : SizedBox(),
-              SizedBox(
-                height: 10.h,
-              ),
-              Divider(
-                thickness: 1,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 5.0, left: 10),
-                child: Text(
-                  "Dive Equipment / Camera Insurance",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                Padding(
+                  padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
+                  child: AdventureDropDown(
+                    hintText: 'Certification Agency',
+                    selectedItem: selectedCertificateAgency,
+                    item: selectedCertificateAgencyList,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCertificateAgency = value;
+                      });
+                    },
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
-                child: Text(
-                  "Various insurance policies are available to cover loss or damage to your dive equipment, photography equipment (including flooding) and personal items including electronics (laptops, tablets, phones, etc). While our crew make every effort to assists guests with equipment, accidents do happen. Whether it be the natural rocking and rolling of the yacht causing equipment to shift or the slippery nature of wet equipment causing a drop, or countless other scenarios, accidents do happen where equipment is damaged regardless of the best intentions of guests and staff. Equipment insurance protects guests from financial disappointment when these unfortunate incidents do happen.",
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                Padding(
+                  padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
+                  child: AdventureFormField(
+                      validator: (value) {
+                        return certificationNumberController.text.isNotEmpty
+                            ? null
+                            : "Please enter certificate number";
+                      },
+                      labelText: "Certification Number",
+                      controller: certificationNumberController),
                 ),
-              ),
-              SizedBox(
-                height: 120.h,
-                child: ListView.builder(
-                  itemCount: selectedDiveEquipmentList.length,
-                  itemBuilder: (context, index) {
-                    return RadioListTile<MasterModel>(
-                      title: Text(
-                        selectedDiveEquipmentList[index].title!,
+                Padding(
+                  padding: EdgeInsets.only(left: 10.w, top: 20.h),
+                  child: Row(
+                    children: [
+                      Text(
+                        "Nitrox Certification Information",
                         style: TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.w400),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      value: selectedDiveEquipmentList[index],
-                      selected: selectedDiveEquipment!.id ==
-                          selectedDiveEquipmentList[index].id,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedDiveEquipment = value;
-                        });
-                      },
-                      groupValue: selectedDiveEquipment,
-                    );
-                  },
+                    ],
+                  ),
                 ),
-              ),
-              selectedDiveEquipment!.id == 0
-                  ? driveEquipmentSubOptions()
-                  : SizedBox(),
-              SizedBox(height: 30.h),
-              GestureDetector(
-                  onTap: () {
-                    launchUrlSite(
-                        url: "https://www.aggressor.com/pages/insurance");
-                  },
-                  child: Align(
-                      child: Image.asset('assets/AggressorDiveAssure.jpg'))),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: 25.h, left: 10.w, right: 10.w, bottom: 10.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AggressorButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      buttonName: "CANCEL",
-                      fontSize: 12,
-                      width: 70,
-                      AggressorButtonColor: AggressorColors.chromeYellow,
-                      AggressorTextColor: AggressorColors.white,
+                Padding(
+                  padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
+                  child: AdventureFormField(
+                      // validator: (value) => nitroxAgencyController.text.isNotEmpty
+                      //     ? null
+                      //     : "Please enter nitrox agency",
+                      labelText: "Nitrox Agency",
+                      controller: nitroxAgencyController),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
+                  child: AdventureFormField(
+                      // validator: (value) => nitroxHashController.text.isNotEmpty
+                      //     ? null
+                      //     : "Please enter nitrox value",
+                      labelText: "Nitrox #",
+                      controller: nitroxNumberController),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
+                  child: AdventureFormField(
+                      onTap: () => _selectNitroxDate(context),
+                      readOnly: true,
+                      // validator: (value) => nitroxDateController.text.isNotEmpty
+                      //     ? null
+                      //     : "Please select nitrox date",
+                      labelText: nitroxDate != null
+                          ? Utils.getFormattedDate(date: nitroxDate!)
+                          : "Nitrox Date",
+                      controller: nitroxDateController),
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Divider(
+                  thickness: 1,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5.0, left: 10),
+                  child: Text(
+                    "Dive Insurance Information",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
                     ),
-                    SizedBox(width: 25),
-                    AggressorButton(
-                        onPressed: (certificationDate != null &&
-                                selectedCertificateLevel != null &&
-                                selectedCertificateAgency != null)
-                            ? () async {
-                                if (_formKey.currentState!.validate()) {
-                                  DivingInsuranceModel
-                                      divingData = DivingInsuranceModel(
-                                          certification_agency:
-                                              selectedCertificateAgency!.title,
-                                          certification_level:
-                                              selectedCertificateLevel!.title,
-                                          certification_number:
-                                              certificationNumberController
-                                                  .text,
-                                          dive_insurance: selectedDiveInsurance!
-                                              .abbv,
-                                          dive_insurance_co:
-                                              selectedInsuranceCompany!.title,
-                                          dive_insurance_other: othersController
-                                              .text,
-                                          dive_insurance_number:
-                                              policyNumberController.text,
-                                          nitrox_agency:
-                                              nitroxAgencyController.text,
-                                          nitrox_date: Utils
-                                              .getFormattedDateForBackend(
-                                                  date: nitroxDate!),
-                                          nitrox_number:
-                                              nitroxNumberController.text,
-                                          equipment_insurance:
-                                              selectedDiveEquipment!.id == 0
-                                                  ? "Yes"
-                                                  : "No",
-                                          equipment_policy:
-                                              selectedDiveEquipment!.title);
-                                  await AggressorApi()
-                                      .postDivingInsuranceDetails(
-                                          inventoryId:
-                                              inventoryDetails.inventoryId,
-                                          divingInfo: divingData);
-                                  await AggressorApi()
-                                      .getDivingInsuranceDetails(
-                                          inventoryId:
-                                              inventoryDetails.inventoryId!);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => TripInsurance(
-                                                charterID: widget.charterID!,
-                                                reservationID: '',
-                                              )));
-                                }
-                              }
-                            : null,
-                        buttonName: "SAVE AND CONTINUE",
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+                  child: Text(
+                    "Dive Insurance provides financial protection for divers in the event of a diving related accident. In the event of a dive accident, this insurance typically provides medical coverage, chamber treatment, and air evacuations. Some policies are primary, while others are secondary. Please research and understand the details of the policies you purchase.",
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                SizedBox(
+                  height: 120.h,
+                  child: ListView.builder(
+                    itemCount: selectedDiveInsuranceList.length,
+                    itemBuilder: (context, index) {
+                      return RadioListTile<MasterModel>(
+                        title: Text(
+                          selectedDiveInsuranceList[index].title!,
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        ),
+                        value: selectedDiveInsuranceList[index],
+                        selected: selectedDiveInsurance!.id ==
+                            selectedDiveInsuranceList[index].id,
+                        onChanged: (value) {
+                          setState(() {
+                            if (selectedDiveInsurance!.id == 0) {
+                              selectedDiveInsurance!.abbv = "true";
+                            } else {
+                              selectedDiveInsurance!.abbv = "false";
+                            }
+                            selectedDiveInsurance = value;
+                          });
+                          print(selectedDiveInsurance!.id);
+                          print(selectedDiveInsurance!.isChecked);
+                        },
+                        groupValue: selectedDiveInsurance,
+                      );
+                    },
+                  ),
+                ),
+                selectedDiveInsurance!.id == 0
+                    ? driveInsuranceSubOptions()
+                    : SizedBox(),
+                SizedBox(
+                  height: 10.h,
+                ),
+                Divider(
+                  thickness: 1,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5.0, left: 10),
+                  child: Text(
+                    "Dive Equipment / Camera Insurance",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+                  child: Text(
+                    "Various insurance policies are available to cover loss or damage to your dive equipment, photography equipment (including flooding) and personal items including electronics (laptops, tablets, phones, etc). While our crew make every effort to assists guests with equipment, accidents do happen. Whether it be the natural rocking and rolling of the yacht causing equipment to shift or the slippery nature of wet equipment causing a drop, or countless other scenarios, accidents do happen where equipment is damaged regardless of the best intentions of guests and staff. Equipment insurance protects guests from financial disappointment when these unfortunate incidents do happen.",
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                SizedBox(
+                  height: 120.h,
+                  child: ListView.builder(
+                    itemCount: selectedDiveEquipmentList.length,
+                    itemBuilder: (context, index) {
+                      return RadioListTile<MasterModel>(
+                        title: Text(
+                          selectedDiveEquipmentList[index].title!,
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        ),
+                        value: selectedDiveEquipmentList[index],
+                        selected: selectedDiveEquipment!.id ==
+                            selectedDiveEquipmentList[index].id,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDiveEquipment = value;
+                          });
+                        },
+                        groupValue: selectedDiveEquipment,
+                      );
+                    },
+                  ),
+                ),
+                selectedDiveEquipment!.id == 0
+                    ? driveEquipmentSubOptions()
+                    : SizedBox(),
+                SizedBox(height: 30.h),
+                GestureDetector(
+                    onTap: () {
+                      launchUrlSite(
+                          url: "https://www.aggressor.com/pages/insurance");
+                    },
+                    child: Align(
+                        child: Image.asset('assets/AggressorDiveAssure.jpg'))),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: 25.h, left: 10.w, right: 10.w, bottom: 10.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AggressorButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        buttonName: "CANCEL",
                         fontSize: 12,
-                        width: 150,
-                        AggressorButtonColor: Color(0xff57ddda),
-                        AggressorTextColor: AggressorColors.white),
-                  ],
-                ),
-              )
-            ],
+                        width: 70,
+                        AggressorButtonColor: AggressorColors.chromeYellow,
+                        AggressorTextColor: AggressorColors.white,
+                      ),
+                      SizedBox(width: 25),
+                      AggressorButton(
+                          onPressed: (certificationDate != null &&
+                                  selectedCertificateLevel != null &&
+                                  selectedCertificateAgency != null)
+                              ? () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    DivingInsuranceModel divingData =
+                                        DivingInsuranceModel(
+                                            certification_agency:
+                                                selectedCertificateAgency!
+                                                    .title,
+                                            certification_level:
+                                                selectedCertificateLevel!.title,
+                                            certification_number:
+                                                certificationNumberController
+                                                    .text,
+                                            dive_insurance:
+                                                selectedDiveInsurance!.abbv,
+                                            dive_insurance_co:
+                                                selectedInsuranceCompany!.title,
+                                            dive_insurance_other:
+                                                othersController.text,
+                                            dive_insurance_number:
+                                                policyNumberController.text,
+                                            nitrox_agency:
+                                                nitroxAgencyController.text,
+                                            nitrox_date:
+                                                Utils.getFormattedDateForBackend(
+                                                    date: nitroxDate!),
+                                            nitrox_number:
+                                                nitroxNumberController.text,
+                                            equipment_insurance:
+                                                selectedDiveEquipment!.id == 0
+                                                    ? "Yes"
+                                                    : "No",
+                                            equipment_policy:
+                                                selectedDiveEquipment!.title);
+                                    await AggressorApi()
+                                        .postDivingInsuranceDetails(
+                                            inventoryId:
+                                                inventoryDetails.inventoryId,
+                                            divingInfo: divingData);
+                                    await AggressorApi()
+                                        .getDivingInsuranceDetails(
+                                            inventoryId:
+                                                inventoryDetails.inventoryId!);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => TripInsurance(
+                                                  charterID: widget.charterID!,
+                                                  reservationID: '',
+                                                )));
+                                  }
+                                }
+                              : null,
+                          buttonName: "SAVE AND CONTINUE",
+                          fontSize: 12,
+                          width: 150,
+                          AggressorButtonColor: Color(0xff57ddda),
+                          AggressorTextColor: AggressorColors.white),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

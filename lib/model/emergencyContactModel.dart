@@ -13,7 +13,7 @@ class EmergencyContactModel {
   String? emergency_city;
   String? emergency_state;
   String? emergency_zip;
-  String? emergency_countryID;
+  int? emergency_countryID;
   String? emergency2_first;
   String? emergency2_last;
   String? emergency2_relationship;
@@ -26,7 +26,7 @@ class EmergencyContactModel {
   String? emergency2_city;
   String? emergency2_state;
   String? emergency2_zip;
-  String? emergency2_countryID;
+  int? emergency2_countryID;
 
   EmergencyContactModel({
     this.emergency2_address1,
@@ -65,8 +65,8 @@ class EmergencyContactModel {
     emergency_city = json['emergency_city'];
     emergency_countryID = json['emergency_countryID'];
     emergency_email = json['emergency_email'];
-    emergency_first = json['emergency_first'];
-    emergency_last = json['emergency_last'];
+    // emergency_first = json['emergency_first'];
+    // emergency_last = json['emergency_last'];
     emergency_ph_home = json['emergency_ph_home'];
     emergency_ph_mobile = json['emergency_ph_mobile'];
     emergency_ph_work = json['emergency_ph_work'];

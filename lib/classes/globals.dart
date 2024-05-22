@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:aggressor_adventures/classes/contact.dart';
 import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
+import 'package:aggressor_adventures/model/emergencyContactModel.dart';
 import 'package:aggressor_adventures/model/inventoryDetails.dart';
 import 'package:aggressor_adventures/model/travelInformationModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/formStatusModel.dart';
@@ -48,6 +49,7 @@ Map<String, Gallery> galleriesMap = <String, Gallery>{};
 Map<String, dynamic> profileData = <String, dynamic>{};
 UserModel userModel = UserModel();
 BasicInfoModel basicInfoModel = BasicInfoModel();
+EmergencyContactModel emergencyContact = EmergencyContactModel();
 InventoryDetails inventoryDetails = InventoryDetails();
 WelcomePageModel welcomePageDetails = WelcomePageModel();
 FormStatusModel form_status = FormStatusModel();
@@ -68,6 +70,7 @@ List<dynamic> certificationList = [];
 List<dynamic> allStarsList = [];
 DateFormat defaultDateFormat = DateFormat.yMMMMd();
 DateFormat defaultDateFormatForBackend = DateFormat('yyyy-MM-dd');
+DateFormat defaultDateFormatForTravelPost = DateFormat("yyyy-MM-ddTHH:mm");
 
 File userImage = File("");
 

@@ -151,186 +151,198 @@ class _ConfirmationState extends State<Confirmation> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 13),
-              child: Text(
-                "Online Application And Waiver Form - Confirmation.",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 1,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 20.h, right: 12.w),
-              child: Container(
-                height: 650.h,
-                width: 350.w,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          offset: Offset(0, 1),
-                          blurRadius: 1.0,
-                          color: Colors.grey)
-                    ],
-                    borderRadius: BorderRadius.circular(12)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
-                      child: Text(
-                        "General Contact Inforamtion.",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    infoContainer(title: "Title", data: basicInfoModel.title!),
-                    infoContainer(
-                        title: "First Name", data: basicInfoModel.firstName!),
-                    infoContainer(
-                        title: "Middle Name", data: basicInfoModel.middleName!),
-                    infoContainer(
-                        title: "Last Name", data: basicInfoModel.lastName!),
-                    infoContainer(
-                        title: "Date of Birth", data: basicInfoModel.dob!),
-                    infoContainer(
-                        title: "Address", data: basicInfoModel.address1!),
-                    infoContainer(
-                        title: "Apt/Building", data: basicInfoModel.address2!),
-                    infoContainer(
-                        title: "Country",
-                        data: basicInfoModel.country!.toString()),
-                    infoContainer(
-                        title: "Occupation", data: basicInfoModel.occupation!),
-                    infoContainer(
-                        title: "Home Phone", data: basicInfoModel.phone1!),
-                    infoContainer(
-                        title: "Work Phone", data: basicInfoModel.phone2!),
-                    infoContainer(title: "Email", data: basicInfoModel.phone3!),
-                    infoContainer(title: "Gender", data: basicInfoModel.email!),
-                    infoContainer(title: "City", data: basicInfoModel.city!),
-                    infoContainer(
-                        title: "Province", data: basicInfoModel.province!),
-                    infoContainer(title: "Zip", data: basicInfoModel.zip!),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 20.h, right: 12.w),
-              child: Container(
-                height: 200.h,
-                width: 350.w,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          offset: Offset(0, 1),
-                          blurRadius: 1.0,
-                          color: Colors.grey)
-                    ],
-                    borderRadius: BorderRadius.circular(12)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
-                      child: Text(
-                        "Passport / Visa Information",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    infoContainer(
-                        title: "Citizenship:",
-                        data: basicInfoModel.country!.toString()),
-                    infoContainer(
-                        title: "Passport #:",
-                        data: basicInfoModel.passportNumber!),
-                    infoContainer(
-                        title: "Expiration Date:",
-                        data: basicInfoModel.passportExpiration!),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 20.h, right: 12.w),
-              child: Container(
-                height: 200.h,
-                width: 350.w,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                          offset: Offset(0, 1),
-                          blurRadius: 1.0,
-                          color: Colors.grey)
-                    ],
-                    borderRadius: BorderRadius.circular(12)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
-                      child: Text(
-                        "Rentals",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    // infoContainer(
-                    //     title: "Citizenship:",
-                    //     data:rentalList.),
-                    infoContainer(
-                        title: "Passport #:",
-                        data: basicInfoModel.passportNumber!),
-                    infoContainer(
-                        title: "Expiration Date:",
-                        data: basicInfoModel.passportExpiration!),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: 25.h, left: 10.w, right: 10.w, bottom: 10.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AggressorButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    buttonName: "CANCEL",
-                    fontSize: 12,
-                    width: 70.w,
-                    AggressorButtonColor: AggressorColors.chromeYellow,
-                    AggressorTextColor: AggressorColors.white,
+        child: AbsorbPointer(
+          absorbing:
+              form_status.confirmation == "1" || form_status.confirmation == "2"
+                  ? true
+                  : false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0, left: 13),
+                child: Text(
+                  "Online Application And Waiver Form - Confirmation.",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                   ),
-                  SizedBox(width: 25.w),
-                  AggressorButton(
-                      onPressed: () async {},
-                      buttonName: "SAVE AND CONTINUE",
-                      fontSize: 12,
-                      width: 150,
-                      AggressorButtonColor: Color(0xff57ddda),
-                      AggressorTextColor: AggressorColors.white),
-                ],
+                ),
               ),
-            )
-          ],
+              Divider(
+                thickness: 1,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 20.h, right: 12.w),
+                child: Container(
+                  height: 650.h,
+                  width: 350.w,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            offset: Offset(0, 1),
+                            blurRadius: 1.0,
+                            color: Colors.grey)
+                      ],
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+                        child: Text(
+                          "General Contact Inforamtion.",
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      infoContainer(
+                          title: "Title", data: basicInfoModel.title!),
+                      infoContainer(
+                          title: "First Name", data: basicInfoModel.firstName!),
+                      infoContainer(
+                          title: "Middle Name",
+                          data: basicInfoModel.middleName!),
+                      infoContainer(
+                          title: "Last Name", data: basicInfoModel.lastName!),
+                      infoContainer(
+                          title: "Date of Birth", data: basicInfoModel.dob!),
+                      infoContainer(
+                          title: "Address", data: basicInfoModel.address1!),
+                      infoContainer(
+                          title: "Apt/Building",
+                          data: basicInfoModel.address2!),
+                      infoContainer(
+                          title: "Country",
+                          data: basicInfoModel.country!.toString()),
+                      infoContainer(
+                          title: "Occupation",
+                          data: basicInfoModel.occupation!),
+                      infoContainer(
+                          title: "Home Phone", data: basicInfoModel.phone1!),
+                      infoContainer(
+                          title: "Work Phone", data: basicInfoModel.phone2!),
+                      infoContainer(
+                          title: "Email", data: basicInfoModel.phone3!),
+                      infoContainer(
+                          title: "Gender", data: basicInfoModel.email!),
+                      infoContainer(title: "City", data: basicInfoModel.city!),
+                      infoContainer(
+                          title: "Province", data: basicInfoModel.province!),
+                      infoContainer(title: "Zip", data: basicInfoModel.zip!),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 20.h, right: 12.w),
+                child: Container(
+                  height: 200.h,
+                  width: 350.w,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            offset: Offset(0, 1),
+                            blurRadius: 1.0,
+                            color: Colors.grey)
+                      ],
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+                        child: Text(
+                          "Passport / Visa Information",
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      infoContainer(
+                          title: "Citizenship:",
+                          data: basicInfoModel.country!.toString()),
+                      infoContainer(
+                          title: "Passport #:",
+                          data: basicInfoModel.passportNumber!),
+                      infoContainer(
+                          title: "Expiration Date:",
+                          data: basicInfoModel.passportExpiration!),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 20.h, right: 12.w),
+                child: Container(
+                  height: 200.h,
+                  width: 350.w,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            offset: Offset(0, 1),
+                            blurRadius: 1.0,
+                            color: Colors.grey)
+                      ],
+                      borderRadius: BorderRadius.circular(12)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+                        child: Text(
+                          "Rentals",
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      // infoContainer(
+                      //     title: "Citizenship:",
+                      //     data:rentalList.),
+                      infoContainer(
+                          title: "Passport #:",
+                          data: basicInfoModel.passportNumber!),
+                      infoContainer(
+                          title: "Expiration Date:",
+                          data: basicInfoModel.passportExpiration!),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    top: 25.h, left: 10.w, right: 10.w, bottom: 10.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AggressorButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      buttonName: "CANCEL",
+                      fontSize: 12,
+                      width: 70.w,
+                      AggressorButtonColor: AggressorColors.chromeYellow,
+                      AggressorTextColor: AggressorColors.white,
+                    ),
+                    SizedBox(width: 25.w),
+                    AggressorButton(
+                        onPressed: () async {},
+                        buttonName: "SAVE AND CONTINUE",
+                        fontSize: 12,
+                        width: 150,
+                        AggressorButtonColor: Color(0xff57ddda),
+                        AggressorTextColor: AggressorColors.white),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

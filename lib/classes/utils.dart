@@ -6,10 +6,20 @@ class Utils {
     return defaultDateFormat
         .format(DateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS").parse(date.toString()));
   }
+  static String getFormattedDateWithTime({required DateTime date}) {
+    return  
+    DateFormat("MMMM d, y hh:mm aaa")
+    
+        .format(DateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS").parse(date.toString()));
+  }
 
   static String getFormattedDateForBackend({required DateTime date}) {
     return defaultDateFormatForBackend
         .format(DateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS").parse(date.toString()));
+  }
+
+  static String getFormattedDateForTravelInformation({required DateTime date}) {
+    return defaultDateFormatForTravelPost.format(date);
   }
 
   static DateTime dateTimeFromString({required String date}) {

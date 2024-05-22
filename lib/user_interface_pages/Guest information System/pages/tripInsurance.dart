@@ -186,122 +186,130 @@ class _TripInsuranceState extends State<TripInsurance> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0, left: 13),
-              child: Text(
-                "Online Application And Waiver Form - Trip Insurance.",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+        child: AbsorbPointer(
+          absorbing:
+              form_status.insurance == "1" || form_status.insurance == "2"
+                  ? true
+                  : false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0, left: 13),
+                child: Text(
+                  "Online Application And Waiver Form - Trip Insurance.",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
-            ),
-            Divider(
-              thickness: 1,
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
-              child: Text(
-                "Aggressor Adventures strongly recommends that each guest purchase comprehensive dive, accident, medical, baggage, trip cancellation and interruption insurance (cancel for any reason policy).",
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+              Divider(
+                thickness: 1,
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
-              child: Text(
-                "Please research and understand the details of the policies you purchase. It is important you understand the coverages your policy offers and any limitations that may exist on claims made.",
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+              Padding(
+                padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+                child: Text(
+                  "Aggressor Adventures strongly recommends that each guest purchase comprehensive dive, accident, medical, baggage, trip cancellation and interruption insurance (cancel for any reason policy).",
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                ),
               ),
-            ),
-            SizedBox(
-              height: 250.h,
-              child: ListView.builder(
-                itemCount: TripInsuranceOptionList.length,
-                itemBuilder: (context, index) {
-                  return RadioListTile<MasterModel>(
-                    title: Text(
-                      TripInsuranceOptionList[index].title!,
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-                    ),
-                    value: TripInsuranceOptionList[index],
-                    selected: selectedTripInsuranceOption!.title ==
-                        TripInsuranceOptionList[index].title,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedTripInsuranceOption = value;
-                      });
-                    },
-                    groupValue: selectedTripInsuranceOption,
-                  );
-                },
+              Padding(
+                padding: EdgeInsets.only(left: 10.w, right: 10.w, top: 20.h),
+                child: Text(
+                  "Please research and understand the details of the policies you purchase. It is important you understand the coverages your policy offers and any limitations that may exist on claims made.",
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                ),
               ),
-            ),
-            selectedTripInsuranceOption!.id == 0
-                ? tripInsuranceSubOptions()
-                : SizedBox(),
-            Padding(
-              padding: EdgeInsets.only(top: 25.h),
-              child: GestureDetector(
-                  onTap: () {
-                    launchUrlSite(
-                        url: "https://www.aggressor.com/pages/insurance");
-                  },
-                  child: Align(
-                      child: Image.asset('assets/AggressorDiveAssure.jpg'))),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: 25.h, left: 10.w, right: 10.w, bottom: 10.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AggressorButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    buttonName: "CANCEL",
-                    fontSize: 12,
-                    width: 70.w,
-                    AggressorButtonColor: AggressorColors.chromeYellow,
-                    AggressorTextColor: AggressorColors.white,
-                  ),
-                  SizedBox(width: 25.w),
-                  AggressorButton(
-                      onPressed: () async {
-                        TripInsuranceModel tripData = TripInsuranceModel(
-                          trip_insurance:
-                              selectedTripInsuranceOption!.id == 0 ? "1" : "0",
-                          trip_insurance_co: selectedInsuranceCompany!.title,
-                          trip_insurance_other: othersController.text,
-                          trip_insurance_number: policyNumberController.text,
-                          trip_insurance_date: Utils.getFormattedDateForBackend(
-                              date: policyExpirationDate!),
-                        );
-                        await AggressorApi().postTripInsuranceDetails(
-                            inventoryId: inventoryDetails.inventoryId!,
-                            insuranceData: tripData);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => TravelInformation(
-                                      currentTrip: widget.charterID,
-                                      charID: widget.charterID,
-                                      reservationID: widget.reservationID,
-                                    )));
+              SizedBox(
+                height: 250.h,
+                child: ListView.builder(
+                  itemCount: TripInsuranceOptionList.length,
+                  itemBuilder: (context, index) {
+                    return RadioListTile<MasterModel>(
+                      title: Text(
+                        TripInsuranceOptionList[index].title!,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w700),
+                      ),
+                      value: TripInsuranceOptionList[index],
+                      selected: selectedTripInsuranceOption!.title ==
+                          TripInsuranceOptionList[index].title,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedTripInsuranceOption = value;
+                        });
                       },
-                      buttonName: "SAVE AND CONTINUE",
-                      fontSize: 12,
-                      width: 150,
-                      AggressorButtonColor: Color(0xff57ddda),
-                      AggressorTextColor: AggressorColors.white),
-                ],
+                      groupValue: selectedTripInsuranceOption,
+                    );
+                  },
+                ),
               ),
-            )
-          ],
+              selectedTripInsuranceOption!.id == 0
+                  ? tripInsuranceSubOptions()
+                  : SizedBox(),
+              Padding(
+                padding: EdgeInsets.only(top: 25.h),
+                child: GestureDetector(
+                    onTap: () {
+                      launchUrlSite(
+                          url: "https://www.aggressor.com/pages/insurance");
+                    },
+                    child: Align(
+                        child: Image.asset('assets/AggressorDiveAssure.jpg'))),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    top: 25.h, left: 10.w, right: 10.w, bottom: 10.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AggressorButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      buttonName: "CANCEL",
+                      fontSize: 12,
+                      width: 70.w,
+                      AggressorButtonColor: AggressorColors.chromeYellow,
+                      AggressorTextColor: AggressorColors.white,
+                    ),
+                    SizedBox(width: 25.w),
+                    AggressorButton(
+                        onPressed: () async {
+                          TripInsuranceModel tripData = TripInsuranceModel(
+                            trip_insurance: selectedTripInsuranceOption!.id == 0
+                                ? "1"
+                                : "0",
+                            trip_insurance_co: selectedInsuranceCompany!.title,
+                            trip_insurance_other: othersController.text,
+                            trip_insurance_number: policyNumberController.text,
+                            trip_insurance_date:
+                                Utils.getFormattedDateForBackend(
+                                    date: policyExpirationDate!),
+                          );
+                          await AggressorApi().postTripInsuranceDetails(
+                              inventoryId: inventoryDetails.inventoryId!,
+                              insuranceData: tripData);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TravelInformation(
+                                        currentTrip: widget.charterID,
+                                        charID: widget.charterID,
+                                        reservationID: widget.reservationID,
+                                      )));
+                        },
+                        buttonName: "SAVE AND CONTINUE",
+                        fontSize: 12,
+                        width: 150,
+                        AggressorButtonColor: Color(0xff57ddda),
+                        AggressorTextColor: AggressorColors.white),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

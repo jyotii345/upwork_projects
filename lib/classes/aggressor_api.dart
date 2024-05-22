@@ -13,6 +13,7 @@ import 'package:aggressor_adventures/databases/trip_database.dart';
 import 'package:aggressor_adventures/model/countries.dart';
 import 'package:aggressor_adventures/model/emergencyContactModel.dart';
 import 'package:aggressor_adventures/model/inventoryDetails.dart';
+import 'package:aggressor_adventures/model/rentalModel.dart';
 import 'package:aggressor_adventures/model/travelInformationModel.dart';
 import 'package:aggressor_adventures/model/userModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/masterModel.dart';
@@ -573,7 +574,9 @@ class AggressorApi {
     return inventoryDetails;
   }
 
-  getRentalAndCoursesDetails({required int? inventoryId}) async {
+  Future<RentalModel> getRentalAndCoursesDetails(
+      {required int? inventoryId}) async {
+    RentalModel rentalModel = RentalModel();
     String url =
         'https://app.aggressor.com/api/gis/rentalscourses/$inventoryId';
     Response response = await get(Uri.parse(url), headers: <String, String>{
@@ -582,11 +585,14 @@ class AggressorApi {
     });
     try {
       if (response.statusCode == 200) {
-        print(response.body);
+        Map<String, dynamic> decodedResponse = json.decode(response.body);
+
+        rentalModel = RentalModel.fromJson(decodedResponse['0']);
       }
     } catch (e) {
       print(e);
     }
+    return rentalModel;
   }
 
   Future getTravelInformation(
@@ -642,6 +648,24 @@ class AggressorApi {
       if (response.statusCode == 200) {
         print(response.body);
       }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  updateTravelInformation(
+      {required String contactId,
+      required TravelInformationModel travelInfo}) async {
+    String url = 'https://app.aggressor.com/api/gis/updateflight/AF/$contactId';
+    var userJson = travelInfo.toJson();
+    print(userJson);
+    try {
+      Response response = await post(Uri.parse(url),
+          headers: <String, String>{
+            'apikey': apiKey,
+          },
+          body: userJson);
+      print(response);
     } catch (e) {
       print(e);
     }
@@ -741,6 +765,19 @@ class AggressorApi {
       if (response.statusCode == 200) {
         print(response.body);
       }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  getEmergencyContactDetails({required String contactId}) async {
+    String url = "https://app.aggressor.com/api/gis/contacts/$contactId";
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+    try {
+      StreamedResponse pageResponse = await request.send();
+      var response = jsonDecode(await pageResponse.stream.bytesToString());
+      emergencyContact = EmergencyContactModel.fromJson(response);
     } catch (e) {
       print(e);
     }

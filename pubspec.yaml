@@ -59,6 +59,7 @@ dependencies:
   network_info_plus: ^3.0.5
   fluttertoast: ^8.2.4
   flutter_screenutil: ^5.9.0
+  flutter_datetime_picker_plus: ^2.2.0
 
 flutter_icons:
   ios: true
