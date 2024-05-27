@@ -75,8 +75,9 @@ class MyApp extends StatelessWidget {
           title: 'Adventure Of A Lifetime',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            primarySwatch: AggressorColors.primaryColor,
-          ),
+              primarySwatch: AggressorColors.secondaryColor,
+              colorScheme:
+                  ColorScheme.light(primary: AggressorColors.secondaryColor)),
           navigatorKey: navigatorKey,
           home: LoginPage(),
         ),

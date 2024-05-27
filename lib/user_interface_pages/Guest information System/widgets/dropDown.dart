@@ -12,12 +12,16 @@ class AdventureDropDown extends StatelessWidget {
   final String hintText;
   final MasterModel? selectedItem;
   final Function(MasterModel?)? onChanged;
+  final bool isSearchable;
+  final String? Function(MasterModel?)? validator;
   const AdventureDropDown({
     Key? key,
     required this.item,
     required this.hintText,
     required this.onChanged,
     this.selectedItem,
+    this.isSearchable = false,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -27,8 +31,9 @@ class AdventureDropDown extends StatelessWidget {
       child: DropdownSearch<MasterModel>(
         selectedItem: selectedItem,
         dropdownBuilder: _customDropDownSelectedAdventure,
-        items: item, //Get.find<RegistrationController>().states,
+        items: item,
         onChanged: onChanged,
+        validator: validator,
         dropdownDecoratorProps: DropDownDecoratorProps(
           dropdownSearchDecoration: InputDecoration(
             iconColor: AggressorColors.aliceBlue,
@@ -52,7 +57,7 @@ class AdventureDropDown extends StatelessWidget {
         ),
         popupProps: PopupProps.menu(
           itemBuilder: _customPopupItemBuilderExample2,
-          showSearchBox: true,
+          showSearchBox: isSearchable,
           searchFieldProps: TextFieldProps(
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               cursorColor: AggressorColors.aliceBlue,
@@ -65,6 +70,7 @@ class AdventureDropDown extends StatelessWidget {
                 fillColor: AggressorColors.textFieldBG,
                 filled: true,
                 hintText: 'Search',
+
                 // labelStyle: TextStyle.textHintColor(),
                 // hintStyle: TextStyle.textHintColor(fontSize: 14),
                 focusedBorder: const OutlineInputBorder(

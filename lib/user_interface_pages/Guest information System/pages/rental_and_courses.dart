@@ -3,8 +3,10 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/confirmation.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/divingInsurance.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/emergency_contact.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/travel_information.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -22,9 +24,9 @@ import '../widgets/aggressor_button.dart';
 class RentalAndCourses extends StatefulWidget {
   RentalAndCourses(
       {required this.charterID, required this.reservationID, this.user});
-  String charterID;
-  String reservationID;
-  User? user;
+  final String charterID;
+  final String reservationID;
+  final User? user;
   @override
   State<RentalAndCourses> createState() => _RentalAndCoursesState();
 }
@@ -38,13 +40,24 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
   List<MasterModel> rentalsModel = [];
   List<MasterModel> bcSizeModel = [];
   TextEditingController otherRentalsController = TextEditingController();
+  bool isDataLoading = true;
+  bool isDataPosting = false;
   @override
   void initState() {
-    formStatus(
-        contactId: basicInfoModel.contactID!, charterId: widget.charterID);
-    getInventoryDetails();
-    getRentalAndCoursesDetails();
     super.initState();
+    getInitialData();
+  }
+
+  getInitialData() async {
+    setState(() {
+      isDataLoading = true;
+    });
+    await formStatus(
+        contactId: basicInfoModel.contactID!, charterId: widget.charterID);
+    await getRentalAndCoursesDetails();
+    setState(() {
+      isDataLoading = false;
+    });
   }
 
   formStatus({required String contactId, required String charterId}) async {
@@ -52,14 +65,10 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
         charterId: charterId, contactId: contactId);
   }
 
-  getInventoryDetails() async {
-    await aggressorApi.getInventoryDetail(reservationId: widget.reservationID);
-  }
-
   getRentalAndCoursesDetails() async {
     RentalModel rentalModelFromAPI = await AggressorApi()
-        .getRentalAndCoursesDetails(inventoryId: inventoryDetails.inventoryId);
-    print(rentalModelFromAPI);
+        .getRentalAndCoursesDetails(
+            inventoryId: welcomePageDetails.inventoryid!);
     setState(() {
       coursesModel = rentalModelFromAPI.coursesList!;
       rentalsModel = rentalModelFromAPI.rentalsList!;
@@ -110,512 +119,492 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: AbsorbPointer(
-          absorbing:
-              // form_status.rentals == "1" || form_status.rentals == "2"
-              //     ? true
-              //     :
-              false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0, left: 30),
-                child: Text(
-                  "Online Application And Waiver Form - Rental Requests.",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              Divider(
-                thickness: 1,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0, left: 20, right: 20),
-                child: Row(
+      body: isDataLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: AbsorbPointer(
+                absorbing:
+                    // form_status.rentals == "1" || form_status.rentals == "2"
+                    //     ? true
+                    //     :
+                    false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Courses",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xff51cbd5)),
-                    ),
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    GestureDetector(
-                      onTap: () {},
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0, left: 30),
                       child: Text(
-                        "See more",
+                        "Online Application And Waiver Form - Rental Requests.",
                         style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xff51cbd5)),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-                child: InfoBannerContainer(
-                    bgColor: AggressorColors.aero,
-                    infoText:
-                        'Want to take a course onboard? Sign up now by checking below boxes.Courses are SSI or PADI based on Instructor Membership.'),
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: coursesModel[0].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        coursesModel[0].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Nitrox",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: coursesModel[1].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        coursesModel[1].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "PADI Advanced Open Water Diver Course",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: coursesModel[2].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        coursesModel[2].isChecked = value!;
-                        ;
-                      });
-                    },
-                  ),
-                  Text(
-                    "SSI Advanced Adventurer Course",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: coursesModel[3].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        coursesModel[3].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Open Water Check-Out Dives",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0, left: 20, right: 20),
-                child: Row(
-                  children: [
-                    Text(
-                      "Rentals",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xff51cbd5)),
+                    Divider(
+                      thickness: 1,
                     ),
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        "See more",
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xff51cbd5)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-                child: InfoBannerContainer(
-                    bgColor: AggressorColors.aero,
-                    infoText:
-                        'Want to rent dive equipment onboard? Check below boxes to reserve.'),
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rentalsModel[0].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        rentalsModel[0].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Dive Computer",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rentalsModel[1].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        rentalsModel[1].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "BC",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rentalsModel[2].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        rentalsModel[2].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Regulator",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rentalsModel[3].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        rentalsModel[3].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Nitrox (Unlimited)",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rentalsModel[4].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        rentalsModel[4].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Mask",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rentalsModel[5].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        rentalsModel[5].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Fins",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rentalsModel[6].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        rentalsModel[6].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Snorkel",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Checkbox(
-                    value: rentalsModel[7].isChecked,
-                    onChanged: (value) {
-                      setState(() {
-                        rentalsModel[7].isChecked = value!;
-                      });
-                    },
-                  ),
-                  Text(
-                    "Dive Light",
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
-              rentalsModel[1].isChecked
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                          child: Text(
-                            "BC Size",
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 15.0, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Courses",
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xff51cbd5)),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                          child: Row(
-                            children: [
-                              Text(
-                                "XS",
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xff51cbd5)),
-                              ),
-                              Checkbox(
-                                value:
-                                    rentalsModel[1].subCategories![0].isChecked,
-                                onChanged: (value) {
-                                  setState(() {
-                                    rentalsModel[1]
-                                        .subCategories![0]
-                                        .isChecked = value!;
-                                  });
-                                },
-                              ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              Text(
-                                "XL",
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xff51cbd5)),
-                              ),
-                              Checkbox(
-                                value:
-                                    rentalsModel[1].subCategories![1].isChecked,
-                                onChanged: (value) {
-                                  setState(() {
-                                    rentalsModel[1].subCategories![1].isChecked;
-                                  });
-                                },
-                              ),
-                              // Checkbox(
-                              //   value:
-                              //       rentalsModel[1].subCategories![2].isChecked,
-                              //   onChanged: (value) {
-                              //     setState(() {
-                              //       rentalsModel[1].subCategories![2].isChecked;
-                              //     });
-                              //   },
-                              // ),
-                            ],
+                          SizedBox(
+                            width: 10.w,
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 20.w),
-                          child: Row(
-                            children: [
-                              Text(
-                                "S",
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xff51cbd5)),
-                              ),
-                              SizedBox(width: 40.w),
-                              Checkbox(
-                                value:
-                                    rentalsModel[1].subCategories![2].isChecked,
-                                onChanged: (value) {
-                                  setState(() {
-                                    rentalsModel[1].subCategories![2].isChecked;
-                                  });
-                                },
-                              ),
-                            ],
+                          GestureDetector(
+                            onTap: () {},
+                            child: Text(
+                              "See more",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xff51cbd5)),
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 20.w),
-                          child: Row(
-                            children: [
-                              Text(
-                                "M",
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xff51cbd5)),
-                              ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
-                              Text(
-                                "2XL",
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xff51cbd5)),
-                              ),
-                              Checkbox(
-                                value:
-                                    rentalsModel[1].subCategories![3].isChecked,
-                                onChanged: (value) {
-                                  setState(() {
-                                    rentalsModel[1].subCategories![3].isChecked;
-                                  });
-                                },
-                              ),
-                              Checkbox(
-                                value:
-                                    rentalsModel[1].subCategories![4].isChecked,
-                                onChanged: (value) {
-                                  setState(() {
-                                    rentalsModel[1].subCategories![4].isChecked;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )
-                  : SizedBox(),
-              Padding(
-                padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                child: Text(
-                  "Other",
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xff51cbd5)),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                    color: Colors.white,
-                  ),
-                  child: TextField(
-                    controller: otherRentalsController,
-                    maxLines: 5,
-                    decoration: InputDecoration(border: InputBorder.none),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0, left: 10, right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AggressorButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      buttonName: "CANCEL",
-                      fontSize: 12,
-                      width: 70,
-                      AggressorButtonColor: AggressorColors.chromeYellow,
-                      AggressorTextColor: AggressorColors.white,
+                        ],
+                      ),
                     ),
-                    SizedBox(width: 25),
-                    AggressorButton(
-                        onPressed: () async {
-                          rentals.clear();
-                          courses.clear();
-                          for (MasterModel courseModel in coursesModel) {
-                            if (courseModel.isChecked == true) {
-                              courses.add(courseModel.abbv!);
-                            }
-                          }
-                          for (MasterModel rentalModel in rentalsModel) {
-                            if (rentalModel.isChecked == true) {
-                              rentals.add(rentalModel.abbv!);
-                            }
-                          }
-                          aggressorApi.postRentalAndCoursesDetails(
-                              inventoryId: inventoryDetails.inventoryId,
-                              courses: courses.join(","),
-                              rentals: rentals.join(","),
-                              otherText: otherRentalsController.text);
-                          await AggressorApi().updatingStatus(
-                              charID: widget.charterID,
-                              contactID: basicInfoModel.contactID!,
-                              column: "rentals");
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DivingInsurance(
-                                        charterID: widget.charterID!,
-                                        reservationID: '',
-                                      )));
-                        },
-                        buttonName: "SAVE AND CONTINUE",
-                        fontSize: 12,
-                        width: 150,
-                        AggressorButtonColor: Color(0xff57ddda),
-                        AggressorTextColor: AggressorColors.white),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
+                      child: InfoBannerContainer(
+                          bgColor: AggressorColors.aero,
+                          infoText:
+                              'Want to take a course onboard? Sign up now by checking below boxes.Courses are SSI or PADI based on Instructor Membership.'),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: coursesModel[0].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              coursesModel[0].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Nitrox",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: coursesModel[1].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              coursesModel[1].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "PADI Advanced Open Water Diver Course",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: coursesModel[2].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              coursesModel[2].isChecked = value!;
+                              ;
+                            });
+                          },
+                        ),
+                        Text(
+                          "SSI Advanced Adventurer Course",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: coursesModel[3].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              coursesModel[3].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Open Water Check-Out Dives",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 15.0, left: 20, right: 20),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Rentals",
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xff51cbd5)),
+                          ),
+                          SizedBox(
+                            width: 10.w,
+                          ),
+                          GestureDetector(
+                            onTap: () {},
+                            child: Text(
+                              "See more",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xff51cbd5)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
+                      child: InfoBannerContainer(
+                          bgColor: AggressorColors.aero,
+                          infoText:
+                              'Want to rent dive equipment onboard? Check below boxes to reserve.'),
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rentalsModel[0].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              rentalsModel[0].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Dive Computer",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rentalsModel[1].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              rentalsModel[1].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "BC",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    if (rentalsModel[1].isChecked)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.h, left: 15.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "BC Size",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xff51cbd5)),
+                                ),
+                                SizedBox(
+                                  height: 100.h,
+                                  width: double.infinity,
+                                  child: GridView.builder(
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              mainAxisSpacing: 20.w,
+                                              crossAxisSpacing: 20.h,
+                                              mainAxisExtent: 80.w),
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return CheckboxListTile(
+                                          visualDensity:
+                                              VisualDensity(horizontal: -4),
+                                          contentPadding: EdgeInsets.zero,
+                                          title: Text(rentalsModel[1]
+                                              .subCategories![index]
+                                              .title!),
+                                          value: rentalsModel[1]
+                                              .subCategories![index]
+                                              .isChecked,
+                                          onChanged: (value) {
+                                            MasterModel selectedValue =
+                                                rentalsModel[1]
+                                                    .subCategories![index];
+
+                                            setState(() {
+                                              selectedValue.isChecked = value!;
+                                              for (var item in rentalsModel[1]
+                                                  .subCategories!) {
+                                                if (item.id !=
+                                                    selectedValue.id) {
+                                                  item.isChecked = false;
+                                                }
+                                              }
+                                            });
+                                          },
+                                        );
+                                      },
+                                      itemCount: rentalsModel[1]
+                                          .subCategories!
+                                          .length),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rentalsModel[2].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              rentalsModel[2].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Regulator",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rentalsModel[3].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              rentalsModel[3].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Nitrox (Unlimited)",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rentalsModel[4].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              rentalsModel[4].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Mask",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rentalsModel[5].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              rentalsModel[5].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Fins",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rentalsModel[6].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              rentalsModel[6].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Snorkel",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: rentalsModel[7].isChecked,
+                          onChanged: (value) {
+                            setState(() {
+                              rentalsModel[7].isChecked = value!;
+                            });
+                          },
+                        ),
+                        Text(
+                          "Dive Light",
+                          style: TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.h, left: 20.w),
+                      child: Text(
+                        "Other",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xff51cbd5)),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(top: 10.h, left: 10.w, right: 10.w),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade400),
+                          color: Colors.white,
+                        ),
+                        child: TextField(
+                          controller: otherRentalsController,
+                          maxLines: 5,
+                          decoration: InputDecoration(border: InputBorder.none),
+                        ),
+                      ),
+                    ),
+                    // isDataPosting
+                    //     ?
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                      ],
+                    ),
+                    // :
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 15.0, left: 10, right: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AggressorButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            buttonName: "CANCEL",
+                            fontSize: 12,
+                            width: 70,
+                            AggressorButtonColor: AggressorColors.chromeYellow,
+                            AggressorTextColor: AggressorColors.white,
+                          ),
+                          SizedBox(width: 25),
+                          AggressorButton(
+                              onPressed: () async {
+                                setState(() {
+                                  isDataPosting = true;
+                                });
+                                rentals.clear();
+                                courses.clear();
+
+                                for (MasterModel courseModel in coursesModel) {
+                                  if (courseModel.isChecked == true) {
+                                    courses.add(courseModel.abbv!);
+                                  }
+                                }
+                                for (MasterModel rentalModel in rentalsModel) {
+                                  if (rentalModel.isChecked == true) {
+                                    rentals.add(rentalModel.abbv!);
+                                  }
+                                }
+
+                                if (rentalsModel[1].isChecked) {
+                                  for (MasterModel bcSize
+                                      in rentalsModel[1].subCategories!) {
+                                    if (bcSize.isChecked == true) {
+                                      rentals.add(bcSize.abbv!);
+                                    }
+                                  }
+                                }
+                                aggressorApi.postRentalAndCoursesDetails(
+                                  inventoryId: inventoryDetails.inventoryId,
+                                  courses: courses.join(","),
+                                  rentals: rentals.join(","),
+                                  otherText: otherRentalsController.text,
+                                );
+                                await AggressorApi().updatingStatus(
+                                    charID: widget.charterID,
+                                    contactID: basicInfoModel.contactID!,
+                                    column: "rentals");
+                                setState(() {
+                                  isDataPosting = false;
+                                });
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => DivingInsurance(
+                                              charterID: widget.charterID,
+                                              reservationID: '',
+                                            )));
+                              },
+                              buttonName: "SAVE AND CONTINUE",
+                              fontSize: 12,
+                              width: 150,
+                              AggressorButtonColor: Color(0xff57ddda),
+                              AggressorTextColor: AggressorColors.white),
+                        ],
+                      ),
+                    )
                   ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
+              ),
+            ),
     );
   }
 }

@@ -1,5 +1,5 @@
 {
-  "dart.flutterSdkPath": ".fvm\\versions\\3.19.0",
+  "dart.flutterSdkPath": ".fvm/versions/3.19.0",
   "editor.formatOnSave": true,
   "search.exclude": {
     "**/.fvm": true

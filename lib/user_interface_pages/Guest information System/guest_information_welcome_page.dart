@@ -208,7 +208,7 @@ class _GuestInformationWelcomePageState
                                     ),
                                   ),
                                   SizedBox(width: 10.w),
-                                  Text(welcomePageDetails.first!)
+                                  Text(welcomePageDetails.nights.toString())
                                 ],
                               ),
                             ),

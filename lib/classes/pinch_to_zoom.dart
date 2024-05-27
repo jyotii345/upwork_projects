@@ -60,7 +60,6 @@ class PinchToZoomState extends State<PinchToZoom>
       animationReset!.addListener(_onAnimateReset);
       controllerReset!.forward();
     });
-
   }
 
   void _onAnimateReset() {
@@ -72,15 +71,14 @@ class PinchToZoomState extends State<PinchToZoom>
         animationReset = null;
         controllerReset!.reset();
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   void _onInteractionStart(ScaleStartDetails details) {
     // cancels the reset if a user clicks again
 
-    if(timer != null ){
-      if(timer!.isActive){
+    if (timer != null) {
+      if (timer!.isActive) {
         timer!.cancel();
         timer = null;
       }

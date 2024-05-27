@@ -561,21 +561,28 @@ class AggressorApi {
   }
 
   getInventoryDetail({required String? reservationId}) async {
-    String url = "https://app.aggressor.com/api/app/reservations/inventory/" +
-        reservationId!;
+    String url =
+        'https://app.aggressor.com/api/app/reservations/inventory/$reservationId';
+    Response response = await get(Uri.parse(url), headers: <String, String>{
+      'apikey': apiKey,
+      "Content-Type": "application/x-www-form-urlencoded"
+    });
 
-    Request request = Request("GET", Uri.parse(url))
-      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+    try {
+      if (response.statusCode == 200) {
+        Map<String, dynamic> decodedResponse = json.decode(response.body);
 
-    StreamedResponse pageResponse = await request.send();
-    var response = jsonDecode(await pageResponse.stream.bytesToString());
-    inventoryDetails = InventoryDetails.fromJson(response['0']);
-    print(inventoryDetails);
-    return inventoryDetails;
+        inventoryDetails = InventoryDetails.fromJson(decodedResponse['0']);
+        print(inventoryDetails);
+        print(inventoryDetails);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<RentalModel> getRentalAndCoursesDetails(
-      {required int? inventoryId}) async {
+      {required String inventoryId}) async {
     RentalModel rentalModel = RentalModel();
     String url =
         'https://app.aggressor.com/api/gis/rentalscourses/$inventoryId';
@@ -586,8 +593,7 @@ class AggressorApi {
     try {
       if (response.statusCode == 200) {
         Map<String, dynamic> decodedResponse = json.decode(response.body);
-
-        rentalModel = RentalModel.fromJson(decodedResponse['0']);
+        rentalModel = RentalModel.fromJson(decodedResponse);
       }
     } catch (e) {
       print(e);
@@ -630,7 +636,6 @@ class AggressorApi {
       StreamedResponse pageResponse = await request.send();
       var response = jsonDecode(await pageResponse.stream.bytesToString());
       welcomePageDetails = WelcomePageModel.fromJson(response);
-      print(welcomePageDetails);
     } catch (e) {
       print(e);
     }
@@ -691,11 +696,12 @@ class AggressorApi {
     }
   }
 
-  postRentalAndCoursesDetails(
-      {required int? inventoryId,
-      required String? courses,
-      required String? rentals,
-      required String? otherText}) async {
+  postRentalAndCoursesDetails({
+    required int? inventoryId,
+    String? courses,
+    String? rentals,
+    String? otherText,
+  }) async {
     String url =
         'https://app.aggressor.com/api/gis/rentalscourses/AF/$inventoryId';
 
@@ -705,7 +711,7 @@ class AggressorApi {
       }, body: {
         'rental_equipment[]': rentals,
         'course[]': courses,
-        'other_rental': otherText
+        'other_rental': otherText,
       });
       if (response.statusCode == 200) {
         print(response.body);

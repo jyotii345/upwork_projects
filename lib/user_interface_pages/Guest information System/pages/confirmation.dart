@@ -208,7 +208,9 @@ class _ConfirmationState extends State<Confirmation> {
                       infoContainer(
                           title: "Last Name", data: basicInfoModel.lastName!),
                       infoContainer(
-                          title: "Date of Birth", data: basicInfoModel.dob!),
+                          title: "Date of Birth",
+                          data: Utils.getFormattedDate(
+                              date: basicInfoModel.dob!)),
                       infoContainer(
                           title: "Address", data: basicInfoModel.address1!),
                       infoContainer(
@@ -270,7 +272,8 @@ class _ConfirmationState extends State<Confirmation> {
                           data: basicInfoModel.passportNumber!),
                       infoContainer(
                           title: "Expiration Date:",
-                          data: basicInfoModel.passportExpiration!),
+                          data: Utils.getFormattedDate(
+                              date: basicInfoModel.passportExpiration!)),
                     ],
                   ),
                 ),
@@ -309,7 +312,8 @@ class _ConfirmationState extends State<Confirmation> {
                           data: basicInfoModel.passportNumber!),
                       infoContainer(
                           title: "Expiration Date:",
-                          data: basicInfoModel.passportExpiration!),
+                          data: Utils.getFormattedDate(
+                              date: basicInfoModel.passportExpiration!)),
                     ],
                   ),
                 ),

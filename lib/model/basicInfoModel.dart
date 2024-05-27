@@ -1,3 +1,5 @@
+import 'package:aggressor_adventures/classes/utils.dart';
+
 import '../user_interface_pages/Guest information System/model/masterModel.dart';
 
 class BasicInfoModel {
@@ -9,7 +11,7 @@ class BasicInfoModel {
   String? lastName;
   String? preferredName;
   String? gender;
-  String? dob;
+  DateTime? dob;
   String? occupation;
   String? phone1;
   String? phone1Type;
@@ -29,7 +31,7 @@ class BasicInfoModel {
   String? zip;
   int? country;
   int? nationalityCountryID;
-  String? passportExpiration;
+  DateTime? passportExpiration;
   String? passportNumber;
   String? emergencyFirst;
   String? emergencyLast;
@@ -125,7 +127,7 @@ class BasicInfoModel {
     lastName = json['last_name'];
     preferredName = json['preferred_name'];
     gender = json['gender'];
-    dob = json['dob'];
+    dob = json['dob'] != null ? DateTime.parse(json['dob']) : null;
     occupation = json['occupation'];
     phone1 = json['phone1'];
     phone1Type = json['phone1_type'];
@@ -145,7 +147,9 @@ class BasicInfoModel {
     zip = json['zip'];
     country = json['country'];
     nationalityCountryID = json['nationality_countryID'];
-    passportExpiration = json['passport_expiration'];
+    passportExpiration = json['passport_expiration'] != null
+        ? DateTime.parse(json['passport_expiration'])
+        : null;
     passportNumber = json['passport_number'];
     emergencyFirst = json['emergency_first'];
     emergencyLast = json['emergency_last'];
@@ -206,7 +210,7 @@ class BasicInfoModel {
     }
 
     if (this.dob != null) {
-      data['dob'] = this.dob;
+      data['dob'] = Utils.getFormattedDateForBackend(date: dob!);
     }
 
     if (this.occupation != null) {
@@ -286,7 +290,8 @@ class BasicInfoModel {
     }
 
     if (this.passportExpiration != null) {
-      data['passport_expiration'] = this.passportExpiration;
+      data['passport_expiration'] =
+          Utils.getFormattedDateForBackend(date: passportExpiration!);
     }
 
     if (this.passportNumber != null) {
