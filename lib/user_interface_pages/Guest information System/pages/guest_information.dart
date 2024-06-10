@@ -13,6 +13,7 @@ import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20
 import 'package:aggressor_adventures/user_interface_pages/trips_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../classes/aggressor_colors.dart';
 import '../../../model/basicInfoModel.dart';
@@ -28,9 +29,9 @@ class GuestInformationPage extends StatefulWidget {
     this.currentTrip,
     this.reservationID,
   });
-  String? charID;
-  String? currentTrip;
-  String? reservationID;
+  final String? charID;
+  final currentTrip;
+  final String? reservationID;
   @override
   State<GuestInformationPage> createState() => _GuestInformationPageState();
 }
@@ -81,8 +82,6 @@ TextEditingController homePhone =
 TextEditingController workPhone =
     TextEditingController(text: basicInfoModel.phone3);
 TextEditingController email = TextEditingController(text: basicInfoModel.email);
-TextEditingController travelPackage =
-    TextEditingController(text: basicInfoModel.travelPackage.toString());
 TextEditingController apartment =
     TextEditingController(text: basicInfoModel.address2);
 TextEditingController provience =
@@ -100,7 +99,8 @@ DateTime? selectedPassportDate;
 DateTime? selectedDob;
 MasterModel? selectedTitleValue;
 bool isDataLoading = true;
-
+bool isDataPosting = false;
+bool isAbsorbing = false;
 countryList() async {
   listOfCountries = await AggressorApi().getCountriesList();
   selectedCountry = listOfCountries
@@ -131,12 +131,14 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
         contactId: basicInfoModel.contactID!, charterId: widget.currentTrip!);
     await getUserData();
     await statesList();
+    isAbsorbing = form_status.general == "1" || form_status.general == "2";
     setState(() {
       isDataLoading = false;
     });
   }
 
   getUserData() async {
+    await AggressorApi().getBasicDetails();
     await countryList();
     setState(() {
       if (basicInfoModel.gender != null && basicInfoModel.gender!.isNotEmpty) {
@@ -166,12 +168,19 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
         selectedDob = basicInfoModel.dob;
         dob.text = Utils.getFormattedDate(date: basicInfoModel.dob!);
       }
+      if (basicInfoModel.travelPackage != null) {
+        isTravelPackageChecked = basicInfoModel.travelPackage!;
+      }
     });
   }
 
   formStatus({required String contactId, required String charterId}) async {
     await aggressorApi.getFormStatus(
         charterId: charterId, contactId: contactId);
+
+    if (form_status.general == "1" || form_status.general == "2") {
+      isTCAgreed = true;
+    }
   }
 
   Future<DateTime?> _selectDate(
@@ -179,7 +188,7 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(1950),
+      firstDate: isForPassport ? DateTime.now() : DateTime(1950),
       lastDate: isForPassport ? DateTime(2100) : DateTime.now(),
     );
     return picked;
@@ -233,11 +242,7 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: AbsorbPointer(
-                absorbing:
-                    // form_status.general == "1" || form_status.general == "2"
-                    //     ? true
-                    //     :
-                    false,
+                absorbing: isAbsorbing,
                 child: Container(
                   child: Form(
                     key: _formKey,
@@ -511,13 +516,13 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                                 ),
                               ),
                               SizedBox(
-                                height: 50,
+                                height: 50.h,
                                 child: CheckboxListTile(
-                                  activeColor: AggressorColors.lightOrange,
+                                  enabled: !isAbsorbing,
                                   title: Text(
                                     "Check if you WOULD like to receive a travel gift package.",
                                     style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 13.sp,
                                         fontWeight: FontWeight.w400),
                                   ),
                                   value: isTravelPackageChecked,
@@ -526,8 +531,8 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                                       isTravelPackageChecked = newValue!;
                                     });
                                   },
-                                  controlAffinity: ListTileControlAffinity
-                                      .leading, //  <-- leading Checkbox
+                                  controlAffinity:
+                                      ListTileControlAffinity.leading,
                                 ),
                               )
                             ],
@@ -598,14 +603,16 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                         SizedBox(
                           height: 25,
                         ),
-                        SizedBox(
-                          height: 200,
+                        ListTileTheme(
+                          data: const ListTileThemeData(
+                            titleAlignment: ListTileTitleAlignment.top,
+                          ),
                           child: CheckboxListTile(
-                            activeColor: AggressorColors.lightOrange,
+                            enabled: !isAbsorbing,
                             title: Text(
                               "I Agree. I understand my passport must be valid for at least 6 months beyond the period of my stay. It is my responsibility to ensure I have the proper passport and visa to travel into each country on my itinerary as well as the return. I understand I should check with a consulate in my country of citizenship to ensure proper passport and visa requirements are met.",
                               style: TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.w400),
+                                  fontSize: 13.sp, fontWeight: FontWeight.w400),
                             ),
                             value: isTCAgreed,
                             onChanged: (newValue) {
@@ -613,127 +620,146 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                                 isTCAgreed = newValue!;
                               });
                             },
-                            controlAffinity: ListTileControlAffinity
-                                .leading, //  <-- leading Checkbox
+                            controlAffinity: ListTileControlAffinity.leading,
                           ),
                         ),
+                        // Padding(
+                        //   padding: const EdgeInsets.only(
+                        //       top: 15.0, left: 25, right: 25),
+                        //   child:
+                        // ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              top: 15.0, left: 25, right: 25),
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Color(0xfff1926e),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5))),
-                            child: Text(
-                              "This form has been finalized. If you need to make changes, please call your reservationist.",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w200),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 15.0, left: 10, right: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              AggressorButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                buttonName: "CANCEL",
-                                fontSize: 12,
-                                width: 70,
-                                AggressorButtonColor:
-                                    AggressorColors.chromeYellow,
-                                AggressorTextColor: AggressorColors.white,
-                              ),
-                              AggressorButton(
-                                  onPressed: (isTCAgreed &&
-                                          selectedDob != null &&
-                                          selectedPassportDate != null &&
-                                          selectedTitle != null &&
-                                          selectedGender != null)
-                                      ? () async {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            BasicInfoModel saveData =
-                                                BasicInfoModel(
-                                                    title: selectedTitle!.title!
-                                                        .toLowerCase(),
-                                                    firstName: firstName.text,
-                                                    middleName: middleName.text,
-                                                    lastName: lastName.text,
-                                                    occupation: occupation.text,
-                                                    phone1: mobilePhone.text,
-                                                    phone2: homePhone.text,
-                                                    phone3: workPhone.text,
-                                                    state:
-                                                        selectedCountry?.id == 2
-                                                            ? selectedState!
-                                                                .title
-                                                            : null,
-                                                    province:
-                                                        selectedCountry?.id != 2
-                                                            ? provience.text
-                                                            : null,
-                                                    preferredName:
-                                                        preferredName.text,
-                                                    gender:
-                                                        selectedGender!.title,
-                                                    email: email.text,
-                                                    dob: selectedDob,
-                                                    address1:
-                                                        streetAddress.text,
-                                                    address2: apartment.text,
-                                                    travelPackage:
-                                                        isTravelPackageChecked
-                                                            ? 1
-                                                            : 0,
-                                                    city: city.text,
-                                                    country:
-                                                        selectedCountry!.id,
-                                                    nationalityCountryID:
-                                                        selectedCitizenship!.id,
-                                                    passportExpiration:
-                                                        selectedPassportDate,
-                                                    passportNumber:
-                                                        passportNumber.text);
-                                            await AggressorApi()
-                                                .postGuestInformation(
-                                                    contactId: basicInfoModel
-                                                        .contactID!,
-                                                    userInfo: saveData);
-                                            await AggressorApi().updatingStatus(
-                                                charID: widget.charID,
-                                                contactID:
-                                                    basicInfoModel.contactID!,
-                                                column: "general");
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        Waiver(
-                                                          charterID:
-                                                              widget.charID!,
-                                                          reservationID: '',
-                                                        )));
-                                          }
-                                        }
-                                      : null,
-                                  buttonName: "SAVE AND CONTINUE",
-                                  fontSize: 12,
-                                  width: 150,
-                                  AggressorButtonColor: isTCAgreed
-                                      ? Color(0xff57ddda)
-                                      : const Color.fromARGB(
-                                          255, 162, 223, 169),
-                                  AggressorTextColor: AggressorColors.white),
-                            ],
-                          ),
+                          padding: EdgeInsets.symmetric(vertical: 15.h),
+                          child: isDataPosting
+                              ? CircularProgressIndicator()
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    AggressorButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      buttonName: "CANCEL",
+                                      fontSize: 12,
+                                      width: 70,
+                                      AggressorButtonColor:
+                                          form_status.general == '1' ||
+                                                  form_status.general == '2'
+                                              ? AggressorColors.chromeYellow
+                                                  .withOpacity(0.6)
+                                              : AggressorColors.chromeYellow,
+                                      AggressorTextColor: AggressorColors.white,
+                                    ),
+                                    AggressorButton(
+                                        onPressed: (isTCAgreed &&
+                                                selectedDob != null &&
+                                                selectedPassportDate != null &&
+                                                selectedTitle != null &&
+                                                selectedGender != null)
+                                            ? () async {
+                                                setState(() {
+                                                  isDataPosting = true;
+                                                });
+                                                if (_formKey.currentState!
+                                                    .validate()) {
+                                                  BasicInfoModel saveData = BasicInfoModel(
+                                                      title: selectedTitle!
+                                                          .title!
+                                                          .toLowerCase(),
+                                                      firstName: firstName.text,
+                                                      middleName: middleName
+                                                          .text,
+                                                      lastName: lastName.text,
+                                                      occupation: occupation
+                                                          .text,
+                                                      phone1: mobilePhone.text,
+                                                      phone2: homePhone.text,
+                                                      phone3: workPhone.text,
+                                                      state:
+                                                          selectedCountry
+                                                                      ?.id ==
+                                                                  2
+                                                              ? selectedState!
+                                                                  .title
+                                                              : null,
+                                                      province:
+                                                          selectedCountry
+                                                                      ?.id !=
+                                                                  2
+                                                              ? provience.text
+                                                              : null,
+                                                      preferredName: preferredName
+                                                          .text,
+                                                      gender: selectedGender!
+                                                          .title,
+                                                      email: email.text,
+                                                      dob: selectedDob,
+                                                      address1:
+                                                          streetAddress.text,
+                                                      address2: apartment.text,
+                                                      travelPackage:
+                                                          isTravelPackageChecked,
+                                                      city: city.text,
+                                                      country:
+                                                          selectedCountry!.id,
+                                                      nationalityCountryID:
+                                                          selectedCitizenship!
+                                                              .id,
+                                                      passportExpiration:
+                                                          selectedPassportDate,
+                                                      passportNumber:
+                                                          passportNumber.text);
+                                                  bool isUserDataUpdated =
+                                                      await AggressorApi()
+                                                          .postGuestInformation(
+                                                              contactId:
+                                                                  basicInfoModel
+                                                                      .contactID!,
+                                                              userInfo:
+                                                                  saveData);
+                                                  await AggressorApi()
+                                                      .updatingStatus(
+                                                          charID: widget.charID,
+                                                          contactID:
+                                                              basicInfoModel
+                                                                  .contactID!,
+                                                          column: "general");
+                                                  setState(() {
+                                                    isDataPosting = false;
+                                                  });
+                                                  if (isUserDataUpdated) {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    Waiver(
+                                                                      charterID:
+                                                                          widget
+                                                                              .charID!,
+                                                                      reservationID:
+                                                                          '',
+                                                                    )));
+                                                  }
+                                                }
+                                              }
+                                            : null,
+                                        buttonName: "SAVE AND CONTINUE",
+                                        fontSize: 12,
+                                        width: 150,
+                                        AggressorButtonColor: (isTCAgreed &&
+                                                selectedDob != null &&
+                                                selectedPassportDate != null &&
+                                                selectedTitle != null &&
+                                                selectedGender != null)
+                                            ? Color(0xff57ddda)
+                                            : Color(0xff57ddda)
+                                                .withOpacity(0.6),
+                                        AggressorTextColor:
+                                            AggressorColors.white),
+                                  ],
+                                ),
                         )
                       ],
                     ),

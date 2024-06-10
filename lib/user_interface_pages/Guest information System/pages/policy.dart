@@ -1,6 +1,7 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/emergency_contact.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/widgets/finalized_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -15,9 +16,9 @@ import '../widgets/aggressor_button.dart';
 
 class Policy extends StatefulWidget {
   Policy({required this.charterID, required this.reservationID, this.user});
-  String charterID;
-  String reservationID;
-  User? user;
+  final String charterID;
+  final String reservationID;
+  final User? user;
   @override
   State<Policy> createState() => _PolicyState();
 }
@@ -25,6 +26,8 @@ class Policy extends StatefulWidget {
 class _PolicyState extends State<Policy> {
   WebViewController controller = WebViewController();
   bool isLoading = true;
+  bool isPolicyStatusUpdating = false;
+  bool isAbsorbing = form_status.policy == "1" || form_status.policy == "2";
   var hostAddress;
   @override
   void initState() {
@@ -139,66 +142,62 @@ class _PolicyState extends State<Policy> {
                     Visibility(
                         visible: isLoading,
                         child: const Center(
-                          child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation(Color(0xfff1926e)),
-                          ),
+                          child: CircularProgressIndicator(),
                         )),
                   ],
                 ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 15.h, left: 25.w, right: 25.w),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: Color(0xfff1926e),
-                    borderRadius: BorderRadius.all(Radius.circular(5))),
-                child: Text(
-                  "This form has been finalized. If you need to make changes, please call your reservationist.",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w200),
-                ),
-              ),
-            ),
+                padding: EdgeInsets.only(top: 15.h, left: 25.w, right: 25.w),
+                child: getFinalizedFormContainer()),
             Padding(
-              padding: EdgeInsets.only(top: 15.h, left: 10.w, right: 10.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AggressorButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    buttonName: "CANCEL",
-                    fontSize: 12.sp,
-                    width: 70.w,
-                    AggressorButtonColor: AggressorColors.chromeYellow,
-                    AggressorTextColor: AggressorColors.white,
-                  ),
-                  SizedBox(width: 25.w),
-                  AggressorButton(
-                      onPressed: () async {
-                        await AggressorApi().updatingStatus(
-                            charID: widget.charterID,
-                            contactID: basicInfoModel.contactID!,
-                            column: "policy");
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EmergencyContact(
-                                    charID: widget.charterID,
-                                    currentTrip: widget.charterID,
-                                    reservationID: widget.reservationID)));
-                      },
-                      buttonName: "SAVE AND CONTINUE",
-                      fontSize: 12.sp,
-                      width: 150.w,
-                      AggressorButtonColor: Color(0xff57ddda),
-                      AggressorTextColor: AggressorColors.white),
-                ],
-              ),
+              padding: EdgeInsets.only(top: 15.h, left: 24.w, right: 10.w),
+              child: isPolicyStatusUpdating
+                  ? CircularProgressIndicator()
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        AggressorButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          buttonName: "CANCEL",
+                          fontSize: 12.sp,
+                          width: 70.w,
+                          AggressorButtonColor: AggressorColors.chromeYellow,
+                          AggressorTextColor: AggressorColors.white,
+                        ),
+                        SizedBox(width: 25.w),
+                        AggressorButton(
+                            onPressed: () async {
+                              setState(() {
+                                isPolicyStatusUpdating = true;
+                              });
+                              await AggressorApi().updatingStatus(
+                                  charID: widget.charterID,
+                                  contactID: basicInfoModel.contactID!,
+                                  column: "policy");
+                              setState(() {
+                                isPolicyStatusUpdating = false;
+                              });
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EmergencyContact(
+                                          charID: widget.charterID,
+                                          currentTrip: widget.charterID,
+                                          reservationID:
+                                              widget.reservationID)));
+                            },
+                            buttonName: "SAVE AND CONTINUE",
+                            fontSize: 12.sp,
+                            width: 150.w,
+                            AggressorButtonColor: Color(0xff57ddda)
+                                .withOpacity(isAbsorbing ? 0.7 : 1),
+                            AggressorTextColor: AggressorColors.white),
+                      ],
+                    ),
             )
           ],
         ),

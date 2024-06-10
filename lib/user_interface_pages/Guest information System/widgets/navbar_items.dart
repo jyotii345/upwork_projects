@@ -29,24 +29,21 @@ class AppBarItems extends StatefulWidget {
       : super(key: key);
   final String charterID;
   final String reservationID;
-  User? user;
+  final User? user;
   @override
   State<AppBarItems> createState() => _AppBarItemsState();
 }
 
-AppDrawerModel model = AppDrawerModel();
-int selectedIndex = -1;
 AggressorApi aggressorApi = AggressorApi();
 
 class _AppBarItemsState extends State<AppBarItems> {
   List<AppDrawerModel> drawersList = [];
 
   getDrawersList() {
+    drawersList.clear();
     drawersList.addAll([
       AppDrawerModel(
           title: 'Guest Informaition',
-          isSaved: true,
-          isSelected: false,
           taskStatus: form_status.general,
           onTap: () {
             Scaffold.of(context).closeDrawer();
@@ -62,8 +59,6 @@ class _AppBarItemsState extends State<AppBarItems> {
           id: 0),
       AppDrawerModel(
           title: 'Waiver',
-          isSaved: false,
-          isSelected: false,
           taskStatus: form_status.waiver,
           onTap: () {
             Scaffold.of(context).closeDrawer();
@@ -78,8 +73,6 @@ class _AppBarItemsState extends State<AppBarItems> {
           id: 1),
       AppDrawerModel(
         title: 'Policies',
-        isSaved: false,
-        isSelected: false,
         taskStatus: form_status.policy,
         onTap: () {
           Scaffold.of(context).closeDrawer();
@@ -94,8 +87,6 @@ class _AppBarItemsState extends State<AppBarItems> {
       ),
       AppDrawerModel(
           title: 'Emergency Contact',
-          isSaved: false,
-          isSelected: false,
           taskStatus: form_status.emcontact,
           onTap: () {
             Scaffold.of(context).closeDrawer();
@@ -111,8 +102,6 @@ class _AppBarItemsState extends State<AppBarItems> {
           id: 3),
       AppDrawerModel(
           title: 'Requests',
-          isSaved: false,
-          isSelected: false,
           taskStatus: form_status.requests,
           onTap: () {
             Navigator.push(
@@ -127,8 +116,6 @@ class _AppBarItemsState extends State<AppBarItems> {
           id: 4),
       AppDrawerModel(
           title: 'Rentals & Courses',
-          isSaved: false,
-          isSelected: false,
           taskStatus: form_status.rentals,
           onTap: () {
             Navigator.push(
@@ -142,8 +129,6 @@ class _AppBarItemsState extends State<AppBarItems> {
           id: 5),
       AppDrawerModel(
           title: 'Diving Insurance',
-          isSaved: false,
-          isSelected: false,
           taskStatus: form_status.diving,
           onTap: () {
             Navigator.push(
@@ -157,8 +142,6 @@ class _AppBarItemsState extends State<AppBarItems> {
           id: 6),
       AppDrawerModel(
           title: 'Trip Insurance',
-          isSaved: false,
-          isSelected: false,
           taskStatus: form_status.insurance,
           onTap: () {
             Navigator.push(
@@ -172,8 +155,6 @@ class _AppBarItemsState extends State<AppBarItems> {
           id: 7),
       AppDrawerModel(
           title: 'Confirmation',
-          isSaved: false,
-          isSelected: false,
           taskStatus: form_status.confirmation,
           onTap: () {
             Navigator.push(
@@ -187,8 +168,6 @@ class _AppBarItemsState extends State<AppBarItems> {
           id: 8),
       AppDrawerModel(
           title: 'Travel Inforamtion',
-          isSaved: false,
-          isSelected: false,
           taskStatus: form_status.travel,
           onTap: () {
             Scaffold.of(context).closeDrawer();
@@ -202,20 +181,15 @@ class _AppBarItemsState extends State<AppBarItems> {
                         )));
           },
           id: 9),
-      AppDrawerModel(
-          title: 'Logout',
-          isSaved: false,
-          isSelected: false,
-          onTap: () {},
-          id: 10),
+      // AppDrawerModel(title: 'Logout', onTap: () {}, id: 10),
     ]);
   }
 
   @override
   void initState() {
-    getDrawersList();
     formStatus(
         contactId: basicInfoModel.contactID!, charterId: widget.charterID);
+    getDrawersList();
     super.initState();
   }
 
@@ -245,12 +219,11 @@ class _AppBarItemsState extends State<AppBarItems> {
     Color blendedColor = Color.alphaBlend(color1.withOpacity(0.1), color2);
     return GestureDetector(
       onTap: () {
-        if (selectedIndex == index) {
+        if (appDrawerselectedIndex == index) {
           Scaffold.of(context).closeDrawer();
         } else {
           setState(() {
-            selectedIndex = index;
-            drawersList[index].isSelected = !drawersList[index].isSelected!;
+            appDrawerselectedIndex = index;
           });
           drawersList[index].onTap!();
         }
@@ -266,7 +239,9 @@ class _AppBarItemsState extends State<AppBarItems> {
                 child: CircleAvatar(
                     backgroundColor: status == "1" || status == "2"
                         ? Colors.green
-                        : Colors.grey
+                        : appDrawerselectedIndex == index
+                            ? Colors.red
+                            : Colors.grey
                     // selectedIndex == index ? Colors.green : blendedColor
                     ),
               ),
@@ -278,8 +253,9 @@ class _AppBarItemsState extends State<AppBarItems> {
                   drawersList[index].title!,
                   style: TextStyle(
                       fontSize: 14,
-                      color:
-                          selectedIndex == index ? Colors.black : blendedColor),
+                      color: appDrawerselectedIndex == index
+                          ? Colors.black
+                          : blendedColor),
                 ),
               )
             ],

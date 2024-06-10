@@ -22,7 +22,7 @@ class BasicInfoModel {
   String? phone4;
   String? phone4Type;
   String? email;
-  int? travelPackage;
+  bool? travelPackage;
   String? address1;
   String? address2;
   String? city;
@@ -138,7 +138,10 @@ class BasicInfoModel {
     phone4 = json['phone4'];
     phone4Type = json['phone4_type'];
     email = json['email'];
-    travelPackage = json['travel_package'] ?? false;
+    if (json['travel_package'] != null) {
+      travelPackage = json['travel_package'] == 1 ? true : false;
+    }
+
     address1 = json['address1'];
     address2 = json['address2'];
     city = json['city'];
@@ -190,15 +193,15 @@ class BasicInfoModel {
     }
 
     if (this.firstName != null) {
-      data['first_name'] = this.firstName;
+      data['first'] = this.firstName;
     }
 
     if (this.middleName != null) {
-      data['middle_name'] = this.middleName;
+      data['middle'] = this.middleName;
     }
 
     if (this.lastName != null) {
-      data['last_name'] = this.lastName;
+      data['last'] = this.lastName;
     }
 
     if (this.preferredName != null) {
@@ -206,11 +209,11 @@ class BasicInfoModel {
     }
 
     if (this.gender != null) {
-      data['gender'] = this.gender;
+      data['sex'] = this.gender!.toLowerCase();
     }
 
     if (this.dob != null) {
-      data['dob'] = Utils.getFormattedDateForBackend(date: dob!);
+      data['date_of_birth'] = Utils.getFormattedDateForBackend(date: dob!);
     }
 
     if (this.occupation != null) {
@@ -218,7 +221,7 @@ class BasicInfoModel {
     }
 
     if (this.phone1 != null) {
-      data['phone1'] = this.phone1;
+      data['mobile'] = this.phone1;
     }
 
     if (this.phone1Type != null) {
@@ -226,7 +229,7 @@ class BasicInfoModel {
     }
 
     if (this.phone2 != null) {
-      data['phone2'] = this.phone2;
+      data['home'] = this.phone2;
     }
 
     if (this.phone2Type != null) {
@@ -234,7 +237,7 @@ class BasicInfoModel {
     }
 
     if (this.phone3 != null) {
-      data['phone3'] = this.phone3;
+      data['work'] = this.phone3;
     }
 
     if (this.phone3Type != null) {
@@ -254,7 +257,7 @@ class BasicInfoModel {
     }
 
     if (this.travelPackage != null) {
-      data['travel_package'] = this.travelPackage.toString();
+      data['international_travel_package'] = this.travelPackage! ? '1' : '0';
     }
 
     if (this.address1 != null) {
@@ -290,7 +293,7 @@ class BasicInfoModel {
     }
 
     if (this.passportExpiration != null) {
-      data['passport_expiration'] =
+      data['passport_exp'] =
           Utils.getFormattedDateForBackend(date: passportExpiration!);
     }
 
@@ -298,109 +301,109 @@ class BasicInfoModel {
       data['passport_number'] = this.passportNumber.toString();
     }
 
-    if (this.emergencyFirst != null) {
-      data['emergency_first'] = this.emergencyFirst;
-    }
+    // if (this.emergencyFirst != null) {
+    //   data['emergency_first'] = this.emergencyFirst;
+    // }
 
-    if (this.emergencyLast != null) {
-      data['emergency_last'] = this.emergencyLast;
-    }
+    // if (this.emergencyLast != null) {
+    //   data['emergency_last'] = this.emergencyLast;
+    // }
 
-    if (this.emergencyRelationship != null) {
-      data['emergency_relationship'] = this.emergencyRelationship;
-    }
+    // if (this.emergencyRelationship != null) {
+    //   data['emergency_relationship'] = this.emergencyRelationship;
+    // }
 
-    if (this.emergencyPhHome != null) {
-      data['emergency_ph_home'] = this.emergencyPhHome;
-    }
+    // if (this.emergencyPhHome != null) {
+    //   data['emergency_ph_home'] = this.emergencyPhHome;
+    // }
 
-    if (this.emergencyPhWork != null) {
-      data['emergency_ph_work'] = this.emergencyPhWork;
-    }
+    // if (this.emergencyPhWork != null) {
+    //   data['emergency_ph_work'] = this.emergencyPhWork;
+    // }
 
-    if (this.emergencyPhMobile != null) {
-      data['emergency_ph_mobile'] = this.emergencyPhMobile;
-    }
+    // if (this.emergencyPhMobile != null) {
+    //   data['emergency_ph_mobile'] = this.emergencyPhMobile;
+    // }
 
-    if (this.emergencyEmail != null) {
-      data['emergency_email'] = this.emergencyEmail;
-    }
+    // if (this.emergencyEmail != null) {
+    //   data['emergency_email'] = this.emergencyEmail;
+    // }
 
-    if (this.emergencyAddress1 != null) {
-      data['emergency_address1'] = this.emergencyAddress1;
-    }
+    // if (this.emergencyAddress1 != null) {
+    //   data['emergency_address1'] = this.emergencyAddress1;
+    // }
 
-    if (this.emergencyAddress2 != null) {
-      data['emergency_address2'] = this.emergencyAddress2;
-    }
+    // if (this.emergencyAddress2 != null) {
+    //   data['emergency_address2'] = this.emergencyAddress2;
+    // }
 
-    if (this.emergencyCity != null) {
-      data['emergency_city'] = this.emergencyCity;
-    }
+    // if (this.emergencyCity != null) {
+    //   data['emergency_city'] = this.emergencyCity;
+    // }
 
-    if (this.emergencyState != null) {
-      data['emergency_state'] = this.emergencyState;
-    }
+    // if (this.emergencyState != null) {
+    //   data['emergency_state'] = this.emergencyState;
+    // }
 
-    if (this.emergencyZip != null) {
-      data['emergency_zip'] = this.emergencyZip;
-    }
+    // if (this.emergencyZip != null) {
+    //   data['emergency_zip'] = this.emergencyZip;
+    // }
 
-    if (this.emergencyCountryID != null) {
-      data['emergency_countryID'] = this.emergencyCountryID.toString();
-    }
+    // if (this.emergencyCountryID != null) {
+    //   data['emergency_countryID'] = this.emergencyCountryID.toString();
+    // }
 
-    if (this.emergency2First != null) {
-      data['emergency2_first'] = this.emergency2First;
-    }
+    // if (this.emergency2First != null) {
+    //   data['emergency2_first'] = this.emergency2First;
+    // }
 
-    if (this.emergency2Last != null) {
-      data['emergency2_last'] = this.emergency2Last;
-    }
+    // if (this.emergency2Last != null) {
+    //   data['emergency2_last'] = this.emergency2Last;
+    // }
 
-    if (this.emergency2Relationship != null) {
-      data['emergency2_relationship'] = this.emergency2Relationship;
-    }
+    // if (this.emergency2Relationship != null) {
+    //   data['emergency2_relationship'] = this.emergency2Relationship;
+    // }
 
-    if (this.emergency2PhHome != null) {
-      data['emergency2_ph_home'] = this.emergency2PhHome;
-    }
+    // if (this.emergency2PhHome != null) {
+    //   data['emergency2_ph_home'] = this.emergency2PhHome;
+    // }
 
-    if (this.emergency2PhWork != null) {
-      data['emergency2_ph_work'] = this.emergency2PhWork;
-    }
+    // if (this.emergency2PhWork != null) {
+    //   data['emergency2_ph_work'] = this.emergency2PhWork;
+    // }
 
-    if (this.emergency2PhMobile != null) {
-      data['emergency2_ph_mobile'] = this.emergency2PhMobile;
-    }
+    // if (this.emergency2PhMobile != null) {
+    //   data['emergency2_ph_mobile'] = this.emergency2PhMobile;
+    // }
 
-    if (this.emergency2Email != null) {
-      data['emergency2_email'] = this.emergency2Email;
-    }
+    // if (this.emergency2Email != null) {
+    //   data['emergency2_email'] = this.emergency2Email;
+    // }
 
-    if (this.emergency2Address1 != null) {
-      data['emergency2_address1'] = this.emergency2Address1;
-    }
+    // if (this.emergency2Address1 != null) {
+    //   data['emergency2_address1'] = this.emergency2Address1;
+    // }
 
-    if (this.emergency2Address2 != null) {
-      data['emergency2_address2'] = this.emergency2Address2;
-    }
+    // if (this.emergency2Address2 != null) {
+    //   data['emergency2_address2'] = this.emergency2Address2;
+    // }
 
-    if (this.emergency2City != null) {
-      data['emergency2_city'] = this.emergency2City;
-    }
+    // if (this.emergency2City != null) {
+    //   data['emergency2_city'] = this.emergency2City;
+    // }
 
-    if (this.emergency2State != null) {
-      data['emergency2_state'] = this.emergency2State;
-    }
+    // if (this.emergency2State != null) {
+    //   data['emergency2_state'] = this.emergency2State;
+    // }
 
-    if (this.emergency2Zip != null) {
-      data['emergency2_zip'] = this.emergency2Zip;
-    }
+    // if (this.emergency2Zip != null) {
+    //   data['emergency2_zip'] = this.emergency2Zip;
+    // }
 
-    if (this.emergency2CountryID != null) {
-      data['emergency2_countryID'] = this.emergency2CountryID.toString();
-    }
+    // if (this.emergency2CountryID != null) {
+    //   data['emergency2_countryID'] = this.emergency2CountryID.toString();
+    // }
     return data;
   }
 }

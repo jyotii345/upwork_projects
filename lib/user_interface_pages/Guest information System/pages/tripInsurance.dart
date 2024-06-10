@@ -3,6 +3,7 @@ import 'package:aggressor_adventures/model/tripInsuranceModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/travel_information.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,9 +20,9 @@ import '../widgets/text_field.dart';
 class TripInsurance extends StatefulWidget {
   TripInsurance(
       {required this.charterID, required this.reservationID, this.user});
-  String charterID;
-  String reservationID;
-  User? user;
+  final String charterID;
+  final String reservationID;
+  final User? user;
 
   @override
   State<TripInsurance> createState() => _TripInsuranceState();
@@ -35,26 +36,21 @@ List<MasterModel> TripInsuranceOptionList = [
           " I hereby decline the opportunity to purchase Trip Insurance and personally accept financial responsibility for any incidents that may cause my trip to be cancelled or not completed in its entirety."),
 ];
 List<MasterModel> insuranceCompanyList = [
-  MasterModel(id: 0, title: "DAN"),
-  MasterModel(id: 1, title: "Dive Insurance"),
-  MasterModel(id: 2, title: "Others"),
+  MasterModel(id: 0, title: "DAN", abbv: 'DAN'),
+  MasterModel(id: 1, title: "Dive Assure", abbv: 'dive_assure'),
+  MasterModel(id: 2, title: "Others", abbv: 'others'),
 ];
 MasterModel? selectedInsuranceCompany;
 MasterModel? selectedTripInsuranceOption = MasterModel(id: -1);
 AggressorApi aggressorApi = AggressorApi();
 DateTime? policyExpirationDate;
-DateTime? policyDate;
 
 TextEditingController policyNumberController = TextEditingController();
-TextEditingController driveEquipmentPolicyNumberController =
-    TextEditingController();
-TextEditingController nitroxDateController = TextEditingController();
 TextEditingController othersController = TextEditingController();
 TextEditingController policyExpirationDateController = TextEditingController();
 
 Future<void> launchUrlSite({required String url}) async {
   final Uri urlParsed = Uri.parse(url);
-
   if (await canLaunchUrl(urlParsed)) {
     await launchUrl(urlParsed);
   } else {
@@ -67,7 +63,7 @@ class _TripInsuranceState extends State<TripInsurance> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 25.0, right: 25, top: 15),
+          padding: const EdgeInsets.only(left: 25.0, right: 25),
           child: AdventureDropDown(
             hintText: 'Insurance Company',
             selectedItem: selectedInsuranceCompany,
@@ -87,14 +83,15 @@ class _TripInsuranceState extends State<TripInsurance> {
               labelText: "Policy Number",
               controller: policyNumberController),
         ),
-        Padding(
-          padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
-          child: AdventureFormField(
-              validator: (value) =>
-                  othersController.text.isNotEmpty ? null : " ",
-              labelText: "Company Name",
-              controller: othersController),
-        ),
+        if (selectedInsuranceCompany?.id == 2)
+          Padding(
+            padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 15.h),
+            child: AdventureFormField(
+                validator: (value) =>
+                    othersController.text.isNotEmpty ? null : " ",
+                labelText: "Company Name",
+                controller: othersController),
+          ),
         Padding(
           padding: EdgeInsets.only(top: 15.h, right: 25.w, left: 25.w),
           child: AdventureFormField(
@@ -127,10 +124,18 @@ class _TripInsuranceState extends State<TripInsurance> {
 
   @override
   void initState() {
-    getInventoryDetails();
-    formStatus(
-        contactId: basicInfoModel.contactID!, charterId: widget.charterID);
+    getInitialData();
     super.initState();
+  }
+
+  getInitialData() async {
+    await getTripDetails();
+    await formStatus(
+        contactId: basicInfoModel.contactID!, charterId: widget.charterID);
+  }
+
+  getTripDetails() async {
+    await aggressorApi.getTripInsuranceDetails();
   }
 
   formStatus({required String contactId, required String charterId}) async {
@@ -138,15 +143,11 @@ class _TripInsuranceState extends State<TripInsurance> {
         charterId: charterId, contactId: contactId);
   }
 
-  getInventoryDetails() async {
-    await aggressorApi.getInventoryDetail(reservationId: widget.reservationID);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: getGISAppDrawer(
-          charterID: widget.charterID, reservationID: widget.reservationID!),
+          charterID: widget.charterID, reservationID: widget.reservationID),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -221,28 +222,38 @@ class _TripInsuranceState extends State<TripInsurance> {
                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
                 ),
               ),
-              SizedBox(
-                height: 250.h,
-                child: ListView.builder(
-                  itemCount: TripInsuranceOptionList.length,
-                  itemBuilder: (context, index) {
-                    return RadioListTile<MasterModel>(
-                      title: Text(
-                        TripInsuranceOptionList[index].title!,
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w700),
-                      ),
-                      value: TripInsuranceOptionList[index],
-                      selected: selectedTripInsuranceOption!.title ==
-                          TripInsuranceOptionList[index].title,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedTripInsuranceOption = value;
-                        });
-                      },
-                      groupValue: selectedTripInsuranceOption,
-                    );
-                  },
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+                child: SizedBox(
+                  height: 250.h,
+                  child: ListView.builder(
+                    itemCount: TripInsuranceOptionList.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return ListTileTheme(
+                        data: ListTileThemeData(
+                            titleAlignment: ListTileTitleAlignment.top),
+                        child: RadioListTile<MasterModel>(
+                          title: Text(
+                            TripInsuranceOptionList[index].title!,
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black),
+                          ),
+                          value: TripInsuranceOptionList[index],
+                          selected: selectedTripInsuranceOption!.title ==
+                              TripInsuranceOptionList[index].title,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedTripInsuranceOption = value;
+                            });
+                          },
+                          groupValue: selectedTripInsuranceOption,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
               selectedTripInsuranceOption!.id == 0
@@ -278,27 +289,32 @@ class _TripInsuranceState extends State<TripInsurance> {
                     AggressorButton(
                         onPressed: () async {
                           TripInsuranceModel tripData = TripInsuranceModel(
-                            trip_insurance: selectedTripInsuranceOption!.id == 0
-                                ? "1"
-                                : "0",
-                            trip_insurance_co: selectedInsuranceCompany!.title,
-                            trip_insurance_other: othersController.text,
-                            trip_insurance_number: policyNumberController.text,
-                            trip_insurance_date:
-                                Utils.getFormattedDateForBackend(
-                                    date: policyExpirationDate!),
-                          );
+                              trip_insurance:
+                                  selectedTripInsuranceOption!.id == 0
+                                      ? true
+                                      : false);
+                          if (selectedTripInsuranceOption!.id == 0) {
+                            tripData.trip_insurance_co =
+                                selectedInsuranceCompany!.abbv;
+                            tripData.trip_insurance_number =
+                                policyNumberController.text;
+                            tripData.trip_insurance_date = policyExpirationDate;
+                          }
+                          if (selectedInsuranceCompany?.id == 2 ||
+                              othersController.text.isNotEmpty) {
+                            tripData.trip_insurance_other =
+                                othersController.text;
+                          }
                           await AggressorApi().postTripInsuranceDetails(
-                              inventoryId: inventoryDetails.inventoryId!,
                               insuranceData: tripData);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TravelInformation(
-                                        currentTrip: widget.charterID,
-                                        charID: widget.charterID,
-                                        reservationID: widget.reservationID,
-                                      )));
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => TravelInformation(
+                          //               currentTrip: widget.charterID,
+                          //               charID: widget.charterID,
+                          //               reservationID: widget.reservationID,
+                          //             )));
                         },
                         buttonName: "SAVE AND CONTINUE",
                         fontSize: 12,

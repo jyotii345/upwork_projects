@@ -18,6 +18,7 @@ import '../model/basicInfoModel.dart';
 import '../model/countries.dart';
 import '../model/userModel.dart';
 import '../model/welcomePageModel.dart';
+import '../user_interface_pages/Guest information System/model/AppBarModel.dart';
 import 'charter.dart';
 import 'gallery.dart';
 import 'user.dart';
@@ -75,6 +76,9 @@ DateFormat defaultDateFormatForTravelPost = DateFormat("yyyy-MM-ddTHH:mm");
 File userImage = File("");
 
 Contact? contact;
+int appDrawerselectedIndex = -1;
+
+List<AppDrawerModel> appBarItems = [];
 
 List<String> certificationOptionList = [
   'Non-Diver',

@@ -349,7 +349,7 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                                               crossAxisCount: 2,
                                               mainAxisSpacing: 20.w,
                                               crossAxisSpacing: 20.h,
-                                              mainAxisExtent: 80.w),
+                                              mainAxisExtent: 90.w),
                                       padding: EdgeInsets.zero,
                                       shrinkWrap: true,
                                       scrollDirection: Axis.horizontal,
@@ -392,6 +392,7 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                           ),
                         ],
                       ),
+                    SizedBox(height: 10.h),
                     Row(
                       children: [
                         Checkbox(
@@ -515,92 +516,100 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                         child: TextField(
                           controller: otherRentalsController,
                           maxLines: 5,
-                          decoration: InputDecoration(border: InputBorder.none),
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.only(left: 15.w, top: 15.h)),
                         ),
                       ),
                     ),
-                    // isDataPosting
-                    //     ?
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                      ],
-                    ),
-                    // :
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 15.0, left: 10, right: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AggressorButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            buttonName: "CANCEL",
-                            fontSize: 12,
-                            width: 70,
-                            AggressorButtonColor: AggressorColors.chromeYellow,
-                            AggressorTextColor: AggressorColors.white,
-                          ),
-                          SizedBox(width: 25),
-                          AggressorButton(
-                              onPressed: () async {
-                                setState(() {
-                                  isDataPosting = true;
-                                });
-                                rentals.clear();
-                                courses.clear();
+                    isDataPosting
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                            ],
+                          )
+                        : Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10.w, vertical: 20.h),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: AggressorButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    buttonName: "CANCEL",
+                                    fontSize: 12,
+                                    width: 70,
+                                    AggressorButtonColor:
+                                        AggressorColors.chromeYellow,
+                                    AggressorTextColor: AggressorColors.white,
+                                  ),
+                                ),
+                                SizedBox(width: 20.w),
+                                AggressorButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        isDataPosting = true;
+                                      });
+                                      rentals.clear();
+                                      courses.clear();
 
-                                for (MasterModel courseModel in coursesModel) {
-                                  if (courseModel.isChecked == true) {
-                                    courses.add(courseModel.abbv!);
-                                  }
-                                }
-                                for (MasterModel rentalModel in rentalsModel) {
-                                  if (rentalModel.isChecked == true) {
-                                    rentals.add(rentalModel.abbv!);
-                                  }
-                                }
+                                      for (MasterModel courseModel
+                                          in coursesModel) {
+                                        if (courseModel.isChecked == true) {
+                                          courses.add(courseModel.abbv!);
+                                        }
+                                      }
+                                      for (MasterModel rentalModel
+                                          in rentalsModel) {
+                                        if (rentalModel.isChecked == true) {
+                                          rentals.add(rentalModel.abbv!);
+                                        }
+                                      }
 
-                                if (rentalsModel[1].isChecked) {
-                                  for (MasterModel bcSize
-                                      in rentalsModel[1].subCategories!) {
-                                    if (bcSize.isChecked == true) {
-                                      rentals.add(bcSize.abbv!);
-                                    }
-                                  }
-                                }
-                                aggressorApi.postRentalAndCoursesDetails(
-                                  inventoryId: inventoryDetails.inventoryId,
-                                  courses: courses.join(","),
-                                  rentals: rentals.join(","),
-                                  otherText: otherRentalsController.text,
-                                );
-                                await AggressorApi().updatingStatus(
-                                    charID: widget.charterID,
-                                    contactID: basicInfoModel.contactID!,
-                                    column: "rentals");
-                                setState(() {
-                                  isDataPosting = false;
-                                });
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => DivingInsurance(
-                                              charterID: widget.charterID,
-                                              reservationID: '',
-                                            )));
-                              },
-                              buttonName: "SAVE AND CONTINUE",
-                              fontSize: 12,
-                              width: 150,
-                              AggressorButtonColor: Color(0xff57ddda),
-                              AggressorTextColor: AggressorColors.white),
-                        ],
-                      ),
-                    )
+                                      if (rentalsModel[1].isChecked) {
+                                        for (MasterModel bcSize
+                                            in rentalsModel[1].subCategories!) {
+                                          if (bcSize.isChecked == true) {
+                                            rentals.add(bcSize.abbv!);
+                                          }
+                                        }
+                                      }
+                                      aggressorApi.postRentalAndCoursesDetails(
+                                        inventoryId:
+                                            inventoryDetails.inventoryId,
+                                        courses: courses.join(","),
+                                        rentals: rentals.join(","),
+                                        otherText: otherRentalsController.text,
+                                      );
+                                      await AggressorApi().updatingStatus(
+                                          charID: widget.charterID,
+                                          contactID: basicInfoModel.contactID!,
+                                          column: "rentals");
+                                      setState(() {
+                                        isDataPosting = false;
+                                      });
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DivingInsurance(
+                                                    charterID: widget.charterID,
+                                                    reservationID: '',
+                                                  )));
+                                    },
+                                    buttonName: "SAVE AND CONTINUE",
+                                    fontSize: 12,
+                                    width: 150,
+                                    AggressorButtonColor: Color(0xff57ddda),
+                                    AggressorTextColor: AggressorColors.white),
+                              ],
+                            ),
+                          )
                   ],
                 ),
               ),

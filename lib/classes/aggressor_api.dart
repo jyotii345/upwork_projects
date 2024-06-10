@@ -305,8 +305,9 @@ class AggressorApi {
     return countriesList;
   }
 
-  Future postGuestInformation(
+  Future<bool> postGuestInformation(
       {required String contactId, required BasicInfoModel userInfo}) async {
+    bool isUserDataUpdated = false;
     String url =
         "https://app.aggressor.com/api/gis/guestinformation/AF/$contactId";
 
@@ -318,10 +319,13 @@ class AggressorApi {
             'apikey': apiKey,
           },
           body: userJson);
-      print(response);
+      if (json.decode(response.body)['status'] == 'success') {
+        isUserDataUpdated = true;
+      }
     } catch (e) {
       print(e);
     }
+    return isUserDataUpdated;
   }
 
   Future postEmergencyContact(
@@ -344,11 +348,12 @@ class AggressorApi {
     }
   }
 
-  Future postWaiverForm(
+  Future<bool> postWaiverForm(
       {required String contactId,
       required String reservationID,
       String? charID,
       var ipAddress}) async {
+    bool isWaiverPosted = false;
     String url =
         "https://app.aggressor.com/api/gis/waiverv2/$contactId/$reservationID/$charID";
 
@@ -358,10 +363,15 @@ class AggressorApi {
       }, body: {
         "ip_address": ipAddress
       });
-      print(response);
+      Map<String, dynamic> decodedResponse = json.decode(response.body);
+
+      if (decodedResponse['status'] == 'success') {
+        isWaiverPosted = true;
+      }
     } catch (e) {
       print(e);
     }
+    return isWaiverPosted;
   }
 
   Future downloadWaiver({required String contactId, String? charID}) async {
@@ -527,9 +537,10 @@ class AggressorApi {
     return userJson;
   }
 
-  Future<BasicInfoModel> getBasicDetails({required String contactId}) async {
+  Future<BasicInfoModel> getBasicDetails({String? contactId}) async {
+    String newContactId = contactId ?? basicInfoModel.contactID!;
     //returns the profile data for the userId provided
-    String url = "https://app.aggressor.com/api/gis/contacts/" + contactId;
+    String url = "https://app.aggressor.com/api/gis/contacts/" + newContactId;
 
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
@@ -571,10 +582,7 @@ class AggressorApi {
     try {
       if (response.statusCode == 200) {
         Map<String, dynamic> decodedResponse = json.decode(response.body);
-
         inventoryDetails = InventoryDetails.fromJson(decodedResponse['0']);
-        print(inventoryDetails);
-        print(inventoryDetails);
       }
     } catch (e) {
       print(e);
@@ -721,31 +729,32 @@ class AggressorApi {
     }
   }
 
-  Future postDivingInsuranceDetails(
-      {required int? inventoryId,
-      required DivingInsuranceModel divingInfo}) async {
+  Future<bool> postDivingInsuranceDetails(
+      {required DivingInsuranceModel divingInfo}) async {
+    bool isDataUpdated = false;
     String url =
-        "https://app.aggressor.com/api/gis/diveinsurance/AF/$inventoryId";
+        "https://app.aggressor.com/api/gis/diveinsurance/AF/${welcomePageDetails.inventoryid}";
 
     var userJson = divingInfo.toJson();
-    print(userJson);
     try {
       Response response = await post(Uri.parse(url),
           headers: <String, String>{
             'apikey': apiKey,
           },
           body: userJson);
-      print(response);
+      if (response.statusCode == 200) {
+        isDataUpdated = true;
+      }
     } catch (e) {
       print(e);
     }
+    return isDataUpdated;
   }
 
   Future postTripInsuranceDetails(
-      {required int? inventoryId,
-      required TripInsuranceModel insuranceData}) async {
+      {required TripInsuranceModel insuranceData}) async {
     String url =
-        "https://app.aggressor.com/api/gis/tripinsurance/AF/$inventoryId";
+        "https://app.aggressor.com/api/gis/tripinsurance/AF/${welcomePageDetails.inventoryid}";
     var userJson = insuranceData.toJson();
     print(userJson);
     try {
@@ -760,20 +769,46 @@ class AggressorApi {
     }
   }
 
-  getDivingInsuranceDetails({required int inventoryId}) async {
+  Future<DivingInsuranceModel?> getDivingInsuranceDetails() async {
+    DivingInsuranceModel? divingInsuranceModel;
     String url =
-        "https://app.aggressor.com/api/gis/divinginsurance/$inventoryId";
+        "https://app.aggressor.com/api/gis/diveinsurance/${welcomePageDetails.inventoryid}";
     Response response = await get(Uri.parse(url), headers: <String, String>{
       'apikey': apiKey,
       "Content-Type": "application/json"
     });
     try {
       if (response.statusCode == 200) {
-        print(response.body);
+        var decodedResponse = json.decode(response.body);
+        divingInsuranceModel =
+            DivingInsuranceModel.fromJson(decodedResponse['0']);
       }
     } catch (e) {
       print(e);
     }
+    return divingInsuranceModel;
+  }
+
+  Future<TripInsuranceModel?> getTripInsuranceDetails() async {
+    TripInsuranceModel? tripInsuranceModel;
+    String url =
+        "https://app.aggressor.com/api/gis/tripinsurance/${welcomePageDetails.inventoryid}";
+    Response response = await get(Uri.parse(url), headers: <String, String>{
+      'apikey': apiKey,
+      "Content-Type": "application/json"
+    });
+    try {
+      if (response.statusCode == 200) {
+        var decodedResponse = json.decode(response.body);
+        // tripInsuranceModel =
+        //     TripInsuranceModel.fromJson(decodedResponse['0']);
+        print(decodedResponse);
+        print(decodedResponse);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return tripInsuranceModel;
   }
 
   getEmergencyContactDetails({required String contactId}) async {
