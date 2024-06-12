@@ -135,7 +135,27 @@ class _TripInsuranceState extends State<TripInsurance> {
   }
 
   getTripDetails() async {
-    await aggressorApi.getTripInsuranceDetails();
+    TripInsuranceModel? tripInsuranceModel =
+        await aggressorApi.getTripInsuranceDetails();
+    if (tripInsuranceModel != null) {
+      policyExpirationDate = tripInsuranceModel.trip_insurance_date;
+      if (policyExpirationDate != null) {
+        policyExpirationDateController.text =
+            Utils.getFormattedDate(date: policyExpirationDate!);
+      }
+      if (tripInsuranceModel.trip_insurance_other != null) {
+        othersController.text = tripInsuranceModel.trip_insurance_other!;
+      }
+
+      tripInsuranceModel.trip_insurance!
+          ? TripInsuranceOptionList[1]
+          : TripInsuranceOptionList[0];
+
+      if (tripInsuranceModel.trip_insurance_co != null) {
+        selectedInsuranceCompany = insuranceCompanyList.firstWhere(
+            (element) => element.title == tripInsuranceModel.trip_insurance_co);
+      }
+    }
   }
 
   formStatus({required String contactId, required String charterId}) async {

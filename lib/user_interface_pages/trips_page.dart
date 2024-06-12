@@ -25,11 +25,12 @@ import '../databases/profile_database.dart';
 import '../databases/slider_database.dart';
 import '../databases/states_database.dart';
 import '../databases/trip_database.dart';
+import '../databases/user_database.dart';
 
 class MyTrips extends StatefulWidget {
-  MyTrips(this.user);
+  MyTrips();
 
-  final User user;
+  // final User? user;
 
   @override
   State<StatefulWidget> createState() => new MyTripsState();
@@ -47,7 +48,8 @@ class MyTripsState extends State<MyTrips>
   int sliderIndex = 0;
 
   bool loading = true;
-
+  UserDatabaseHelper helper = UserDatabaseHelper.instance;
+  User? currentUser;
 // coordinates for a center location
 
   /*
@@ -55,10 +57,20 @@ class MyTripsState extends State<MyTrips>
    */
   @override
   void initState() {
+    getInitialData();
     super.initState();
+  }
+
+  getInitialData() async {
     pastTripsList = [];
     upcomingTripsList = [];
-    updateSliderImagesList();
+    await getCurrentUser();
+    await updateSliderImagesList();
+  }
+
+  getCurrentUser() async {
+    var userList = await helper.queryUser();
+    currentUser = userList[0];
   }
 
   Future<dynamic> getOfflineLoad() async {
@@ -122,7 +134,7 @@ class MyTripsState extends State<MyTrips>
     });
 
     for (var trip in tripList) {
-      trip.user = widget.user;
+      trip.user = currentUser;
       await trip.initCharterInformation();
       setState(() {
         loadedCount++;
@@ -228,10 +240,10 @@ class MyTripsState extends State<MyTrips>
 
   updateTripListList() async {
     var tempList = await AggressorApi()
-        .getReservationList(widget.user.contactId!, loadingCallBack);
+        .getReservationList(currentUser!.contactId!, loadingCallBack);
     tripList = tempList;
     for (var trip in tripList) {
-      trip.user = widget.user;
+      trip.user = currentUser;
       await trip.initCharterInformation();
 
       setState(() {
@@ -607,7 +619,7 @@ class MyTripsState extends State<MyTrips>
 
     int index = 0;
     pastTrips.forEach((element) {
-      element.user = widget.user;
+      element.user = currentUser;
       pastTripsList.add(element.getPastTripCard(context, index));
       index++;
     });

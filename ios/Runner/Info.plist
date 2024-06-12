@@ -65,6 +65,10 @@
 	<string>Used for adding to and getting images for galleries</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Not used in this application</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires microphone access.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app requires location access.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

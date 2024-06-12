@@ -12,6 +12,8 @@ import 'package:html_editor_enhanced/utils/shims/dart_ui.dart';
 import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart'
     as picker;
 import '../../../classes/user.dart';
+import '../../main_page.dart';
+import '../../trips_page.dart';
 import '../pages/confirmation.dart';
 import '../pages/emergency_contact.dart';
 import '../pages/policy.dart';
@@ -181,7 +183,17 @@ class _AppBarItemsState extends State<AppBarItems> {
                         )));
           },
           id: 9),
-      // AppDrawerModel(title: 'Logout', onTap: () {}, id: 10),
+      AppDrawerModel(
+          title: 'Home',
+          onTap: () {
+            // Scaffold.of(context).closeDrawer();
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => MyHomePage()),
+            );
+          },
+          id: 10),
     ]);
   }
 
@@ -219,7 +231,12 @@ class _AppBarItemsState extends State<AppBarItems> {
     Color blendedColor = Color.alphaBlend(color1.withOpacity(0.1), color2);
     return GestureDetector(
       onTap: () {
-        if (appDrawerselectedIndex == index) {
+        if (drawersList[index].title == 'Home') {
+          setState(() {
+            appDrawerselectedIndex = -1;
+          });
+          drawersList[index].onTap!();
+        } else if (appDrawerselectedIndex == index) {
           Scaffold.of(context).closeDrawer();
         } else {
           setState(() {
@@ -237,11 +254,13 @@ class _AppBarItemsState extends State<AppBarItems> {
               Padding(
                 padding: EdgeInsets.only(left: 20.w),
                 child: CircleAvatar(
-                    backgroundColor: status == "1" || status == "2"
-                        ? Colors.green
-                        : appDrawerselectedIndex == index
-                            ? Colors.red
-                            : Colors.grey
+                    backgroundColor: drawersList[index].title == 'Home'
+                        ? Colors.grey
+                        : status == "1" || status == "2"
+                            ? Colors.green
+                            : appDrawerselectedIndex == index
+                                ? Colors.red
+                                : Colors.grey
                     // selectedIndex == index ? Colors.green : blendedColor
                     ),
               ),

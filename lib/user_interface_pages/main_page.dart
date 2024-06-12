@@ -35,9 +35,9 @@ import 'trips_page.dart';
 import 'notes_page.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.user, this.tripList}) : super(key: key);
+  MyHomePage({Key? key, this.tripList}) : super(key: key);
 
-  final User user;
+  // final User user;
   final List<Trip>? tripList;
 
   @override
@@ -50,43 +50,57 @@ class _MyHomePageState extends State<MyHomePage>
   instance variables
    */
 
-  UserDatabaseHelper? helper;
-
+  UserDatabaseHelper helper = UserDatabaseHelper.instance;
+  User? currentUser;
   Widget galleryWidget = Container();
-
+  bool isLoading = true;
   /*
   init state
    */
 
   @override
   void initState() {
-    loadProfileDetails();
-    getCountriesList();
+    loadInitialData();
     super.initState();
+  }
 
-    BlocProvider.of<UserCubit>(context).setCurrentUser(widget.user);
+  var pageList = [];
+
+  getCurrentUser() async {
+    var userList = await helper.queryUser();
+    currentUser = userList[0];
+  }
+
+  loadInitialData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await getCurrentUser();
+    await loadProfileDetails();
+    getCountriesList();
+
+    BlocProvider.of<UserCubit>(context).setCurrentUser(currentUser);
     pageList = [
       MyTrips(
-        widget.user,
-      ),
+          // user: currentUser,
+          ),
       //trips page
-      Rewards(widget.user),
+      Rewards(currentUser!),
       // notes page
       Photos(
-        widget.user,
+        currentUser!,
       ),
       // photos page
       // rewards page
-      Reels(widget.user, refreshState),
+      Reels(currentUser!, refreshState),
       // login page
-      MyProfile(widget.user),
+      MyProfile(currentUser!),
       //my profile page
-      MyFiles(widget.user),
+      MyFiles(currentUser!),
       // my files page
-      Notes(widget.user),
-      InboxPage(widget.user),
+      Notes(currentUser!),
+      InboxPage(currentUser!),
     ];
-    helper = UserDatabaseHelper.instance;
     mainPageCallback = refreshState;
     mainPageSignOutCallback = signOutUser;
     homePage = true;
@@ -99,17 +113,19 @@ class _MyHomePageState extends State<MyHomePage>
           currentIndex = 7;
         });
       },
-      widget.user.contactId ?? "",
-      widget.user.userId ?? "",
+      currentUser!.contactId ?? "",
+      currentUser!.userId ?? "",
     );
+    setState(() {
+      isLoading = false;
+    });
   }
-
-  var pageList = [];
 
   Future<dynamic> loadProfileDetails() async {
     //loads the initial value of the users profile data
-    await AggressorApi().getProfileData(widget.user.userId!);
+    await AggressorApi().getProfileData(currentUser!.userId!);
   }
+
   void getCountriesList() async {
     //set the initial countries list
     countriesList = await AggressorApi().getCountries();
@@ -122,16 +138,20 @@ class _MyHomePageState extends State<MyHomePage>
     homePage = true;
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      bottomNavigationBar: showVideo ? null : getBottomNavigationBar(),
       // floatingActionButton: FloatingActionButton(onPressed: (){
       //   setState(() {
       //     currentIndex = 7;
       //   });
       // },),
-      appBar: showVideo ? null : getAppBar(),
-      body: Scaffold(
-          resizeToAvoidBottomInset: false,
-          bottomNavigationBar: showVideo ? null : getBottomNavigationBar(),
-          body: pageList[currentIndex]),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : pageList[currentIndex],
+      // appBar: showVideo ? null : getAppBar(),
+      // body: Scaffold(
+      //     resizeToAvoidBottomInset: false,
+      //     // bottomNavigationBar: showVideo ? null : getBottomNavigationBar(),
+      //     body: pageList[currentIndex]),
     );
   }
 
@@ -177,23 +197,23 @@ class _MyHomePageState extends State<MyHomePage>
     return IndexedStack(
       children: <Widget>[
         MyTrips(
-          widget.user,
-        ),
+            // user: currentUser,
+            ),
         //trips page
-        Rewards(widget.user),
+        Rewards(currentUser!),
         // notes page
         Photos(
-          widget.user,
+          currentUser!,
         ),
         // photos page
         // rewards page
-        Reels(widget.user, refreshState),
+        Reels(currentUser!, refreshState),
         // login page
-        MyProfile(widget.user),
+        MyProfile(currentUser!),
         //my profile page
-        MyFiles(widget.user),
+        MyFiles(currentUser!),
         // my files page
-        Notes(widget.user),
+        Notes(currentUser!),
         // my notes page
       ],
       index: currentIndex,

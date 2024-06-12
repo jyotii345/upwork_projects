@@ -36,7 +36,7 @@ class TripInsuranceModel {
   }
 
   TripInsuranceModel.fromJson(Map<String, dynamic> json) {
-    trip_insurance = json['tripInsurance'];
+    trip_insurance = json['tripInsurance'] ?? false;
     trip_insurance_co = json['tripInsuranceCo'];
     trip_insurance_other = json['tripInsuranceOther'];
     trip_insurance_number = json['tripInsuranceNumber'];

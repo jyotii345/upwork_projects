@@ -150,68 +150,72 @@ class _GuestInformationWelcomePageState
                             EdgeInsets.only(left: 25.0, right: 25, top: 15),
                         child: Column(
                           children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "Name",
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
+                            if (welcomePageDetails.first != null)
+                              Row(
+                                children: [
+                                  Text(
+                                    "Name",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
+                                  SizedBox(width: 10.w),
+                                  Text(welcomePageDetails.first!)
+                                ],
+                              ),
+                            if (welcomePageDetails.destination != null)
+                              Padding(
+                                padding: EdgeInsets.only(top: 10.h),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Yacht",
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10.w),
+                                    Text(welcomePageDetails.destination!)
+                                  ],
                                 ),
-                                SizedBox(width: 10.w),
-                                Text(welcomePageDetails.first!)
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.h),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Yacht",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(width: 10.w),
-                                  Text(welcomePageDetails.destination!)
-                                ],
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.h),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Departure",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
+                            if (welcomePageDetails.startDate != null)
+                              Padding(
+                                padding: EdgeInsets.only(top: 10.h),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Departure",
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 10.w),
-                                  Text(Utils.getFormattedDate(
-                                      date: welcomePageDetails.startDate!))
-                                ],
+                                    SizedBox(width: 10.w),
+                                    Text(Utils.getFormattedDate(
+                                        date: welcomePageDetails.startDate!))
+                                  ],
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.h),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Nights",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
+                            if (welcomePageDetails.nights != null)
+                              Padding(
+                                padding: EdgeInsets.only(top: 10.h),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Nights",
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 10.w),
-                                  Text(welcomePageDetails.nights.toString())
-                                ],
+                                    SizedBox(width: 10.w),
+                                    Text(welcomePageDetails.nights.toString())
+                                  ],
+                                ),
                               ),
-                            ),
                             Padding(
                               padding: EdgeInsets.only(top: 20.h),
                               child: Text(

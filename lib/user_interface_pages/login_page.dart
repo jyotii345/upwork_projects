@@ -420,8 +420,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
           builder: (context) => MyHomePage(
-            user: userList[0],
-          ),
+              // user: userList[0],
+              ),
         ),
       );
       // Navigator.pushReplacement(context,

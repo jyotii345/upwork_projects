@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../databases/slider_database.dart';
+import '../databases/user_database.dart';
 import '../user_interface_pages/Guest information System/widgets/navbar_items.dart';
 import 'aggressor_api.dart';
 import 'aggressor_colors.dart';
@@ -761,6 +762,7 @@ Drawer getGISAppDrawer(
         AppBarItems(
           charterID: charterID,
           reservationID: reservationID,
+          user: user,
         )
       ],
     ),

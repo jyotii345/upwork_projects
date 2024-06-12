@@ -121,7 +121,8 @@ class LoadingPageState extends State<LoadingPage> {
     });
 
     var connectivityResult = await (Connectivity().checkConnectivity());
-    online =(connectivityResult == ConnectivityResult.mobile||connectivityResult == ConnectivityResult.wifi);
+    online = (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi);
     // await DataConnectionChecker().hasConnection;
     if (online == true) {
       await updateOffline();
@@ -161,7 +162,7 @@ class LoadingPageState extends State<LoadingPage> {
         context,
         MaterialPageRoute(
             builder: (context) => MyHomePage(
-                  user: widget.user,
+                // user: widget.user,
                 )));
   }
 
@@ -410,8 +411,7 @@ class LoadingPageState extends State<LoadingPage> {
   }
 
   VoidCallback loadingCallBack() {
-
-    return (){
+    return () {
       setState(() {
         loadedCount++;
         percent += .01;
@@ -424,21 +424,21 @@ class LoadingPageState extends State<LoadingPage> {
     var response = await AggressorApi().getContact(widget.user.contactId!);
     setState(() {
       contact = Contact(
-          response["contactid"]??"",
-          response["first_name"]??"",
-          response["middle_name"]??"",
-          response["last_name"]??"",
-          response["email"]??"",
-          response["vipcount"]??"",
-          response["vippluscount"]??"",
-          response["sevenseascount"]??"",
-          response["aacount"]??"",
-          response["boutique_points"]??"",
-          response["vip"]??"",
-          response["vipPlus"]??"",
-          response["sevenSeas"]??"",
-          response["adventuresClub"]??"",
-          response["memberSince"]??"");
+          response["contactid"] ?? "",
+          response["first_name"] ?? "",
+          response["middle_name"] ?? "",
+          response["last_name"] ?? "",
+          response["email"] ?? "",
+          response["vipcount"] ?? "",
+          response["vippluscount"] ?? "",
+          response["sevenseascount"] ?? "",
+          response["aacount"] ?? "",
+          response["boutique_points"] ?? "",
+          response["vip"] ?? "",
+          response["vipPlus"] ?? "",
+          response["sevenSeas"] ?? "",
+          response["adventuresClub"] ?? "",
+          response["memberSince"] ?? "");
     });
     updateContactCache(response);
   }
@@ -484,21 +484,21 @@ class LoadingPageState extends State<LoadingPage> {
     }
 
     await contactDatabaseHelper.insertContact(
-        response["contactid"]??"",
-        response["first_name"]??"",
-        response["middle_name"]??"",
-        response["last_name"]??"",
-        response["email"]??"",
-        response["vipcount"]??"",
-        response["vippluscount"]??"",
-        response["sevenseascount"]??"",
-        response["aacount"]??"",
-        response["boutique_points"]??"",
-        response["vip"]??"",
-        response["vipPlus"]??"",
-        response["sevenSeas"]??"",
-        response["adventuresClub"]??"",
-        response["memberSince"]??"");
+        response["contactid"] ?? "",
+        response["first_name"] ?? "",
+        response["middle_name"] ?? "",
+        response["last_name"] ?? "",
+        response["email"] ?? "",
+        response["vipcount"] ?? "",
+        response["vippluscount"] ?? "",
+        response["sevenseascount"] ?? "",
+        response["aacount"] ?? "",
+        response["boutique_points"] ?? "",
+        response["vip"] ?? "",
+        response["vipPlus"] ?? "",
+        response["sevenSeas"] ?? "",
+        response["adventuresClub"] ?? "",
+        response["memberSince"] ?? "");
   }
 
   void updateCertificationCache() async {
@@ -574,22 +574,22 @@ class LoadingPageState extends State<LoadingPage> {
 
     await profileDatabaseHelper.insertProfile(
       response['userId'],
-      response['first']??"",
-      response['last']??"",
-      response['email']??"",
-      response['address1']??"",
-      response['address2']??"",
-      response['address2']??"",
-      response['state']??"",
-      response['province']??"",
+      response['first'] ?? "",
+      response['last'] ?? "",
+      response['email'] ?? "",
+      response['address1'] ?? "",
+      response['address2'] ?? "",
+      response['address2'] ?? "",
+      response['state'] ?? "",
+      response['province'] ?? "",
       response['country'].toString(),
       response['time_zone'],
-      response['zip']??"",
-      response['username']??"",
-      response['password']??"",
-      response['homePhone']??"",
-      response['workPhone']??"",
-      response['mobilePhone']??"",
+      response['zip'] ?? "",
+      response['username'] ?? "",
+      response['password'] ?? "",
+      response['homePhone'] ?? "",
+      response['workPhone'] ?? "",
+      response['mobilePhone'] ?? "",
     );
   }
 
@@ -631,8 +631,8 @@ class LoadingPageState extends State<LoadingPage> {
       }
 
       if (!tempGalleries.containsKey(tripList[tripIndex].reservationId)) {
-        tempGalleries[tripList[tripIndex].reservationId!] = Gallery(
-            widget.user, element.boatId.toString(), <Photo>[], tripList[tripIndex]);
+        tempGalleries[tripList[tripIndex].reservationId!] = Gallery(widget.user,
+            element.boatId.toString(), <Photo>[], tripList[tripIndex]);
       } else {
         tempGalleries[tripList[tripIndex].reservationId]!.addPhoto(element);
       }
@@ -660,16 +660,14 @@ class LoadingPageState extends State<LoadingPage> {
               NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
               OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
             }
-          }
-          else if (offlineItem["action"] == "delete") {
+          } else if (offlineItem["action"] == "delete") {
             var response = await AggressorApi()
                 .deleteNote(widget.user.userId!, offlineItem["id"]);
             if (response["status"] == "success") {
               NotesDatabaseHelper.instance.deleteNotes(offlineItem["id"]);
               OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
             }
-          }
-          else {
+          } else {
             Note uploadNote =
                 await NotesDatabaseHelper.instance.getNotes(offlineItem["id"]);
             var response = await AggressorApi().updateNote(
@@ -685,8 +683,7 @@ class LoadingPageState extends State<LoadingPage> {
               OfflineDatabaseHelper.instance.deleteOffline(offlineItem["id"]);
             }
           }
-        }
-        else if (offlineItem['type'] == 'image') {
+        } else if (offlineItem['type'] == 'image') {
           if (offlineItem['action'] == 'add') {
             Photo photo =
                 await PhotoDatabaseHelper.instance.getPhoto(offlineItem['id']);
