@@ -66,9 +66,8 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
   }
 
   getRentalAndCoursesDetails() async {
-    RentalModel rentalModelFromAPI = await AggressorApi()
-        .getRentalAndCoursesDetails(
-            inventoryId: welcomePageDetails.inventoryid!);
+    RentalModel rentalModelFromAPI =
+        await AggressorApi().getRentalAndCoursesDetails();
     setState(() {
       coursesModel = rentalModelFromAPI.coursesList!;
       rentalsModel = rentalModelFromAPI.rentalsList!;

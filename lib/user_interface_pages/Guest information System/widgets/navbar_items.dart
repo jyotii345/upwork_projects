@@ -1,6 +1,6 @@
 import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/classes/globals.dart';
-import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/guest_information_welcome_page.dart';
+import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/gis_welcome_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/AppBarModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/formStatusModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/divingInsurance.dart';

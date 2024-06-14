@@ -302,6 +302,7 @@ class AggressorApi {
       countriesList.add(
           MasterModel(id: country['countryid'], title: country['country']));
     }
+    listOfCountries = countriesList;
     return countriesList;
   }
 
@@ -460,6 +461,7 @@ class AggressorApi {
     //   statesList
     //       .add(MasterModel(title: states['state'], abbv: states['stateAbbr'], id: ));
     // }
+    listOfStates = statesList;
     return statesList;
   }
 
@@ -589,11 +591,10 @@ class AggressorApi {
     }
   }
 
-  Future<RentalModel> getRentalAndCoursesDetails(
-      {required String inventoryId}) async {
+  Future<RentalModel> getRentalAndCoursesDetails() async {
     RentalModel rentalModel = RentalModel();
     String url =
-        'https://app.aggressor.com/api/gis/rentalscourses/$inventoryId';
+        'https://app.aggressor.com/api/gis/rentalscourses/${welcomePageDetails.inventoryid}';
     Response response = await get(Uri.parse(url), headers: <String, String>{
       'apikey': apiKey,
       "Content-Type": "application/x-www-form-urlencoded"
@@ -751,8 +752,9 @@ class AggressorApi {
     return isDataUpdated;
   }
 
-  Future postTripInsuranceDetails(
+  Future<bool> postTripInsuranceDetails(
       {required TripInsuranceModel insuranceData}) async {
+    bool isUpdated = false;
     String url =
         "https://app.aggressor.com/api/gis/tripinsurance/AF/${welcomePageDetails.inventoryid}";
     var userJson = insuranceData.toJson();
@@ -763,10 +765,13 @@ class AggressorApi {
             'apikey': apiKey,
           },
           body: userJson);
-      print(response);
+      if (response.statusCode == 200) {
+        isUpdated = true;
+      }
     } catch (e) {
       print(e);
     }
+    return isUpdated;
   }
 
   Future<DivingInsuranceModel?> getDivingInsuranceDetails() async {
@@ -800,10 +805,7 @@ class AggressorApi {
     try {
       if (response.statusCode == 200) {
         var decodedResponse = json.decode(response.body);
-        // tripInsuranceModel =
-        //     TripInsuranceModel.fromJson(decodedResponse['0']);
-        print(decodedResponse);
-        print(decodedResponse);
+        tripInsuranceModel = TripInsuranceModel.fromJson(decodedResponse['0']);
       }
     } catch (e) {
       print(e);

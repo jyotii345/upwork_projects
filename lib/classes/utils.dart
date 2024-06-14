@@ -1,4 +1,5 @@
 import 'package:aggressor_adventures/classes/globals.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
@@ -6,10 +7,9 @@ class Utils {
     return defaultDateFormat
         .format(DateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS").parse(date.toString()));
   }
+
   static String getFormattedDateWithTime({required DateTime date}) {
-    return  
-    DateFormat("MMMM d, y hh:mm aaa")
-    
+    return DateFormat("MMMM d, y hh:mm aaa")
         .format(DateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS").parse(date.toString()));
   }
 
@@ -24,5 +24,24 @@ class Utils {
 
   static DateTime dateTimeFromString({required String date}) {
     return defaultDateFormatForBackend.parse(date);
+  }
+
+  static Widget getBulletPointText(
+      {required String text, TextStyle? textStyle}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "• ",
+          style: textStyle,
+        ),
+        Expanded(
+          child: Text(
+            text,
+            style: textStyle,
+          ),
+        ),
+      ],
+    );
   }
 }

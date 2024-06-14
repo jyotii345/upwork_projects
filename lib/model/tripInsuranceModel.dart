@@ -17,7 +17,7 @@ class TripInsuranceModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.trip_insurance != null) {
-      data['trip_insurance'] = this.trip_insurance! ? 1 : 0;
+      data['trip_insurance'] = this.trip_insurance! ? '1' : '0';
     }
     if (this.trip_insurance_co != null) {
       data['trip_insurance_co'] = this.trip_insurance_co;

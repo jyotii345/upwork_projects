@@ -6,9 +6,9 @@ import 'package:aggressor_adventures/model/welcomePageModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../classes/aggressor_colors.dart';
-import '../../classes/user.dart';
-import 'widgets/text_field.dart';
+import '../../../classes/aggressor_colors.dart';
+import '../../../classes/user.dart';
+import '../widgets/text_field.dart';
 
 class GuestInformationWelcomePage extends StatefulWidget {
   GuestInformationWelcomePage(
@@ -38,17 +38,24 @@ class _GuestInformationWelcomePageState
   bool isLoading = true;
   @override
   void initState() {
-    formStatus(contactId: widget.contactId, charterId: widget.currentTrip);
-    getInfo(
-        contactId: widget.contactId,
-        charterId: widget.currentTrip,
-        reservationId: widget.reservationID);
+    getInitialData();
     super.initState();
   }
 
   formStatus({required String contactId, required String charterId}) async {
     await aggressorApi.getFormStatus(
         charterId: widget.currentTrip, contactId: widget.contactId);
+  }
+
+  getInitialData() async {
+    await aggressorApi.getCountriesList();
+    await aggressorApi.getStatesList();
+    await formStatus(
+        contactId: widget.contactId, charterId: widget.currentTrip);
+    await getInfo(
+        contactId: widget.contactId,
+        charterId: widget.currentTrip,
+        reservationId: widget.reservationID);
   }
 
   getInfo(
