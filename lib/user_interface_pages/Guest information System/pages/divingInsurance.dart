@@ -669,119 +669,128 @@ class _DivingInsuranceState extends State<DivingInsurance> {
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  AggressorButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    buttonName: "CANCEL",
-                                    fontSize: 12,
-                                    width: 70,
-                                    AggressorButtonColor:
-                                        AggressorColors.chromeYellow,
-                                    AggressorTextColor: AggressorColors.white,
+                                  Expanded(
+                                    child: AggressorButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      buttonName: "CANCEL",
+                                      fontSize: 12,
+                                      width: 70,
+                                      AggressorButtonColor:
+                                          AggressorColors.chromeYellow,
+                                      AggressorTextColor: AggressorColors.white,
+                                    ),
                                   ),
-                                  SizedBox(width: 25),
-                                  AggressorButton(
-                                      onPressed:
-                                          // (certificationDate != null &&
-                                          //         selectedCertificateLevel !=
-                                          //             null &&
-                                          //         selectedCertificateAgency !=
-                                          //             null &&
-                                          //         certificationNumberController
-                                          //             .text.isNotEmpty)
-                                          // ?
-                                          () async {
-                                        setState(() {
-                                          isDataPosting = true;
-                                        });
-                                        if (_formKey.currentState!.validate()) {
-                                          DivingInsuranceModel divingData =
-                                              DivingInsuranceModel(
-                                            certification_agency:
-                                                selectedCertificateAgency!
-                                                    .title,
-                                            certification_level:
-                                                selectedCertificateLevel!.title,
-                                            certification_number:
-                                                certificationNumberController
-                                                    .text
-                                                    .trim(),
-                                            certificationDate:
-                                                certificationDate,
-                                            nitrox_agency:
-                                                nitroxAgencyController.text
-                                                    .trim(),
-                                            nitrox_date: nitroxDate,
-                                            nitrox_number:
-                                                nitroxNumberController.text
-                                                    .trim(),
-                                          );
-
-                                          if (selectedDiveEquipment!.id == 0) {
-                                            divingData.equipment_insurance =
-                                                true;
-                                            if (driveEquipmentPolicyNumberController
-                                                .text.isNotEmpty) {
-                                              divingData.equipment_policy =
-                                                  driveEquipmentPolicyNumberController
+                                  SizedBox(width: 20.w),
+                                  Expanded(
+                                    child: AggressorButton(
+                                        onPressed:
+                                            // (certificationDate != null &&
+                                            //         selectedCertificateLevel !=
+                                            //             null &&
+                                            //         selectedCertificateAgency !=
+                                            //             null &&
+                                            //         certificationNumberController
+                                            //             .text.isNotEmpty)
+                                            // ?
+                                            () async {
+                                          setState(() {
+                                            isDataPosting = true;
+                                          });
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            DivingInsuranceModel divingData =
+                                                DivingInsuranceModel(
+                                              certification_agency:
+                                                  selectedCertificateAgency!
+                                                      .title,
+                                              certification_level:
+                                                  selectedCertificateLevel!
+                                                      .title,
+                                              certification_number:
+                                                  certificationNumberController
                                                       .text
+                                                      .trim(),
+                                              certificationDate:
+                                                  certificationDate,
+                                              nitrox_agency:
+                                                  nitroxAgencyController.text
+                                                      .trim(),
+                                              nitrox_date: nitroxDate,
+                                              nitrox_number:
+                                                  nitroxNumberController.text
+                                                      .trim(),
+                                            );
+
+                                            if (selectedDiveEquipment!.id ==
+                                                0) {
+                                              divingData.equipment_insurance =
+                                                  true;
+                                              if (driveEquipmentPolicyNumberController
+                                                  .text.isNotEmpty) {
+                                                divingData.equipment_policy =
+                                                    driveEquipmentPolicyNumberController
+                                                        .text
+                                                        .trim();
+                                              }
+                                            }
+                                            if (selectedDiveInsurance?.id ==
+                                                0) {
+                                              divingData.dive_insurance = true;
+                                              divingData.dive_insurance_co =
+                                                  selectedInsuranceCompany!
+                                                      .abbv;
+                                              divingData.dive_insurance_date =
+                                                  policyDate;
+                                              divingData.dive_insurance_number =
+                                                  policyNumberController.text
                                                       .trim();
                                             }
-                                          }
-                                          if (selectedDiveInsurance?.id == 0) {
-                                            divingData.dive_insurance = true;
-                                            divingData.dive_insurance_co =
-                                                selectedInsuranceCompany!.abbv;
-                                            divingData.dive_insurance_date =
-                                                policyDate;
-                                            divingData.dive_insurance_number =
-                                                policyNumberController.text
-                                                    .trim();
-                                          }
-                                          if (selectedInsuranceCompany?.id ==
-                                                  2 &&
-                                              othersController
-                                                  .text.isNotEmpty) {
-                                            divingData.dive_insurance_other =
-                                                othersController.text.trim();
-                                          }
+                                            if (selectedInsuranceCompany?.id ==
+                                                    2 &&
+                                                othersController
+                                                    .text.isNotEmpty) {
+                                              divingData.dive_insurance_other =
+                                                  othersController.text.trim();
+                                            }
 
-                                          bool isDataUpdated =
-                                              await AggressorApi()
-                                                  .postDivingInsuranceDetails(
-                                                      divingInfo: divingData);
-                                          setState(() {
-                                            isDataPosting = false;
-                                          });
-                                          await AggressorApi().updatingStatus(
-                                              charID: widget.charterID,
-                                              contactID:
-                                                  basicInfoModel.contactID!,
-                                              column: "diving");
-                                          if (isDataUpdated) {
-                                            appDrawerselectedIndex = 7;
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        TripInsurance(
-                                                          charterID:
-                                                              widget.charterID,
-                                                          reservationID: widget
-                                                              .reservationID,
-                                                        )));
+                                            bool isDataUpdated =
+                                                await AggressorApi()
+                                                    .postDivingInsuranceDetails(
+                                                        divingInfo: divingData);
+                                            setState(() {
+                                              isDataPosting = false;
+                                            });
+                                            await AggressorApi().updatingStatus(
+                                                charID: widget.charterID,
+                                                contactID:
+                                                    basicInfoModel.contactID!,
+                                                column: "diving");
+                                            if (isDataUpdated) {
+                                              appDrawerselectedIndex = 7;
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          TripInsurance(
+                                                            charterID: widget
+                                                                .charterID,
+                                                            reservationID: widget
+                                                                .reservationID,
+                                                          )));
+                                            }
                                           }
-                                        }
-                                      },
-                                      // : null,
-                                      buttonName: "SAVE AND CONTINUE",
-                                      fontSize: 12,
-                                      width: 150,
-                                      AggressorButtonColor: Color(0xff57ddda)
-                                          .withOpacity(isAbsorbing ? 0.7 : 1),
-                                      AggressorTextColor:
-                                          AggressorColors.white),
+                                        },
+                                        // : null,
+                                        buttonName: "SAVE AND CONTINUE",
+                                        fontSize: 12,
+                                        width: 150,
+                                        AggressorButtonColor: Color(0xff57ddda)
+                                            .withOpacity(isAbsorbing ? 0.7 : 1),
+                                        AggressorTextColor:
+                                            AggressorColors.white),
+                                  ),
                                 ],
                               ),
                       )

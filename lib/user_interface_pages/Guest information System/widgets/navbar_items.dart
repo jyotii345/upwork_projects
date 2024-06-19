@@ -40,7 +40,7 @@ AggressorApi aggressorApi = AggressorApi();
 
 class _AppBarItemsState extends State<AppBarItems> {
   List<AppDrawerModel> drawersList = [];
-
+  bool isLoading = true;
   getDrawersList() {
     drawersList.clear();
     drawersList.addAll([
@@ -156,6 +156,19 @@ class _AppBarItemsState extends State<AppBarItems> {
           },
           id: 7),
       AppDrawerModel(
+          title: 'Travel Inforamtion',
+          taskStatus: form_status.travel,
+          onTap: () {
+            Scaffold.of(context).closeDrawer();
+            Navigator.push(
+                navigatorKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => TravelInformation(
+                          reservationID: widget.reservationID,
+                        )));
+          },
+          id: 9),
+      AppDrawerModel(
           title: 'Confirmation',
           taskStatus: form_status.confirmation,
           onTap: () {
@@ -168,41 +181,36 @@ class _AppBarItemsState extends State<AppBarItems> {
                         )));
           },
           id: 8),
-      AppDrawerModel(
-          title: 'Travel Inforamtion',
-          taskStatus: form_status.travel,
-          onTap: () {
-            Scaffold.of(context).closeDrawer();
-            Navigator.push(
-                navigatorKey.currentContext!,
-                MaterialPageRoute(
-                    builder: (context) => TravelInformation(
-                          charID: widget.charterID,
-                          reservationID: widget.reservationID,
-                          currentTrip: widget.charterID,
-                        )));
-          },
-          id: 9),
-      AppDrawerModel(
-          title: 'Home',
-          onTap: () {
-            // Scaffold.of(context).closeDrawer();
+      // AppDrawerModel(
+      //     title: 'Home',
+      //     onTap: () {
+      //       // Scaffold.of(context).closeDrawer();
 
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => MyHomePage()),
-            );
-          },
-          id: 10),
+      //       Navigator.pushReplacement(
+      //         context,
+      //         MaterialPageRoute(builder: (context) => MyHomePage()),
+      //       );
+      //     },
+      //     id: 10),
     ]);
   }
 
   @override
   void initState() {
-    formStatus(
+    getInitialData();
+    super.initState();
+  }
+
+  getInitialData() async {
+    setState(() {
+      isLoading = true;
+    });
+    await formStatus(
         contactId: basicInfoModel.contactID!, charterId: widget.charterID);
     getDrawersList();
-    super.initState();
+    setState(() {
+      isLoading = false;
+    });
   }
 
   formStatus({required String contactId, required String charterId}) async {
@@ -212,16 +220,18 @@ class _AppBarItemsState extends State<AppBarItems> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 765.h,
-      child: ListView.builder(
-        itemCount: drawersList.length,
-        itemBuilder: (context, index) {
-          return ItemBuilder(
-              index: index, status: drawersList[index].taskStatus);
-        },
-      ),
-    );
+    return isLoading
+        ? Expanded(child: Center(child: CircularProgressIndicator()))
+        : Expanded(
+            child: ListView.builder(
+              itemCount: drawersList.length,
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              itemBuilder: (context, index) {
+                return ItemBuilder(
+                    index: index, status: drawersList[index].taskStatus);
+              },
+            ),
+          );
   }
 
   ItemBuilder({required int index, required String? status}) {

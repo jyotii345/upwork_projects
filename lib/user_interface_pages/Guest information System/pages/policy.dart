@@ -70,137 +70,132 @@ class _PolicyState extends State<Policy> {
 
   @override
   Widget build(BuildContext context) {
-    return AbsorbPointer(
-      absorbing:
-          form_status.policy == "1" || form_status.policy == "2" ? true : false,
-      child: Scaffold(
-        drawer: getGISAppDrawer(
-            charterID: widget.charterID, reservationID: widget.reservationID!),
-        appBar: AppBar(
-          elevation: 0,
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          leading: Builder(builder: (context) {
-            return IconButton(
-              icon: Icon(
-                Icons.menu_outlined,
-                color: Color(0xff418cc7),
-                size: 22,
+    return Scaffold(
+      drawer: getGISAppDrawer(
+          charterID: widget.charterID, reservationID: widget.reservationID!),
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leading: Builder(builder: (context) {
+          return IconButton(
+            icon: Icon(
+              Icons.menu_outlined,
+              color: Color(0xff418cc7),
+              size: 22,
+            ),
+            color: AggressorColors.secondaryColor,
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          );
+        }),
+        title: Padding(
+          padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+          child: Image.asset(
+            "assets/logo.png",
+            height: AppBar().preferredSize.height,
+            fit: BoxFit.fitHeight,
+          ),
+        ),
+        actions: <Widget>[
+          SizedBox(
+            height: AppBar().preferredSize.height,
+            child: IconButton(
+              icon: Container(
+                child: Image.asset("assets/callicon.png"),
               ),
-              color: AggressorColors.secondaryColor,
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          }),
-          title: Padding(
-            padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-            child: Image.asset(
-              "assets/logo.png",
-              height: AppBar().preferredSize.height,
-              fit: BoxFit.fitHeight,
+              onPressed: makeCall,
             ),
           ),
-          actions: <Widget>[
-            SizedBox(
-              height: AppBar().preferredSize.height,
-              child: IconButton(
-                icon: Container(
-                  child: Image.asset("assets/callicon.png"),
-                ),
-                onPressed: makeCall,
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 10.h, left: 30.w),
+            child: Text(
+              "Online Application And Waiver Form - Payment & Cancellation Policy.",
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w700,
               ),
             ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 10.h, left: 30.w),
-              child: Text(
-                "Online Application And Waiver Form - Payment & Cancellation Policy.",
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-            Divider(
-              thickness: 1,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 15.h, left: 20.w, right: 20.w),
-              child: Container(
-                decoration: BoxDecoration(
+          ),
+          Divider(
+            thickness: 1,
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 15.h, left: 20.w, right: 20.w),
+            child: Container(
+              decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(12)),
-                ),
-                height: 450.h,
-                child: Stack(
-                  children: [
-                    WebViewWidget(controller: controller),
-                    Visibility(
-                        visible: isLoading,
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        )),
-                  ],
-                ),
+                  color: Colors.white),
+              height: 450.h,
+              child: Stack(
+                children: [
+                  WebViewWidget(controller: controller),
+                  Visibility(
+                      visible: isLoading,
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      )),
+                ],
               ),
             ),
-            Padding(
-                padding: EdgeInsets.only(top: 15.h, left: 25.w, right: 25.w),
-                child: getFinalizedFormContainer()),
-            Padding(
-              padding: EdgeInsets.only(top: 15.h, left: 24.w, right: 10.w),
-              child: isPolicyStatusUpdating
-                  ? CircularProgressIndicator()
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        AggressorButton(
-                          onPressed: () {
-                            Navigator.pop(context);
+          ),
+          Padding(
+              padding: EdgeInsets.only(top: 15.h, left: 25.w, right: 25.w),
+              child: getFinalizedFormContainer()),
+          Padding(
+            padding: EdgeInsets.only(top: 15.h, left: 24.w, right: 10.w),
+            child: isPolicyStatusUpdating
+                ? CircularProgressIndicator()
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      AggressorButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        buttonName: "CANCEL",
+                        fontSize: 12.sp,
+                        width: 70.w,
+                        AggressorButtonColor: AggressorColors.chromeYellow,
+                        AggressorTextColor: AggressorColors.white,
+                      ),
+                      SizedBox(width: 25.w),
+                      AggressorButton(
+                          onPressed: () async {
+                            setState(() {
+                              isPolicyStatusUpdating = true;
+                            });
+                            await AggressorApi().updatingStatus(
+                                charID: widget.charterID,
+                                contactID: basicInfoModel.contactID!,
+                                column: "policy");
+                            setState(() {
+                              isPolicyStatusUpdating = false;
+                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => EmergencyContact(
+                                        charID: widget.charterID,
+                                        currentTrip: widget.charterID,
+                                        reservationID: widget.reservationID)));
                           },
-                          buttonName: "CANCEL",
+                          buttonName: "SAVE AND CONTINUE",
                           fontSize: 12.sp,
-                          width: 70.w,
-                          AggressorButtonColor: AggressorColors.chromeYellow,
-                          AggressorTextColor: AggressorColors.white,
-                        ),
-                        SizedBox(width: 25.w),
-                        AggressorButton(
-                            onPressed: () async {
-                              setState(() {
-                                isPolicyStatusUpdating = true;
-                              });
-                              await AggressorApi().updatingStatus(
-                                  charID: widget.charterID,
-                                  contactID: basicInfoModel.contactID!,
-                                  column: "policy");
-                              setState(() {
-                                isPolicyStatusUpdating = false;
-                              });
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EmergencyContact(
-                                          charID: widget.charterID,
-                                          currentTrip: widget.charterID,
-                                          reservationID:
-                                              widget.reservationID)));
-                            },
-                            buttonName: "SAVE AND CONTINUE",
-                            fontSize: 12.sp,
-                            width: 150.w,
-                            AggressorButtonColor: Color(0xff57ddda)
-                                .withOpacity(isAbsorbing ? 0.7 : 1),
-                            AggressorTextColor: AggressorColors.white),
-                      ],
-                    ),
-            )
-          ],
-        ),
+                          width: 150.w,
+                          AggressorButtonColor: Color(0xff57ddda)
+                              .withOpacity(isAbsorbing ? 0.7 : 1),
+                          AggressorTextColor: AggressorColors.white),
+                    ],
+                  ),
+          )
+        ],
       ),
     );
   }

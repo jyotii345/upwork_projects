@@ -208,16 +208,17 @@ class _EmergencyContactState extends State<EmergencyContact> {
         ],
       ),
       backgroundColor: Color(0xfff4f3ef),
-      body: SingleChildScrollView(
-        child: AbsorbPointer(
-          absorbing: isAbsorbing,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
-            child: isMasterDataLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Column(
+      body: isMasterDataLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: AbsorbPointer(
+                absorbing: isAbsorbing,
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+                  child: Column(
                     children: [
                       InfoBannerContainer(
                         bgColor: AggressorColors.aero,
@@ -623,9 +624,9 @@ class _EmergencyContactState extends State<EmergencyContact> {
                       )
                     ],
                   ),
-          ),
-        ),
-      ),
+                ),
+              ),
+            ),
     );
   }
 }

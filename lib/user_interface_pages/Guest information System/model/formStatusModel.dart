@@ -34,7 +34,8 @@ class FormStatusModel {
     diving = json['diving'];
     insurance = json['insurance'];
     waiver = json['waiver'];
-    policy = json['confirmation'];
+    policy = json['policy'];
+    confirmation = json['confirmation'];
     options = json['options'];
     activities = json['activities'];
   }

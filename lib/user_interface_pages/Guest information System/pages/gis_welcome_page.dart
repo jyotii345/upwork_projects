@@ -90,6 +90,7 @@ class _GuestInformationWelcomePageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xfff4f3ef),
+      // bottomNavigationBar: getBottomNavigationBar(),
       drawer: getGISAppDrawer(
           user: widget.user!,
           charterID: widget.currentTrip,
@@ -149,118 +150,112 @@ class _GuestInformationWelcomePageState
                   Divider(
                     thickness: 1,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 25.0, right: 25, top: 15),
-                        child: Column(
-                          children: [
-                            if (welcomePageDetails.first != null)
-                              Row(
-                                children: [
-                                  Text(
-                                    "Name",
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 25.h, right: 25.h, top: 15.h, bottom: 20.h),
+                    child: Column(
+                      children: [
+                        if (welcomePageDetails.first != null)
+                          Row(
+                            children: [
+                              Text(
+                                "Name",
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                              Text(welcomePageDetails.first!)
+                            ],
+                          ),
+                        if (welcomePageDetails.destination != null)
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.h),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Yacht",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                  SizedBox(width: 10.w),
-                                  Text(welcomePageDetails.first!)
-                                ],
-                              ),
-                            if (welcomePageDetails.destination != null)
-                              Padding(
-                                padding: EdgeInsets.only(top: 10.h),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Yacht",
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    SizedBox(width: 10.w),
-                                    Text(welcomePageDetails.destination!)
-                                  ],
                                 ),
-                              ),
-                            if (welcomePageDetails.startDate != null)
-                              Padding(
-                                padding: EdgeInsets.only(top: 10.h),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Departure",
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    SizedBox(width: 10.w),
-                                    Text(Utils.getFormattedDate(
-                                        date: welcomePageDetails.startDate!))
-                                  ],
+                                SizedBox(width: 10.w),
+                                Text(welcomePageDetails.destination!)
+                              ],
+                            ),
+                          ),
+                        if (welcomePageDetails.startDate != null)
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.h),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Departure",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                            if (welcomePageDetails.nights != null)
-                              Padding(
-                                padding: EdgeInsets.only(top: 10.h),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Nights",
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    SizedBox(width: 10.w),
-                                    Text(welcomePageDetails.nights.toString())
-                                  ],
+                                SizedBox(width: 10.w),
+                                Text(Utils.getFormattedDate(
+                                    date: welcomePageDetails.startDate!))
+                              ],
+                            ),
+                          ),
+                        if (welcomePageDetails.nights != null)
+                          Padding(
+                            padding: EdgeInsets.only(top: 10.h),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Nights",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 20.h),
-                              child: Text(
-                                  "Please complete each of the sections above to be cleared for boarding or check-in starting with the Guest Information tab.",
+                                SizedBox(width: 10.w),
+                                Text(welcomePageDetails.nights.toString())
+                              ],
+                            ),
+                          ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 20.h),
+                          child: Text(
+                              "Please complete each of the sections above to be cleared for boarding or check-in starting with the Guest Information tab.",
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w500)),
+                        ),
+                        ListView.builder(
+                          padding: EdgeInsets.symmetric(vertical: 20.h),
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: paymentPoints.length,
+                          itemBuilder: (context, index) {
+                            return textBuilder(index: index);
+                          },
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Thank you for choosing to travel with us.",
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500)),
-                            ),
-                            SizedBox(
-                              height: 20.h,
-                            ),
-                            SizedBox(
-                              height: 450.h,
-                              child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                itemCount: paymentPoints.length,
-                                itemBuilder: (context, index) {
-                                  return textBuilder(index: index);
-                                },
-                              ),
-                            )
-                          ],
+                              Text(
+                                  "For questions regarding the GIS or about a specific yacht, please email info@aggressor.com.",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500)),
+                            ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.w),
-                        child: Text("Thank you for choosing to travel with us.",
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w500)),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 10.h, left: 10.w),
-                        child: Text(
-                            "For questions regarding the GIS or about a specific yacht, please email info@aggressor.com.",
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.w500)),
-                      ),
-                    ],
+                      ],
+                    ),
                   )
                 ],
               ),

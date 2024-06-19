@@ -272,17 +272,17 @@ class _WaiverState extends State<Waiver> {
                               ? Color(0xff57ddda).withOpacity(0.7)
                               : Color(0xff57ddda),
                           AggressorTextColor: AggressorColors.white),
-                      AggressorButton(
-                          onPressed: () async {
-                            await AggressorApi().downloadWaiver(
-                                contactId: basicInfoModel.contactID!,
-                                charID: widget.charterID);
-                          },
-                          buttonName: "DOWNLOAD WAIVER",
-                          fontSize: 12.sp,
-                          width: 140.w,
-                          AggressorButtonColor: AggressorColors.dimGrey,
-                          AggressorTextColor: AggressorColors.white),
+                      // AggressorButton(
+                      //     onPressed: () async {
+                      //       await AggressorApi().downloadWaiver(
+                      //           contactId: basicInfoModel.contactID!,
+                      //           charID: widget.charterID);
+                      //     },
+                      //     buttonName: "DOWNLOAD WAIVER",
+                      //     fontSize: 12.sp,
+                      //     width: 140.w,
+                      //     AggressorButtonColor: AggressorColors.dimGrey,
+                      //     AggressorTextColor: AggressorColors.white),
                     ],
                   ),
           )

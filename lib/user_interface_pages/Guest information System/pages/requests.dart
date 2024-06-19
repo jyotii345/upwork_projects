@@ -116,15 +116,16 @@ class _RequestsState extends State<Requests> {
         ],
       ),
       backgroundColor: Color(0xfff4f3ef),
-      body: SingleChildScrollView(
-        child: AbsorbPointer(
-          absorbing: isAbsorbing,
-          child: Container(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
-              child: isDataLoading
-                  ? Center(child: CircularProgressIndicator())
-                  : Column(
+      body: isDataLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: AbsorbPointer(
+                absorbing: isAbsorbing,
+                child: Container(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+                    child: Column(
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0, left: 15),
@@ -275,10 +276,10 @@ class _RequestsState extends State<Requests> {
                         )
                       ],
                     ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

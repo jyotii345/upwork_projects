@@ -20,16 +20,14 @@ import '../../widgets/info_banner_container.dart';
 import '../model/masterModel.dart';
 import '../widgets/dropDown.dart';
 import '../widgets/text_field.dart';
+import 'confirmation.dart';
 
 class TravelInformation extends StatefulWidget {
   TravelInformation({
     super.key,
-    required this.charID,
-    required this.currentTrip,
     required this.reservationID,
   });
-  final String charID;
-  final String currentTrip;
+
   final String reservationID;
 
   @override
@@ -70,20 +68,17 @@ DateTime? departureDate;
 class _TravelInformationState extends State<TravelInformation> {
   @override
   void initState() {
-    getUserTravelInformation(
-        contactId: basicInfoModel.contactID!, charterId: widget.currentTrip);
-    formStatus(
-        contactId: basicInfoModel.contactID!, charterId: widget.currentTrip);
+    getUserTravelInformation();
+    formStatus();
     super.initState();
   }
 
-  getUserTravelInformation(
-      {required String contactId, required String charterId}) async {
+  getUserTravelInformation() async {
     setState(() {
       isLoading = true;
     });
-    List<TravelInformationModel> travelInformationList = await aggressorApi
-        .getTravelInformation(charterId: charterId, contactId: contactId);
+    List<TravelInformationModel> travelInformationList =
+        await aggressorApi.getTravelInformation();
 
     inboundFlightsList.clear();
     outboundFlightsList.clear();
@@ -100,9 +95,8 @@ class _TravelInformationState extends State<TravelInformation> {
     });
   }
 
-  formStatus({required String contactId, required String charterId}) async {
-    await aggressorApi.getFormStatus(
-        charterId: charterId, contactId: contactId);
+  formStatus() async {
+    await aggressorApi.getFormStatus();
   }
 
   newFlightWidget({
@@ -233,12 +227,10 @@ class _TravelInformationState extends State<TravelInformation> {
 
                             await aggressorApi.postTravelInformation(
                               contactId: basicInfoModel.contactID!,
-                              charterId: widget.currentTrip,
+                              charterId: welcomePageDetails.charterid,
                               travelInfo: saveFlightData,
                             );
-                            getUserTravelInformation(
-                                contactId: basicInfoModel.contactID!,
-                                charterId: widget.currentTrip);
+                            await getUserTravelInformation();
                           } else {
                             TravelInformationModel updateFlightData =
                                 TravelInformationModel(
@@ -256,9 +248,7 @@ class _TravelInformationState extends State<TravelInformation> {
                               contactId: basicInfoModel.contactID!,
                               travelInfo: updateFlightData,
                             );
-                            getUserTravelInformation(
-                                contactId: basicInfoModel.contactID!,
-                                charterId: widget.currentTrip);
+                            await getUserTravelInformation();
                           }
                         }
                       },
@@ -277,9 +267,7 @@ class _TravelInformationState extends State<TravelInformation> {
                                 await aggressorApi.deleteTravelInformation(
                                     contactId: basicInfoModel.contactID!,
                                     flightId: travelInformation.flightId!);
-                                getUserTravelInformation(
-                                    contactId: basicInfoModel.contactID!,
-                                    charterId: widget.currentTrip);
+                                await getUserTravelInformation();
                               },
                               buttonName: 'DELETE FLIGHT',
                               AggressorButtonColor: AggressorColors.red,
@@ -304,7 +292,8 @@ class _TravelInformationState extends State<TravelInformation> {
         //todo what you need for left drawer
       },
       drawer: getGISAppDrawer(
-          charterID: widget.charID, reservationID: widget.reservationID),
+          charterID: welcomePageDetails.charterid.toString(),
+          reservationID: widget.reservationID),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
@@ -344,111 +333,123 @@ class _TravelInformationState extends State<TravelInformation> {
         ],
       ),
       backgroundColor: Color(0xfff4f3ef),
-      body: SingleChildScrollView(
-        child: AbsorbPointer(
-          absorbing: form_status.travel == "1" || form_status.travel == "2"
-              ? true
-              : false,
-          child: Container(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
-              child: !isLoading
-                  ? Column(
-                      children: [
-                        InfoBannerContainer(
-                          bgColor: AggressorColors.aero,
-                          infoText:
-                              'Travel information does not have to be completed now to confirm your reservation, however, it will need to be completed prior to traveling. You may return to this page at any time by opening this same GIS link to complete your travel information. If transfers are not included in your yacht package, please contact your yacht specialist to confirm these arrangements.',
-                        ),
-                        SizedBox(
-                          height: 30.h,
-                        ),
-                        newFlightWidget(
-                          isArrivalFlight: true,
-                          isNewFlight: true,
-                          travelInformation: arrivalInformationModel,
-                        ),
-                        SizedBox(
-                          height: inboundFlightsList.isNotEmpty ? 450.h : 0.h,
-                          child: ListView.builder(
-                            itemCount: inboundFlightsList.length,
-                            itemBuilder: (context, index) {
-                              return newFlightWidget(
-                                  isArrivalFlight: true,
-                                  isNewFlight: false,
-                                  travelInformation: inboundFlightsList[index]);
-                            },
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: AbsorbPointer(
+                absorbing:
+                    form_status.travel == "1" || form_status.travel == "2"
+                        ? true
+                        : false,
+                child: Container(
+                  child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10.w, vertical: 15.h),
+                      child: Column(
+                        children: [
+                          InfoBannerContainer(
+                            bgColor: AggressorColors.aero,
+                            infoText:
+                                'Travel information does not have to be completed now to confirm your reservation, however, it will need to be completed prior to traveling. You may return to this page at any time by opening this same GIS link to complete your travel information. If transfers are not included in your yacht package, please contact your yacht specialist to confirm these arrangements.',
                           ),
-                        ),
-                        SizedBox(height: 25.h),
-                        newFlightWidget(
-                            isArrivalFlight: false,
+                          SizedBox(
+                            height: 30.h,
+                          ),
+                          newFlightWidget(
+                            isArrivalFlight: true,
                             isNewFlight: true,
-                            travelInformation: departureInformationModel),
-                        SizedBox(
-                          height: 30.h,
-                        ),
-                        SizedBox(
-                          height: outboundFlightsList.isNotEmpty ? 450.h : 10.h,
-                          child: ListView.builder(
-                            itemCount: outboundFlightsList.length,
-                            itemBuilder: (context, index) {
-                              return newFlightWidget(
-                                  isArrivalFlight: false,
-                                  isNewFlight: false,
-                                  travelInformation:
-                                      outboundFlightsList[index]);
-                            },
+                            travelInformation: arrivalInformationModel,
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: AggressorButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  buttonName: 'Cancel',
-                                  AggressorButtonColor:
-                                      AggressorColors.chromeYellow,
-                                  AggressorTextColor: AggressorColors.white,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(width: 20.w),
-                              Expanded(
-                                child: AggressorButton(
-                                  onPressed: () async {
-                                    await AggressorApi().updatingStatus(
-                                        charID: widget.charID,
-                                        contactID: basicInfoModel.contactID!,
-                                        column: "travel");
-                                  },
-                                  buttonName:
-                                      'I HAVE COMPLETED ALL OF MY TRAVEL PLANS.',
-                                  leftPadding: 10.w,
-                                  AggressorButtonColor: AggressorColors.aero,
-                                  AggressorTextColor: AggressorColors.white,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              )
-                            ],
+                          SizedBox(
+                            height: inboundFlightsList.isNotEmpty ? 450.h : 0.h,
+                            child: ListView.builder(
+                              itemCount: inboundFlightsList.length,
+                              itemBuilder: (context, index) {
+                                return newFlightWidget(
+                                    isArrivalFlight: true,
+                                    isNewFlight: false,
+                                    travelInformation:
+                                        inboundFlightsList[index]);
+                              },
+                            ),
                           ),
-                        )
-                      ],
-                    )
-                  : Padding(
-                      padding: EdgeInsets.only(top: 380.h),
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
+                          SizedBox(height: 25.h),
+                          newFlightWidget(
+                              isArrivalFlight: false,
+                              isNewFlight: true,
+                              travelInformation: departureInformationModel),
+                          SizedBox(
+                            height: 30.h,
+                          ),
+                          SizedBox(
+                            height:
+                                outboundFlightsList.isNotEmpty ? 450.h : 10.h,
+                            child: ListView.builder(
+                              itemCount: outboundFlightsList.length,
+                              itemBuilder: (context, index) {
+                                return newFlightWidget(
+                                    isArrivalFlight: false,
+                                    isNewFlight: false,
+                                    travelInformation:
+                                        outboundFlightsList[index]);
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: AggressorButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    buttonName: 'Cancel',
+                                    AggressorButtonColor:
+                                        AggressorColors.chromeYellow,
+                                    AggressorTextColor: AggressorColors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(width: 20.w),
+                                Expanded(
+                                  child: AggressorButton(
+                                    onPressed: () async {
+                                      bool isStatusUpdated =
+                                          await AggressorApi()
+                                              .updatingStatus(column: "travel");
+                                      if (isStatusUpdated) {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Confirmation(
+                                                      charterID:
+                                                          welcomePageDetails
+                                                              .charterid
+                                                              .toString(),
+                                                      reservationID:
+                                                          widget.reservationID,
+                                                    )));
+                                      }
+                                    },
+                                    buttonName: 'Save And Continue',
+                                    leftPadding: 10.w,
+                                    AggressorButtonColor: AggressorColors.aero,
+                                    AggressorTextColor: AggressorColors.white,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      )),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

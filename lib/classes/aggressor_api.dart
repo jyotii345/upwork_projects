@@ -393,26 +393,27 @@ class AggressorApi {
     }
   }
 
-  Future updatingStatus(
-      {required String column,
-      required String contactID,
-      required String? charID}) async {
+  Future<bool> updatingStatus(
+      {required String column, String? contactID, String? charID}) async {
+    bool isStatusUpdated = false;
     String url =
-        "https://app.aggressor.com/api/gis/updatestatus/AF/$contactID/$charID/$column";
+        "https://app.aggressor.com/api/gis/updatestatus/AF/${basicInfoModel.contactID}/${welcomePageDetails.charterid}/$column";
     try {
       Response response = await get(Uri.parse(url), headers: <String, String>{
         'apikey': apiKey,
       });
-      print(response);
+      if (response.statusCode == 200) {
+        isStatusUpdated = true;
+      }
     } catch (e) {
       print(e);
     }
+    return isStatusUpdated;
   }
 
-  getFormStatus({required String contactId, required String charterId}) async {
-    List statusList = [];
+  getFormStatus({String? contactId, String? charterId}) async {
     String url =
-        'https://app.aggressor.com/api/gis/getformstatus/AF/$contactId/$charterId';
+        'https://app.aggressor.com/api/gis/getformstatus/AF/${basicInfoModel.contactID}/${welcomePageDetails.charterid}';
     try {
       Response response = await get(Uri.parse(url), headers: <String, String>{
         'apikey': apiKey,
@@ -420,10 +421,6 @@ class AggressorApi {
       if (response.statusCode == 200) {
         List decodedResponse = json.decode(response.body);
         form_status = FormStatusModel.fromJson(decodedResponse[0]);
-        for (var data in decodedResponse) {
-          statusList.add(data);
-        }
-        return statusList;
       }
     } catch (e) {
       print(e);
@@ -610,11 +607,10 @@ class AggressorApi {
     return rentalModel;
   }
 
-  Future getTravelInformation(
-      {required String contactId, required charterId}) async {
+  Future getTravelInformation() async {
     List<TravelInformationModel> travelInformation = [];
     String url =
-        'https://app.aggressor.com/api/gis/flightsv2/$contactId/$charterId';
+        'https://app.aggressor.com/api/gis/flightsv2/${basicInfoModel.contactID}/${welcomePageDetails.charterid}';
     try {
       Response response = await get(Uri.parse(url), headers: <String, String>{
         'apikey': apiKey,
@@ -690,7 +686,7 @@ class AggressorApi {
       required charterId,
       required TravelInformationModel travelInfo}) async {
     String url =
-        'https://app.aggressor.com/api/gis/saveflight/AF/$contactId/$charterId';
+        'https://app.aggressor.com/api/gis/saveflight/AF/${contactId}/$charterId';
     var userJson = travelInfo.toJson();
     print(userJson);
     try {

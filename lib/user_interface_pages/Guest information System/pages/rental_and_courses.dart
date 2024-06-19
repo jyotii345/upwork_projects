@@ -42,6 +42,8 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
   TextEditingController otherRentalsController = TextEditingController();
   bool isDataLoading = true;
   bool isDataPosting = false;
+  bool isAbsorbing = form_status.rentals == "1" || form_status.rentals == "2";
+
   @override
   void initState() {
     super.initState();
@@ -124,11 +126,7 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
             )
           : SingleChildScrollView(
               child: AbsorbPointer(
-                absorbing:
-                    // form_status.rentals == "1" || form_status.rentals == "2"
-                    //     ? true
-                    //     :
-                    false,
+                absorbing: isAbsorbing,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -188,11 +186,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: coursesModel[0].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              coursesModel[0].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    coursesModel[0].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Nitrox",
@@ -205,11 +205,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: coursesModel[1].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              coursesModel[1].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    coursesModel[1].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "PADI Advanced Open Water Diver Course",
@@ -222,12 +224,14 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: coursesModel[2].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              coursesModel[2].isChecked = value!;
-                              ;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    coursesModel[2].isChecked = value!;
+                                    ;
+                                  });
+                                },
                         ),
                         Text(
                           "SSI Advanced Adventurer Course",
@@ -240,11 +244,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: coursesModel[3].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              coursesModel[3].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    coursesModel[3].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Open Water Check-Out Dives",
@@ -293,11 +299,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: rentalsModel[0].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              rentalsModel[0].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    rentalsModel[0].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Dive Computer",
@@ -310,11 +318,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: rentalsModel[1].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              rentalsModel[1].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    rentalsModel[1].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "BC",
@@ -364,22 +374,27 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                                           value: rentalsModel[1]
                                               .subCategories![index]
                                               .isChecked,
-                                          onChanged: (value) {
-                                            MasterModel selectedValue =
-                                                rentalsModel[1]
-                                                    .subCategories![index];
+                                          onChanged: isAbsorbing
+                                              ? null
+                                              : (value) {
+                                                  MasterModel selectedValue =
+                                                      rentalsModel[1]
+                                                              .subCategories![
+                                                          index];
 
-                                            setState(() {
-                                              selectedValue.isChecked = value!;
-                                              for (var item in rentalsModel[1]
-                                                  .subCategories!) {
-                                                if (item.id !=
-                                                    selectedValue.id) {
-                                                  item.isChecked = false;
-                                                }
-                                              }
-                                            });
-                                          },
+                                                  setState(() {
+                                                    selectedValue.isChecked =
+                                                        value!;
+                                                    for (var item
+                                                        in rentalsModel[1]
+                                                            .subCategories!) {
+                                                      if (item.id !=
+                                                          selectedValue.id) {
+                                                        item.isChecked = false;
+                                                      }
+                                                    }
+                                                  });
+                                                },
                                         );
                                       },
                                       itemCount: rentalsModel[1]
@@ -396,11 +411,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: rentalsModel[2].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              rentalsModel[2].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    rentalsModel[2].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Regulator",
@@ -413,11 +430,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: rentalsModel[3].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              rentalsModel[3].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    rentalsModel[3].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Nitrox (Unlimited)",
@@ -430,11 +449,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: rentalsModel[4].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              rentalsModel[4].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    rentalsModel[4].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Mask",
@@ -447,11 +468,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: rentalsModel[5].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              rentalsModel[5].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    rentalsModel[5].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Fins",
@@ -464,11 +487,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: rentalsModel[6].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              rentalsModel[6].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    rentalsModel[6].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Snorkel",
@@ -481,11 +506,13 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                       children: [
                         Checkbox(
                           value: rentalsModel[7].isChecked,
-                          onChanged: (value) {
-                            setState(() {
-                              rentalsModel[7].isChecked = value!;
-                            });
-                          },
+                          onChanged: isAbsorbing
+                              ? null
+                              : (value) {
+                                  setState(() {
+                                    rentalsModel[7].isChecked = value!;
+                                  });
+                                },
                         ),
                         Text(
                           "Dive Light",
@@ -515,6 +542,7 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                         child: TextField(
                           controller: otherRentalsController,
                           maxLines: 5,
+                          readOnly: isAbsorbing,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               contentPadding:
@@ -549,63 +577,71 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                                   ),
                                 ),
                                 SizedBox(width: 20.w),
-                                AggressorButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        isDataPosting = true;
-                                      });
-                                      rentals.clear();
-                                      courses.clear();
+                                Expanded(
+                                  child: AggressorButton(
+                                      onPressed: () async {
+                                        setState(() {
+                                          isDataPosting = true;
+                                        });
+                                        rentals.clear();
+                                        courses.clear();
 
-                                      for (MasterModel courseModel
-                                          in coursesModel) {
-                                        if (courseModel.isChecked == true) {
-                                          courses.add(courseModel.abbv!);
-                                        }
-                                      }
-                                      for (MasterModel rentalModel
-                                          in rentalsModel) {
-                                        if (rentalModel.isChecked == true) {
-                                          rentals.add(rentalModel.abbv!);
-                                        }
-                                      }
-
-                                      if (rentalsModel[1].isChecked) {
-                                        for (MasterModel bcSize
-                                            in rentalsModel[1].subCategories!) {
-                                          if (bcSize.isChecked == true) {
-                                            rentals.add(bcSize.abbv!);
+                                        for (MasterModel courseModel
+                                            in coursesModel) {
+                                          if (courseModel.isChecked == true) {
+                                            courses.add(courseModel.abbv!);
                                           }
                                         }
-                                      }
-                                      aggressorApi.postRentalAndCoursesDetails(
-                                        inventoryId:
-                                            inventoryDetails.inventoryId,
-                                        courses: courses.join(","),
-                                        rentals: rentals.join(","),
-                                        otherText: otherRentalsController.text,
-                                      );
-                                      await AggressorApi().updatingStatus(
-                                          charID: widget.charterID,
-                                          contactID: basicInfoModel.contactID!,
-                                          column: "rentals");
-                                      setState(() {
-                                        isDataPosting = false;
-                                      });
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DivingInsurance(
-                                                    charterID: widget.charterID,
-                                                    reservationID: '',
-                                                  )));
-                                    },
-                                    buttonName: "SAVE AND CONTINUE",
-                                    fontSize: 12,
-                                    width: 150,
-                                    AggressorButtonColor: Color(0xff57ddda),
-                                    AggressorTextColor: AggressorColors.white),
+                                        for (MasterModel rentalModel
+                                            in rentalsModel) {
+                                          if (rentalModel.isChecked == true) {
+                                            rentals.add(rentalModel.abbv!);
+                                          }
+                                        }
+
+                                        if (rentalsModel[1].isChecked) {
+                                          for (MasterModel bcSize
+                                              in rentalsModel[1]
+                                                  .subCategories!) {
+                                            if (bcSize.isChecked == true) {
+                                              rentals.add(bcSize.abbv!);
+                                            }
+                                          }
+                                        }
+                                        aggressorApi
+                                            .postRentalAndCoursesDetails(
+                                          inventoryId:
+                                              inventoryDetails.inventoryId,
+                                          courses: courses.join(","),
+                                          rentals: rentals.join(","),
+                                          otherText:
+                                              otherRentalsController.text,
+                                        );
+                                        await AggressorApi().updatingStatus(
+                                            charID: widget.charterID,
+                                            contactID:
+                                                basicInfoModel.contactID!,
+                                            column: "rentals");
+                                        setState(() {
+                                          isDataPosting = false;
+                                        });
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    DivingInsurance(
+                                                      charterID:
+                                                          widget.charterID,
+                                                      reservationID: '',
+                                                    )));
+                                      },
+                                      buttonName: "SAVE AND CONTINUE",
+                                      fontSize: 12,
+                                      width: 150,
+                                      AggressorButtonColor: Color(0xff57ddda),
+                                      AggressorTextColor:
+                                          AggressorColors.white),
+                                ),
                               ],
                             ),
                           )

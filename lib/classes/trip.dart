@@ -17,8 +17,10 @@ import 'package:aggressor_adventures/user_interface_pages/notes_view_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/trip_make_payment_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../user_interface_pages/Guest information System/widgets/aggressor_button.dart';
 import 'aggressor_api.dart';
 import 'aggressor_colors.dart';
 
@@ -566,85 +568,85 @@ class Trip {
                           width: double.infinity,
                           color: Colors.grey,
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom:
-                                  BorderSide(width: 1.0, color: Colors.grey),
-                              left: BorderSide(width: 1.0, color: Colors.grey),
-                              right: BorderSide(width: 1.0, color: Colors.grey),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: rowSectionHeight,
-                                width: MediaQuery.of(context).size.width / 4.8,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      padding: EdgeInsets.all(0)),
-                                  onPressed: () async {
-                                    await AggressorApi().getBasicDetails(
-                                        contactId: user!.contactId!);
-                                    Navigator.push(
-                                        navigatorKey.currentContext!,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                GuestInformationWelcomePage(
-                                                  contactId: user!.contactId!,
-                                                  user: user,
-                                                  currentTrip: charterId!,
-                                                  reservationID: reservationId!,
-                                                )));
-                                    // launchGIS(refreshState);
-                                  },
-                                  child: Text("Guest Information System (GIS)",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.lightBlue,
-                                          fontSize: screenFontSizeSmall)),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 25,
-                                width: MediaQuery.of(context).size.width / 4.8,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      padding: EdgeInsets.all(0)),
-                                  onPressed: () {
-                                    launchKBYG();
-                                  },
-                                  child: Text(
-                                    "Know before you go",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.lightBlue,
-                                        fontSize: screenFontSizeSmall),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width / 4.8,
-                                height: 25,
-                                child: TextButton(
-                                  style: TextButton.styleFrom(
-                                      padding: EdgeInsets.all(0)),
-                                  onPressed: () {
-                                    launchPayment(refreshState);
-                                  },
-                                  child: Text(
-                                    "Make Payment",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.lightBlue,
-                                        fontSize: screenFontSizeSmall),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //     border: Border(
+                        //       bottom:
+                        //           BorderSide(width: 1.0, color: Colors.grey),
+                        //       left: BorderSide(width: 1.0, color: Colors.grey),
+                        //       right: BorderSide(width: 1.0, color: Colors.grey),
+                        //     ),
+                        //   ),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.center,
+                        //     children: [
+                        //       SizedBox(
+                        //         height: rowSectionHeight,
+                        //         width: MediaQuery.of(context).size.width / 4.8,
+                        //         child: TextButton(
+                        //           style: TextButton.styleFrom(
+                        //               padding: EdgeInsets.all(0)),
+                        //           onPressed: () async {
+                        //             await AggressorApi().getBasicDetails(
+                        //                 contactId: user!.contactId!);
+                        //             Navigator.push(
+                        //                 context,
+                        //                 MaterialPageRoute(
+                        //                     builder: (context) =>
+                        //                         GuestInformationWelcomePage(
+                        //                           contactId: user!.contactId!,
+                        //                           user: user,
+                        //                           currentTrip: charterId!,
+                        //                           reservationID: reservationId!,
+                        //                         )));
+                        //             // launchGIS(refreshState);
+                        //           },
+                        //           child: Text("Guest Information System (GIS)",
+                        //               textAlign: TextAlign.center,
+                        //               style: TextStyle(
+                        //                   color: Colors.lightBlue,
+                        //                   fontSize: screenFontSizeSmall)),
+                        //         ),
+                        //       ),
+                        //       SizedBox(
+                        //         height: 25,
+                        //         width: MediaQuery.of(context).size.width / 4.8,
+                        //         child: TextButton(
+                        //           style: TextButton.styleFrom(
+                        //               padding: EdgeInsets.all(0)),
+                        //           onPressed: () {
+                        //             launchKBYG();
+                        //           },
+                        //           child: Text(
+                        //             "Know before you go",
+                        //             textAlign: TextAlign.center,
+                        //             style: TextStyle(
+                        //                 color: Colors.lightBlue,
+                        //                 fontSize: screenFontSizeSmall),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //       SizedBox(
+                        //         width: MediaQuery.of(context).size.width / 4.8,
+                        //         height: 25,
+                        //         child: TextButton(
+                        //           style: TextButton.styleFrom(
+                        //               padding: EdgeInsets.all(0)),
+                        //           onPressed: () {
+                        //             launchPayment(refreshState);
+                        //           },
+                        //           child: Text(
+                        //             "Make Payment",
+                        //             textAlign: TextAlign.center,
+                        //             style: TextStyle(
+                        //                 color: Colors.lightBlue,
+                        //                 fontSize: screenFontSizeSmall),
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -664,6 +666,59 @@ class Trip {
                   color: Colors.grey[300],
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: AggressorButton(
+                        onPressed: () async {
+                          await AggressorApi()
+                              .getBasicDetails(contactId: user!.contactId!);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      GuestInformationWelcomePage(
+                                        contactId: user!.contactId!,
+                                        user: user,
+                                        currentTrip: charterId!,
+                                        reservationID: reservationId!,
+                                      )));
+                        },
+                        buttonName: "Guest Information System (GIS)",
+                        fontSize: 12.sp,
+                        AggressorButtonColor: AggressorColors.aero,
+                        AggressorTextColor: AggressorColors.white,
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: AggressorButton(
+                        onPressed: () {
+                          launchKBYG();
+                        },
+                        buttonName: "Know Before You Go",
+                        fontSize: 12.sp,
+                        AggressorButtonColor: AggressorColors.aero,
+                        AggressorTextColor: AggressorColors.white,
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Expanded(
+                      child: AggressorButton(
+                        onPressed: () {
+                          launchPayment(refreshState);
+                        },
+                        buttonName: "Make Payment",
+                        fontSize: 12.sp,
+                        AggressorButtonColor: AggressorColors.aero,
+                        AggressorTextColor: AggressorColors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         );

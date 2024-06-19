@@ -2,7 +2,6 @@ import 'package:aggressor_adventures/classes/aggressor_api.dart';
 import 'package:aggressor_adventures/model/basicInfoModel.dart';
 import 'package:aggressor_adventures/model/rentalModel.dart';
 import 'package:aggressor_adventures/model/tripInsuranceModel.dart';
-import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/pages/travel_information.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,6 +13,9 @@ import '../../../classes/globals.dart';
 import '../../../classes/globals_user_interface.dart';
 import '../../../classes/user.dart';
 import '../../../classes/utils.dart';
+import '../../../model/divingInsurance.dart';
+import '../../../model/travelInformationModel.dart';
+import '../../main_page.dart';
 import '../model/masterModel.dart';
 import '../widgets/aggressor_button.dart';
 import '../widgets/dropDown.dart';
@@ -38,6 +40,12 @@ AggressorApi aggressorApi = AggressorApi();
 List<String> rentalsList = [];
 List<String> coursesList = [];
 bool isLoading = true;
+bool isUpdatingStatus = false;
+DivingInsuranceModel? divingInsuranceModel;
+TripInsuranceModel? tripInsuranceModel;
+List<TravelInformationModel> inboundFlightsList = [];
+List<TravelInformationModel> outboundFlightsList = [];
+RentalModel rentalModel = RentalModel();
 
 Future<void> launchUrlSite({required String url}) async {
   final Uri urlParsed = Uri.parse(url);
@@ -85,7 +93,7 @@ addCheckedRentals(
 }
 
 getRentalsInfo() async {
-  RentalModel rentalModel = await aggressorApi.getRentalAndCoursesDetails();
+  rentalModel = await aggressorApi.getRentalAndCoursesDetails();
   rentalsList.clear();
   coursesList.clear();
   if (rentalModel.coursesList != null) {
@@ -95,6 +103,30 @@ getRentalsInfo() async {
   if (rentalModel.rentalsList != null) {
     addCheckedRentals(
         rentalsList: rentalModel.rentalsList!, listOfString: rentalsList);
+  }
+}
+
+getDivingInsuranceDetails() async {
+  divingInsuranceModel = await aggressorApi.getDivingInsuranceDetails();
+}
+
+getTripInsuranceDetails() async {
+  tripInsuranceModel = await aggressorApi.getTripInsuranceDetails();
+}
+
+getTravelInformation() async {
+  List<TravelInformationModel> travelInformationList =
+      await aggressorApi.getTravelInformation();
+
+  inboundFlightsList.clear();
+  outboundFlightsList.clear();
+
+  for (var travelInfo in travelInformationList) {
+    if (travelInfo.flightType == 'INBOUND') {
+      inboundFlightsList.add(travelInfo);
+    } else {
+      outboundFlightsList.add(travelInfo);
+    }
   }
 }
 
@@ -111,6 +143,9 @@ class _ConfirmationState extends State<Confirmation> {
     await formStatus(
         contactId: basicInfoModel.contactID!, charterId: widget.charterID);
     await getRentalsInfo();
+    await getDivingInsuranceDetails();
+    await getTripInsuranceDetails();
+    await getTravelInformation();
     setState(() {
       isLoading = false;
     });
@@ -119,7 +154,6 @@ class _ConfirmationState extends State<Confirmation> {
   @override
   void initState() {
     getInitialData();
-
     super.initState();
   }
 
@@ -334,102 +368,484 @@ class _ConfirmationState extends State<Confirmation> {
                                 color: Colors.grey)
                           ],
                           borderRadius: BorderRadius.circular(12)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Rentals",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Rentals",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    if (rentalsList.isNotEmpty)
+                                      ListView.separated(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.h),
+                                          itemBuilder: (context, index) {
+                                            return Utils.getBulletPointText(
+                                              text: rentalsList[index],
+                                              textStyle: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w700),
+                                            );
+                                          },
+                                          separatorBuilder: (context, index) {
+                                            return SizedBox(height: 10.h);
+                                          },
+                                          itemCount: rentalsList.length),
+                                  ],
                                 ),
-                                if (rentalsList.isNotEmpty)
-                                  ListView.separated(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.h),
-                                      itemBuilder: (context, index) {
-                                        return Utils.getBulletPointText(
-                                          text: rentalsList[index],
-                                          textStyle: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w700),
-                                        );
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return SizedBox(height: 10.h);
-                                      },
-                                      itemCount: rentalsList.length)
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Courses",
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Courses",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    if (coursesList.isNotEmpty)
+                                      ListView.separated(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.h),
+                                          itemBuilder: (context, index) {
+                                            return Utils.getBulletPointText(
+                                              text: coursesList[index],
+                                              textStyle: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w700),
+                                            );
+                                          },
+                                          separatorBuilder: (context, index) {
+                                            return SizedBox(height: 10.h);
+                                          },
+                                          itemCount: coursesList.length)
+                                  ],
                                 ),
-                                if (coursesList.isNotEmpty)
-                                  ListView.separated(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.h),
-                                      itemBuilder: (context, index) {
-                                        return Utils.getBulletPointText(
-                                          text: coursesList[index],
-                                          textStyle: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w700),
-                                        );
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return SizedBox(height: 10.h);
-                                      },
-                                      itemCount: coursesList.length)
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
+                          if (rentalModel.others != null)
+                            Padding(
+                              padding: EdgeInsets.only(top: 12.h),
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Others",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    Text(
+                                      rentalModel.others!,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                     ),
-                    // Padding(
-                    //   padding: EdgeInsets.only(
-                    //       top: 25.h, left: 10.w, right: 10.w, bottom: 10.h),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.center,
-                    //     children: [
-                    //       AggressorButton(
-                    //         onPressed: () {
-                    //           Navigator.pop(context);
-                    //         },
-                    //         buttonName: "CANCEL",
-                    //         fontSize: 12,
-                    //         width: 70.w,
-                    //         AggressorButtonColor: AggressorColors.chromeYellow,
-                    //         AggressorTextColor: AggressorColors.white,
-                    //       ),
-                    //       SizedBox(width: 25.w),
-                    //       AggressorButton(
-                    //           onPressed: () async {},
-                    //           buttonName: "SAVE AND CONTINUE",
-                    //           fontSize: 12,
-                    //           width: 150,
-                    //           AggressorButtonColor: Color(0xff57ddda),
-                    //           AggressorTextColor: AggressorColors.white),
-                    //     ],
-                    //   ),
-                    // )
+                    if (divingInsuranceModel != null)
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 15.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.w, vertical: 15.h),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(0, 1),
+                                  blurRadius: 1.0,
+                                  color: Colors.grey)
+                            ],
+                            borderRadius: BorderRadius.circular(12.r)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Diving Certificate Information",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                infoContainer(
+                                    title: "Certification Level",
+                                    data: divingInsuranceModel!
+                                        .certification_level),
+                                if (divingInsuranceModel!.certificationDate !=
+                                    null)
+                                  infoContainer(
+                                      title: "Certification Date",
+                                      data: Utils.getFormattedDate(
+                                          date: divingInsuranceModel!
+                                              .certificationDate!)),
+                                infoContainer(
+                                    title: "Certification Agency",
+                                    data: divingInsuranceModel!
+                                        .certification_agency),
+                                infoContainer(
+                                    title: "Certification Number",
+                                    data: divingInsuranceModel!
+                                        .certification_number),
+                              ],
+                            ),
+                            if (tripInsuranceModel != null)
+                              Padding(
+                                padding: EdgeInsets.only(top: 20.h),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Nitrox Certificate Information",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                    infoContainer(
+                                        title: "Certification Agency",
+                                        data: divingInsuranceModel!
+                                            .nitrox_agency),
+                                    infoContainer(
+                                        title: "Certification Number",
+                                        data: divingInsuranceModel!
+                                            .nitrox_number),
+                                    if (divingInsuranceModel!.nitrox_date !=
+                                        null)
+                                      infoContainer(
+                                          title: "Certification Date",
+                                          data: Utils.getFormattedDate(
+                                              date: divingInsuranceModel!
+                                                  .nitrox_date!)),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 20.w, vertical: 15.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10.w, vertical: 15.h),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                offset: Offset(0, 1),
+                                blurRadius: 1.0,
+                                color: Colors.grey)
+                          ],
+                          borderRadius: BorderRadius.circular(12.r)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (divingInsuranceModel!.dive_insurance!)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Dive Insurance Information",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                                infoContainer(
+                                    title: "Insurance Co",
+                                    data:
+                                        divingInsuranceModel!
+                                                    .dive_insurance_co ==
+                                                'other'
+                                            ? divingInsuranceModel!
+                                                .dive_insurance_other
+                                            : divingInsuranceModel!
+                                                .dive_insurance_co),
+                                infoContainer(
+                                    title: "Policy Number",
+                                    data: divingInsuranceModel!
+                                        .dive_insurance_number),
+                                if (divingInsuranceModel!.dive_insurance_date !=
+                                    null)
+                                  infoContainer(
+                                      title: "Valid Until",
+                                      data: Utils.getFormattedDate(
+                                          date: divingInsuranceModel!
+                                              .dive_insurance_date!)),
+                              ],
+                            ),
+                          if (tripInsuranceModel != null)
+                            Padding(
+                              padding: EdgeInsets.only(top: 20.h),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Trip Insurance Information",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  infoContainer(
+                                      title: "Insurance Company",
+                                      data:
+                                          tripInsuranceModel!
+                                                      .trip_insurance_co ==
+                                                  'other'
+                                              ? tripInsuranceModel!
+                                                  .trip_insurance_other
+                                              : tripInsuranceModel!
+                                                  .trip_insurance_co),
+                                  infoContainer(
+                                      title: "Policy Number",
+                                      data: tripInsuranceModel!
+                                          .trip_insurance_number),
+                                  if (tripInsuranceModel!.trip_insurance_date !=
+                                      null)
+                                    infoContainer(
+                                        title: "Date Issued",
+                                        data: Utils.getFormattedDate(
+                                            date: tripInsuranceModel!
+                                                .trip_insurance_date!)),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (inboundFlightsList.isNotEmpty ||
+                        outboundFlightsList.isNotEmpty)
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                            horizontal: 20.w, vertical: 15.h),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10.w, vertical: 15.h),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(0, 1),
+                                  blurRadius: 1.0,
+                                  color: Colors.grey)
+                            ],
+                            borderRadius: BorderRadius.circular(12.r)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (inboundFlightsList.isNotEmpty)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 12.h),
+                                    child: Text(
+                                      "Arrival Information",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700),
+                                    ),
+                                  ),
+                                  ListView.separated(
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.only(bottom: 20.h),
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w, vertical: 10.h),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12.r),
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  offset: Offset(0, 1),
+                                                  blurRadius: 1.0,
+                                                  color: Colors.grey)
+                                            ],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              infoContainer(
+                                                  title: "Airport",
+                                                  data:
+                                                      inboundFlightsList[index]
+                                                          .airport),
+                                              infoContainer(
+                                                  title: "Airline",
+                                                  data:
+                                                      inboundFlightsList[index]
+                                                          .airline),
+                                              infoContainer(
+                                                  title: "Flight",
+                                                  data:
+                                                      inboundFlightsList[index]
+                                                          .flightNum),
+                                              if (inboundFlightsList[index]
+                                                      .flightDate !=
+                                                  null)
+                                                infoContainer(
+                                                    title: "Arrival Date",
+                                                    data: Utils
+                                                        .getFormattedDateWithTime(
+                                                            date: inboundFlightsList[
+                                                                    index]
+                                                                .flightDate!)),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return SizedBox(height: 10.h);
+                                      },
+                                      itemCount: inboundFlightsList.length),
+                                ],
+                              ),
+                            if (outboundFlightsList.isNotEmpty)
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Departure Information",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  ListView.separated(
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.zero,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w, vertical: 10.h),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12.r),
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  offset: Offset(1, 1),
+                                                  blurRadius: 1.0,
+                                                  color: Colors.grey)
+                                            ],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              infoContainer(
+                                                  title: "Airport",
+                                                  data:
+                                                      outboundFlightsList[index]
+                                                          .airport),
+                                              infoContainer(
+                                                  title: "Airline",
+                                                  data:
+                                                      outboundFlightsList[index]
+                                                          .airline),
+                                              infoContainer(
+                                                  title: "Flight",
+                                                  data:
+                                                      outboundFlightsList[index]
+                                                          .flightNum),
+                                              if (outboundFlightsList[index]
+                                                      .flightDate !=
+                                                  null)
+                                                infoContainer(
+                                                    title: "Departure Date",
+                                                    data: Utils
+                                                        .getFormattedDateWithTime(
+                                                            date: outboundFlightsList[
+                                                                    index]
+                                                                .flightDate!)),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return SizedBox(height: 10.h);
+                                      },
+                                      itemCount: outboundFlightsList.length),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 25.h, left: 10.w, right: 10.w, bottom: 25.h),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: isUpdatingStatus
+                            ? [CircularProgressIndicator()]
+                            : [
+                                AggressorButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  buttonName: "CANCEL",
+                                  fontSize: 12,
+                                  width: 70.w,
+                                  AggressorButtonColor:
+                                      AggressorColors.chromeYellow,
+                                  AggressorTextColor: AggressorColors.white,
+                                ),
+                                SizedBox(width: 25.w),
+                                AggressorButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        isUpdatingStatus = true;
+                                      });
+                                      bool isStatusUpdated =
+                                          await AggressorApi().updatingStatus(
+                                              charID: widget.charterID,
+                                              contactID:
+                                                  basicInfoModel.contactID!,
+                                              column: "confirmation");
+                                      setState(() {
+                                        isUpdatingStatus = false;
+                                      });
+
+                                      if (isStatusUpdated) {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MyHomePage()),
+                                        );
+                                      }
+                                    },
+                                    buttonName: "SAVE AND CONTINUE",
+                                    fontSize: 12,
+                                    width: 150,
+                                    AggressorButtonColor: Color(0xff57ddda),
+                                    AggressorTextColor: AggressorColors.white),
+                              ],
+                      ),
+                    )
                   ],
                 ),
               ),

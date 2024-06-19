@@ -42,10 +42,12 @@ class AggressorButton extends StatelessWidget {
           padding: EdgeInsets.only(left: leftPadding ?? 0),
           child: Text(
             buttonName,
+            textAlign: TextAlign.center,
             style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: fontWeight,
-                color: AggressorTextColor),
+              fontSize: fontSize,
+              fontWeight: fontWeight,
+              color: AggressorTextColor,
+            ),
           ),
         )),
       ),
