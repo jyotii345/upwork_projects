@@ -82,8 +82,8 @@ class _MyHomePageState extends State<MyHomePage>
     BlocProvider.of<UserCubit>(context).setCurrentUser(currentUser);
     pageList = [
       MyTrips(
-          // user: currentUser,
-          ),
+        user: currentUser,
+      ),
       //trips page
       Rewards(currentUser!),
       // notes page
@@ -197,8 +197,8 @@ class _MyHomePageState extends State<MyHomePage>
     return IndexedStack(
       children: <Widget>[
         MyTrips(
-            // user: currentUser,
-            ),
+          user: currentUser,
+        ),
         //trips page
         Rewards(currentUser!),
         // notes page

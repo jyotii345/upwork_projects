@@ -676,7 +676,6 @@ class _DivingInsuranceState extends State<DivingInsurance> {
                                       },
                                       buttonName: "CANCEL",
                                       fontSize: 12,
-                                      width: 70,
                                       AggressorButtonColor:
                                           AggressorColors.chromeYellow,
                                       AggressorTextColor: AggressorColors.white,
@@ -785,8 +784,8 @@ class _DivingInsuranceState extends State<DivingInsurance> {
                                         // : null,
                                         buttonName: "SAVE AND CONTINUE",
                                         fontSize: 12,
-                                        width: 150,
-                                        AggressorButtonColor: Color(0xff57ddda)
+                                        AggressorButtonColor: AggressorColors
+                                            .aero
                                             .withOpacity(isAbsorbing ? 0.7 : 1),
                                         AggressorTextColor:
                                             AggressorColors.white),

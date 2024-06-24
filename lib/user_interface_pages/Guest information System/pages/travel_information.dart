@@ -37,8 +37,7 @@ class TravelInformation extends StatefulWidget {
 final AggressorApi aggressorApi = AggressorApi();
 
 DateTime? departureDateAndTime;
-final primaryFormKey = GlobalKey<FormState>();
-final secondaryFormKey = GlobalKey<FormState>();
+
 bool isSaved = false;
 final arrivalFormKey = GlobalKey<FormState>();
 final departureFormKey = GlobalKey<FormState>();
@@ -64,6 +63,7 @@ List<TravelInformationModel> travelInformationList = [];
 bool isLoading = true;
 DateTime? arrivalDate;
 DateTime? departureDate;
+bool isAbsorbing = form_status.travel == "1" || form_status.travel == "2";
 
 class _TravelInformationState extends State<TravelInformation> {
   @override
@@ -336,118 +336,129 @@ class _TravelInformationState extends State<TravelInformation> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              child: AbsorbPointer(
-                absorbing:
-                    form_status.travel == "1" || form_status.travel == "2"
-                        ? true
-                        : false,
-                child: Container(
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 10.w, vertical: 15.h),
-                      child: Column(
-                        children: [
-                          InfoBannerContainer(
-                            bgColor: AggressorColors.aero,
-                            infoText:
-                                'Travel information does not have to be completed now to confirm your reservation, however, it will need to be completed prior to traveling. You may return to this page at any time by opening this same GIS link to complete your travel information. If transfers are not included in your yacht package, please contact your yacht specialist to confirm these arrangements.',
-                          ),
-                          SizedBox(
-                            height: 30.h,
-                          ),
-                          newFlightWidget(
+              child: Container(
+                child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
+                    child: Column(
+                      children: [
+                        InfoBannerContainer(
+                          bgColor: AggressorColors.aero,
+                          infoText:
+                              'Travel information does not have to be completed now to confirm your reservation, however, it will need to be completed prior to traveling. You may return to this page at any time by opening this same GIS link to complete your travel information. If transfers are not included in your yacht package, please contact your yacht specialist to confirm these arrangements.',
+                        ),
+                        SizedBox(
+                          height: 30.h,
+                        ),
+                        AbsorbPointer(
+                          absorbing: isAbsorbing,
+                          child: newFlightWidget(
                             isArrivalFlight: true,
                             isNewFlight: true,
                             travelInformation: arrivalInformationModel,
                           ),
-                          SizedBox(
-                            height: inboundFlightsList.isNotEmpty ? 450.h : 0.h,
-                            child: ListView.builder(
-                              itemCount: inboundFlightsList.length,
-                              itemBuilder: (context, index) {
-                                return newFlightWidget(
+                        ),
+                        SizedBox(
+                          height: inboundFlightsList.isNotEmpty ? 450.h : 0.h,
+                          child: ListView.builder(
+                            itemCount: inboundFlightsList.length,
+                            physics: ClampingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return AbsorbPointer(
+                                absorbing: isAbsorbing,
+                                child: newFlightWidget(
                                     isArrivalFlight: true,
                                     isNewFlight: false,
                                     travelInformation:
-                                        inboundFlightsList[index]);
-                              },
-                            ),
+                                        inboundFlightsList[index]),
+                              );
+                            },
                           ),
-                          SizedBox(height: 25.h),
-                          newFlightWidget(
+                        ),
+                        SizedBox(height: 25.h),
+                        AbsorbPointer(
+                          absorbing: isAbsorbing,
+                          child: newFlightWidget(
                               isArrivalFlight: false,
                               isNewFlight: true,
                               travelInformation: departureInformationModel),
-                          SizedBox(
-                            height: 30.h,
-                          ),
-                          SizedBox(
-                            height:
-                                outboundFlightsList.isNotEmpty ? 450.h : 10.h,
-                            child: ListView.builder(
-                              itemCount: outboundFlightsList.length,
-                              itemBuilder: (context, index) {
-                                return newFlightWidget(
+                        ),
+                        SizedBox(
+                          height: 30.h,
+                        ),
+                        SizedBox(
+                          height: outboundFlightsList.isNotEmpty ? 450.h : 10.h,
+                          child: ListView.builder(
+                            itemCount: outboundFlightsList.length,
+                            physics: ClampingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return AbsorbPointer(
+                                absorbing: isAbsorbing,
+                                child: newFlightWidget(
                                     isArrivalFlight: false,
                                     isNewFlight: false,
                                     travelInformation:
-                                        outboundFlightsList[index]);
-                              },
-                            ),
+                                        outboundFlightsList[index]),
+                              );
+                            },
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12.h),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: AggressorButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    buttonName: 'Cancel',
-                                    AggressorButtonColor:
-                                        AggressorColors.chromeYellow,
-                                    AggressorTextColor: AggressorColors.white,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: AggressorButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  buttonName: 'Cancel',
+                                  AggressorButtonColor:
+                                      AggressorColors.chromeYellow,
+                                  AggressorTextColor: AggressorColors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                SizedBox(width: 20.w),
-                                Expanded(
-                                  child: AggressorButton(
-                                    onPressed: () async {
-                                      bool isStatusUpdated =
-                                          await AggressorApi()
-                                              .updatingStatus(column: "travel");
-                                      if (isStatusUpdated) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Confirmation(
-                                                      charterID:
-                                                          welcomePageDetails
-                                                              .charterid
-                                                              .toString(),
-                                                      reservationID:
-                                                          widget.reservationID,
-                                                    )));
-                                      }
-                                    },
-                                    buttonName: 'Save And Continue',
-                                    leftPadding: 10.w,
-                                    AggressorButtonColor: AggressorColors.aero,
-                                    AggressorTextColor: AggressorColors.white,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      )),
-                ),
+                              ),
+                              SizedBox(width: 20.w),
+                              Expanded(
+                                child: AggressorButton(
+                                  onPressed: isAbsorbing
+                                      ? null
+                                      : () async {
+                                          bool isStatusUpdated =
+                                              await AggressorApi()
+                                                  .updatingStatus(
+                                                      column: "travel");
+                                          if (isStatusUpdated) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Confirmation(
+                                                          charterID:
+                                                              welcomePageDetails
+                                                                  .charterid
+                                                                  .toString(),
+                                                          reservationID: widget
+                                                              .reservationID,
+                                                        )));
+                                          }
+                                        },
+                                  buttonName: 'Save And Continue',
+                                  leftPadding: 10.w,
+                                  AggressorButtonColor: AggressorColors.aero
+                                      .withOpacity(isAbsorbing ? 0.7 : 1),
+                                  AggressorTextColor: AggressorColors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    )),
               ),
             ),
     );

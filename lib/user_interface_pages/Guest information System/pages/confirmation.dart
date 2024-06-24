@@ -46,7 +46,8 @@ TripInsuranceModel? tripInsuranceModel;
 List<TravelInformationModel> inboundFlightsList = [];
 List<TravelInformationModel> outboundFlightsList = [];
 RentalModel rentalModel = RentalModel();
-
+bool isAbsorbing =
+    form_status.confirmation == "1" || form_status.confirmation == "2";
 Future<void> launchUrlSite({required String url}) async {
   final Uri urlParsed = Uri.parse(url);
 
@@ -802,47 +803,59 @@ class _ConfirmationState extends State<Confirmation> {
                         children: isUpdatingStatus
                             ? [CircularProgressIndicator()]
                             : [
-                                AggressorButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  buttonName: "CANCEL",
-                                  fontSize: 12,
-                                  width: 70.w,
-                                  AggressorButtonColor:
-                                      AggressorColors.chromeYellow,
-                                  AggressorTextColor: AggressorColors.white,
+                                Expanded(
+                                  child: AggressorButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    buttonName: "CANCEL",
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                    AggressorButtonColor:
+                                        AggressorColors.chromeYellow,
+                                    AggressorTextColor: AggressorColors.white,
+                                  ),
                                 ),
                                 SizedBox(width: 25.w),
-                                AggressorButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        isUpdatingStatus = true;
-                                      });
-                                      bool isStatusUpdated =
-                                          await AggressorApi().updatingStatus(
-                                              charID: widget.charterID,
-                                              contactID:
-                                                  basicInfoModel.contactID!,
-                                              column: "confirmation");
-                                      setState(() {
-                                        isUpdatingStatus = false;
-                                      });
+                                Expanded(
+                                  child: AggressorButton(
+                                      onPressed: isAbsorbing
+                                          ? null
+                                          : () async {
+                                              setState(() {
+                                                isUpdatingStatus = true;
+                                              });
+                                              bool isStatusUpdated =
+                                                  await AggressorApi()
+                                                      .updatingStatus(
+                                                          charID:
+                                                              widget.charterID,
+                                                          contactID:
+                                                              basicInfoModel
+                                                                  .contactID!,
+                                                          column:
+                                                              "confirmation");
+                                              setState(() {
+                                                isUpdatingStatus = false;
+                                              });
 
-                                      if (isStatusUpdated) {
-                                        Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MyHomePage()),
-                                        );
-                                      }
-                                    },
-                                    buttonName: "SAVE AND CONTINUE",
-                                    fontSize: 12,
-                                    width: 150,
-                                    AggressorButtonColor: Color(0xff57ddda),
-                                    AggressorTextColor: AggressorColors.white),
+                                              if (isStatusUpdated) {
+                                                Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MyHomePage()),
+                                                );
+                                              }
+                                            },
+                                      buttonName: "SAVE AND CONTINUE",
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      AggressorButtonColor: AggressorColors.aero
+                                          .withOpacity(isAbsorbing ? 0.7 : 1),
+                                      AggressorTextColor:
+                                          AggressorColors.white),
+                                ),
                               ],
                       ),
                     )

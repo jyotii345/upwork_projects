@@ -159,6 +159,7 @@ class _RequestsState extends State<Requests> {
                           data: ListTileThemeData(
                               titleAlignment: ListTileTitleAlignment.top),
                           child: CheckboxListTile(
+                            enabled: !isAbsorbing,
                             value: allergyCheckbox,
                             controlAffinity: ListTileControlAffinity.leading,
                             contentPadding: EdgeInsets.zero,

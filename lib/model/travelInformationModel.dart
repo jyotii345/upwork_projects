@@ -34,7 +34,6 @@ class TravelInformationModel {
     airlineController = TextEditingController(text: json['airline']);
     flightNumberController = TextEditingController(text: json['flightNum']);
     flightTypeController = TextEditingController(text: json['flightType']);
-    
 
     airport = json['airport'];
     airline = json['airline'];
@@ -44,10 +43,10 @@ class TravelInformationModel {
     flightDate =
         json['flightDate'] != null ? DateTime.parse(json['flightDate']) : null;
     flightDateController = TextEditingController(
-    text: flightDate != null ?  Utils.getFormattedDateWithTime(
-                              date: flightDate!) : null
-    ) ;
-    formKey=  GlobalKey<FormState>(debugLabel: flightNum);
+        text: flightDate != null
+            ? Utils.getFormattedDateWithTime(date: flightDate!)
+            : null);
+    formKey = GlobalKey<FormState>(debugLabel: flightNum);
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

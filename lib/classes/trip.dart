@@ -681,8 +681,7 @@ class Trip {
                                   builder: (context) =>
                                       GuestInformationWelcomePage(
                                         contactId: user!.contactId!,
-                                        user: user,
-                                        currentTrip: charterId!,
+                                        charterId: charterId!,
                                         reservationID: reservationId!,
                                       )));
                         },

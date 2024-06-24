@@ -12,14 +12,12 @@ import '../widgets/text_field.dart';
 
 class GuestInformationWelcomePage extends StatefulWidget {
   GuestInformationWelcomePage(
-      {required this.currentTrip,
+      {required this.charterId,
       required this.reservationID,
-      this.user,
       required this.contactId});
-  final String currentTrip;
+  final String charterId;
   final String reservationID;
   final String contactId;
-  User? user;
   @override
   State<GuestInformationWelcomePage> createState() =>
       _GuestInformationWelcomePageState();
@@ -44,18 +42,17 @@ class _GuestInformationWelcomePageState
 
   formStatus({required String contactId, required String charterId}) async {
     await aggressorApi.getFormStatus(
-        charterId: widget.currentTrip, contactId: widget.contactId);
+        charterId: widget.charterId, contactId: widget.contactId);
   }
 
   getInitialData() async {
     await aggressorApi.getCountriesList();
     await aggressorApi.getStatesList();
-    await formStatus(
-        contactId: widget.contactId, charterId: widget.currentTrip);
     await getInfo(
         contactId: widget.contactId,
-        charterId: widget.currentTrip,
+        charterId: widget.charterId,
         reservationId: widget.reservationID);
+    await formStatus(contactId: widget.contactId, charterId: widget.charterId);
   }
 
   getInfo(
@@ -67,7 +64,7 @@ class _GuestInformationWelcomePageState
     });
     await aggressorApi.getWelcomePageInfo(
         contactId: contactId,
-        charterId: charterId,
+        charterId: widget.charterId,
         reservationId: reservationId);
     setState(() {
       isLoading = false;
@@ -92,9 +89,7 @@ class _GuestInformationWelcomePageState
       backgroundColor: Color(0xfff4f3ef),
       // bottomNavigationBar: getBottomNavigationBar(),
       drawer: getGISAppDrawer(
-          user: widget.user!,
-          charterID: widget.currentTrip,
-          reservationID: widget.reservationID),
+          charterID: widget.charterId, reservationID: widget.reservationID),
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,

@@ -570,7 +570,6 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                                     },
                                     buttonName: "CANCEL",
                                     fontSize: 12,
-                                    width: 70,
                                     AggressorButtonColor:
                                         AggressorColors.chromeYellow,
                                     AggressorTextColor: AggressorColors.white,
@@ -579,66 +578,74 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                                 SizedBox(width: 20.w),
                                 Expanded(
                                   child: AggressorButton(
-                                      onPressed: () async {
-                                        setState(() {
-                                          isDataPosting = true;
-                                        });
-                                        rentals.clear();
-                                        courses.clear();
+                                      onPressed: isAbsorbing
+                                          ? null
+                                          : () async {
+                                              setState(() {
+                                                isDataPosting = true;
+                                              });
+                                              rentals.clear();
+                                              courses.clear();
 
-                                        for (MasterModel courseModel
-                                            in coursesModel) {
-                                          if (courseModel.isChecked == true) {
-                                            courses.add(courseModel.abbv!);
-                                          }
-                                        }
-                                        for (MasterModel rentalModel
-                                            in rentalsModel) {
-                                          if (rentalModel.isChecked == true) {
-                                            rentals.add(rentalModel.abbv!);
-                                          }
-                                        }
+                                              for (MasterModel courseModel
+                                                  in coursesModel) {
+                                                if (courseModel.isChecked ==
+                                                    true) {
+                                                  courses
+                                                      .add(courseModel.abbv!);
+                                                }
+                                              }
+                                              for (MasterModel rentalModel
+                                                  in rentalsModel) {
+                                                if (rentalModel.isChecked ==
+                                                    true) {
+                                                  rentals
+                                                      .add(rentalModel.abbv!);
+                                                }
+                                              }
 
-                                        if (rentalsModel[1].isChecked) {
-                                          for (MasterModel bcSize
-                                              in rentalsModel[1]
-                                                  .subCategories!) {
-                                            if (bcSize.isChecked == true) {
-                                              rentals.add(bcSize.abbv!);
-                                            }
-                                          }
-                                        }
-                                        aggressorApi
-                                            .postRentalAndCoursesDetails(
-                                          inventoryId:
-                                              inventoryDetails.inventoryId,
-                                          courses: courses.join(","),
-                                          rentals: rentals.join(","),
-                                          otherText:
-                                              otherRentalsController.text,
-                                        );
-                                        await AggressorApi().updatingStatus(
-                                            charID: widget.charterID,
-                                            contactID:
-                                                basicInfoModel.contactID!,
-                                            column: "rentals");
-                                        setState(() {
-                                          isDataPosting = false;
-                                        });
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DivingInsurance(
-                                                      charterID:
-                                                          widget.charterID,
-                                                      reservationID: '',
-                                                    )));
-                                      },
+                                              if (rentalsModel[1].isChecked) {
+                                                for (MasterModel bcSize
+                                                    in rentalsModel[1]
+                                                        .subCategories!) {
+                                                  if (bcSize.isChecked ==
+                                                      true) {
+                                                    rentals.add(bcSize.abbv!);
+                                                  }
+                                                }
+                                              }
+                                              aggressorApi
+                                                  .postRentalAndCoursesDetails(
+                                                inventoryId: inventoryDetails
+                                                    .inventoryId,
+                                                courses: courses.join(","),
+                                                rentals: rentals.join(","),
+                                                otherText:
+                                                    otherRentalsController.text,
+                                              );
+                                              await AggressorApi()
+                                                  .updatingStatus(
+                                                      charID: widget.charterID,
+                                                      contactID: basicInfoModel
+                                                          .contactID!,
+                                                      column: "rentals");
+                                              setState(() {
+                                                isDataPosting = false;
+                                              });
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          DivingInsurance(
+                                                            charterID: widget
+                                                                .charterID,
+                                                            reservationID: '',
+                                                          )));
+                                            },
                                       buttonName: "SAVE AND CONTINUE",
                                       fontSize: 12,
-                                      width: 150,
-                                      AggressorButtonColor: Color(0xff57ddda),
+                                      AggressorButtonColor: AggressorColors.aero
+                                          .withOpacity(isAbsorbing ? 0.7 : 1),
                                       AggressorTextColor:
                                           AggressorColors.white),
                                 ),

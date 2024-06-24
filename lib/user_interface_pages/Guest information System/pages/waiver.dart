@@ -29,7 +29,6 @@ class _WaiverState extends State<Waiver> {
   AggressorApi aggressorApi = AggressorApi();
   bool isLoading = true;
   bool isWaiverPosting = false;
-  Trip firstTrip = tripList[0];
   bool isAbsorbing = form_status.waiver == "1" || form_status.waiver == "2";
   bool isWaiverAgreed = false;
   var tempList;
@@ -79,8 +78,6 @@ class _WaiverState extends State<Waiver> {
   getTripInfo() async {
     tempList = await AggressorApi()
         .getReservationList(basicInfoModel.contactID!, () {});
-    Trip firstTrip = tripList[0];
-    print("Charter ID of first trip: ${firstTrip.charterId}");
   }
 
   @override
@@ -225,53 +222,57 @@ class _WaiverState extends State<Waiver> {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      AggressorButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        buttonName: "CANCEL",
-                        fontSize: 12.sp,
-                        width: 70.w,
-                        AggressorButtonColor: AggressorColors.chromeYellow,
-                        AggressorTextColor: AggressorColors.white,
-                      ),
-                      AggressorButton(
-                          onPressed: isAbsorbing || !isWaiverAgreed
-                              ? null
-                              : () async {
-                                  setState(() {
-                                    isWaiverPosting = true;
-                                  });
-                                  bool isWaiverPosted = await AggressorApi()
-                                      .postWaiverForm(
-                                          contactId: basicInfoModel.contactID!,
-                                          reservationID: widget.reservationID,
-                                          charID: widget.charterID,
-                                          ipAddress: hostAddress);
-                                  // await AggressorApi().updatingStatus(
-                                  //     charID: widget.charterID,
-                                  //     contactID: basicInfoModel.contactID!,
-                                  //     column: "waiver");
-                                  setState(() {
-                                    isWaiverPosting = false;
-                                  });
-                                  if (isWaiverPosted) {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Policy(
-                                                charterID: widget.charterID,
-                                                reservationID:
-                                                    widget.reservationID)));
-                                  }
-                                },
-                          buttonName: "SAVE AND CONTINUE",
+                      Expanded(
+                        child: AggressorButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          buttonName: "CANCEL",
                           fontSize: 12.sp,
-                          width: 150.w,
-                          AggressorButtonColor: isAbsorbing || !isWaiverAgreed
-                              ? Color(0xff57ddda).withOpacity(0.7)
-                              : Color(0xff57ddda),
-                          AggressorTextColor: AggressorColors.white),
+                          AggressorButtonColor: AggressorColors.chromeYellow,
+                          AggressorTextColor: AggressorColors.white,
+                        ),
+                      ),
+                      SizedBox(width: 25.w),
+                      Expanded(
+                        child: AggressorButton(
+                            onPressed: isAbsorbing || !isWaiverAgreed
+                                ? null
+                                : () async {
+                                    setState(() {
+                                      isWaiverPosting = true;
+                                    });
+                                    bool isWaiverPosted = await AggressorApi()
+                                        .postWaiverForm(
+                                            contactId:
+                                                basicInfoModel.contactID!,
+                                            reservationID: widget.reservationID,
+                                            charID: widget.charterID,
+                                            ipAddress: hostAddress);
+                                    // await AggressorApi().updatingStatus(
+                                    //     charID: widget.charterID,
+                                    //     contactID: basicInfoModel.contactID!,
+                                    //     column: "waiver");
+                                    setState(() {
+                                      isWaiverPosting = false;
+                                    });
+                                    if (isWaiverPosted) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Policy(
+                                                  charterID: widget.charterID,
+                                                  reservationID:
+                                                      widget.reservationID)));
+                                    }
+                                  },
+                            buttonName: "SAVE AND CONTINUE",
+                            fontSize: 12.sp,
+                            AggressorButtonColor: AggressorColors.aero
+                                .withOpacity(
+                                    isAbsorbing || !isWaiverAgreed ? 0.7 : 1),
+                            AggressorTextColor: AggressorColors.white),
+                      ),
                       // AggressorButton(
                       //     onPressed: () async {
                       //       await AggressorApi().downloadWaiver(

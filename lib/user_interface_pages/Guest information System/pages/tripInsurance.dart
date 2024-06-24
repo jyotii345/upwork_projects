@@ -328,7 +328,6 @@ class _TripInsuranceState extends State<TripInsurance> {
                                     },
                                     buttonName: "Cancel",
                                     fontSize: 12,
-                                    width: 70.w,
                                     AggressorButtonColor:
                                         AggressorColors.chromeYellow,
                                     AggressorTextColor: AggressorColors.white,
@@ -337,59 +336,71 @@ class _TripInsuranceState extends State<TripInsurance> {
                                 SizedBox(width: 20.w),
                                 Expanded(
                                   child: AggressorButton(
-                                      onPressed: () async {
-                                        setState(() {
-                                          isDataPosting = true;
-                                        });
-                                        TripInsuranceModel tripData =
-                                            TripInsuranceModel(
-                                                trip_insurance:
-                                                    selectedTripInsuranceOption!
-                                                                .id ==
-                                                            0
-                                                        ? true
-                                                        : false);
+                                      onPressed: isAbsorbing
+                                          ? null
+                                          : () async {
+                                              setState(() {
+                                                isDataPosting = true;
+                                              });
+                                              TripInsuranceModel tripData =
+                                                  TripInsuranceModel(
+                                                      trip_insurance:
+                                                          selectedTripInsuranceOption!
+                                                                      .id ==
+                                                                  0
+                                                              ? true
+                                                              : false);
 
-                                        if (selectedTripInsuranceOption!.id ==
-                                            0) {
-                                          tripData.trip_insurance_co =
-                                              selectedInsuranceCompany!.abbv;
-                                          tripData.trip_insurance_number =
-                                              policyNumberController.text;
-                                          tripData.trip_insurance_date =
-                                              policyExpirationDate;
-                                        }
-                                        if (selectedInsuranceCompany?.id == 2 ||
-                                            othersController.text.isNotEmpty) {
-                                          tripData.trip_insurance_other =
-                                              othersController.text;
-                                        }
-                                        bool isDataPosted = await AggressorApi()
-                                            .postTripInsuranceDetails(
-                                                insuranceData: tripData);
-                                        setState(() {
-                                          isDataPosting = false;
-                                        });
-                                        if (isDataPosted) {
-                                          await AggressorApi().updatingStatus(
-                                              charID: widget.charterID,
-                                              contactID:
-                                                  basicInfoModel.contactID!,
-                                              column: "insurance");
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      TravelInformation(
-                                                        reservationID: widget
-                                                            .reservationID,
-                                                      )));
-                                        }
-                                      },
+                                              if (selectedTripInsuranceOption!
+                                                      .id ==
+                                                  0) {
+                                                tripData.trip_insurance_co =
+                                                    selectedInsuranceCompany!
+                                                        .abbv;
+                                                tripData.trip_insurance_number =
+                                                    policyNumberController.text;
+                                                tripData.trip_insurance_date =
+                                                    policyExpirationDate;
+                                              }
+                                              if (selectedInsuranceCompany
+                                                          ?.id ==
+                                                      2 ||
+                                                  othersController
+                                                      .text.isNotEmpty) {
+                                                tripData.trip_insurance_other =
+                                                    othersController.text;
+                                              }
+                                              bool isDataPosted =
+                                                  await AggressorApi()
+                                                      .postTripInsuranceDetails(
+                                                          insuranceData:
+                                                              tripData);
+                                              setState(() {
+                                                isDataPosting = false;
+                                              });
+                                              if (isDataPosted) {
+                                                await AggressorApi()
+                                                    .updatingStatus(
+                                                        charID:
+                                                            widget.charterID,
+                                                        contactID:
+                                                            basicInfoModel
+                                                                .contactID!,
+                                                        column: "insurance");
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            TravelInformation(
+                                                              reservationID: widget
+                                                                  .reservationID,
+                                                            )));
+                                              }
+                                            },
                                       buttonName: "Save And Continue",
                                       fontSize: 12,
-                                      width: 150,
-                                      AggressorButtonColor: Color(0xff57ddda),
+                                      AggressorButtonColor: AggressorColors.aero
+                                          .withOpacity(isAbsorbing ? 0.7 : 1),
                                       AggressorTextColor:
                                           AggressorColors.white),
                                 ),

@@ -516,101 +516,126 @@ class _EmergencyContactState extends State<EmergencyContact> {
                                   SizedBox(width: 20.w),
                                   Expanded(
                                     child: AggressorButton(
-                                      onPressed: () async {
-                                        setState(() {
-                                          isEmrDataPosting = true;
-                                        });
-                                        if (primaryFormKey.currentState!
-                                                .validate() &&
-                                            secondaryFormKey.currentState!
-                                                .validate()) {
-                                          EmergencyContactModel saveData =
-                                              EmergencyContactModel(
-                                            emergency2_address1:
-                                                primaryAddressController.text,
-                                            emergency2_city:
-                                                secondaryCityController.text,
-                                            emergency2_countryID:
-                                                secondarySelectedCountry!.id,
-                                            emergency2_email:
-                                                secondaryEmailController.text,
-                                            emergency2_first:
-                                                primaryFirstNameController.text,
-                                            emergency2_last:
-                                                secondaryLastNameController
-                                                    .text,
-                                            emergency2_ph_home:
-                                                secondaryHomePhoneController
-                                                    .text,
-                                            emergency2_ph_mobile:
-                                                secondaryMobilePhoneController
-                                                    .text,
-                                            emergency2_ph_work:
-                                                secondaryWorkPhoneController
-                                                    .text,
-                                            emergency2_relationship:
-                                                secondaryRelationshipController
-                                                    .text,
-                                            emergency2_state:
-                                                secondarySelectedCountry?.id ==
-                                                        2
-                                                    ? secondarySelectedState!
-                                                        .abbv
-                                                    : null,
-                                            emergency2_zip:
-                                                secondaryZipController.text,
-                                            emergency_address1:
-                                                primaryAddressController.text,
-                                            emergency_city:
-                                                primaryCityController.text,
-                                            emergency_countryID:
-                                                primarySelectedCountry!.id,
-                                            emergency_email:
-                                                primaryEmailController.text,
-                                            emergency_first:
-                                                primaryFirstNameController.text,
-                                            emergency_last:
-                                                primaryLastNameController.text,
-                                            emergency_ph_home:
-                                                primaryHomePhoneController.text,
-                                            emergency_ph_mobile:
-                                                primaryMobilePhoneController
-                                                    .text,
-                                            emergency_ph_work:
-                                                primaryWorkPhoneController.text,
-                                            emergency_relationship:
-                                                primaryRelationshipController
-                                                    .text,
-                                            emergency_state:
-                                                primarySelectedCountry?.id == 2
-                                                    ? primarySelectedState!.abbv
-                                                    : null,
-                                            emergency_zip:
-                                                primaryZipController.text,
-                                          );
-                                          await AggressorApi()
-                                              .postEmergencyContact(
-                                                  contactId:
-                                                      basicInfoModel.contactID!,
-                                                  userInfo: saveData);
-                                          await AggressorApi().updatingStatus(
-                                              charID: widget.charID,
-                                              contactID:
-                                                  basicInfoModel.contactID!,
-                                              column: "emcontact");
-                                          setState(() {
-                                            isEmrDataPosting = false;
-                                          });
-                                        }
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => Requests(
-                                                      charID: widget.charID,
-                                                      reservationID:
-                                                          widget.reservationID,
-                                                    )));
-                                      },
+                                      onPressed: isAbsorbing
+                                          ? null
+                                          : () async {
+                                              setState(() {
+                                                isEmrDataPosting = true;
+                                              });
+                                              if (primaryFormKey.currentState!
+                                                      .validate() &&
+                                                  secondaryFormKey.currentState!
+                                                      .validate()) {
+                                                EmergencyContactModel saveData =
+                                                    EmergencyContactModel(
+                                                  emergency2_address1:
+                                                      primaryAddressController
+                                                          .text,
+                                                  emergency2_city:
+                                                      secondaryCityController
+                                                          .text,
+                                                  emergency2_countryID:
+                                                      secondarySelectedCountry!
+                                                          .id,
+                                                  emergency2_email:
+                                                      secondaryEmailController
+                                                          .text,
+                                                  emergency2_first:
+                                                      primaryFirstNameController
+                                                          .text,
+                                                  emergency2_last:
+                                                      secondaryLastNameController
+                                                          .text,
+                                                  emergency2_ph_home:
+                                                      secondaryHomePhoneController
+                                                          .text,
+                                                  emergency2_ph_mobile:
+                                                      secondaryMobilePhoneController
+                                                          .text,
+                                                  emergency2_ph_work:
+                                                      secondaryWorkPhoneController
+                                                          .text,
+                                                  emergency2_relationship:
+                                                      secondaryRelationshipController
+                                                          .text,
+                                                  emergency2_state:
+                                                      secondarySelectedCountry
+                                                                  ?.id ==
+                                                              2
+                                                          ? secondarySelectedState!
+                                                              .abbv
+                                                          : null,
+                                                  emergency2_zip:
+                                                      secondaryZipController
+                                                          .text,
+                                                  emergency_address1:
+                                                      primaryAddressController
+                                                          .text,
+                                                  emergency_city:
+                                                      primaryCityController
+                                                          .text,
+                                                  emergency_countryID:
+                                                      primarySelectedCountry!
+                                                          .id,
+                                                  emergency_email:
+                                                      primaryEmailController
+                                                          .text,
+                                                  emergency_first:
+                                                      primaryFirstNameController
+                                                          .text,
+                                                  emergency_last:
+                                                      primaryLastNameController
+                                                          .text,
+                                                  emergency_ph_home:
+                                                      primaryHomePhoneController
+                                                          .text,
+                                                  emergency_ph_mobile:
+                                                      primaryMobilePhoneController
+                                                          .text,
+                                                  emergency_ph_work:
+                                                      primaryWorkPhoneController
+                                                          .text,
+                                                  emergency_relationship:
+                                                      primaryRelationshipController
+                                                          .text,
+                                                  emergency_state:
+                                                      primarySelectedCountry
+                                                                  ?.id ==
+                                                              2
+                                                          ? primarySelectedState!
+                                                              .abbv
+                                                          : null,
+                                                  emergency_zip:
+                                                      primaryZipController.text,
+                                                );
+                                                await AggressorApi()
+                                                    .postEmergencyContact(
+                                                        contactId:
+                                                            basicInfoModel
+                                                                .contactID!,
+                                                        userInfo: saveData);
+                                                await AggressorApi()
+                                                    .updatingStatus(
+                                                        charID: widget.charID,
+                                                        contactID:
+                                                            basicInfoModel
+                                                                .contactID!,
+                                                        column: "emcontact");
+                                                setState(() {
+                                                  isEmrDataPosting = false;
+                                                });
+                                              }
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Requests(
+                                                            charID:
+                                                                widget.charID,
+                                                            reservationID: widget
+                                                                .reservationID,
+                                                          )));
+                                            },
                                       buttonName: 'Save & Continue',
                                       AggressorButtonColor: AggressorColors.aero
                                           .withOpacity(isAbsorbing ? 0.7 : 1),

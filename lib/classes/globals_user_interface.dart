@@ -737,11 +737,11 @@ AppBar getAppBar() {
   );
 }
 
-Drawer getGISAppDrawer(
-    {required String charterID,
-    required String reservationID,
-    String? contactId,
-    User? user}) {
+Drawer getGISAppDrawer({
+  required String charterID,
+  required String reservationID,
+  String? contactId,
+}) {
   return Drawer(
     child: Column(
       children: [
@@ -762,7 +762,6 @@ Drawer getGISAppDrawer(
         AppBarItems(
           charterID: charterID,
           reservationID: reservationID,
-          user: user,
         )
       ],
     ),

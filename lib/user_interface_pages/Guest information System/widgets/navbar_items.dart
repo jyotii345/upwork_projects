@@ -23,15 +23,13 @@ import '../pages/travel_information.dart';
 import '../pages/tripInsurance.dart';
 
 class AppBarItems extends StatefulWidget {
-  AppBarItems(
-      {Key? key,
-      required this.charterID,
-      required this.reservationID,
-      this.user})
-      : super(key: key);
+  AppBarItems({
+    Key? key,
+    required this.charterID,
+    required this.reservationID,
+  }) : super(key: key);
   final String charterID;
   final String reservationID;
-  final User? user;
   @override
   State<AppBarItems> createState() => _AppBarItemsState();
 }
@@ -167,7 +165,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           reservationID: widget.reservationID,
                         )));
           },
-          id: 9),
+          id: 8),
       AppDrawerModel(
           title: 'Confirmation',
           taskStatus: form_status.confirmation,
@@ -180,7 +178,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           reservationID: widget.reservationID,
                         )));
           },
-          id: 8),
+          id: 9),
       // AppDrawerModel(
       //     title: 'Home',
       //     onTap: () {
@@ -241,18 +239,18 @@ class _AppBarItemsState extends State<AppBarItems> {
     Color blendedColor = Color.alphaBlend(color1.withOpacity(0.1), color2);
     return GestureDetector(
       onTap: () {
-        if (drawersList[index].title == 'Home') {
-          setState(() {
-            appDrawerselectedIndex = -1;
-          });
-          drawersList[index].onTap!();
-        } else if (appDrawerselectedIndex == index) {
+        if (appDrawerselectedIndex == index) {
           Scaffold.of(context).closeDrawer();
         } else {
-          setState(() {
-            appDrawerselectedIndex = index;
-          });
-          drawersList[index].onTap!();
+          if (index == 8 ||
+              !(index == 0
+                  ? false
+                  : drawersList[index - 1].taskStatus == '0')) {
+            setState(() {
+              appDrawerselectedIndex = index;
+            });
+            drawersList[index].onTap!();
+          }
         }
       },
       child: Padding(
@@ -264,15 +262,11 @@ class _AppBarItemsState extends State<AppBarItems> {
               Padding(
                 padding: EdgeInsets.only(left: 20.w),
                 child: CircleAvatar(
-                    backgroundColor: drawersList[index].title == 'Home'
-                        ? Colors.grey
-                        : status == "1" || status == "2"
-                            ? Colors.green
-                            : appDrawerselectedIndex == index
-                                ? Colors.red
-                                : Colors.grey
-                    // selectedIndex == index ? Colors.green : blendedColor
-                    ),
+                    backgroundColor: status == "1" || status == "2"
+                        ? Colors.green
+                        : (appDrawerselectedIndex == index || index == 8)
+                            ? Colors.red
+                            : Colors.grey),
               ),
               Padding(
                 padding: EdgeInsets.only(

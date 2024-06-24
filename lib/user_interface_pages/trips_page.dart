@@ -28,9 +28,9 @@ import '../databases/trip_database.dart';
 import '../databases/user_database.dart';
 
 class MyTrips extends StatefulWidget {
-  MyTrips();
+  MyTrips({this.user});
 
-  // final User? user;
+  final User? user;
 
   @override
   State<StatefulWidget> createState() => new MyTripsState();
