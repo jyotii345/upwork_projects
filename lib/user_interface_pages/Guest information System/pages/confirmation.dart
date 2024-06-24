@@ -5,7 +5,9 @@ import 'package:aggressor_adventures/model/tripInsuranceModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../classes/aggressor_colors.dart';
@@ -235,10 +237,7 @@ class _ConfirmationState extends State<Confirmation> {
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: AbsorbPointer(
-                absorbing: form_status.confirmation == "1" ||
-                        form_status.confirmation == "2"
-                    ? true
-                    : false,
+                absorbing: isAbsorbing,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -352,6 +351,33 @@ class _ConfirmationState extends State<Confirmation> {
                               title: "Expiration Date:",
                               data: Utils.getFormattedDate(
                                   date: basicInfoModel.passportExpiration!)),
+                          // Padding(
+                          //   padding: EdgeInsets.only(top: 10.h),
+                          //   child: GestureDetector(
+                          //     onTap: () async {
+                          //       await launchUrl(
+                          //           Uri.parse(
+                          //               'https://www.aggressor.com/passport/passport.php?l=${welcomePageDetails.destination}&y=${welcomePageDetails.startDate!.year}&m=${welcomePageDetails.startDate!.month}${DateFormat('MMM').format(DateTime(0, welcomePageDetails.startDate!.month))}&d=${welcomePageDetails.startDate!.day}&p=${basicInfoModel.contactID}&n=${basicInfoModel.firstName}_${basicInfoModel.lastName}'),
+                          //           mode: LaunchMode.externalApplication);
+                          //     },
+                          //     child: Row(
+                          //       mainAxisAlignment:
+                          //           MainAxisAlignment.spaceBetween,
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         Icon(
+                          //           Icons.drive_folder_upload_outlined,
+                          //           size: 30.h,
+                          //         ),
+                          //         SizedBox(width: 12.w),
+                          //         Expanded(
+                          //           child: Text(
+                          //               'Your destination requires an image of your passport, please tap here to upload.'),
+                          //         )
+                          //       ],
+                          //     ),
+                          //   ),
+                          // )
                         ],
                       ),
                     ),

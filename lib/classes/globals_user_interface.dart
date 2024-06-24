@@ -378,7 +378,6 @@ void onTabTapped(int index, Orientation? orientation) {
   /*
     set the state of the navigation bar selection to index
      */
-
   if (index != 4) {
     // if (false) {
 

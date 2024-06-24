@@ -106,7 +106,7 @@ Future<void> launchUrlSite({required String url}) async {
   final Uri urlParsed = Uri.parse(url);
 
   if (await canLaunchUrl(urlParsed)) {
-    await launchUrl(urlParsed);
+    await launchUrl(urlParsed, mode: LaunchMode.externalApplication);
   } else {
     throw 'Could not launch $url';
   }
