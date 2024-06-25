@@ -106,7 +106,7 @@ class EmergencyContactModel {
       data['emergency_city'] = this.emergency_city;
     }
     if (this.emergency_countryID != null) {
-      data['emergency_countryID'] = this.emergency_countryID;
+      data['emergency_countryID'] = this.emergency_countryID.toString();
     }
     if (this.emergency_email != null) {
       data['emergency_email'] = this.emergency_email;
@@ -145,7 +145,7 @@ class EmergencyContactModel {
       data['emergency2_city'] = this.emergency2_city;
     }
     if (this.emergency2_countryID != null) {
-      data['emergency2_countryID'] = this.emergency2_countryID;
+      data['emergency2_countryID'] = this.emergency2_countryID.toString();
     }
     if (this.emergency2_email != null) {
       data['emergency2_email'] = this.emergency2_email;

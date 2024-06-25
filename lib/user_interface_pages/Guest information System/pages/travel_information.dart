@@ -16,9 +16,11 @@ import '../../../classes/globals.dart';
 import '../../../classes/globals_user_interface.dart';
 import '../../../classes/user.dart';
 import '../../../classes/utils.dart';
+import '../../main_page.dart';
 import '../../widgets/info_banner_container.dart';
 import '../model/masterModel.dart';
 import '../widgets/dropDown.dart';
+import '../widgets/finalized_form.dart';
 import '../widgets/text_field.dart';
 import 'confirmation.dart';
 
@@ -63,7 +65,7 @@ List<TravelInformationModel> travelInformationList = [];
 bool isLoading = true;
 DateTime? arrivalDate;
 DateTime? departureDate;
-bool isAbsorbing = form_status.travel == "1" || form_status.travel == "2";
+bool isAbsorbing = false;
 
 class _TravelInformationState extends State<TravelInformation> {
   @override
@@ -97,6 +99,7 @@ class _TravelInformationState extends State<TravelInformation> {
 
   formStatus() async {
     await aggressorApi.getFormStatus();
+    isAbsorbing = form_status.travel == "1" || form_status.travel == "2";
   }
 
   newFlightWidget({
@@ -403,6 +406,11 @@ class _TravelInformationState extends State<TravelInformation> {
                             },
                           ),
                         ),
+                        if (isAbsorbing)
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  top: 15.h, left: 10.w, right: 10.w),
+                              child: getFinalizedFormContainer()),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 12.h),
                           child: Row(
@@ -410,7 +418,13 @@ class _TravelInformationState extends State<TravelInformation> {
                               Expanded(
                                 child: AggressorButton(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MyHomePage(),
+                                      ),
+                                      (route) => false,
+                                    );
                                   },
                                   buttonName: 'Cancel',
                                   AggressorButtonColor:
@@ -431,6 +445,7 @@ class _TravelInformationState extends State<TravelInformation> {
                                                   .updatingStatus(
                                                       column: "travel");
                                           if (isStatusUpdated) {
+                                            appDrawerselectedIndex = 10;
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(

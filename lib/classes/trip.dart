@@ -673,6 +673,7 @@ class Trip {
                     Expanded(
                       child: AggressorButton(
                         onPressed: () async {
+                          appDrawerselectedIndex = -1;
                           await AggressorApi()
                               .getBasicDetails(contactId: user!.contactId!);
                           Navigator.push(

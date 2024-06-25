@@ -329,9 +329,10 @@ class AggressorApi {
     return isUserDataUpdated;
   }
 
-  Future postEmergencyContact(
+  Future<bool> postEmergencyContact(
       {required String contactId,
       required EmergencyContactModel userInfo}) async {
+    bool isUpdated = false;
     String url =
         "https://app.aggressor.com/api/gis/emergencycontact/AF/$contactId";
 
@@ -343,10 +344,14 @@ class AggressorApi {
             'apikey': apiKey,
           },
           body: userJson);
-      print(response);
+      if (response.statusCode == 200) {
+        isUpdated = true;
+      }
     } catch (e) {
       print(e);
     }
+
+    return isUpdated;
   }
 
   Future<bool> postWaiverForm(
@@ -356,7 +361,7 @@ class AggressorApi {
       var ipAddress}) async {
     bool isWaiverPosted = false;
     String url =
-        "https://app.aggressor.com/api/gis/waiverv2/$contactId/$reservationID/$charID";
+        "https://app.aggressor.com/api/gis/waiverv2/$contactId/${welcomePageDetails.reservationid}/$charID";
 
     try {
       Response response = await post(Uri.parse(url), headers: <String, String>{
@@ -701,12 +706,13 @@ class AggressorApi {
     }
   }
 
-  postRentalAndCoursesDetails({
+  Future<bool> postRentalAndCoursesDetails({
     required int? inventoryId,
     String? courses,
     String? rentals,
     String? otherText,
   }) async {
+    bool isRentalDataPosted = false;
     String url =
         'https://app.aggressor.com/api/gis/rentalscourses/AF/$inventoryId';
 
@@ -719,11 +725,12 @@ class AggressorApi {
         'other_rental': otherText,
       });
       if (response.statusCode == 200) {
-        print(response.body);
+        isRentalDataPosted = true;
       }
     } catch (e) {
       print(e);
     }
+    return isRentalDataPosted;
   }
 
   Future<bool> postDivingInsuranceDetails(

@@ -43,6 +43,17 @@ class _AppBarItemsState extends State<AppBarItems> {
     drawersList.clear();
     drawersList.addAll([
       AppDrawerModel(
+          title: 'Home',
+          onTap: () {
+            Scaffold.of(context).closeDrawer();
+            Navigator.pushAndRemoveUntil(
+              navigatorKey.currentContext!,
+              MaterialPageRoute(builder: (context) => MyHomePage()),
+              (route) => false,
+            );
+          },
+          id: 0),
+      AppDrawerModel(
           title: 'Guest Informaition',
           taskStatus: form_status.general,
           onTap: () {
@@ -56,7 +67,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           currentTrip: widget.charterID,
                         )));
           },
-          id: 0),
+          id: 1),
       AppDrawerModel(
           title: 'Waiver',
           taskStatus: form_status.waiver,
@@ -70,7 +81,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           reservationID: widget.reservationID,
                         )));
           },
-          id: 1),
+          id: 2),
       AppDrawerModel(
         title: 'Policies',
         taskStatus: form_status.policy,
@@ -83,7 +94,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                       charterID: widget.charterID,
                       reservationID: widget.reservationID)));
         },
-        id: 2,
+        id: 3,
       ),
       AppDrawerModel(
           title: 'Emergency Contact',
@@ -99,7 +110,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           currentTrip: widget.charterID,
                         )));
           },
-          id: 3),
+          id: 4),
       AppDrawerModel(
           title: 'Requests',
           taskStatus: form_status.requests,
@@ -113,7 +124,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           currentTrip: widget.charterID,
                         )));
           },
-          id: 4),
+          id: 5),
       AppDrawerModel(
           title: 'Rentals & Courses',
           taskStatus: form_status.rentals,
@@ -126,7 +137,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           reservationID: widget.reservationID,
                         )));
           },
-          id: 5),
+          id: 6),
       AppDrawerModel(
           title: 'Diving Insurance',
           taskStatus: form_status.diving,
@@ -139,7 +150,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           reservationID: widget.reservationID,
                         )));
           },
-          id: 6),
+          id: 7),
       AppDrawerModel(
           title: 'Trip Insurance',
           taskStatus: form_status.insurance,
@@ -152,7 +163,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           reservationID: widget.reservationID,
                         )));
           },
-          id: 7),
+          id: 8),
       AppDrawerModel(
           title: 'Travel Inforamtion',
           taskStatus: form_status.travel,
@@ -165,7 +176,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           reservationID: widget.reservationID,
                         )));
           },
-          id: 8),
+          id: 9),
       AppDrawerModel(
           title: 'Confirmation',
           taskStatus: form_status.confirmation,
@@ -178,7 +189,7 @@ class _AppBarItemsState extends State<AppBarItems> {
                           reservationID: widget.reservationID,
                         )));
           },
-          id: 9),
+          id: 10),
       // AppDrawerModel(
       //     title: 'Home',
       //     onTap: () {
@@ -242,8 +253,8 @@ class _AppBarItemsState extends State<AppBarItems> {
         if (appDrawerselectedIndex == index) {
           Scaffold.of(context).closeDrawer();
         } else {
-          if (index == 8 ||
-              !(index == 0
+          if (index == 9 ||
+              !(index == 1 || index == 0
                   ? false
                   : drawersList[index - 1].taskStatus == '0')) {
             setState(() {
@@ -264,9 +275,16 @@ class _AppBarItemsState extends State<AppBarItems> {
                 child: CircleAvatar(
                     backgroundColor: status == "1" || status == "2"
                         ? Colors.green
-                        : (appDrawerselectedIndex == index || index == 8)
-                            ? Colors.red
-                            : Colors.grey),
+                        : index == 0
+                            ? Colors.grey
+                            : (appDrawerselectedIndex == index || index == 9) ||
+                                    ((drawersList[index - 1].taskStatus ==
+                                                '1' ||
+                                            drawersList[index - 1].taskStatus ==
+                                                '2') &&
+                                        drawersList[index].taskStatus == '0')
+                                ? Colors.red
+                                : Colors.grey),
               ),
               Padding(
                 padding: EdgeInsets.only(

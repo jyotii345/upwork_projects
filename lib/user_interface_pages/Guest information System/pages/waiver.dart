@@ -12,6 +12,7 @@ import '../../../classes/colors.dart';
 import '../../../classes/globals_user_interface.dart';
 import '../../../classes/trip.dart';
 import '../../../classes/user.dart';
+import '../../main_page.dart';
 import '../widgets/aggressor_button.dart';
 import '../widgets/finalized_form.dart';
 
@@ -184,7 +185,7 @@ class _WaiverState extends State<Waiver> {
             child: isAbsorbing
                 ? Padding(
                     padding:
-                        EdgeInsets.only(top: 15.h, left: 25.w, right: 25.w),
+                        EdgeInsets.only(top: 15.h, left: 20.w, right: 20.w),
                     child: getFinalizedFormContainer())
                 : SizedBox(
                     height: 150.h,
@@ -225,7 +226,13 @@ class _WaiverState extends State<Waiver> {
                       Expanded(
                         child: AggressorButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                              ),
+                              (route) => false,
+                            );
                           },
                           buttonName: "CANCEL",
                           fontSize: 12.sp,
@@ -249,22 +256,28 @@ class _WaiverState extends State<Waiver> {
                                             reservationID: widget.reservationID,
                                             charID: widget.charterID,
                                             ipAddress: hostAddress);
-                                    // await AggressorApi().updatingStatus(
-                                    //     charID: widget.charterID,
-                                    //     contactID: basicInfoModel.contactID!,
-                                    //     column: "waiver");
+
+                                    if (isWaiverPosted) {
+                                      bool isStatusUpdated =
+                                          await AggressorApi().updatingStatus(
+                                              charID: widget.charterID,
+                                              contactID:
+                                                  basicInfoModel.contactID!,
+                                              column: "waiver");
+                                      if (isStatusUpdated) {
+                                        appDrawerselectedIndex = 3;
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Policy(
+                                                    charterID: widget.charterID,
+                                                    reservationID:
+                                                        widget.reservationID)));
+                                      }
+                                    }
                                     setState(() {
                                       isWaiverPosting = false;
                                     });
-                                    if (isWaiverPosted) {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Policy(
-                                                  charterID: widget.charterID,
-                                                  reservationID:
-                                                      widget.reservationID)));
-                                    }
                                   },
                             buttonName: "SAVE AND CONTINUE",
                             fontSize: 12.sp,

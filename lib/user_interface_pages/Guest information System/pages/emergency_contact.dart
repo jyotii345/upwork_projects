@@ -12,9 +12,11 @@ import '../../../classes/aggressor_colors.dart';
 import '../../../classes/globals.dart';
 import '../../../classes/globals_user_interface.dart';
 import '../../../classes/user.dart';
+import '../../main_page.dart';
 import '../../widgets/info_banner_container.dart';
 import '../model/masterModel.dart';
 import '../widgets/dropDown.dart';
+import '../widgets/finalized_form.dart';
 import '../widgets/text_field.dart';
 
 class EmergencyContact extends StatefulWidget {
@@ -66,8 +68,8 @@ TextEditingController secondaryAptController = TextEditingController();
 TextEditingController secondaryCityController = TextEditingController();
 TextEditingController secondaryZipController = TextEditingController();
 bool isMasterDataLoading = true;
-final primaryFormKey = GlobalKey<FormState>();
-final secondaryFormKey = GlobalKey<FormState>();
+final primaryFormKey = GlobalKey<FormState>(debugLabel: 'primarykey');
+final secondaryFormKey = GlobalKey<FormState>(debugLabel: 'secondarykey');
 bool isEmrDataPosting = false;
 bool isAbsorbing = form_status.emcontact == "1" || form_status.emcontact == "2";
 
@@ -213,443 +215,459 @@ class _EmergencyContactState extends State<EmergencyContact> {
               child: CircularProgressIndicator(),
             )
           : SingleChildScrollView(
-              child: AbsorbPointer(
-                absorbing: isAbsorbing,
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
-                  child: Column(
-                    children: [
-                      InfoBannerContainer(
-                        bgColor: AggressorColors.aero,
-                        infoText:
-                            'The following information is intended for use in the unlikely event of an emergency where the guest is unable to communicate with the crew or medical personnel.',
-                      ),
-                      Form(
-                        key: primaryFormKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8.h),
-                              child: Text(
-                                "Primary Emergency Contact Information",
-                                style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            AdventureFormField(
-                              validator: (value) =>
-                                  primaryFirstNameController.text.isNotEmpty
-                                      ? null
-                                      : "Please provide first name",
-                              labelText: "First Name",
-                              // initialValue: emergencyContact.emergency_first,
-                              isRequired: true,
-                              controller: primaryFirstNameController,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  validator: (value) =>
-                                      primaryLastNameController.text.isNotEmpty
-                                          ? null
-                                          : "Please provide last name",
-                                  labelText: "Last Name",
-                                  // initialValue: emergencyContact.emergency_last,
-                                  isRequired: true,
-                                  controller: primaryLastNameController),
-                            ),
-                            AdventureFormField(
-                                validator: (value) =>
-                                    primaryRelationshipController
-                                            .text.isNotEmpty
-                                        ? null
-                                        : "Please provide relationship",
-                                labelText: "Relationship",
-                                // initialValue:
-                                //     emergencyContact.emergency_relationship,
-                                isRequired: true,
-                                controller: primaryRelationshipController),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  validator: (value) =>
-                                      primaryHomePhoneController.text.isNotEmpty
-                                          ? null
-                                          : "Please provide home phone",
-                                  labelText: "Home Phone",
-                                  // initialValue:
-                                  //     emergencyContact.emergency_ph_home,
-                                  isRequired: true,
-                                  controller: primaryHomePhoneController),
-                            ),
-                            AdventureFormField(
-                                labelText: "Work Phone",
-                                // initialValue:
-                                //     emergencyContact.emergency_ph_work,
-                                controller: primaryWorkPhoneController),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  labelText: "Mobile Phone",
-                                  // initialValue:
-                                  //     emergencyContact.emergency_ph_mobile,
-                                  controller: primaryMobilePhoneController),
-                            ),
-                            AdventureFormField(
-                                labelText: "Email",
-                                isRequired: true,
-                                // initialValue: emergencyContact.emergency_email,
-                                controller: primaryEmailController),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  labelText: "Address",
-                                  // initialValue:
-                                  //     emergencyContact.emergency_address1,
-                                  isRequired: true,
-                                  controller: primaryAddressController),
-                            ),
-                            AdventureFormField(
-                                labelText: "Apt/Unit",
-                                // initialValue:
-                                //     emergencyContact.emergency_address2,
-                                controller: primaryAptController),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.h),
-                              child: AdventureDropDown(
-                                hintText: 'Country',
-                                selectedItem: primarySelectedCountry,
-                                item: listOfCountries,
-                                onChanged: (value) {
-                                  setState(() {
-                                    primarySelectedCountry = value;
-                                  });
-                                },
-                              ),
-                            ),
-                            if (primarySelectedCountry?.id == 2)
-                              Padding(
-                                padding: EdgeInsets.only(top: 10.h),
-                                child: AdventureDropDown(
-                                  hintText: 'State',
-                                  selectedItem: primarySelectedState,
-                                  item: listOfStates,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      primarySelectedState = value;
-                                    });
-                                  },
+              child: Column(
+                children: [
+                  AbsorbPointer(
+                    absorbing: isAbsorbing,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10.w, vertical: 15.h),
+                      child: Column(
+                        children: [
+                          InfoBannerContainer(
+                            bgColor: AggressorColors.aero,
+                            infoText:
+                                'The following information is intended for use in the unlikely event of an emergency where the guest is unable to communicate with the crew or medical personnel.',
+                          ),
+                          Form(
+                            key: primaryFormKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                                  child: Text(
+                                    "Primary Emergency Contact Information",
+                                    style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w600),
+                                  ),
                                 ),
-                              ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  labelText: "City",
-                                  isRequired: true,
-                                  // initialValue:
-                                  //     emergencyContact.emergency_city,
-                                  controller: primaryCityController),
-                            ),
-                            AdventureFormField(
-                                labelText: "Zip",
-                                isRequired: true,
-                                // initialValue: emergencyContact.emergency_zip,
-                                controller: primaryZipController),
-                          ],
-                        ),
-                      ),
-                      Form(
-                        key: secondaryFormKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 20.h, bottom: 10.h),
-                              child: Text(
-                                "Secondary Emergency Contact Information",
-                                style: TextStyle(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                            AdventureFormField(
-                                validator: (value) =>
-                                    secondaryFirstNameController.text.isNotEmpty
-                                        ? null
-                                        : "Please provide first name",
-                                labelText: "First Name",
-                                // initialValue: emergencyContact.emergency2_first,
-                                isRequired: true,
-                                controller: secondaryFirstNameController),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
+                                AdventureFormField(
                                   validator: (value) =>
-                                      secondaryLastNameController
-                                              .text.isNotEmpty
+                                      primaryFirstNameController.text.isNotEmpty
                                           ? null
-                                          : "Please provide last name",
-                                  labelText: "Last Name",
-                                  // initialValue: emergencyContact.emergency2_last,
+                                          : "Please provide first name",
+                                  labelText: "First Name",
+                                  // initialValue: emergencyContact.emergency_first,
                                   isRequired: true,
-                                  controller: secondaryLastNameController),
-                            ),
-                            AdventureFormField(
-                                validator: (value) =>
-                                    secondaryRelationshipController
-                                            .text.isNotEmpty
-                                        ? null
-                                        : "Please provide relationship",
-                                labelText: "Relationship",
-                                // initialValue:
-                                //     emergencyContact.emergency2_relationship,
-                                isRequired: true,
-                                controller: secondaryRelationshipController),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  validator: (value) =>
-                                      secondaryHomePhoneController
-                                              .text.isNotEmpty
-                                          ? null
-                                          : "Please provide home phone",
-                                  labelText: "Home Phone",
-                                  // initialValue: emergencyContact.emergency2_ph_home,
-                                  isRequired: true,
-                                  controller: secondaryHomePhoneController),
-                            ),
-                            AdventureFormField(
-                                labelText: "Work Phone",
-                                // initialValue: emergencyContact.emergency2_ph_work,
-                                controller: secondaryWorkPhoneController),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  labelText: "Mobile Phone",
-                                  // initialValue:
-                                  //     emergencyContact.emergency2_ph_mobile,
-                                  controller: secondaryMobilePhoneController),
-                            ),
-                            AdventureFormField(
-                                labelText: "Email",
-                                isRequired: true,
-                                // initialValue: emergencyContact.emergency2_email,
-                                controller: secondaryEmailController),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  labelText: "Address",
-                                  isRequired: true,
-                                  // initialValue:
-                                  //     emergencyContact.emergency2_address1,
-                                  controller: secondaryAddressController),
-                            ),
-                            AdventureFormField(
-                                labelText: "Apt/Unit",
-                                // initialValue: emergencyContact.emergency2_address2,
-                                controller: secondaryAptController),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.h),
-                              child: AdventureDropDown(
-                                hintText: 'Country',
-                                selectedItem: secondarySelectedCountry,
-                                item: listOfCountries,
-                                onChanged: (value) {
-                                  setState(() {
-                                    secondarySelectedCountry = value;
-                                  });
-                                },
-                              ),
-                            ),
-                            if (secondarySelectedCountry?.id == 2)
-                              Padding(
-                                padding: EdgeInsets.only(top: 10.h),
-                                child: AdventureDropDown(
-                                  hintText: 'State',
-                                  selectedItem: secondarySelectedState,
-                                  item: listOfStates,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      secondarySelectedState = value;
-                                    });
-                                  },
+                                  controller: primaryFirstNameController,
                                 ),
-                              ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.h),
-                              child: AdventureFormField(
-                                  labelText: "City",
-                                  isRequired: true,
-                                  // initialValue: emergencyContact.emergency2_city,
-                                  controller: secondaryCityController),
-                            ),
-                            AdventureFormField(
-                                labelText: "Zip",
-                                isRequired: true,
-                                // initialValue: emergencyContact.emergency2_zip,
-                                controller: secondaryZipController),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15.h),
-                        child: isEmrDataPosting
-                            ? CircularProgressIndicator()
-                            : Row(
-                                children: [
-                                  Expanded(
-                                    child: AggressorButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      validator: (value) =>
+                                          primaryLastNameController
+                                                  .text.isNotEmpty
+                                              ? null
+                                              : "Please provide last name",
+                                      labelText: "Last Name",
+                                      // initialValue: emergencyContact.emergency_last,
+                                      isRequired: true,
+                                      controller: primaryLastNameController),
+                                ),
+                                AdventureFormField(
+                                    validator: (value) =>
+                                        primaryRelationshipController
+                                                .text.isNotEmpty
+                                            ? null
+                                            : "Please provide relationship",
+                                    labelText: "Relationship",
+                                    // initialValue:
+                                    //     emergencyContact.emergency_relationship,
+                                    isRequired: true,
+                                    controller: primaryRelationshipController),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      validator: (value) =>
+                                          primaryHomePhoneController
+                                                  .text.isNotEmpty
+                                              ? null
+                                              : "Please provide home phone",
+                                      labelText: "Home Phone",
+                                      // initialValue:
+                                      //     emergencyContact.emergency_ph_home,
+                                      isRequired: true,
+                                      controller: primaryHomePhoneController),
+                                ),
+                                AdventureFormField(
+                                    labelText: "Work Phone",
+                                    // initialValue:
+                                    //     emergencyContact.emergency_ph_work,
+                                    controller: primaryWorkPhoneController),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      labelText: "Mobile Phone",
+                                      // initialValue:
+                                      //     emergencyContact.emergency_ph_mobile,
+                                      controller: primaryMobilePhoneController),
+                                ),
+                                AdventureFormField(
+                                    labelText: "Email",
+                                    isRequired: true,
+                                    // initialValue: emergencyContact.emergency_email,
+                                    controller: primaryEmailController),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      labelText: "Address",
+                                      // initialValue:
+                                      //     emergencyContact.emergency_address1,
+                                      isRequired: true,
+                                      controller: primaryAddressController),
+                                ),
+                                AdventureFormField(
+                                    labelText: "Apt/Unit",
+                                    // initialValue:
+                                    //     emergencyContact.emergency_address2,
+                                    controller: primaryAptController),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 10.h),
+                                  child: AdventureDropDown(
+                                    hintText: 'Country',
+                                    selectedItem: primarySelectedCountry,
+                                    item: listOfCountries,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        primarySelectedCountry = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                if (primarySelectedCountry?.id == 2)
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.h),
+                                    child: AdventureDropDown(
+                                      hintText: 'State',
+                                      selectedItem: primarySelectedState,
+                                      item: listOfStates,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          primarySelectedState = value;
+                                        });
                                       },
-                                      buttonName: 'Cancel',
-                                      AggressorButtonColor:
-                                          AggressorColors.chromeYellow,
-                                      AggressorTextColor: AggressorColors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  SizedBox(width: 20.w),
-                                  Expanded(
-                                    child: AggressorButton(
-                                      onPressed: isAbsorbing
-                                          ? null
-                                          : () async {
-                                              setState(() {
-                                                isEmrDataPosting = true;
-                                              });
-                                              if (primaryFormKey.currentState!
-                                                      .validate() &&
-                                                  secondaryFormKey.currentState!
-                                                      .validate()) {
-                                                EmergencyContactModel saveData =
-                                                    EmergencyContactModel(
-                                                  emergency2_address1:
-                                                      primaryAddressController
-                                                          .text,
-                                                  emergency2_city:
-                                                      secondaryCityController
-                                                          .text,
-                                                  emergency2_countryID:
-                                                      secondarySelectedCountry!
-                                                          .id,
-                                                  emergency2_email:
-                                                      secondaryEmailController
-                                                          .text,
-                                                  emergency2_first:
-                                                      primaryFirstNameController
-                                                          .text,
-                                                  emergency2_last:
-                                                      secondaryLastNameController
-                                                          .text,
-                                                  emergency2_ph_home:
-                                                      secondaryHomePhoneController
-                                                          .text,
-                                                  emergency2_ph_mobile:
-                                                      secondaryMobilePhoneController
-                                                          .text,
-                                                  emergency2_ph_work:
-                                                      secondaryWorkPhoneController
-                                                          .text,
-                                                  emergency2_relationship:
-                                                      secondaryRelationshipController
-                                                          .text,
-                                                  emergency2_state:
-                                                      secondarySelectedCountry
-                                                                  ?.id ==
-                                                              2
-                                                          ? secondarySelectedState!
-                                                              .abbv
-                                                          : null,
-                                                  emergency2_zip:
-                                                      secondaryZipController
-                                                          .text,
-                                                  emergency_address1:
-                                                      primaryAddressController
-                                                          .text,
-                                                  emergency_city:
-                                                      primaryCityController
-                                                          .text,
-                                                  emergency_countryID:
-                                                      primarySelectedCountry!
-                                                          .id,
-                                                  emergency_email:
-                                                      primaryEmailController
-                                                          .text,
-                                                  emergency_first:
-                                                      primaryFirstNameController
-                                                          .text,
-                                                  emergency_last:
-                                                      primaryLastNameController
-                                                          .text,
-                                                  emergency_ph_home:
-                                                      primaryHomePhoneController
-                                                          .text,
-                                                  emergency_ph_mobile:
-                                                      primaryMobilePhoneController
-                                                          .text,
-                                                  emergency_ph_work:
-                                                      primaryWorkPhoneController
-                                                          .text,
-                                                  emergency_relationship:
-                                                      primaryRelationshipController
-                                                          .text,
-                                                  emergency_state:
-                                                      primarySelectedCountry
-                                                                  ?.id ==
-                                                              2
-                                                          ? primarySelectedState!
-                                                              .abbv
-                                                          : null,
-                                                  emergency_zip:
-                                                      primaryZipController.text,
-                                                );
-                                                await AggressorApi()
-                                                    .postEmergencyContact(
-                                                        contactId:
-                                                            basicInfoModel
-                                                                .contactID!,
-                                                        userInfo: saveData);
-                                                await AggressorApi()
-                                                    .updatingStatus(
-                                                        charID: widget.charID,
-                                                        contactID:
-                                                            basicInfoModel
-                                                                .contactID!,
-                                                        column: "emcontact");
-                                                setState(() {
-                                                  isEmrDataPosting = false;
-                                                });
-                                              }
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Requests(
-                                                            charID:
-                                                                widget.charID,
-                                                            reservationID: widget
-                                                                .reservationID,
-                                                          )));
-                                            },
-                                      buttonName: 'Save & Continue',
-                                      AggressorButtonColor: AggressorColors.aero
-                                          .withOpacity(isAbsorbing ? 0.7 : 1),
-                                      AggressorTextColor: AggressorColors.white,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w600,
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      labelText: "City",
+                                      isRequired: true,
+                                      // initialValue:
+                                      //     emergencyContact.emergency_city,
+                                      controller: primaryCityController),
+                                ),
+                                AdventureFormField(
+                                    labelText: "Zip",
+                                    isRequired: true,
+                                    // initialValue: emergencyContact.emergency_zip,
+                                    controller: primaryZipController),
+                              ],
+                            ),
+                          ),
+                          Form(
+                            key: secondaryFormKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(top: 20.h, bottom: 10.h),
+                                  child: Text(
+                                    "Secondary Emergency Contact Information",
+                                    style: TextStyle(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                AdventureFormField(
+                                    validator: (value) =>
+                                        secondaryFirstNameController
+                                                .text.isNotEmpty
+                                            ? null
+                                            : "Please provide first name",
+                                    labelText: "First Name",
+                                    // initialValue: emergencyContact.emergency2_first,
+                                    isRequired: true,
+                                    controller: secondaryFirstNameController),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      validator: (value) =>
+                                          secondaryLastNameController
+                                                  .text.isNotEmpty
+                                              ? null
+                                              : "Please provide last name",
+                                      labelText: "Last Name",
+                                      // initialValue: emergencyContact.emergency2_last,
+                                      isRequired: true,
+                                      controller: secondaryLastNameController),
+                                ),
+                                AdventureFormField(
+                                    validator: (value) =>
+                                        secondaryRelationshipController
+                                                .text.isNotEmpty
+                                            ? null
+                                            : "Please provide relationship",
+                                    labelText: "Relationship",
+                                    // initialValue:
+                                    //     emergencyContact.emergency2_relationship,
+                                    isRequired: true,
+                                    controller:
+                                        secondaryRelationshipController),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      validator: (value) =>
+                                          secondaryHomePhoneController
+                                                  .text.isNotEmpty
+                                              ? null
+                                              : "Please provide home phone",
+                                      labelText: "Home Phone",
+                                      // initialValue: emergencyContact.emergency2_ph_home,
+                                      isRequired: true,
+                                      controller: secondaryHomePhoneController),
+                                ),
+                                AdventureFormField(
+                                    labelText: "Work Phone",
+                                    // initialValue: emergencyContact.emergency2_ph_work,
+                                    controller: secondaryWorkPhoneController),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      labelText: "Mobile Phone",
+                                      // initialValue:
+                                      //     emergencyContact.emergency2_ph_mobile,
+                                      controller:
+                                          secondaryMobilePhoneController),
+                                ),
+                                AdventureFormField(
+                                    labelText: "Email",
+                                    isRequired: true,
+                                    // initialValue: emergencyContact.emergency2_email,
+                                    controller: secondaryEmailController),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      labelText: "Address",
+                                      isRequired: true,
+                                      // initialValue:
+                                      //     emergencyContact.emergency2_address1,
+                                      controller: secondaryAddressController),
+                                ),
+                                AdventureFormField(
+                                    labelText: "Apt/Unit",
+                                    // initialValue: emergencyContact.emergency2_address2,
+                                    controller: secondaryAptController),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 10.h),
+                                  child: AdventureDropDown(
+                                    hintText: 'Country',
+                                    selectedItem: secondarySelectedCountry,
+                                    item: listOfCountries,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        secondarySelectedCountry = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                if (secondarySelectedCountry?.id == 2)
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 10.h),
+                                    child: AdventureDropDown(
+                                      hintText: 'State',
+                                      selectedItem: secondarySelectedState,
+                                      item: listOfStates,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          secondarySelectedState = value;
+                                        });
+                                      },
                                     ),
-                                  )
-                                ],
-                              ),
-                      )
-                    ],
+                                  ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: AdventureFormField(
+                                      labelText: "City",
+                                      isRequired: true,
+                                      // initialValue: emergencyContact.emergency2_city,
+                                      controller: secondaryCityController),
+                                ),
+                                AdventureFormField(
+                                    labelText: "Zip",
+                                    isRequired: true,
+                                    // initialValue: emergencyContact.emergency2_zip,
+                                    controller: secondaryZipController),
+                              ],
+                            ),
+                          ),
+                          if (isAbsorbing)
+                            Padding(
+                                padding: EdgeInsets.only(top: 15.h),
+                                child: getFinalizedFormContainer()),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
+                    child: isEmrDataPosting
+                        ? CircularProgressIndicator()
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: AggressorButton(
+                                  onPressed: () {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => MyHomePage(),
+                                      ),
+                                      (route) => false,
+                                    );
+                                  },
+                                  buttonName: 'Cancel',
+                                  AggressorButtonColor:
+                                      AggressorColors.chromeYellow,
+                                  AggressorTextColor: AggressorColors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(width: 20.w),
+                              Expanded(
+                                child: AggressorButton(
+                                  onPressed: isAbsorbing
+                                      ? null
+                                      : () async {
+                                          setState(() {
+                                            isEmrDataPosting = true;
+                                          });
+                                          if (primaryFormKey.currentState!
+                                                  .validate() &&
+                                              secondaryFormKey.currentState!
+                                                  .validate()) {
+                                            EmergencyContactModel saveData =
+                                                EmergencyContactModel(
+                                              emergency2_address1:
+                                                  primaryAddressController.text,
+                                              emergency2_city:
+                                                  secondaryCityController.text,
+                                              emergency2_countryID:
+                                                  secondarySelectedCountry!.id,
+                                              emergency2_email:
+                                                  secondaryEmailController.text,
+                                              emergency2_first:
+                                                  primaryFirstNameController
+                                                      .text,
+                                              emergency2_last:
+                                                  secondaryLastNameController
+                                                      .text,
+                                              emergency2_ph_home:
+                                                  secondaryHomePhoneController
+                                                      .text,
+                                              emergency2_ph_mobile:
+                                                  secondaryMobilePhoneController
+                                                      .text,
+                                              emergency2_ph_work:
+                                                  secondaryWorkPhoneController
+                                                      .text,
+                                              emergency2_relationship:
+                                                  secondaryRelationshipController
+                                                      .text,
+                                              emergency2_state:
+                                                  secondarySelectedCountry
+                                                              ?.id ==
+                                                          2
+                                                      ? secondarySelectedState!
+                                                          .abbv
+                                                      : null,
+                                              emergency2_zip:
+                                                  secondaryZipController.text,
+                                              emergency_address1:
+                                                  primaryAddressController.text,
+                                              emergency_city:
+                                                  primaryCityController.text,
+                                              emergency_countryID:
+                                                  primarySelectedCountry!.id,
+                                              emergency_email:
+                                                  primaryEmailController.text,
+                                              emergency_first:
+                                                  primaryFirstNameController
+                                                      .text,
+                                              emergency_last:
+                                                  primaryLastNameController
+                                                      .text,
+                                              emergency_ph_home:
+                                                  primaryHomePhoneController
+                                                      .text,
+                                              emergency_ph_mobile:
+                                                  primaryMobilePhoneController
+                                                      .text,
+                                              emergency_ph_work:
+                                                  primaryWorkPhoneController
+                                                      .text,
+                                              emergency_relationship:
+                                                  primaryRelationshipController
+                                                      .text,
+                                              emergency_state:
+                                                  primarySelectedCountry?.id ==
+                                                          2
+                                                      ? primarySelectedState!
+                                                          .abbv
+                                                      : null,
+                                              emergency_zip:
+                                                  primaryZipController.text,
+                                            );
+                                            bool isPosted = await AggressorApi()
+                                                .postEmergencyContact(
+                                                    contactId: basicInfoModel
+                                                        .contactID!,
+                                                    userInfo: saveData);
+                                            if (isPosted) {
+                                              bool isStatusUpdated =
+                                                  await AggressorApi()
+                                                      .updatingStatus(
+                                                          charID: widget.charID,
+                                                          contactID:
+                                                              basicInfoModel
+                                                                  .contactID!,
+                                                          column: "emcontact");
+                                              if (isStatusUpdated) {
+                                                appDrawerselectedIndex = 5;
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Requests(
+                                                              charID:
+                                                                  widget.charID,
+                                                              reservationID: widget
+                                                                  .reservationID,
+                                                            )));
+                                              }
+                                            }
+                                            setState(() {
+                                              isEmrDataPosting = false;
+                                            });
+                                          }
+                                        },
+                                  buttonName: 'Save & Continue',
+                                  AggressorButtonColor: AggressorColors.aero
+                                      .withOpacity(isAbsorbing ? 0.7 : 1),
+                                  AggressorTextColor: AggressorColors.white,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              )
+                            ],
+                          ),
+                  )
+                ],
               ),
             ),
     );

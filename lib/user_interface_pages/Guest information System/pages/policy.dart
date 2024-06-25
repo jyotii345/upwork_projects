@@ -12,6 +12,7 @@ import '../../../classes/colors.dart';
 import '../../../classes/globals_user_interface.dart';
 import '../../../classes/trip.dart';
 import '../../../classes/user.dart';
+import '../../main_page.dart';
 import '../widgets/aggressor_button.dart';
 
 class Policy extends StatefulWidget {
@@ -145,11 +146,12 @@ class _PolicyState extends State<Policy> {
               ),
             ),
           ),
+          if (isAbsorbing)
+            Padding(
+                padding: EdgeInsets.only(top: 15.h, left: 20.w, right: 20.w),
+                child: getFinalizedFormContainer()),
           Padding(
-              padding: EdgeInsets.only(top: 15.h, left: 25.w, right: 25.w),
-              child: getFinalizedFormContainer()),
-          Padding(
-            padding: EdgeInsets.only(top: 15.h, left: 24.w, right: 25.w),
+            padding: EdgeInsets.only(top: 20.h, left: 20.w, right: 20.w),
             child: isPolicyStatusUpdating
                 ? CircularProgressIndicator()
                 : Row(
@@ -158,7 +160,13 @@ class _PolicyState extends State<Policy> {
                       Expanded(
                         child: AggressorButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyHomePage(),
+                              ),
+                              (route) => false,
+                            );
                           },
                           buttonName: "CANCEL",
                           fontSize: 12.sp,
@@ -176,23 +184,28 @@ class _PolicyState extends State<Policy> {
                                     setState(() {
                                       isPolicyStatusUpdating = true;
                                     });
-                                    await AggressorApi().updatingStatus(
-                                        charID: widget.charterID,
-                                        contactID: basicInfoModel.contactID!,
-                                        column: "policy");
+                                    bool isStatusUpdated = await AggressorApi()
+                                        .updatingStatus(
+                                            charID: widget.charterID,
+                                            contactID:
+                                                basicInfoModel.contactID!,
+                                            column: "policy");
                                     setState(() {
                                       isPolicyStatusUpdating = false;
                                     });
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                EmergencyContact(
-                                                    charID: widget.charterID,
-                                                    currentTrip:
-                                                        widget.charterID,
-                                                    reservationID:
-                                                        widget.reservationID)));
+                                    if (isStatusUpdated) {
+                                      appDrawerselectedIndex = 4;
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  EmergencyContact(
+                                                      charID: widget.charterID,
+                                                      currentTrip:
+                                                          widget.charterID,
+                                                      reservationID: widget
+                                                          .reservationID)));
+                                    }
                                   },
                             buttonName: "SAVE AND CONTINUE",
                             fontSize: 12.sp,
