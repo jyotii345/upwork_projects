@@ -2,6 +2,8 @@ import 'package:aggressor_adventures/classes/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../user_interface_pages/main_page.dart';
+
 class Utils {
   static String getFormattedDate({required DateTime date}) {
     return defaultDateFormat
@@ -42,6 +44,16 @@ class Utils {
           ),
         ),
       ],
+    );
+  }
+
+  static void redirectToHomePage({required BuildContext context}) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyHomePage(),
+      ),
+      (route) => false,
     );
   }
 }

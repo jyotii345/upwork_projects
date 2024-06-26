@@ -85,177 +85,185 @@ class _GuestInformationWelcomePageState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xfff4f3ef),
-      // bottomNavigationBar: getBottomNavigationBar(),
-      drawer: getGISAppDrawer(
-          charterID: widget.charterId, reservationID: widget.reservationID),
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
+    return PopScope(
+      onPopInvoked: (didPop) async {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Utils.redirectToHomePage(context: context);
+        });
+      },
+      child: Scaffold(
         backgroundColor: Color(0xfff4f3ef),
-        automaticallyImplyLeading: false,
-        leading: Builder(builder: (context) {
-          return IconButton(
-            icon: Icon(
-              Icons.menu_outlined,
-              color: Color(0xff418cc7),
-              size: 22,
-            ),
-            color: AggressorColors.secondaryColor,
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          );
-        }),
-        title: Padding(
-          padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-          child: Image.asset(
-            "assets/logo.png",
-            height: AppBar().preferredSize.height,
-            fit: BoxFit.fitHeight,
-          ),
-        ),
-        actions: <Widget>[
-          SizedBox(
-            height: AppBar().preferredSize.height,
-            child: IconButton(
-              icon: Container(
-                child: Image.asset("assets/callicon.png"),
+        // bottomNavigationBar: getBottomNavigationBar(),
+        drawer: getGISAppDrawer(
+            charterID: widget.charterId, reservationID: widget.reservationID),
+        appBar: AppBar(
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Color(0xfff4f3ef),
+          automaticallyImplyLeading: false,
+          leading: Builder(builder: (context) {
+            return IconButton(
+              icon: Icon(
+                Icons.menu_outlined,
+                color: Color(0xff418cc7),
+                size: 22,
               ),
-              onPressed: makeCall,
+              color: AggressorColors.secondaryColor,
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          }),
+          title: Padding(
+            padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            child: Image.asset(
+              "assets/logo.png",
+              height: AppBar().preferredSize.height,
+              fit: BoxFit.fitHeight,
             ),
           ),
-        ],
-      ),
-      body: !isLoading
-          ? SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0, left: 20),
-                    child: Text(
-                      "Welcome To Your Guest Information System (GIS) Portal.",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
+          actions: <Widget>[
+            SizedBox(
+              height: AppBar().preferredSize.height,
+              child: IconButton(
+                icon: Container(
+                  child: Image.asset("assets/callicon.png"),
+                ),
+                onPressed: makeCall,
+              ),
+            ),
+          ],
+        ),
+        body: !isLoading
+            ? SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0, left: 20),
+                      child: Text(
+                        "Welcome To Your Guest Information System (GIS) Portal.",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                  ),
-                  Divider(
-                    thickness: 1,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 25.h, right: 25.h, top: 15.h, bottom: 20.h),
-                    child: Column(
-                      children: [
-                        if (welcomePageDetails.first != null)
-                          Row(
-                            children: [
-                              Text(
-                                "Name",
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              SizedBox(width: 10.w),
-                              Text(welcomePageDetails.first!)
-                            ],
-                          ),
-                        if (welcomePageDetails.destination != null)
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.h),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Yacht",
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(width: 10.w),
-                                Text(welcomePageDetails.destination!)
-                              ],
-                            ),
-                          ),
-                        if (welcomePageDetails.startDate != null)
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.h),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Departure",
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(width: 10.w),
-                                Text(Utils.getFormattedDate(
-                                    date: welcomePageDetails.startDate!))
-                              ],
-                            ),
-                          ),
-                        if (welcomePageDetails.nights != null)
-                          Padding(
-                            padding: EdgeInsets.only(top: 10.h),
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Nights",
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(width: 10.w),
-                                Text(welcomePageDetails.nights.toString())
-                              ],
-                            ),
-                          ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 20.h),
-                          child: Text(
-                              "Please complete each of the sections above to be cleared for boarding or check-in starting with the Guest Information tab.",
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500)),
-                        ),
-                        ListView.builder(
-                          padding: EdgeInsets.symmetric(vertical: 20.h),
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: paymentPoints.length,
-                          itemBuilder: (context, index) {
-                            return textBuilder(index: index);
-                          },
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Thank you for choosing to travel with us.",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500)),
-                              Text(
-                                  "For questions regarding the GIS or about a specific yacht, please email info@aggressor.com.",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500)),
-                            ],
-                          ),
-                        ),
-                      ],
+                    Divider(
+                      thickness: 1,
                     ),
-                  )
-                ],
-              ),
-            )
-          : Center(child: CircularProgressIndicator()),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 25.h, right: 25.h, top: 15.h, bottom: 20.h),
+                      child: Column(
+                        children: [
+                          if (welcomePageDetails.first != null)
+                            Row(
+                              children: [
+                                Text(
+                                  "Name",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(width: 10.w),
+                                Text(welcomePageDetails.first!)
+                              ],
+                            ),
+                          if (welcomePageDetails.destination != null)
+                            Padding(
+                              padding: EdgeInsets.only(top: 10.h),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Yacht",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Text(welcomePageDetails.destination!)
+                                ],
+                              ),
+                            ),
+                          if (welcomePageDetails.startDate != null)
+                            Padding(
+                              padding: EdgeInsets.only(top: 10.h),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Departure",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Text(Utils.getFormattedDate(
+                                      date: welcomePageDetails.startDate!))
+                                ],
+                              ),
+                            ),
+                          if (welcomePageDetails.nights != null)
+                            Padding(
+                              padding: EdgeInsets.only(top: 10.h),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Nights",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Text(welcomePageDetails.nights.toString())
+                                ],
+                              ),
+                            ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 20.h),
+                            child: Text(
+                                "Please complete each of the sections above to be cleared for boarding or check-in starting with the Guest Information tab.",
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w500)),
+                          ),
+                          ListView.builder(
+                            padding: EdgeInsets.symmetric(vertical: 20.h),
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: paymentPoints.length,
+                            itemBuilder: (context, index) {
+                              return textBuilder(index: index);
+                            },
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.w),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    "Thank you for choosing to travel with us.",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500)),
+                                Text(
+                                    "For questions regarding the GIS or about a specific yacht, please email info@aggressor.com.",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              )
+            : Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 }
