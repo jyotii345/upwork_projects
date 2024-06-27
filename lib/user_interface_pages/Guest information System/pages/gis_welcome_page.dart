@@ -14,10 +14,12 @@ class GuestInformationWelcomePage extends StatefulWidget {
   GuestInformationWelcomePage(
       {required this.charterId,
       required this.reservationID,
-      required this.contactId});
+      required this.contactId,
+      required this.loginKey});
   final String charterId;
   final String reservationID;
   final String contactId;
+  final String loginKey;
   @override
   State<GuestInformationWelcomePage> createState() =>
       _GuestInformationWelcomePageState();
@@ -65,7 +67,8 @@ class _GuestInformationWelcomePageState
     await aggressorApi.getWelcomePageInfo(
         contactId: contactId,
         charterId: widget.charterId,
-        reservationId: reservationId);
+        reservationId: reservationId,
+        loginKey: widget.loginKey);
     setState(() {
       isLoading = false;
     });

@@ -11,6 +11,7 @@ import 'package:aggressor_adventures/user_interface_pages/registration_page.dart
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'main_page.dart';
+import '../storage.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage();
@@ -350,7 +351,8 @@ class _LoginSignUpPageState extends State<LoginPage> {
       });
     }
 
-    var loginResponse = await AggressorApi().getUserLogin(username, password);
+    Map<String, dynamic> loginResponse =
+        await AggressorApi().getUserLogin(username, password);
 
     if (loginResponse["status"] == "success") {
       setState(() {
@@ -368,7 +370,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
       // timeZone=loginResponse["time_zone"];
 
       await initDatabase();
-      await saveUserData();
+      await saveUserData(userData: loginResponse);
 
       String? token = await FCMHelper.generateFCMToken();
       // String deviceType=(Platform.isAndroid)?"Android":"IOS";
@@ -429,7 +431,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
     }
   }
 
-  saveUserData() async {
+  saveUserData({required Map<String, dynamic> userData}) async {
     //saves user data into the sql database
     await database!.delete("user", where: 'id = ?', whereArgs: [100]);
     await database!.rawInsert(
@@ -446,6 +448,9 @@ class _LoginSignUpPageState extends State<LoginPage> {
         contactType,
       ],
     );
+
+    String serializedUserModel = User.serialize(User.fromJson(userData));
+    await storage.write(key: 'userModel', value: serializedUserModel);
   }
 
   initDatabase() async {

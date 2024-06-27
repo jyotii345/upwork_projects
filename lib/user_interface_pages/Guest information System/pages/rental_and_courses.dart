@@ -646,29 +646,29 @@ class _RentalAndCoursesState extends State<RentalAndCourses> {
                                                     otherRentalsController.text,
                                               );
                                               if (isDataPosted) {
-                                                bool isStatusUpdated =
-                                                    await aggressorApi
-                                                        .updatingStatus(
-                                                            charID: widget
-                                                                .charterID,
-                                                            contactID:
-                                                                basicInfoModel
-                                                                    .contactID!,
-                                                            column: "rentals");
+                                                // bool isStatusUpdated =
+                                                //     await aggressorApi
+                                                //         .updatingStatus(
+                                                //             charID: widget
+                                                //                 .charterID,
+                                                //             contactID:
+                                                //                 basicInfoModel
+                                                //                     .contactID!,
+                                                //             column: "rentals");
 
-                                                if (isStatusUpdated) {
-                                                  appDrawerselectedIndex = 7;
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              DivingInsurance(
-                                                                charterID: widget
-                                                                    .charterID,
-                                                                reservationID:
-                                                                    '',
-                                                              )));
-                                                }
+                                                // if (isStatusUpdated) {
+                                                //   appDrawerselectedIndex = 7;
+                                                //   Navigator.push(
+                                                //       context,
+                                                //       MaterialPageRoute(
+                                                //           builder: (context) =>
+                                                //               DivingInsurance(
+                                                //                 charterID: widget
+                                                //                     .charterID,
+                                                //                 reservationID:
+                                                //                     '',
+                                                //               )));
+                                                // }
                                                 setState(() {
                                                   isDataPosting = false;
                                                 });

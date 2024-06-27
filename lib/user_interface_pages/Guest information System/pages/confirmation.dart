@@ -68,8 +68,8 @@ getUserAddress() {
     userCountry = selectedCountry.title;
   }
   if (basicInfoModel.state != null && basicInfoModel.state!.isNotEmpty) {
-    MasterModel selectedState = listOfStates
-        .firstWhere((element) => element.abbv == basicInfoModel.state);
+    MasterModel selectedState = listOfStates.firstWhere((element) =>
+        element.abbv!.toLowerCase() == basicInfoModel.state!.toLowerCase());
     userState = selectedState.title;
   }
   if (basicInfoModel.nationalityCountryID != null) {

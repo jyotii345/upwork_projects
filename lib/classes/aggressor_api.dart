@@ -14,6 +14,7 @@ import 'package:aggressor_adventures/model/countries.dart';
 import 'package:aggressor_adventures/model/emergencyContactModel.dart';
 import 'package:aggressor_adventures/model/inventoryDetails.dart';
 import 'package:aggressor_adventures/model/rentalModel.dart';
+import 'package:aggressor_adventures/model/reservationModel.dart';
 import 'package:aggressor_adventures/model/travelInformationModel.dart';
 import 'package:aggressor_adventures/model/userModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/masterModel.dart';
@@ -634,12 +635,14 @@ class AggressorApi {
     return travelInformation;
   }
 
-  getWelcomePageInfo(
-      {required String contactId,
-      required charterId,
-      required String reservationId}) async {
+  getWelcomePageInfo({
+    required String contactId,
+    required charterId,
+    required String reservationId,
+    required String loginKey,
+  }) async {
     String url =
-        'https://app.aggressor.com/api/gis/authenticate/AF/$contactId/$reservationId/$charterId/f082784c136c6b565a88184e3689413a';
+        'https://app.aggressor.com/api/gis/authenticate/AF/$contactId/$reservationId/$charterId/${loginKey}';
     Request request = Request("GET", Uri.parse(url))
       ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
     try {

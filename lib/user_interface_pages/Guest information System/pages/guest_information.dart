@@ -115,8 +115,8 @@ countryList() async {
 statesList() async {
   listOfStates = await AggressorApi().getStatesList();
   if (basicInfoModel.state != null && basicInfoModel.state!.isNotEmpty) {
-    selectedState =
-        listOfStates.firstWhere((state) => state.abbv == basicInfoModel.state);
+    selectedState = listOfStates.firstWhere((state) =>
+        state.abbv!.toLowerCase() == basicInfoModel.state!.toLowerCase());
   }
 }
 
@@ -134,7 +134,7 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
     });
     await formStatus(
         contactId: basicInfoModel.contactID!, charterId: widget.currentTrip!);
-    await statesList();
+
     await getUserData();
     setState(() {
       isDataLoading = false;
@@ -144,6 +144,7 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
   getUserData() async {
     await AggressorApi().getBasicDetails();
     await countryList();
+    await statesList();
     setState(() {
       if (basicInfoModel.gender != null && basicInfoModel.gender!.isNotEmpty) {
         selectedGender = genderList.firstWhere((gender) =>
@@ -181,7 +182,6 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
   formStatus({required String contactId, required String charterId}) async {
     await aggressorApi.getFormStatus(
         charterId: charterId, contactId: contactId);
-
     if (form_status.general == "1" || form_status.general == "2") {
       isAbsorbing = true;
     }
@@ -703,11 +703,11 @@ class _GuestInformationPageState extends State<GuestInformationPage> {
                                                       isAbsorbing
                                                   ? null
                                                   : () async {
-                                                      setState(() {
-                                                        isDataPosting = true;
-                                                      });
                                                       if (_formKey.currentState!
                                                           .validate()) {
+                                                        setState(() {
+                                                          isDataPosting = true;
+                                                        });
                                                         BasicInfoModel saveData = BasicInfoModel(
                                                             title: selectedTitle!
                                                                 .title!

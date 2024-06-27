@@ -10,6 +10,7 @@ import 'package:aggressor_adventures/classes/file_data.dart';
 import 'package:aggressor_adventures/classes/trip.dart';
 import 'package:aggressor_adventures/model/emergencyContactModel.dart';
 import 'package:aggressor_adventures/model/inventoryDetails.dart';
+import 'package:aggressor_adventures/model/reservationModel.dart';
 import 'package:aggressor_adventures/model/travelInformationModel.dart';
 import 'package:aggressor_adventures/user_interface_pages/Guest%20information%20System/model/formStatusModel.dart';
 import 'package:flutter/cupertino.dart';
@@ -82,6 +83,7 @@ Contact? contact;
 int appDrawerselectedIndex = -1;
 
 List<AppDrawerModel> appBarItems = [];
+User? loggedinUser;
 
 List<String> certificationOptionList = [
   'Non-Diver',

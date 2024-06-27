@@ -41,7 +41,7 @@ class _RequestsState extends State<Requests> {
   TextEditingController dietaryController = TextEditingController();
   bool isDataUploading = false;
   bool isDataLoading = true;
-  bool isAbsorbing = form_status.requests == "1" || form_status.requests == "2";
+  bool isAbsorbing = false;
   @override
   void initState() {
     getUserData();
@@ -55,7 +55,7 @@ class _RequestsState extends State<Requests> {
     await getDietaryRestrictions();
     await formStatus(
         contactId: basicInfoModel.contactID!, charterId: widget.currentTrip!);
-    allergyCheckbox = isAbsorbing;
+
     setState(() {
       isDataLoading = false;
     });
@@ -64,6 +64,8 @@ class _RequestsState extends State<Requests> {
   formStatus({required String contactId, required String charterId}) async {
     await aggressorApi.getFormStatus(
         charterId: charterId, contactId: contactId);
+
+    isAbsorbing = form_status.requests == '1' || form_status.requests == '2';
   }
 
   getDietaryRestrictions() async {
@@ -71,6 +73,7 @@ class _RequestsState extends State<Requests> {
         .getDietaryRestrictions(contactId: basicInfoModel.contactID!);
     if (dietaryDetails != null) {
       dietaryController.text = dietaryDetails;
+      allergyCheckbox = true;
     }
   }
 
@@ -202,7 +205,7 @@ class _RequestsState extends State<Requests> {
                                 child: TextField(
                                   controller: dietaryController,
                                   maxLines: 3,
-                                  readOnly: isAbsorbing,
+                                  readOnly: isAbsorbing || !allergyCheckbox,
                                   textInputAction: TextInputAction.done,
                                   decoration: InputDecoration(
                                       border: InputBorder.none,
@@ -242,21 +245,22 @@ class _RequestsState extends State<Requests> {
                                 SizedBox(width: 20.w),
                                 Expanded(
                                   child: AggressorButton(
-                                      onPressed: (!isAbsorbing ||
-                                              allergyCheckbox)
+                                      onPressed: (!isAbsorbing)
                                           ? () async {
                                               setState(() {
                                                 isDataUploading = true;
                                               });
                                               bool isDietaryInformationSaved =
-                                                  await AggressorApi()
-                                                      .savingDietaryRestrictions(
-                                                          contactId:
-                                                              basicInfoModel
-                                                                  .contactID!,
-                                                          information:
-                                                              dietaryController
-                                                                  .text);
+                                                  allergyCheckbox
+                                                      ? await AggressorApi()
+                                                          .savingDietaryRestrictions(
+                                                              contactId:
+                                                                  basicInfoModel
+                                                                      .contactID!,
+                                                              information:
+                                                                  dietaryController
+                                                                      .text)
+                                                      : true;
                                               if (isDietaryInformationSaved) {
                                                 bool isStatusUpdated =
                                                     await AggressorApi()
@@ -289,10 +293,7 @@ class _RequestsState extends State<Requests> {
                                       buttonName: "SAVE AND CONTINUE",
                                       fontSize: 12,
                                       AggressorButtonColor: AggressorColors.aero
-                                          .withOpacity(
-                                              isAbsorbing || !allergyCheckbox
-                                                  ? 0.7
-                                                  : 1),
+                                          .withOpacity(isAbsorbing ? 0.7 : 1),
                                       AggressorTextColor:
                                           AggressorColors.white),
                                 ),

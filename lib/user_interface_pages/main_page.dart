@@ -25,9 +25,11 @@ import 'package:aggressor_adventures/user_interface_pages/reels_page.dart';
 import 'package:aggressor_adventures/user_interface_pages/rewards_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sqflite/sqflite.dart';
 import '../bloc/user_cubit/user_cubit.dart';
 import '../classes/fcm_helper.dart';
 import '../model/userModel.dart';
+import '../storage.dart';
 import 'login_page.dart';
 import 'files_page.dart';
 import 'profile_view_page.dart';
@@ -67,8 +69,11 @@ class _MyHomePageState extends State<MyHomePage>
   var pageList = [];
 
   getCurrentUser() async {
-    var userList = await helper.queryUser();
-    currentUser = userList[0];
+    String? userDataString = await storage.read(key: 'userModel');
+
+    currentUser = User.deserialize(userDataString!);
+    print(currentUser);
+    print(currentUser);
   }
 
   loadInitialData() async {
@@ -113,8 +118,8 @@ class _MyHomePageState extends State<MyHomePage>
           currentIndex = 7;
         });
       },
-      currentUser!.contactId ?? "",
-      currentUser!.userId ?? "",
+      currentUser?.contactId ?? "",
+      currentUser?.userId ?? "",
     );
     setState(() {
       isLoading = false;
@@ -182,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage>
     await TripDatabaseHelper.instance.deleteTripTable();
     await UserDatabaseHelper.instance.deleteUser(100);
     BlocProvider.of<UserCubit>(context).setCurrentUser(null);
-
+    storage.deleteAll();
     setState(() {
       navigatorKey.currentState!.pushReplacement(
           MaterialPageRoute(builder: (context) => LoginPage()));

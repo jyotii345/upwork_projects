@@ -684,6 +684,7 @@ class Trip {
                                         contactId: user!.contactId!,
                                         charterId: charterId!,
                                         reservationID: reservationId!,
+                                        loginKey: loginKey!,
                                       )));
                         },
                         buttonName: "Guest Information System (GIS)",

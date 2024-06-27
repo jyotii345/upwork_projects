@@ -26,6 +26,7 @@ import '../databases/slider_database.dart';
 import '../databases/states_database.dart';
 import '../databases/trip_database.dart';
 import '../databases/user_database.dart';
+import '../storage.dart';
 
 class MyTrips extends StatefulWidget {
   MyTrips({this.user});
@@ -69,8 +70,10 @@ class MyTripsState extends State<MyTrips>
   }
 
   getCurrentUser() async {
-    var userList = await helper.queryUser();
-    currentUser = userList[0];
+    String? userDataString = await storage.read(key: 'userModel');
+    currentUser = User.deserialize(userDataString!);
+    print(currentUser);
+    print(currentUser);
   }
 
   Future<dynamic> getOfflineLoad() async {

@@ -5,7 +5,6 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-
 class UserDatabaseHelper {
   //a helper class to drive the database
   static final _databaseName = "userDatabase.db";
@@ -14,7 +13,8 @@ class UserDatabaseHelper {
 
   UserDatabaseHelper._privateConstructor();
 
-  static final UserDatabaseHelper instance = UserDatabaseHelper._privateConstructor();
+  static final UserDatabaseHelper instance =
+      UserDatabaseHelper._privateConstructor();
 
   static Database? _database;
 
@@ -35,7 +35,6 @@ class UserDatabaseHelper {
         version: _databaseVersion, onCreate: _onCreate);
   }
 
-
   Future _onCreate(Database db, int version) async {
     //create a new table object in the database
     return db.execute(
@@ -53,7 +52,7 @@ class UserDatabaseHelper {
 
     int id = await db.insert(
       'user',
-      user.toMap(),
+      User.toMap(userData: user),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     return id;
@@ -89,5 +88,4 @@ class UserDatabaseHelper {
       );
     });
   }
-
 }

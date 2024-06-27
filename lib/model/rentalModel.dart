@@ -44,12 +44,13 @@ class RentalModel {
           abbv: "BC",
           isChecked: false,
           subCategories: [
-            MasterModel(id: 1, title: "XS", abbv: "BC(xs)", isChecked: false),
-            MasterModel(id: 3, title: "S", abbv: "BC(s)", isChecked: false),
-            MasterModel(id: 4, title: "M", abbv: "BC(m)", isChecked: false),
-            MasterModel(id: 2, title: "L", abbv: "BC(l)", isChecked: false),
-            MasterModel(id: 2, title: "XL", abbv: "BC(xl)", isChecked: false),
-            MasterModel(id: 5, title: "2XL", abbv: "BC(2xl)", isChecked: false),
+            MasterModel(id: 1, title: "XS", abbv: "BC (xs)", isChecked: false),
+            MasterModel(id: 3, title: "S", abbv: "BC (s)", isChecked: false),
+            MasterModel(id: 4, title: "M", abbv: "BC (m)", isChecked: false),
+            MasterModel(id: 2, title: "L", abbv: "BC (l)", isChecked: false),
+            MasterModel(id: 2, title: "XL", abbv: "BC (xl)", isChecked: false),
+            MasterModel(
+                id: 5, title: "2XL", abbv: "BC (2xl)", isChecked: false),
           ]),
       MasterModel(
           id: 2, title: "Regulator", abbv: "Regulator", isChecked: false),
