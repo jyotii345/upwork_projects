@@ -11,7 +11,8 @@ class Boat {
   String? imagePath;
   String? kbygLink;
 
-  Boat(String boatId, String name, String abbreviation, String email, String active, String imageLink, String imagePath, String kbygLink) {
+  Boat(String boatId, String name, String abbreviation, String email,
+      String active, String imageLink, String imagePath, String kbygLink) {
     // default constructor
     this.boatId = boatId;
     this.name = name;
@@ -32,8 +33,18 @@ class Boat {
       'email': email,
       'active': active,
       'imageLink': imageLink,
-      'imagePath' : imagePath,
-      'kbygLink' : kbygLink,
+      'imagePath': imagePath,
+      'kbygLink': kbygLink,
     };
+  }
+
+  Boat.fromJson(Map<String, dynamic> json) {
+    boatId = json['boatid'];
+    name = json['name'];
+    abbreviation = json['abbreviation'];
+    kbygLink = json['kbyg'];
+    email = json['email'];
+    imageLink = json['imageLink'];
+    imagePath = json['imagePath'];
   }
 }

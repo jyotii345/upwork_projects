@@ -72,8 +72,6 @@ class MyTripsState extends State<MyTrips>
   getCurrentUser() async {
     String? userDataString = await storage.read(key: 'userModel');
     currentUser = User.deserialize(userDataString!);
-    print(currentUser);
-    print(currentUser);
   }
 
   Future<dynamic> getOfflineLoad() async {

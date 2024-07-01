@@ -371,6 +371,7 @@ class _LoginSignUpPageState extends State<LoginPage> {
 
       await initDatabase();
       await saveUserData(userData: loginResponse);
+      await AggressorApi().getBoatList();
 
       String? token = await FCMHelper.generateFCMToken();
       // String deviceType=(Platform.isAndroid)?"Android":"IOS";

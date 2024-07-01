@@ -237,12 +237,16 @@ class Trip {
     try {
       charter = await CharterDatabaseHelper.instance.getCharter(charterId!);
 
-      boat = await BoatDatabaseHelper.instance.getBoat(charter!.boatId!);
-      boatList.forEach((boatObj) {
-        if (boatObj["boatid"].toString() == boat!.boatId!) {
-          boat!.kbygLink = boatObj["kbyg"];
-        }
-      });
+      List<Boat> boatsList = await AggressorApi().getBoatModelsList();
+      // boat = await BoatDatabaseHelper.instance.getBoat(charter!.boatId!);
+      boat = boatsList.firstWhere((element) => element.boatId == boatid);
+      print(boat);
+      print(boat);
+      // boatList.forEach((boatObj) {
+      //   if (boatObj["boatid"].toString() == boat!.boatId!) {
+      //     boat!.kbygLink = boatObj["kbyg"];
+      //   }
+      // });
     } catch (e) {
       print("charter not in DB");
     }

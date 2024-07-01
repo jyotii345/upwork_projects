@@ -101,8 +101,7 @@ class AggressorApi {
                 .getTrip(response[i.toString()]["reservationid"].toString());
           }
 
-          if (newTrip.charterId == null ||
-              !await charterDatabaseHelper.charterExists(newTrip.charterId!)) {
+          if (newTrip.charterId != null) {
             var charterResponse =
                 await AggressorApi().getCharter(newTrip.charterId!);
             if (charterResponse["status"] == "success") {
@@ -117,24 +116,26 @@ class AggressorApi {
                   charterResponse["disembarkment"].toString(),
                   charterResponse["destination"].toString());
 
-              await charterDatabaseHelper.insertCharter(newCharter);
+              if (!await charterDatabaseHelper
+                  .charterExists(newTrip.charterId!)) {
+                await charterDatabaseHelper.insertCharter(newCharter);
+              }
 
-              if (!await boatDatabaseHelper.boatExists(newCharter.boatId!)) {
-                var boatResponse =
-                    await AggressorApi().getBoat(newCharter.boatId!);
-                if (boatResponse["status"] == "success") {
-                  Boat newBoat;
+              var boatResponse =
+                  await AggressorApi().getBoat(newCharter.boatId!);
+              if (boatResponse["status"] == "success") {
+                Boat newBoat;
+                newBoat = Boat(
+                    boatResponse["boatid"].toString(),
+                    boatResponse["name"].toString(),
+                    boatResponse["abbreviation"].toString(),
+                    boatResponse["boat_email"].toString(),
+                    boatResponse["active"].toString(),
+                    boatResponse?["image"],
+                    boatResponse?['imagePath'] ?? '',
+                    boatResponse?["kbyg"] ?? '');
 
-                  newBoat = Boat(
-                      boatResponse["boatid"].toString(),
-                      boatResponse["name"].toString(),
-                      boatResponse["abbreviation"].toString(),
-                      boatResponse["boat_email"].toString(),
-                      boatResponse["active"].toString(),
-                      boatResponse["image"],
-                      '',
-                      '');
-
+                if (!await boatDatabaseHelper.boatExists(newCharter.boatId!)) {
                   await boatDatabaseHelper.insertBoat(newBoat);
                 }
               }
@@ -1104,7 +1105,7 @@ class AggressorApi {
     return pageJson;
   }
 
-  Future<dynamic> getBoatList() async {
+  Future<List<Map<String, dynamic>>> getBoatList() async {
     //gets the list of boats from the API and adds the maps to the boat list
     String url = "https://app.aggressor.com/api/app/boats/list";
 
@@ -1116,6 +1117,7 @@ class AggressorApi {
     List<dynamic> pageJson =
         json.decode(await pageResponse.stream.bytesToString());
 
+    boatList.clear();
     pageJson.forEach((element) {
       boatList.add(element);
     });
@@ -1125,8 +1127,27 @@ class AggressorApi {
       "name": " -- SELECT -- ",
       "abbreviation": "SEL"
     };
+
     boatList.insert(0, selectionTrip);
     return boatList;
+  }
+
+  Future<List<Boat>> getBoatModelsList() async {
+    List<Boat> boatsModelList = [];
+    String url = "https://app.aggressor.com/api/app/boats/list";
+
+    Request request = Request("GET", Uri.parse(url))
+      ..headers.addAll({"apikey": apiKey, "Content-Type": "application/json"});
+
+    StreamedResponse pageResponse = await request.send();
+
+    List<dynamic> pageJson =
+        json.decode(await pageResponse.stream.bytesToString());
+
+    pageJson.forEach((element) {
+      boatsModelList.add(Boat.fromJson(element));
+    });
+    return boatsModelList;
   }
 
   Future<dynamic> getRewardsSliderList() async {

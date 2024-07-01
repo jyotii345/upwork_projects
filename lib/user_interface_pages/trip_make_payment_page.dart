@@ -409,8 +409,9 @@ class MakePaymentState extends State<MakePayment> {
             hintText: "0000  0000  0000  0000",
             labelText: "Card Number",
           ),
-          validator: (value) =>
-              (value==null||value.isEmpty) ? 'Card Number can\'t be empty' : null,
+          validator: (value) => (value == null || value.isEmpty)
+              ? 'Card Number can\'t be empty'
+              : null,
           onSaved: (value) => cardNumber = value!.trim(),
         ),
       ),
@@ -436,7 +437,7 @@ class MakePaymentState extends State<MakePayment> {
                 hintText: "00/0000",
                 labelText: "Expiration Date",
               ),
-              validator: (value) => (value==null||value.isEmpty)
+              validator: (value) => (value == null || value.isEmpty)
                   ? 'Exp Date can\'t be empty'
                   : value.trim().length != 7
                       ? 'Exp date format incorrect'
@@ -458,8 +459,9 @@ class MakePaymentState extends State<MakePayment> {
                   hintText: "000",
                   labelText: "CVV",
                 ),
-                validator: (value) =>
-                    (value==null||value.isEmpty) ? 'CVV can\'t be empty' : null,
+                validator: (value) => (value == null || value.isEmpty)
+                    ? 'CVV can\'t be empty'
+                    : null,
                 onSaved: (value) => cvv = value!.trim(),
               ),
             ),
@@ -483,8 +485,9 @@ class MakePaymentState extends State<MakePayment> {
           hintStyle: TextStyle(),
           labelText: "Payment Amount",
         ),
-        validator: (value) =>
-            (value==null||value.isEmpty) ? 'Payment Amount can\'t be empty' : null,
+        validator: (value) => (value == null || value.isEmpty)
+            ? 'Payment Amount can\'t be empty'
+            : null,
         onSaved: (value) => paymentAmount = value!.trim(),
       ),
     );
@@ -616,7 +619,7 @@ class MakePaymentState extends State<MakePayment> {
       } catch (e) {
         print('caught Error: $e');
         setState(() {
-          errorMessage = e.toString();//.message;
+          errorMessage = e.toString(); //.message;
           loading = false;
         });
       }
