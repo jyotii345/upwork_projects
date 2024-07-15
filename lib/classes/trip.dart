@@ -381,7 +381,10 @@ class Trip {
                                       : Icon(Icons.directions_boat_sharp);
                                 } else {
                                   return Center(
-                                    child: CircularProgressIndicator(),
+                                    child: SizedBox(
+                                      child: Image.asset(
+                                          'assets/adventureclub.png'),
+                                    ),
                                   );
                                 }
                               },
